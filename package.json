@@ -1,6 +1,6 @@
 {
   "name": "vue-web-terminal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -8,23 +8,23 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "compression-webpack-plugin": "^9.2.0",
-    "core-js": "^3.6.5",
     "element-resize-detector": "^1.2.4",
     "file-saver": "^2.0.5",
     "js-base64": "^3.7.2",
     "object-sizeof": "^1.6.2",
-    "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6"
   },
   "devDependencies": {
+    "compression-webpack-plugin": "^9.2.0",
+    "core-js": "^3.6.5",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "vue": "^2.6.11"
   },
   "eslintConfig": {
     "root": true,

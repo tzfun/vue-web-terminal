@@ -8,16 +8,16 @@ module.exports = {
     },
     configureWebpack: {
         output: {
-            filename: `js/${name}.js`,
-            chunkFilename: `js/${name}.chunk.js`,
+            filename: `${name}.js`,
+            chunkFilename: `${name}.chunk.js`,
             libraryTarget: 'umd',
             umdNamedDefine: true
         }
     },
     css: {
         extract: {
-            filename: `css/${name}.css`,
-            chunkFilename: `css/${name}.chunk.css`
+            filename: `${name}.css`,
+            chunkFilename: `${name}.chunk.css`
         }
     },
     chainWebpack: (config) => {
