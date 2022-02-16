@@ -77,3 +77,19 @@ export function _unHtml(str) {
 export function _sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+export function _screenType(width = document.body.clientWidth) {
+    let result = {}
+    if (width < 600) {
+        result.xs = true
+    } else if (width >= 600 && width < 960) {
+        result.sm = true
+    } else if (width >= 960 && width < 1264) {
+        result.md = true
+    } else if (width >= 1264 && width < 1904) {
+        result.lg = true
+    } else {
+        result.xl = true
+    }
+    return result
+}

@@ -3,72 +3,70 @@
     <div class="terminal">
       <div class="terminal-header">
         <h4>
-          <span @click="eventBus.$emit('showFloatDoor')" style="cursor: pointer">{{ projectName }}</span>
-          <span v-if="$store.state.server != null" class="app-server">{{ $store.state.server.name }}</span>
+          <span @click="_triggerClick('title')" style="cursor: pointer">{{ title }}</span>
         </h4>
         <ul class="shell-dots">
           <li class="shell-dots-red">
-            <i class="el-icon-close page-close" @click="_exit"></i>
+            <i class="el-icon-close page-close" @click="_triggerClick('close')"></i>
           </li>
-          <li class="shell-dots-yellow"></li>
-          <li class="shell-dots-green"></li>
+          <li class="shell-dots-yellow">
+            <i class="el-icon-close page-close" @click="_triggerClick('minScreen')"></i>
+          </li>
+          <li class="shell-dots-green">
+            <i class="el-icon-close page-close" @click="_triggerClick('fullScreen')"></i>
+          </li>
         </ul>
       </div>
       <div class="terminal-window" id="terminalWindow" @click.self="_activeCursor">
         <p v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
-          <span v-if="item.cmdLine" class="crude-font">
-              <span class="prompt">{{ item.message }}</span>
+          <span v-if="item.type === 'cmdLine'" class="crude-font">
+              <span class="prompt">{{ item.content }}</span>
           </span>
-          <span v-else-if="item.splitLine">
-            <span style="line-height: 60px">====> {{ item.message }}</span>
+          <span v-else-if="item.type === 'splitLine'">
+            <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
           <span v-else>
             <span @click.self="_activeCursor">
-<!--              <span>{{ item.time == null ? "" : (item.time + " ") }}</span>-->
-              <span v-show="item.type != null && !item.viewJson && !item.viewCode" :class="item.type"
-                    style="margin-right: 10px">{{ item.tag == null ? item.type : item.tag }}</span>
+              <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
+              <span v-show="item.type === 'normal'" :class="item.class" style="margin-right: 10px">
+                {{ item.tag == null ? item.class : item.tag }}
+              </span>
             </span>
-            <span v-if="item.viewJson" style="position: relative">
+            <span v-if="item.type === 'json'" style="position: relative">
                 <json-viewer :expand-depth="item.depth"
                              sort boxed copyable expanded
                              :key="idx + '_' + item.depth"
-                             :value="parseToJson(item.message)">
+                             :value="parseToJson(item.content)">
                 </json-viewer>
                 <el-select class="json-deep-selector"
                            v-model="item.depth"
-                           placeholder="选择显示层级">
+                           placeholder="Choose a display deep.">
                   <el-option
                       v-for="i in jsonViewDepth"
                       :key="i"
-                      :label="'显示 '+ i +' 层'"
+                      :label="`View Deep ${i}`"
                       :value="i">
                   </el-option>
                 </el-select>
             </span>
-            <span v-else-if="item.viewCode" style="position: relative">
+            <span v-else-if="item.type === 'code'" style="position: relative">
               <span class="code-viewer">
-                <codemirror ref="codeViewer" v-model="item.message" :options="cmOptions"/>
+                <codemirror ref="codeViewer" v-model="item.content" :options="_getCmOptions(item.language)"/>
               </span>
             </span>
-            <span v-else v-html="item.message" @click="_activeCursor"></span>
+            <span v-else v-html="item.content" @click="_activeCursor"></span>
           </span>
         </p>
         <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
           <span>
-            <span class="prompt">{{ projectName }}
-              <span v-if='require("@/Util.js")._nonEmpty($store.state.gameAddress)'>
-                {{ $store.state.gameAddress }}
-              </span>
-              <span v-else>
-                <span>{{ $store.state.gameIds.join(',') }}</span>
-              </span>
-              <span>[{{ $store.getters.getProxy }}]</span>
+            <span class="prompt">{{ title }}
+              <span>{{ context }}</span>
               <span> > </span>
             </span>
           </span>
           <span v-html="require('@/Util.js')._html(command)"></span>
           <span v-show="cursorConf.show" class="cursor"
-                :style="'width:' + cursorConf.width + 'px;margin-left:' + cursorConf.left +'px'">&nbsp;</span>
+                :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
           <input type="text" autofocus="autofocus" id="command-input" v-model="command" class="input-box"
                  ref="inputCmd"
                  autocomplete="off"
@@ -79,13 +77,34 @@
                  @keyup.enter="execute"
                  @keyup.up.exact="switchPreCmd"
                  @keyup.down.exact="switchNextCmd"
-                 @keydown.ctrl.82="_searchCmdLog"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
-          <span id="en-flag" @click.self="_activeCursor">aa</span>
-          <span id="cn-flag" @click.self="_activeCursor">你好</span>
+          <span id="terminal-en-flag" @click.self="_activeCursor">aa</span>
+          <span id="terminal-cn-flag" @click.self="_activeCursor">你好</span>
         </p>
         <p class="help-msg" v-if="searchCmd.item != null">{{ searchCmd.item.usage }}</p>
+      </div>
+    </div>
+    <div class="cmd-help" v-if="searchCmd.item != null && !(require('@/Util.js'))._screenType().xs">
+      <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
+         v-html="searchCmd.item.description"></p>
+      <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
+        <div v-for="(it,idx) in searchCmd.item.example" :key="idx" class="text">
+          <div v-if="searchCmd.item.example.length === 1">
+            <span>Example: <code>{{ it.cmd }}</code> {{ it.des }}</span>
+          </div>
+          <div v-else>
+            <div style="float:left;width: 8.333%">
+              eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}：
+            </div>
+            <div style="float:left;width: 91.667%">
+              <ul class="example-ul">
+                <li class="example-li"><code>{{ it.cmd }}</code></li>
+                <li class="example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -93,6 +112,7 @@
 
 <script>
 import TerminalJs from './Terminal.js'
+
 export default TerminalJs
 
 </script>

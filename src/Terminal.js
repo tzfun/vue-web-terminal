@@ -1,31 +1,22 @@
-// import 'vue-json-viewer/style.css'
+import 'vue-json-viewer/style.css'
 import {codemirror} from "vue-codemirror";
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/darcula.css'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/addon/edit/closebrackets.js'
 import sizeof from 'object-sizeof'
-import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
+import {_dateFormat, _isEmpty, _sleep} from "./Util.js";
 import elementResizeDetectorMaker from 'element-resize-detector'
-
-const MSG_TYPE = {
-    SUCCESS: 'success',
-    ERROR: 'error',
-    SYSTEM: 'system',
-    INFO: 'info',
-    WARNING: 'warning',
-    GRAYSCALE: 'grayscale'
-}
+import historyStore from "@/HistoryStore";
 
 export default {
     name: 'Terminal',
-    props: {
-        msg: String
+    components: {
+        codemirror
     },
     data() {
         return {
-            showHelpDialog: false,
-            projectName: "Leocool@ProjectX",
+            context: 'terminal/tzfun',
             command: "",
             commandLog: [],
             cmdChange: false,
@@ -58,29 +49,145 @@ export default {
             searchCmd: {
                 item: null
             },
-            config:{}
+            allCommandStore: [
+                {
+                    key: 'clear',
+                    title: 'Clear logs',
+                    group: 'local',
+                    usage: 'clear [history]',
+                    description: 'Clear screen or history.',
+                    example: [
+                        {
+                            cmd: 'clear',
+                            des: 'Clear all records on the current screen.'
+                        },
+                        {
+                            cmd: 'clear history',
+                            des: 'Clear command history'
+                        }
+                    ]
+                },
+                {
+                    key: 'refresh',
+                    title: 'Refresh page',
+                    group: 'local',
+                    usage: 'refresh',
+                    description: 'Refresh current page.',
+                    example: null
+                },
+                {
+                    key: 'exit',
+                    title: 'Close page',
+                    group: 'local',
+                    usage: 'exit',
+                    description: 'Shutdown terminal and close current page.',
+                    example: null
+                },
+                {
+                    key: 'open',
+                    title: 'Open page',
+                    group: 'local',
+                    usage: 'open <url>',
+                    description: 'Open a specified page.',
+                    example: [
+                        {
+                            cmd: 'open blog.beifengtz.com'
+                        }
+                    ]
+                }
+            ]
         }
     },
-    components: {
-        codemirror
+    props: {
+        name: {
+            type: String,
+            default: 'terminal'
+        },
+        //  终端标题
+        title: {
+            type: String,
+            default: 'vue-web-terminal'
+        },
+        //  初始化日志内容
+        initLog: {
+            type: Array,
+            default: [
+                {
+                    content: "Terminal Initializing ..."
+                }, {
+                    content: "Current login time: " + new Date().toLocaleString()
+                }, {
+                    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='teach'>help</span> command to learn."
+                }
+            ]
+        },
+        //  初始化日志每条延迟时间，单位毫秒
+        initLogDelay: {
+            type: Number,
+            default: 150
+        },
+        //  键盘时间监听器
+        keyListener: {
+            type: Function
+        },
+        //  点击时间监听器
+        clickListener: {
+            type: Function
+        },
+        //  是否显示记录结果的时间
+        showLogTime: {
+            type: Boolean,
+            default: true
+        },
+        //  命令行搜索以及help指令用
+        commandStore: {
+            type: Array
+        },
+        //  记录大小超出此限制会发出警告，单位byte
+        warnLogByteLimit: {
+            type: Number,
+            default: 1024 * 1024 * 10
+        },
+        //  记录条数超出此限制会发出警告
+        warnLogCountLimit: {
+            type: Number,
+            default: 500
+        },
+        //  记录限制警告开关
+        warnLogLimitEnable: {
+            type: Boolean,
+            default: true
+        },
+        //  自动搜索帮助
+        autoHelp: {
+            type: Boolean,
+            default: true
+        }
     },
     created() {
-        this._pushMessageBatch([
-            {
-                message: "Terminal Initializing ..."
-            }, {
-                message: `System version number: Update time: xxx`
-            }, {
-                message: "Current login time: " + new Date().toLocaleString()
-            }, {
-                message: "Welcome to LEOCOOL GAMES terminal! If you are using for the first time, you can use the <span class='teach'>help</span> to learn this terminal."
+        this.$terminal.register(this.name, (type, options) => {
+            if (type === 'pushMessage') {
+                this._pushMessage(options)
+            } else if (type === 'updateContext') {
+                this.context = options
+            } else {
+                console.error("Unsupported event type: " + type)
             }
-        ], 150)
+        })
+
+        if (this.initLog != null) {
+            this._pushMessageBatch(this.initLog, this.initLogDelay).then(() => {
+            })
+        }
+
+        if (this.commandStore != null) {
+            this.allCommandStore.concat(this.commandStore)
+        }
     },
     mounted() {
         this.byteLen = {
-            en: document.getElementById("en-flag").getBoundingClientRect().width / 2,
-            cn: document.getElementById("cn-flag").getBoundingClientRect().width / 2
+            en: document.getElementById("terminal-en-flag").getBoundingClientRect().width / 2,
+            cn: document.getElementById("terminal-cn-flag").getBoundingClientRect().width / 2
         }
         this.$nextTick(() => {
             let el = document.getElementsByClassName("terminal-window")[0]
@@ -89,13 +196,13 @@ export default {
             }
         })
 
-        this.eventBus.$on('onCtrlAltRight', () => {
-            this.showHelpDialog = !this.showHelpDialog
-        })
         this.keydownListener = event => {
             if (event.key.toLowerCase() === 'tab') {
                 this._fillCmd()
                 event.preventDefault()
+            }
+            if (this.keyListener != null) {
+                this.keyListener(event)
             }
         }
         window.addEventListener('keydown', this.keydownListener);
@@ -119,6 +226,7 @@ export default {
     },
     destroyed() {
         window.removeEventListener('keydown', this.keydownListener)
+        this.$terminal.unregister(this.name)
     },
     watch: {
         command(val, oldVal) {
@@ -134,17 +242,26 @@ export default {
                 this.cmdChange = false;
             }
         },
-        "$store.state.gameAddress"(val) {
-            console.log(val)
-        },
     },
     methods: {
+        _triggerClick(key) {
+            if (this.clickListener != null) {
+                this.clickListener(key)
+                return
+            }
+            if (key === 'close') {
+                this._exit()
+            }
+        },
         _resetSearchKey() {
             this.searchCmd = {
                 item: null
             }
         },
         _searchCmd(key) {
+            if (!this.autoHelp) {
+                return;
+            }
             let cmd = key
             if (key == null) {
                 cmd = this.command
@@ -152,8 +269,8 @@ export default {
             if (_isEmpty(cmd)) {
                 this._resetSearchKey()
             } else if (cmd.trim().indexOf(" ") < 0) {
-                for (let i in this.config.commandHelp) {
-                    let o = this.config.commandHelp[i]
+                for (let i in this.allCommandStore) {
+                    let o = this.allCommandStore[i]
                     if (o.key.trim().toLowerCase().indexOf(cmd.trim().toLowerCase()) >= 0) {
                         this.searchCmd.item = o
                         return
@@ -172,22 +289,22 @@ export default {
                 this.$refs.inputCmd.focus()
             })
         },
-        _searchCmdLog(e) {
-            console.log(e)
-            return false
+        _printHelp() {
+
         },
-        execute: function () {
+        execute() {
             this._resetSearchKey()
             if (this.command.trim() !== "") {
                 let split = this.command.split(" ")
                 let cmdKey = split[0];
                 this.saveCurCommand();
+                this.$emit("beforeExecCmd", cmdKey, this.command)
                 switch (cmdKey) {
                     case 'refresh':
                         location.reload()
                         break;
                     case 'help':
-                        this.showHelpDialog = true
+                        this._printHelp()
                         break;
                     case 'clear':
                         this._doClear(split);
@@ -196,23 +313,34 @@ export default {
                         this.openUrl(split[1]);
                         break;
                     case 'exit':
-                        // this.$store.commit('clearLogin')
-                        // this.$router.push({name: 'login'})
                         this._exit()
                         break;
-                    case 'region':
-                        if (split.length > 1) {
-                            this._showRegion(split[1])
-                        } else {
-                            this._showRegion("");
-                        }
-                        break
                     default: {
-                        let viewJson = false;
-                        if (this.arrayContains(split, "-V")) {
-                            viewJson = true;
+                        this.showInputLine = false
+                        let success = (message) => {
+                            if (message.time == null) {
+                                message.time = this._curTime()
+                            }
+                            this._pushMessage(message)
+                            this.showInputLine = true
+                            this._activeCursor()
+                            this._endExecCallBack()
                         }
-                        this._execServerCmd(this.command.replace(" -V", ""), viewJson);
+
+                        let failed = (message = 'Failed to execute.') => {
+                            this._pushMessage({
+                                time: this._curTime(),
+                                type: 'normal',
+                                class: 'error',
+                                content: message
+                            })
+                            this.showInputLine = true
+                            this._activeCursor()
+                            this._endExecCallBack()
+                        }
+
+                        this.$emit("execCmd", cmdKey, this.command, success, failed)
+                        return
                     }
                 }
             }
@@ -227,40 +355,6 @@ export default {
                 show: true,
             }
         },
-        _execServerCmd(cmd, viewJson) {
-            if (_isEmpty(this.$store.state.gameAddress) && this.$store.state.gameIds.length === 0) {
-                this._pushMessage({
-                    time: this.genCurTime(),
-                    type: MSG_TYPE.SYSTEM,
-                    message: "未选择任何Game服务器，请打开服务器配置面板选择，打开方式可使用 <span class='teach'>help</span> 命令查看",
-                })
-                return
-            }
-            this.showInputLine = false;
-            console.log(viewJson)
-        },
-        _showRegion(pattern) {
-            this.showInputLine = false;
-            let result;
-            result = this.$parent._getRegionDetail(pattern)
-
-            result.then((resData) => {
-                if (resData != null) {
-                    this._pushMessage({
-                        time: this.genCurTime(),
-                        type: MSG_TYPE.SUCCESS,
-                        message: resData,
-                        viewJson: true,
-                        depth: 1
-                    })
-                }
-            }).catch((err) => {
-                this.pushErrorMsg(err.message)
-            }).finally(() => {
-                this.showInputLine = true;
-                this._activeCursor()
-            })
-        },
         parseToJson(obj) {
             if (typeof obj === 'object' && obj) {
                 return obj;
@@ -272,13 +366,26 @@ export default {
                 }
             }
         },
+        /**
+         * message内容：
+         *
+         * time: 当前时间
+         * class: 类别，只可选：success、error、system、info、warning
+         * type: 类型，只可选：normal、json、code、cmdLine、splitLine
+         * content: 具体内容
+         * tag: 标签
+         * language: 语言，当类型为code时需设置语言显示高亮
+         *
+         * @param message
+         * @private
+         */
         _pushMessage(message) {
             this.terminalLog.push(message);
             this.terminalSize += sizeof(message)
             this.checkTerminalLog()
 
             //  为了修复json创建过慢无法实时获取到scrollTop的情况
-            if (message.viewJson) {
+            if (message.type === 'json') {
                 setTimeout(() => {
                     this.$nextTick(() => {
                         document.getElementById("terminal-container").scrollTop += 50
@@ -297,61 +404,40 @@ export default {
             this.checkTerminalLog()
         },
         checkTerminalLog() {
+            if (!this.warnLogLimitEnable) {
+                return
+            }
             let length = this.terminalLog.length
-            if (this.terminalSize > 1024 * 1024 * 10) {
-                this.$notify({
-                    title: '警告',
-                    dangerouslyUseHTMLString: true,
-                    duration: 10000,
-                    message: 'Terminal消息大小已超出<strong style="color: red">10MB</strong>，消息内容太大可能会影响浏览器运行性能，请执行“clear”命令进行清理',
-                    type: 'warning',
-                    position: 'bottom-right'
-                });
-            } else if (length > 600) {
-                this.$notify({
-                    title: '警告',
-                    duration: 10000,
-                    dangerouslyUseHTMLString: true,
-                    message: 'Terminal消息已超出<strong style="color: red">600条</strong>，消息内容太大可能会影响浏览器运行性能，请执行“clear”命令进行清理',
-                    type: 'warning',
-                    position: 'bottom-right'
-                });
-            } else if (length > 1000 || this.terminalSize > 1024 * 1024 * 10) {
-                this.terminalLog.splice(0, this.terminalLog.length - 500)
-                this.$notify.info({
-                    title: '提示',
-                    duration: 10000,
-                    dangerouslyUseHTMLString: true,
-                    message: 'Terminal消息已超出<strong style="color: red">1000条</strong>  或  <strong style="color: red">10MB</strong>，已强制清理前500条记录',
-                    position: 'bottom-right'
-                });
+            if (this.terminalSize > this.warnLogByteLimit) {
+                this._pushMessage({
+                    time: this._curTime(),
+                    content: `Terminal log size exceeded <strong style="color: red">${this.warnLogByteLimit}(byte)</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
+                    class: 'system',
+                    type: 'normal'
+                })
+            } else if (length > this.warnLogCountLimit) {
+                this._pushMessage({
+                    time: this._curTime(),
+                    content: `Terminal log count exceeded <strong style="color: red">${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
+                    class: 'system',
+                    type: 'normal'
+                })
             }
         },
         saveCurCommand() {
-            this.$store.commit("pushCommandLog", this.command)
-
-            let cmdLine = ""
-            cmdLine += (this.projectName + " ")
-
-            if (_nonEmpty(this.$store.state.gameAddress)) {
-                cmdLine += this.$store.state.gameAddress
-            } else {
-                for (let i in this.$parent.$store.state.gameIds) {
-                    cmdLine += ("/" + this.$parent.$store.state.gameIds[i])
-                }
-            }
+            historyStore.pushCmd(this.name, this.command)
 
             this.terminalLog.push({
-                message: `${cmdLine} [${this.$store.getters.getProxy}] > ${this.command}`,
-                cmdLine: true
+                message: `${this.context} > ${this.command}`,
+                type: "cmdLine"
             });
         },
-        genCurTime() {
+        _curTime() {
             return _dateFormat("YYYY-mm-dd HH:MM:SS", new Date())
         },
         switchPreCmd() {
-            let cmdLog = this.$store.state.cmdLog
-            let cmdIdx = this.$store.state.cmdIdx
+            let cmdLog = historyStore.getLog(this.name)
+            let cmdIdx = historyStore.getIdx(this.name)
             if (cmdLog.length !== 0 && cmdIdx > 0) {
                 cmdIdx -= 1;
                 this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
@@ -363,12 +449,12 @@ export default {
                 }
                 this.cmdChange = true;
             }
-            this.$store.commit('updateCmdIdx', cmdIdx)
+            historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
         switchNextCmd() {
-            let cmdLog = this.$store.state.cmdLog
-            let cmdIdx = this.$store.state.cmdIdx
+            let cmdLog = historyStore.getLog(this.name)
+            let cmdIdx = historyStore.getIdx(this.name)
             if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
                 cmdIdx += 1;
                 this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
@@ -380,15 +466,15 @@ export default {
                 this.cursorConf.idx = this.command.length;
                 this.cmdChange = true;
             }
-            this.$store.commit('updateCmdIdx', cmdIdx)
+            historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
         _doClear(args) {
             if (args.length === 1) {
                 this.terminalLog = [];
                 this.terminalSize = 0;
-            } else if (args.length === 2 && args[1] === 'log') {
-                this.$store.commit('clearCmdLog')
+            } else if (args.length === 2 && args[1] === 'history') {
+                historyStore.clearLog(this.name)
             }
         },
         openUrl(url) {
@@ -401,19 +487,12 @@ export default {
                 }
             } else {
                 this._pushMessage({
-                    time: this.genCurTime(),
-                    type: MSG_TYPE.ERROR,
-                    message: "Invalid website url"
+                    time: this._curTime(),
+                    class: 'error',
+                    type: 'normal',
+                    content: "Invalid website url"
                 })
             }
-        },
-        arrayContains(array, target) {
-            for (let i in array) {
-                if (array[i] === target) {
-                    return true;
-                }
-            }
-            return false;
         },
         onDownLeft() {
             if (this.cursorConf.idx > 0) {
@@ -520,17 +599,66 @@ export default {
                 }
             }
         },
-        pushErrorMsg(msg, viewJson) {
-            this._pushMessage({
-                time: this.genCurTime(),
-                type: MSG_TYPE.ERROR,
-                message: msg,
-                viewJson: (viewJson == null ? false : viewJson),
-                depth: 1
-            })
-        },
         _exit() {
             this.$router.push('/')
+        },
+        _getCmOptions(language) {
+            let options = JSON.parse(JSON.stringify(this.cmOptions))
+            options.mode = this._parseCodeMode(language)
+            return language
+        },
+        _parseCodeMode(language) {
+            if (language == null) {
+                return null
+            }
+            language = language.toLowerCase()
+
+            switch (language) {
+                case 'yml':
+                case 'yaml':
+                    return 'text/x-yaml'
+                case 'java':
+                    return 'text/x-java'
+                case 'c':
+                    return 'text/x-csrc'
+                case 'c++':
+                case 'cpp':
+                    return 'text/x-c++src'
+                case 'c#':
+                    return 'text/x-csharp'
+                case 'objectivec':
+                case 'objective-c':
+                    return 'text/x-objectivec'
+                case 'scala':
+                    return 'text/x-scala'
+                case 'php':
+                    return 'text/x-php'
+                case 'erlang':
+                    return 'text/x-erlang'
+                case 'go':
+                case 'golang':
+                    return 'text/x-go'
+                case 'http':
+                    return 'message/http'
+                case 'lua':
+                    return 'text/x-lua'
+                case 'xml':
+                case 'html':
+                    return 'text/html'
+                case 'css':
+                    return 'text/css'
+                case 'scss':
+                    return 'text/scss'
+                case 'less':
+                    return 'text/less'
+                case 'javascript':
+                case 'js':
+                    return 'text/javascript'
+                case 'typescript':
+                    return 'text/typescript'
+                default:
+                    return null
+            }
         }
     }
 }

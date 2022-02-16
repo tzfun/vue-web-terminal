@@ -1,6 +1,6 @@
 {
   "name": "vue-web-terminal",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "element-resize-detector": "^1.2.4",
-    "file-saver": "^2.0.5",
     "js-base64": "^3.7.2",
     "object-sizeof": "^1.6.2",
-    "vue-codemirror": "^4.0.6"
+    "vue-codemirror": "^4.0.6",
+    "vue-json-viewer": "^2.2.21"
   },
   "devDependencies": {
     "compression-webpack-plugin": "^9.2.0",
