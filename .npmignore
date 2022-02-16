@@ -11,5 +11,3 @@ gulpfile.js
 babel.config.js
 vue.config.js
 lib/index.html
-lib/*.chunk.*
-lib/*.map
