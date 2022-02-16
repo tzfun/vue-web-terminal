@@ -1,10 +1,10 @@
 {
   "name": "vue-web-terminal",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest dist src/index.js",
+    "build": "vue-cli-service build --dest lib src/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -62,5 +62,5 @@
     "vue-console"
   ],
   "author": "beifengtz",
-  "main": "dist/vue-web-terminal.min.js"
+  "main": "lib/vue-web-terminal.js"
 }

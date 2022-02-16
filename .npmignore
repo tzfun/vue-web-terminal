@@ -7,10 +7,9 @@ node_modules/
 src/
 test/
 dist/
-lib/
 gulpfile.js
 babel.config.js
 vue.config.js
-./index.html
-./*.chunk.*
-./*.map
+lib/index.html
+lib/*.chunk.*
+lib/*.map
