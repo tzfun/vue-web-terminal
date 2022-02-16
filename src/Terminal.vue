@@ -56,7 +56,7 @@
         <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
           <span>
             <span class="prompt">{{ projectName }}
-              <span v-if='require("@/common/extensions")._nonEmpty($store.state.gameAddress)'>
+              <span v-if='require("@/Util.js")._nonEmpty($store.state.gameAddress)'>
                 {{ $store.state.gameAddress }}
               </span>
               <span v-else>
@@ -66,7 +66,7 @@
               <span> > </span>
             </span>
           </span>
-          <span v-html="require('@/common/extensions')._html(command)"></span>
+          <span v-html="require('@/Util.js')._html(command)"></span>
           <span v-show="cursorConf.show" class="cursor"
                 :style="'width:' + cursorConf.width + 'px;margin-left:' + cursorConf.left +'px'">&nbsp;</span>
           <input type="text" autofocus="autofocus" id="command-input" v-model="command" class="input-box"
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import TerminalJs from './terminal.js'
+import TerminalJs from './Terminal.js'
 export default TerminalJs
 
 </script>

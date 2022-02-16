@@ -1,13 +1,14 @@
 {
   "name": "vue-web-terminal",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --dest dist src/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "compression-webpack-plugin": "^9.2.0",
     "core-js": "^3.6.5",
     "element-resize-detector": "^1.2.4",
     "file-saver": "^2.0.5",
@@ -60,5 +61,6 @@
     "vue-terminal",
     "vue-console"
   ],
-  "author": "beifengtz"
+  "author": "beifengtz",
+  "main": "dist/vue-web-terminal.min.js"
 }

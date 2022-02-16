@@ -74,25 +74,6 @@ export function _unHtml(str) {
     }) : '';
 }
 
-/**
- * 将空格、回车、Tab转译为html
- *
- * @param str
- * @returns {*|string}
- * @private
- */
-export function _html(str) {
-    return String(str)
-        .replace(/&(?!\w+;)/g, '&amp;')
-        .replace(/ /g, '&nbsp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;')
-        .replace(/\n/g, '<br>')
-        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
-}
-
 export function _sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }

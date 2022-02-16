@@ -1,13 +1,11 @@
-import 'vue-json-viewer/style.css'
+// import 'vue-json-viewer/style.css'
 import {codemirror} from "vue-codemirror";
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/darcula.css'
 import 'codemirror/mode/clike/clike.js'
 import 'codemirror/addon/edit/closebrackets.js'
 import sizeof from 'object-sizeof'
-import {_dateFormat, _html, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
-import {saveAs} from 'file-saver'
-import {Base64} from "js-base64";
+import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
 import elementResizeDetectorMaker from 'element-resize-detector'
 
 const MSG_TYPE = {
@@ -26,7 +24,6 @@ export default {
     },
     data() {
         return {
-            helpDialogWidth: '70%',
             showHelpDialog: false,
             projectName: "Leocool@ProjectX",
             command: "",
@@ -61,6 +58,7 @@ export default {
             searchCmd: {
                 item: null
             },
+            config:{}
         }
     },
     components: {
@@ -71,7 +69,7 @@ export default {
             {
                 message: "Terminal Initializing ..."
             }, {
-                message: `System version number: ${config.version.key} Update time: ${config.version.time}`
+                message: `System version number: Update time: xxx`
             }, {
                 message: "Current login time: " + new Date().toLocaleString()
             }, {
@@ -90,7 +88,6 @@ export default {
                 document.documentElement.scrollTop = el.offsetHeight;
             }
         })
-        this.helpDialogWidth = _getDialogWidth()
 
         this.eventBus.$on('onCtrlAltRight', () => {
             this.showHelpDialog = !this.showHelpDialog
@@ -155,8 +152,8 @@ export default {
             if (_isEmpty(cmd)) {
                 this._resetSearchKey()
             } else if (cmd.trim().indexOf(" ") < 0) {
-                for (let i in config.commandHelp) {
-                    let o = config.commandHelp[i]
+                for (let i in this.config.commandHelp) {
+                    let o = this.config.commandHelp[i]
                     if (o.key.trim().toLowerCase().indexOf(cmd.trim().toLowerCase()) >= 0) {
                         this.searchCmd.item = o
                         return
@@ -240,74 +237,7 @@ export default {
                 return
             }
             this.showInputLine = false;
-            _requestCmd({
-                type: 1,
-                commands: [{
-                    command: cmd,
-                    regionId: this.$store.state.regionId,
-                    gameAddress: this.$store.state.gameAddress,
-                    proxy: this.$store.state.proxy,
-                    proxyId: this.$store.state.proxyId
-                }]
-            }).then((resData) => {
-                let message
-                let type = MSG_TYPE.SUCCESS
-                let fold = false
-                if (resData.file) {
-                    if (resData.fileEncode === 'base64') {
-                        saveAs(Base64.toUint8Array(resData.fileContent), resData.fileName)
-                    } else {
-                        saveAs(resData.fileContent, resData.fileName)
-                    }
-
-                    message = "Download file => " + resData.fileName;
-                } else {
-                    if (resData.success) {
-                        if (resData.suggest == null) {
-                            message = 'null'
-                        } else if (typeof (resData.suggest) === 'number' || typeof (resData.suggest) === 'boolean') {
-                            message = resData.suggest
-                            viewJson = false
-                        } else if (viewJson || resData.viewJson) {
-                            try {
-                                message = JSON.parse(resData.suggest)
-                                viewJson = true
-                            } catch (_) {
-                                message = resData.suggest
-                                viewJson = false
-                            }
-                        } else {
-                            message = resData.suggest
-                        }
-                    } else {
-                        type = MSG_TYPE.ERROR
-                        let lines = resData.error.split('\n').length
-                        fold = lines > 5
-                        message = _html(resData.error)
-                    }
-                }
-
-                this._pushMessage({
-                    time: this.genCurTime(),
-                    type: type,
-                    message: message,
-                    viewJson: viewJson,
-                    depth: 1,
-                    viewCode: resData.viewCode,
-                    fold: fold
-                })
-            }).catch((err, resData) => {
-                let msg;
-                if (!viewJson) {
-                    msg = "code: " + err.status + ". " + err.message;
-                } else {
-                    msg = resData;
-                }
-                this.pushErrorMsg(msg, viewJson)
-            }).finally(() => {
-                this.showInputLine = true
-                this._activeCursor()
-            })
+            console.log(viewJson)
         },
         _showRegion(pattern) {
             this.showInputLine = false;
