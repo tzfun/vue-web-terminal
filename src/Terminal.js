@@ -6,7 +6,6 @@ import historyStore from "./HistoryStore.js";
 
 export default {
     name: 'Terminal',
-    components: {},
     data() {
         return {
             context: 'vue-web-terminal/tzfun',
@@ -63,7 +62,8 @@ export default {
                 }]
             }]
         }
-    }, props: {
+    },
+    props: {
         name: {
             type: String, default: 'terminal'
         }, //  终端标题
@@ -80,33 +80,35 @@ export default {
                     content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='teach'>help</span> command to learn."
                 }]
             }
-        }
-    }, //  初始化日志每条延迟时间，单位毫秒
-    initLogDelay: {
-        type: Number, default: 150
-    }, //  键盘时间监听器
-    keyListener: {
-        type: Function
-    }, //  点击时间监听器
-    clickListener: {
-        type: Function
-    }, //  是否显示记录结果的时间
-    showLogTime: true, //  命令行搜索以及help指令用
-    commandStore: {
-        type: Array
-    }, //  记录大小超出此限制会发出警告，单位byte
-    warnLogByteLimit: {
-        type: Number, default: 1024 * 1024 * 10
-    }, //  记录条数超出此限制会发出警告
-    warnLogCountLimit: {
-        type: Number, default: 500
-    }, //  记录限制警告开关
-    warnLogLimitEnable: {
-        type: Boolean, default: true
-    }, //  自动搜索帮助
-    autoHelp: {
-        type: Boolean, default: true
-    }, created() {
+        },
+        //  初始化日志每条延迟时间，单位毫秒
+        initLogDelay: {
+            type: Number, default: 150
+        },
+        //  是否显示记录结果的时间
+        showLogTime: {
+            type: Boolean,
+            default: true
+        }, //  命令行搜索以及help指令用
+        commandStore: {
+            type: Array
+        }, //  记录大小超出此限制会发出警告，单位byte
+        warnLogByteLimit: {
+            type: Number, default: 1024 * 1024 * 10
+        }, //  记录条数超出此限制会发出警告
+        warnLogCountLimit: {
+            type: Number, default: 500
+        }, //  记录限制警告开关
+        warnLogLimitEnable: {
+            type: Boolean,
+            default: true
+        }, //  自动搜索帮助
+        autoHelp: {
+            type: Boolean,
+            default: true
+        },
+    },
+    created() {
         this.$terminal.register(this.name, (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
@@ -123,9 +125,10 @@ export default {
         }
 
         if (this.commandStore != null) {
-            this.allCommandStore.concat(this.commandStore)
+            this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
-    }, mounted() {
+    },
+    mounted() {
         this.byteLen = {
             en: document.getElementById("terminal-en-flag").getBoundingClientRect().width / 2,
             cn: document.getElementById("terminal-cn-flag").getBoundingClientRect().width / 2
@@ -142,9 +145,7 @@ export default {
                 this._fillCmd()
                 event.preventDefault()
             }
-            if (this.keyListener != null) {
-                this.keyListener(event)
-            }
+            this.$emit('onKeydown', event)
         }
         window.addEventListener('keydown', this.keydownListener);
 
@@ -181,14 +182,10 @@ export default {
                 this.cmdChange = false;
             }
         },
-    }, methods: {
-        _showLogTime() {
-            return this.showLogTime
-        }, _triggerClick(key) {
-            if (this.clickListener != null) {
-                this.clickListener(key)
-                return
-            }
+    },
+    methods: {
+        _triggerClick(key) {
+            this.$emit('triggerClick', key)
             if (key === 'close') {
                 this._exit()
             }
@@ -252,12 +249,8 @@ export default {
                     default: {
                         this.showInputLine = false
                         let success = (message) => {
-                            if (message.time == null) {
-                                message.time = this._curTime()
-                            }
                             this._pushMessage(message)
                             this.showInputLine = true
-                            this._activeCursor()
                             this._endExecCallBack()
                         }
 
@@ -266,7 +259,6 @@ export default {
                                 time: this._curTime(), type: 'normal', class: 'error', content: message
                             })
                             this.showInputLine = true
-                            this._activeCursor()
                             this._endExecCallBack()
                         }
 
@@ -275,12 +267,18 @@ export default {
                     }
                 }
             }
+            this._activeCursor()
             this._endExecCallBack()
-        }, _endExecCallBack() {
+        },
+        _endExecCallBack() {
             this.command = ""
             this.cursorConf = {
-                idx: 0, left: 0, width: this.cursorConf.defaultWidth, show: true,
+                idx: 0,
+                left: 0,
+                width: this.cursorConf.defaultWidth,
+                show: true,
             }
+            this._activeCursor()
         }, parseToJson(obj) {
             if (typeof obj === 'object' && obj) {
                 return obj;
@@ -299,26 +297,28 @@ export default {
          * type: 类型，只可选：normal、json、code、cmdLine、splitLine
          * content: 具体内容
          * tag: 标签
-         * language: 语言，当类型为code时需设置语言显示高亮
          *
          * @param message
          * @private
          */
         _pushMessage(message) {
+            if (this.showLogTime) {
+                message.time = this._curTime()
+            }
+
             this.terminalLog.push(message);
             this.terminalSize += sizeof(message)
             this.checkTerminalLog()
 
-            //  为了修复json创建过慢无法实时获取到scrollTop的情况
-            if (message.type === 'json') {
-                setTimeout(() => {
-                    this.$nextTick(() => {
-                        let container = this.$refs['terminal-container']
-                        container.scrollTop += 50
-                    })
-                }, 200)
-            }
-        }, async _pushMessageBatch(messages, time) {
+            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    let container = this.$refs['terminal-container']
+                    container.scrollTop += 50
+                })
+            }, 200)
+        },
+        async _pushMessageBatch(messages, time) {
             for (let m in messages) {
                 this.terminalLog.push(messages[m]);
                 this.terminalSize += sizeof(messages)
@@ -327,7 +327,8 @@ export default {
                 }
             }
             this.checkTerminalLog()
-        }, checkTerminalLog() {
+        },
+        checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
                 return
             }
@@ -347,15 +348,18 @@ export default {
                     type: 'normal'
                 })
             }
-        }, saveCurCommand() {
+        },
+        saveCurCommand() {
             historyStore.pushCmd(this.name, this.command)
 
             this.terminalLog.push({
                 content: `${this.context} > ${this.command}`, type: "cmdLine"
             });
-        }, _curTime() {
+        },
+        _curTime() {
             return _dateFormat("YYYY-mm-dd HH:MM:SS", new Date())
-        }, switchPreCmd() {
+        },
+        switchPreCmd() {
             let cmdLog = historyStore.getLog(this.name)
             let cmdIdx = historyStore.getIdx(this.name)
             if (cmdLog.length !== 0 && cmdIdx > 0) {
@@ -368,7 +372,8 @@ export default {
             }
             historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
-        }, switchNextCmd() {
+        },
+        switchNextCmd() {
             let cmdLog = historyStore.getLog(this.name)
             let cmdIdx = historyStore.getIdx(this.name)
             if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
@@ -384,14 +389,16 @@ export default {
             }
             historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
-        }, _doClear(args) {
+        },
+        _doClear(args) {
             if (args.length === 1) {
                 this.terminalLog = [];
                 this.terminalSize = 0;
             } else if (args.length === 2 && args[1] === 'history') {
                 historyStore.clearLog(this.name)
             }
-        }, openUrl(url) {
+        },
+        openUrl(url) {
             let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
             if (match.test(url)) {
                 if (!url.startsWith("http") && !url.startsWith("https")) {
@@ -404,7 +411,8 @@ export default {
                     time: this._curTime(), class: 'error', type: 'normal', content: "Invalid website url"
                 })
             }
-        }, onDownLeft() {
+        },
+        onDownLeft() {
             if (this.cursorConf.idx > 0) {
                 this.cursorConf.idx--;
                 if (this.command[this.cursorConf.idx] != null) {
@@ -413,7 +421,8 @@ export default {
                     this.cursorConf.width = (wordByte === 1 ? this.byteLen.en : this.byteLen.cn);
                 }
             }
-        }, onDownRight() {
+        },
+        onDownRight() {
             if (this.cursorConf.idx < this.command.length - 1) {
                 let curWordByte = this.getByteLen(this.command[this.cursorConf.idx])
                 this.cursorConf.idx++;
@@ -425,7 +434,8 @@ export default {
                 this.cursorConf.left = 0;
                 this.cursorConf.width = this.cursorConf.defaultWidth;
             }
-        }, getByteLen(val) {
+        },
+        getByteLen(val) {
             let len = 0;
             for (let i = 0; i < val.length; i++) {
                 // eslint-disable-next-line no-control-regex
@@ -434,7 +444,8 @@ export default {
                 else len += 1; //半角占用一个字节
             }
             return len;
-        }, /**
+        },
+        /**
          * 获取两个连续字符串的不同部分
          *
          * @param one
@@ -472,7 +483,8 @@ export default {
                 }
             }
             return diff;
-        }, onKey(e) {
+        },
+        onKey(e) {
             let eIn = document.getElementById("command-input")
             if (eIn.selectionStart !== this.cursorConf.idx) {
                 this.cursorConf.idx = eIn.selectionStart
@@ -501,61 +513,9 @@ export default {
                     this._searchCmd()
                 }
             }
-        }, _exit() {
-            this.$router.push('/')
         },
-        _parseCodeMode(language) {
-            if (language == null) {
-                return null
-            }
-            language = language.toLowerCase()
-
-            switch (language) {
-                case 'yml':
-                case 'yaml':
-                    return 'text/x-yaml'
-                case 'java':
-                    return 'text/x-java'
-                case 'c':
-                    return 'text/x-csrc'
-                case 'c++':
-                case 'cpp':
-                    return 'text/x-c++src'
-                case 'c#':
-                    return 'text/x-csharp'
-                case 'objectivec':
-                case 'objective-c':
-                    return 'text/x-objectivec'
-                case 'scala':
-                    return 'text/x-scala'
-                case 'php':
-                    return 'text/x-php'
-                case 'erlang':
-                    return 'text/x-erlang'
-                case 'go':
-                case 'golang':
-                    return 'text/x-go'
-                case 'http':
-                    return 'message/http'
-                case 'lua':
-                    return 'text/x-lua'
-                case 'xml':
-                case 'html':
-                    return 'text/html'
-                case 'css':
-                    return 'text/css'
-                case 'scss':
-                    return 'text/scss'
-                case 'less':
-                    return 'text/less'
-                case 'javascript':
-                case 'js':
-                    return 'text/javascript, application/javascript, application/x-javascript, text/ecmascript, application/ecmascript, application/json, application/x-json, application/manifest+json, application/ld+json, text/typescript, application/typescript'
-                case 'typescript':
-                    return 'text/typescript'
-                default:
-                    return null
-            }
+        _exit() {
+            this.$router.push('/')
         }
     }
 }

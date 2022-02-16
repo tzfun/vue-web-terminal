@@ -51,9 +51,6 @@
     z-index: 99;
     background-color: black !important;
     max-width: 50%;
-}
-
-.cmd-help .el-card__body {
     padding: 5px;
     color: white;
 }
@@ -85,4 +82,10 @@
 
 pre {
     position: relative;
+}
+
+.example-ul {
+    padding: 0 0 0 10px;
+    margin: 0;
+    list-style: none;
 }

@@ -14,6 +14,9 @@ function HistoryStore() {
         if (data.cmdLog == null) {
             data.cmdLog = []
         }
+        if (data.cmdLog.length > 0 && data.cmdLog[data.cmdLog.length - 1] === cmd) {
+            return
+        }
         data.cmdLog.push(cmd)
         if (data.cmdLog.length > 1000) {
             data.cmdLog.splice(0, data.cmdLog.length - 1000)
@@ -46,6 +49,7 @@ function HistoryStore() {
     const clearLog = function (name) {
         let data = getData(name)
         data.cmdLog = []
+        data.cmdIdx = 0
         store()
     }
 

@@ -26,11 +26,11 @@
             <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
           <div v-else>
-            <span @click.self="_activeCursor">
-              <span v-show="_showLogTime()">{{ item.time == null ? "" : (item.time + " ") }}</span>
-              <span v-show="item.type === 'normal'" :class="item.class" style="margin-right: 10px">
-                {{ item.tag == null ? item.class : item.tag }}
-              </span>
+            <span @click.self="_activeCursor" class="terminal-content-normal">
+              <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
+              <span v-show="item.type === 'normal'"
+                    :class="item.class"
+                    style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
             </span>
             <span v-if="item.type === 'json'" style="position: relative">
                 <json-viewer :expand-depth="item.depth"
@@ -87,10 +87,10 @@
             <span>Example: <code>{{ it.cmd }}</code> {{ it.des }}</span>
           </div>
           <div v-else>
-            <div style="float:left;width: 8.333%">
+            <div style="float:left;width: 8.5%;display:flex;font-size: 16px;line-height: 26px;">
               eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}：
             </div>
-            <div style="float:left;width: 91.667%">
+            <div style="float:left;width: 91.5%;display: flex">
               <ul class="example-ul">
                 <li class="example-li"><code>{{ it.cmd }}</code></li>
                 <li class="example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
@@ -278,39 +278,29 @@ input {
   }
 }
 
-.terminal-window p .success {
+.terminal-content-normal .success {
   padding: 2px 3px;
   background: #27ae60;
 }
 
-.terminal-window p .error {
+.terminal-content-normal .error {
   padding: 2px 3px;
   background: #c0392b;
 }
 
-.terminal-window p .warning {
+.terminal-content-normal .warning {
   padding: 2px 3px;
   background: #f39c12;
 }
 
-.terminal-window p .info {
+.terminal-content-normal .info {
   padding: 2px 3px;
   background: #2980b9;
 }
 
-.terminal-window p .system {
+.terminal-content-normal .system {
   padding: 2px 3px;
   background: #8697a2;
-}
-
-.terminal-window p .grayscale {
-  padding: 2px 3px;
-  background: #27ae60;
-  -webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
 }
 
 .crude-font {
