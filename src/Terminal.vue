@@ -1,5 +1,5 @@
 <template>
-  <div id="terminal-container" @click.self="_activeCursor">
+  <div class="terminal-container" ref="terminal-container" @click.self="_activeCursor">
     <div class="terminal">
       <div class="terminal-header">
         <h4>
@@ -58,10 +58,8 @@
           <span class="prompt">
             <span>{{ context }}</span>
             <span> > </span>
-          </span>
-          <span v-html="require('@/Util.js')._html(command)"></span>
-          <span v-show="cursorConf.show" class="cursor"
-                :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
+          </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
+                :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp</span>
           <input type="text" autofocus="autofocus" id="command-input" v-model="command" class="input-box"
                  ref="inputCmd"
                  autocomplete="off"
@@ -80,7 +78,7 @@
         <p class="help-msg" v-if="searchCmd.item != null">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
-    <div class="cmd-help" v-if="searchCmd.item != null && !(require('@/Util.js'))._screenType().xs">
+    <div class="cmd-help" v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
       <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
          v-html="searchCmd.item.description"></p>
       <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
@@ -114,6 +112,7 @@ export default TerminalJs
 </script>
 
 <style scoped>
+
 .log-box {
   display: block;
   margin-block-start: 1em;
@@ -122,7 +121,7 @@ export default TerminalJs
   margin-inline-end: 0;
 }
 
-#terminal-container {
+.terminal-container {
   position: absolute;
   width: 100%;
   min-height: 100%;

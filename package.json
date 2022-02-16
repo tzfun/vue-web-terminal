@@ -4,7 +4,8 @@
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest lib src/index.js",
+    "build-cli": "vue-cli-service build --dest lib src/index.js",
+    "build": "webpack --mode=production --config webpack.config.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -14,16 +15,21 @@
     "vue-json-viewer": "^2.2.21"
   },
   "devDependencies": {
-    "compression-webpack-plugin": "^9.2.0",
-    "core-js": "^3.6.5",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.3",
+    "compression-webpack-plugin": "^9.2.0",
+    "core-js": "^3.6.5",
+    "css-loader": "^6.6.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "vue": "^2.6.11",
+    "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.11",
-    "vue": "^2.6.11"
+    "webpack-cli": "^4.9.2",
+    "webpack": "^5.69.0"
   },
   "eslintConfig": {
     "root": true,

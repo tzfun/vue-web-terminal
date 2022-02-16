@@ -2,7 +2,7 @@ import 'vue-json-viewer/style.css'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _isEmpty, _sleep} from "./Util.js";
 import elementResizeDetectorMaker from 'element-resize-detector'
-import historyStore from "@/HistoryStore";
+import historyStore from "./HistoryStore.js";
 
 export default {
     name: 'Terminal',
@@ -155,7 +155,7 @@ export default {
         erd.listenTo(ele, (element) => {
             if (element.offsetHeight >= document.documentElement.offsetHeight) {
                 this.$nextTick(() => {
-                    let target = document.getElementById("terminal-container")
+                    let target = this.$refs['terminal-container']
 
                     if (target.scrollTop - lastScrollPos > 50) {
                         target.scrollTop = element.offsetHeight;
@@ -313,7 +313,8 @@ export default {
             if (message.type === 'json') {
                 setTimeout(() => {
                     this.$nextTick(() => {
-                        document.getElementById("terminal-container").scrollTop += 50
+                        let container = this.$refs['terminal-container']
+                        container.scrollTop += 50
                     })
                 }, 200)
             }
