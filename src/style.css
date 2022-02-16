@@ -1,0 +1,88 @@
+.CodeMirror {
+    height: 500px;
+}
+
+.CodeMirror-scrollbar-filler {
+    opacity: 0;
+}
+
+.CodeMirror-lines {
+    font-size: 20px;
+}
+
+.terminal-window p .teach {
+    font-weight: 700;
+    color: yellow;
+}
+
+.help-list {
+    margin: 0;
+    list-style: none;
+    padding-left: 0;
+    display: inline-grid;
+    display: -moz-inline-grid;
+    display: -ms-inline-grid;
+}
+
+.help-list li {
+    margin: 3px 0;
+}
+
+.CodeMirror-scroll {
+    max-height: 700px;
+}
+
+.tag-danger {
+    background: red;
+    margin: 0 8px;
+    padding: 1px 8px;
+    border-radius: 3px;
+}
+
+.json-deep-selector {
+    margin-top: 5px;
+    width: 140px;
+}
+
+.cmd-help {
+    position: fixed;
+    right: 10px;
+    top: 40px;
+    z-index: 99;
+    background-color: black !important;
+    max-width: 50%;
+}
+
+.cmd-help .el-card__body {
+    padding: 5px;
+    color: white;
+}
+
+.cmd-help code {
+    color: white;
+    background-color: rgba(0, 0, 0, 0) !important;
+    border: none;
+    padding: 0;
+}
+
+.pre-numbering {
+    margin-top: 0;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 30px;
+    border-right: 1px solid #C3CCD0;
+    background-color: #1C1D21;
+    text-align: center;
+    padding: 0.5em 0;
+}
+
+.pre-numbering li {
+    list-style: none;
+    color: #AAA;
+    font-size: 1em;
+}
+
+pre {
+    position: relative;
+}

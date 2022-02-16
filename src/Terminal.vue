@@ -18,16 +18,16 @@
         </ul>
       </div>
       <div class="terminal-window" id="terminalWindow" @click.self="_activeCursor">
-        <p v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
+        <div class="log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
           <span v-if="item.type === 'cmdLine'" class="crude-font">
               <span class="prompt">{{ item.content }}</span>
           </span>
           <span v-else-if="item.type === 'splitLine'">
             <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
-          <span v-else>
+          <div v-else>
             <span @click.self="_activeCursor">
-              <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
+              <span v-show="_showLogTime()">{{ item.time == null ? "" : (item.time + " ") }}</span>
               <span v-show="item.type === 'normal'" :class="item.class" style="margin-right: 10px">
                 {{ item.tag == null ? item.class : item.tag }}
               </span>
@@ -38,31 +38,26 @@
                              :key="idx + '_' + item.depth"
                              :value="parseToJson(item.content)">
                 </json-viewer>
-                <el-select class="json-deep-selector"
-                           v-model="item.depth"
-                           placeholder="Choose a display deep.">
-                  <el-option
+                <select class="json-deep-selector" v-model="item.depth">
+                  <option value="" disabled selected hidden label="Choose a display deep"></option>
+                  <option
                       v-for="i in jsonViewDepth"
                       :key="i"
-                      :label="`View Deep ${i}`"
+                      :label="`Deep ${i}`"
                       :value="i">
-                  </el-option>
-                </el-select>
+                  </option>
+                </select>
             </span>
-            <span v-else-if="item.type === 'code'" style="position: relative">
-              <span class="code-viewer">
-                <codemirror ref="codeViewer" v-model="item.content" :options="_getCmOptions(item.language)"/>
-              </span>
-            </span>
+            <div v-else-if="item.type === 'code'" style="position: relative;max-height: 500px;overflow: auto;font-size: 20px" v-highlight>
+              <pre style="margin:0 0 0 30px"><code v-html="item.content"></code></pre>
+            </div>
             <span v-else v-html="item.content" @click="_activeCursor"></span>
-          </span>
-        </p>
+          </div>
+        </div>
         <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
-          <span>
-            <span class="prompt">{{ title }}
-              <span>{{ context }}</span>
-              <span> > </span>
-            </span>
+          <span class="prompt">
+            <span>{{ context }}</span>
+            <span> > </span>
           </span>
           <span v-html="require('@/Util.js')._html(command)"></span>
           <span v-show="cursorConf.show" class="cursor"
@@ -112,12 +107,20 @@
 
 <script>
 import TerminalJs from './Terminal.js'
+import './style.css'
 
 export default TerminalJs
 
 </script>
 
 <style scoped>
+.log-box {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+}
 
 #terminal-container {
   position: absolute;
@@ -201,6 +204,9 @@ export default TerminalJs
 .terminal-window p {
   overflow-wrap: break-word;
   word-break: break-all;
+}
+
+.terminal-window p, .terminal-window div {
   font-size: 13px;
 }
 
@@ -312,12 +318,8 @@ input {
   font-weight: 600;
 }
 
-#en-flag, #cn-flag {
+#terminal-en-flag, #terminal-cn-flag {
   opacity: 0;
-}
-
-.code-viewer {
-  display: block;
 }
 
 .help-msg {
@@ -345,74 +347,8 @@ input {
 @media screen and (max-width: 992px) and (min-width: 768.1px) {
 
 }
-</style>
 
-<style>
-.CodeMirror {
-  height: 500px;
-}
+select:invalid { color: gray; }
 
-.CodeMirror-scrollbar-filler {
-  opacity: 0;
-}
-
-.CodeMirror-lines {
-  font-size: 20px;
-}
-
-.terminal-window p .teach {
-  font-weight: 700;
-  color: yellow;
-}
-
-.help-list {
-  margin: 0;
-  list-style: none;
-  padding-left: 0;
-  display: inline-grid;
-  display: -moz-inline-grid;
-  display: -ms-inline-grid;
-}
-
-.help-list li {
-  margin: 3px 0;
-}
-
-.CodeMirror-scroll {
-  max-height: 700px;
-}
-
-.tag-danger {
-  background: red;
-  margin: 0 8px;
-  padding: 1px 8px;
-  border-radius: 3px;
-}
-
-.json-deep-selector {
-  margin-top: 5px;
-  width: 140px;
-}
-
-.cmd-help {
-  position: fixed;
-  right: 10px;
-  top: 40px;
-  z-index: 99;
-  background-color: black !important;
-  max-width: 50%;
-}
-
-.cmd-help .el-card__body {
-  padding: 5px;
-  color: white;
-}
-
-.cmd-help code {
-  color: white;
-  background-color: rgba(0, 0, 0, 0) !important;
-  border: none;
-  padding: 0;
-}
 </style>
 

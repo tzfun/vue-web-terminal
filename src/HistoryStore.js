@@ -1,7 +1,7 @@
 const instance = new HistoryStore()
-const storageKey = 'terminal'
 
 function HistoryStore() {
+    const storageKey = 'terminal'
     let dataMap = window.localStorage.getItem(storageKey)
     if (dataMap == null) {
         dataMap = {}
