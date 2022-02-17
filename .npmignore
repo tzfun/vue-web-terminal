@@ -2,6 +2,7 @@
 *.md
 *.yml
 *.iml
+*.lock
 build/
 node_modules/
 src/
@@ -10,6 +11,7 @@ dist/
 public/
 gulpfile.js
 babel.config.js
+webpack.config.js
 vue.config.js
 lib/index.html
 lib/*.chunk.*

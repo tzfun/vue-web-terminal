@@ -1,14 +1,12 @@
 import 'vue-json-viewer/style.css'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
-import elementResizeDetectorMaker from 'element-resize-detector'
 import historyStore from "./HistoryStore.js";
 
 export default {
     name: 'Terminal',
     data() {
         return {
-            context: '/vue-web-terminal/tzfun',
             command: "",
             commandLog: [],
             cmdChange: false,
@@ -45,13 +43,6 @@ export default {
                 description: 'Refresh current page.',
                 example: null
             }, {
-                key: 'exit',
-                title: 'Close page',
-                group: 'local',
-                usage: 'exit',
-                description: 'Shutdown terminal and close current page.',
-                example: null
-            }, {
                 key: 'open',
                 title: 'Open page',
                 group: 'local',
@@ -81,6 +72,11 @@ export default {
                 }]
             }
         },
+        //  上下文
+        context: {
+            type: String,
+            default: '/vue-web-terminal'
+        },
         //  初始化日志每条延迟时间，单位毫秒
         initLogDelay: {
             type: Number, default: 150
@@ -97,7 +93,7 @@ export default {
             type: Number, default: 1024 * 1024 * 10
         }, //  记录条数超出此限制会发出警告
         warnLogCountLimit: {
-            type: Number, default: 500
+            type: Number, default: 200
         }, //  记录限制警告开关
         warnLogLimitEnable: {
             type: Boolean,
@@ -118,7 +114,7 @@ export default {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
             } else if (type === 'updateContext') {
-                this.context = options
+                this.$emit("update:context", options)
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -150,26 +146,11 @@ export default {
                 this._fillCmd()
                 event.preventDefault()
             }
-            this.$emit('onKeydown', event)
+            if (this.cursorConf.show) {
+                this.$emit('onKeydown', event)
+            }
         }
         window.addEventListener('keydown', this.keydownListener);
-
-        //  Terminal窗口发生变化时自动定位到底部
-        const erd = elementResizeDetectorMaker()
-        let ele = document.getElementById("terminalWindow")
-        let lastScrollPos = 0;
-        erd.listenTo(ele, (element) => {
-            if (element.offsetHeight >= document.documentElement.offsetHeight) {
-                this.$nextTick(() => {
-                    let target = this.$refs['terminal-container']
-
-                    if (target.scrollTop - lastScrollPos > 50) {
-                        target.scrollTop = element.offsetHeight;
-                        lastScrollPos = target.scrollTop
-                    }
-                })
-            }
-        })
     }, destroyed() {
         window.removeEventListener('keydown', this.keydownListener)
         this.$terminal.unregister(this.name)
@@ -336,7 +317,8 @@ export default {
                 show: true,
             }
             this._activeCursor()
-        }, parseToJson(obj) {
+        },
+        parseToJson(obj) {
             if (typeof obj === 'object' && obj) {
                 return obj;
             } else if (typeof obj === 'string') {
@@ -380,9 +362,9 @@ export default {
             setTimeout(() => {
                 this.$nextTick(() => {
                     let container = this.$refs['terminal-container']
-                    container.scrollTop += 50
+                    container.scrollTop += 1000
                 })
-            }, 200)
+            }, 100)
         },
         async _pushMessageBatch(messages, time) {
             for (let m in messages) {

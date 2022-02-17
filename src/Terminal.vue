@@ -49,7 +49,7 @@
           </li>
         </ul>
       </div>
-      <div class="terminal-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" id="terminalWindow"
+      <div class="terminal-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" ref="terminal-window"
            @click.self="_activeCursor">
         <div class="log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
           <span v-if="item.type === 'cmdLine'" class="crude-font">
@@ -126,7 +126,7 @@
           <span id="terminal-en-flag" @click.self="_activeCursor">aa</span>
           <span id="terminal-cn-flag" @click.self="_activeCursor">你好</span>
         </p>
-        <p class="help-msg" v-if="searchCmd.item != null">{{ searchCmd.item.usage }}</p>
+        <p class="help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
     <div class="cmd-help" :style="`${showHeader ? '' : 'top:10px'}`"
