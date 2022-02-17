@@ -53,6 +53,7 @@
     max-width: 50%;
     padding: 5px;
     color: white;
+    box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
 }
 
 .cmd-help code {
@@ -88,4 +89,25 @@ pre {
     padding: 0 0 0 10px;
     margin: 0;
     list-style: none;
+}
+
+.t-table-container {
+    max-width: 100%;
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+}
+
+.t-border-dashed {
+    border: 1px dashed #fff;
+    border-collapse: collapse;
+}
+
+.t-table thead {
+    font-weight: 600;
+}
+
+.t-table, .t-table tr, .t-table td, .t-table tbody, .t-table thead {
+    margin: 0;
+    padding: 15px;
 }

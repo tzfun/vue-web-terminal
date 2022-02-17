@@ -26,10 +26,9 @@
             <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
           <div v-else>
-            <span @click.self="_activeCursor" class="terminal-content-normal">
+            <span @click.self="_activeCursor" class="terminal-content-normal" v-show="item.type === 'normal'">
               <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
-              <span v-show="item.type === 'normal'"
-                    :class="item.class"
+              <span :class="item.class"
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
             </span>
             <span v-if="item.type === 'json'" style="position: relative">
@@ -48,8 +47,27 @@
                   </option>
                 </select>
             </span>
-            <div v-else-if="item.type === 'code'" style="position: relative;max-height: 500px;overflow: auto;font-size: 20px" v-highlight>
+            <div v-else-if="item.type === 'code'"
+                 style="position: relative;max-height: 500px;overflow: auto;font-size: 20px" v-highlight>
               <pre style="margin:0 0 0 30px"><code v-html="item.content"></code></pre>
+            </div>
+            <div v-else-if="item.type === 'table'">
+              <div class="t-table-container" @click.self="_activeCursor">
+                <table class="t-table t-border-dashed">
+                  <thead>
+                  <tr class="t-border-dashed">
+                    <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
+                    <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
+                      <div v-html="it"></div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
             <span v-else v-html="item.content" @click="_activeCursor"></span>
           </div>
@@ -59,7 +77,7 @@
             <span>{{ context }}</span>
             <span> > </span>
           </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
-                :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp</span>
+                                                                                 :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp</span>
           <input type="text" autofocus="autofocus" id="command-input" v-model="command" class="input-box"
                  ref="inputCmd"
                  autocomplete="off"
@@ -87,10 +105,10 @@
             <span>Example: <code>{{ it.cmd }}</code> {{ it.des }}</span>
           </div>
           <div v-else>
-            <div style="float:left;width: 8.5%;display:flex;font-size: 16px;line-height: 26px;">
-              eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}：
+            <div style="float:left;width: 30px;display:flex;font-size: 16px;line-height: 26px;">
+              eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}:
             </div>
-            <div style="float:left;width: 91.5%;display: flex">
+            <div style="float:left;width: calc(100% - 30px);display: flex">
               <ul class="example-ul">
                 <li class="example-li"><code>{{ it.cmd }}</code></li>
                 <li class="example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
@@ -127,7 +145,7 @@ export default TerminalJs
   min-height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #030924;
+  background-color: #191b24;
   overflow: auto;
 }
 
@@ -187,7 +205,7 @@ export default TerminalJs
   overflow: auto;
   z-index: 1;
   max-height: none;
-  background-color: #030924;
+  background-color: #191b24;
   min-height: 140px;
   padding: 50px 20px 20px 20px;
   font-weight: 400;
@@ -337,7 +355,9 @@ input {
 
 }
 
-select:invalid { color: gray; }
+select:invalid {
+  color: gray;
+}
 
 </style>
 

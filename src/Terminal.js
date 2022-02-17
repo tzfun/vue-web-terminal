@@ -1,6 +1,6 @@
 import 'vue-json-viewer/style.css'
 import sizeof from 'object-sizeof'
-import {_dateFormat, _isEmpty, _sleep} from "./Util.js";
+import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
 import elementResizeDetectorMaker from 'element-resize-detector'
 import historyStore from "./HistoryStore.js";
 
@@ -189,11 +189,13 @@ export default {
             if (key === 'close') {
                 this._exit()
             }
-        }, _resetSearchKey() {
+        },
+        _resetSearchKey() {
             this.searchCmd = {
                 item: null
             }
-        }, _searchCmd(key) {
+        },
+        _searchCmd(key) {
             if (!this.autoHelp) {
                 return;
             }
@@ -213,17 +215,73 @@ export default {
                 }
                 this.searchCmd.item = null
             }
-        }, _fillCmd() {
+        },
+        _fillCmd() {
             if (this.searchCmd.item != null) {
                 this.command = this.searchCmd.item.key
             }
-        }, _activeCursor() {
+        },
+        _activeCursor() {
             this.$nextTick(function () {
                 this.$refs.inputCmd.focus()
             })
-        }, _printHelp() {
+        },
+        _printHelp() {
+            let content = {
+                head: ['KEY', 'GROUP', 'DETAIL'],
+                rows: []
+            }
+            this.allCommandStore.forEach(command => {
+                let row = []
+                row.push(command.key)
+                row.push(command.group)
 
-        }, execute() {
+                let detail = ''
+                if (_nonEmpty(command.description)) {
+                    detail += `Description: ${command.description}<br>`
+                }
+                if (_nonEmpty(command.usage)) {
+                    detail += `Usage: <code>${command.usage}</code><br>`
+                }
+                if (command.example != null) {
+                    if (command.example.length > 0) {
+                        detail += '<br>'
+                    }
+
+                    for (let idx in command.example) {
+                        let eg = command.example[idx]
+                        detail += `
+                    <div>
+                        <div style="float:left;width: 30px;display:flex;font-size: 12px;line-height: 18px;">
+                          eg${parseInt(idx) + 1}:
+                        </div>
+                        <div style="float:left;width: calc(100% - 30px);display: flex">
+                          <ul class="example-ul">
+                            <li class="example-li"><code>${eg.cmd}</code></li>
+                            <li class="example-li"><span></span></li>
+                    `
+
+                        if (_nonEmpty(eg.des)) {
+                            detail += `<li class="example-li"><span>${eg.des}</span></li>`
+                        }
+                        detail += `
+                            </ul>
+                        </div>
+                    </div>
+                    `
+                    }
+                }
+
+                row.push(detail)
+
+                content.rows.push(row)
+            })
+            this._pushMessage({
+                type: 'table',
+                content: content
+            })
+        },
+        execute() {
             this._resetSearchKey()
             if (this.command.trim() !== "") {
                 let split = this.command.split(" ")
@@ -294,9 +352,18 @@ export default {
          *
          * time: 当前时间
          * class: 类别，只可选：success、error、system、info、warning
-         * type: 类型，只可选：normal、json、code、cmdLine、splitLine
-         * content: 具体内容
-         * tag: 标签
+         * type: 类型，只可选：normal、json、code、table、cmdLine、splitLine
+         * content: 具体内容，不同消息内容格式不一样
+         * tag: 标签，仅类型为normal有效
+         *
+         * 当 type 为 table 时 content 的格式：
+         * {
+         *     head: [headName1, headName2, headName3...],
+         *     rows: [
+         *         [ value1, value2, value3... ],
+         *         [ value1, value2, value3... ]
+         *     ]
+         * }
          *
          * @param message
          * @private
