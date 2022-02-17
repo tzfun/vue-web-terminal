@@ -1,5 +1,5 @@
 import Hljs from 'highlight.js';
-import 'highlight.js/styles/tomorrow-night.css';
+import 'highlight.js/styles/tomorrow-night-bright.css';
 
 let Highlight = {};
 Highlight.install = function (Vue) {

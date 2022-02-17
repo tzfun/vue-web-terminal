@@ -2,17 +2,17 @@ let path = require('path')
 let webpack = require('webpack')
 const {VueLoaderPlugin} = require("vue-loader");
 const name = "vue-web-terminal"
-// const uglify = require("uglifyjs-webpack-plugin");
 
 module.exports = {
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, './lib'),
-        publicPath: '/',
         filename: `${name}.js`,
         library: `${name}`,
         libraryTarget: 'umd',
         umdNamedDefine: true
+    },
+    externals: {
     },
     module: {
         rules: [
@@ -22,13 +22,15 @@ module.exports = {
                     'vue-style-loader',
                     'css-loader'
                 ],
-            }, {
+            },
+            {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: {
                     loaders: {}
                     // other vue-loader options go here
-                }
+                },
+                exclude: path.resolve(__dirname, "node_modules")
             },
             {
                 test: /\.js$/,
@@ -36,19 +38,21 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.(png|jpg|gif|svg)$/,
+                test: /\.(png|jpg|svg)$/,
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]?[hash]'
-                }
+                },
+                exclude: path.resolve(__dirname, "node_modules")
             }
-        ]
+        ],
     },
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue$': 'vue/dist/vue.esm.js',
+            '@': './src/'
         },
-        extensions: ['*', '.js', '.vue', '.json']
+        extensions: ['*', '.js', '.vue', '.json', '.css']
     },
     devServer: {
         historyApiFallback: true,
@@ -58,19 +62,13 @@ module.exports = {
     performance: {
         hints: false
     },
-    devtool: 'source-map',
+    devtool: 'nosources-source-map',
     plugins: (module.exports.plugins || []).concat([
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: '"production"'
             }
         }),
-        // new uglify({
-        //     sourceMap: true,
-        //     compress: {
-        //         warnings: false
-        //     }
-        // }),
         new webpack.LoaderOptionsPlugin({
             minimize: true
         }),

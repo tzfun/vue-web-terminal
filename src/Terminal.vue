@@ -110,7 +110,7 @@
             <span>{{ context }}</span>
             <span> > </span>
           </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
-                                                                                 :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp</span>
+                                                                                 :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
           <input type="text" autofocus="autofocus" id="command-input" v-model="command" class="input-box"
                  ref="inputCmd"
                  autocomplete="off"

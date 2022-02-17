@@ -1,6 +1,6 @@
 # vue-web-terminal
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡切换光标️。
+一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️ 切换光标️。
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
@@ -40,14 +40,6 @@ Vue.use(Terminal)
 export default {
   name: 'App',
   methods: {
-    /**
-     * 当用户输入自定义命令时调用
-     *
-     * @param key     命令行key，用于唯一标识
-     * @param command 命令行
-     * @param success 成功回调
-     * @param failed  失败回调
-     */
     onExecCmd(key, command, success, failed) {
       if (key === 'fail') {
         failed('Something wrong!!!')
@@ -111,7 +103,7 @@ body, html {
 | init-log           | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组  | array   | 略                  |
 | init-log-delay     | 初始化显示日志时每条日志之间的间隔事件，单位毫秒 ms             | number  | 150                |
 | show-log-time      | 当消息**type**为`normal`时是否显示时间             | boolean | true               |
-| warnLogByteLimit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位byte     | number  | 1024 * 1024 * 10   |
+| warnLogByteLimit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`   | number  | 1024 * 1024 * 10   |
 | warnLogCountLimit  | 当前Terminal日志条数超出此限制会发出警告                | number  | 200                |
 | warnLogLimitEnable | 是否开启日志限制警告                              | boolean | true               |
 | auto-help          | 是否打开命令行自动搜索提示功能                         | boolean | true               |
@@ -119,12 +111,12 @@ body, html {
 
 ## Select Events
 
-| 事件名称          | 说明                                                           | 回调参数                                          |
-|---------------|--------------------------------------------------------------|-----------------------------------------------|
-| execCmd       | 执行自定义命令时触发，success和failed为回调函数，执行结束后必须调用其中之一                 | `function (cmdKey, command, success, failed)` |
-| beforeExecCmd | 执行任意命令之前触发                                                   | `function (cmdKey, command)`                  |
-| onKeydown     | 当获取光标焦点时，按下任意键盘触发                                            | `function (event)`                            |
-| triggerClick  | 用户点击按钮时触发，参数key为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title | `function (key)`                              |
+| 事件名称          | 说明                                                                                                     | 回调参数                                 |
+|---------------|--------------------------------------------------------------------------------------------------------|--------------------------------------|
+| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，执行结束后必须调用其中之一，其中`success`回调参数为一个[消息对象](#消息对象)，`failed`回调参数为一个string | `(cmdKey, command, success, failed)` |
+| beforeExecCmd | 执行任意命令之前触发                                                                                             | `(cmdKey, command)`                  |
+| onKeydown     | 当获取光标焦点时，按下任意键盘触发                                                                                      | `(event)`                            |
+| triggerClick  | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                         | `(key)`                              |
 
 ## Api
 
@@ -154,7 +146,7 @@ this.$terminal.pushMessage(name, message)
 
 ### 修改上下文
 
-比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置 ，但是需使用`.sync`绑定一个变量才能成功
+比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置 ，但是需使用`.sync`绑定一个变量
 
 ```vue
 <template>
@@ -186,9 +178,9 @@ export default {
 
 | 属性      | 说明                          | 类型     | 可选值                               |
 |---------|-----------------------------|--------|-----------------------------------|
-| time    | 消息产生时间，仅类型为normal有效         | string | /                                 |
+| time    | 消息产生时间，仅类型为`normal`有效       | string | /                                 |
 | class   | 消息类别                        | string | success、error、system、info、warning |
-| tag     | 显示标签，仅类型为normal有效           | /      |
+| tag     | 显示标签，仅类型为`normal`有效         | /      | /                                 |
 | type    | 消息格式类型                      | string | normal、json、code、table            |
 | content | 具体内容，不同消息格式的内容类型不一样，具体规则见下文 | /      | /                                 |
 

@@ -1,11 +1,6 @@
 const path = require("path");
 const name = "vue-web-terminal"
 module.exports = {
-    pages: {
-        index: {
-            entry: "src/index.js"
-        },
-    },
     configureWebpack: {
         output: {
             filename: `${name}.js`,

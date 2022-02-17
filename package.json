@@ -1,6 +1,6 @@
 {
   "name": "vue-web-terminal",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "highlight.js": "^11.4.0",
     "object-sizeof": "^1.6.2",
     "vue-json-viewer": "^2.2.21"
   },
