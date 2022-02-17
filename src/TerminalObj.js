@@ -5,8 +5,7 @@ function TerminalObj() {
 
     let register = function (name, listener) {
         if (pool[name] != null) {
-            console.error("Unable to register a listener with the same name: " + name)
-            return
+            throw Error("Unable to register a listener with the same name: " + name)
         }
         pool[name] = listener
     }

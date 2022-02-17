@@ -8,7 +8,7 @@ export default {
     name: 'Terminal',
     data() {
         return {
-            context: 'vue-web-terminal/tzfun',
+            context: '/vue-web-terminal/tzfun',
             command: "",
             commandLog: [],
             cmdChange: false,
@@ -107,6 +107,11 @@ export default {
             type: Boolean,
             default: true
         },
+        //  显示终端头部
+        showHeader: {
+            type: Boolean,
+            default: true
+        }
     },
     created() {
         this.$terminal.register(this.name, (type, options) => {
@@ -186,9 +191,6 @@ export default {
     methods: {
         _triggerClick(key) {
             this.$emit('triggerClick', key)
-            if (key === 'close') {
-                this._exit()
-            }
         },
         _resetSearchKey() {
             this.searchCmd = {
@@ -300,9 +302,6 @@ export default {
                         break;
                     case 'open':
                         this.openUrl(split[1]);
-                        break;
-                    case 'exit':
-                        this._exit()
                         break;
                     default: {
                         this.showInputLine = false
@@ -580,9 +579,6 @@ export default {
                     this._searchCmd()
                 }
             }
-        },
-        _exit() {
-            this.$router.push('/')
         }
     }
 }

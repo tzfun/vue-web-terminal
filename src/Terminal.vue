@@ -1,23 +1,56 @@
 <template>
   <div class="terminal-container" ref="terminal-container" @click.self="_activeCursor">
     <div class="terminal">
-      <div class="terminal-header">
+      <div class="terminal-header" v-if="showHeader">
         <h4>
           <span @click="_triggerClick('title')" style="cursor: pointer">{{ title }}</span>
         </h4>
         <ul class="shell-dots">
-          <li class="shell-dots-red">
-            <i class="el-icon-close page-close" @click="_triggerClick('close')"></i>
+          <li class="shell-dot-item shell-dots-red">
+            <svg t="1645078279626"
+                 class="shell-dot-icon"
+                 viewBox="0 0 1024 1024"
+                 version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 p-id="1864"
+                 width="10"
+                 height="10" @click="_triggerClick('close')">
+              <path
+                  d="M544.448 499.2l284.576-284.576a32 32 0 0 0-45.248-45.248L499.2 453.952 214.624 169.376a32 32 0 0 0-45.248 45.248l284.576 284.576-284.576 284.576a32 32 0 0 0 45.248 45.248l284.576-284.576 284.576 284.576a31.904 31.904 0 0 0 45.248 0 32 32 0 0 0 0-45.248L544.448 499.2z"
+                  p-id="1865" fill="#1413139c"></path>
+            </svg>
           </li>
-          <li class="shell-dots-yellow">
-            <i class="el-icon-close page-close" @click="_triggerClick('minScreen')"></i>
+          <li class="shell-dot-item shell-dots-yellow">
+            <svg t="1645078503601"
+                 class="shell-dot-icon"
+                 viewBox="0 0 1024 1024"
+                 version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 p-id="2762"
+                 width="10"
+                 height="10" @click="_triggerClick('minScreen')">
+              <path d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
+                    p-id="2763" fill="#1413139c"></path>
+            </svg>
           </li>
-          <li class="shell-dots-green">
-            <i class="el-icon-close page-close" @click="_triggerClick('fullScreen')"></i>
+          <li class="shell-dot-item shell-dots-green">
+            <svg t="1645078604258"
+                 class="shell-dot-icon"
+                 viewBox="0 0 1024 1024"
+                 version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 p-id="9907"
+                 width="10"
+                 height="10" @click="_triggerClick('fullScreen')">
+              <path
+                  d="M188.373333 128H384c23.573333 0 42.666667-19.093333 42.666667-42.666667s-19.093333-42.666667-42.666667-42.666666H85.333333C61.76 42.666667 42.666667 61.76 42.666667 85.333333v298.666667c0 23.573333 19.093333 42.666667 42.666666 42.666667s42.666667-19.093333 42.666667-42.666667V188.373333L396.170667 456.533333a42.730667 42.730667 0 0 0 60.362666 0 42.741333 42.741333 0 0 0 0-60.362666L188.373333 128zM938.666667 597.002667c-23.573333 0-42.666667 19.093333-42.666667 42.666666v195.626667l-268.309333-268.16c-16.746667-16.64-43.893333-16.64-60.544 0s-16.650667 43.893333 0 60.533333L835.317333 896h-195.626666c-23.584 0-42.666667 19.093333-42.666667 42.666667s19.082667 42.666667 42.666667 42.666666h298.666666C961.92 981.333333 981.333333 961.92 981.333333 938.336v-298.666667c0-23.573333-19.093333-42.666667-42.666666-42.666666z"
+                  p-id="9908" fill="#1413139c"></path>
+            </svg>
           </li>
         </ul>
       </div>
-      <div class="terminal-window" id="terminalWindow" @click.self="_activeCursor">
+      <div class="terminal-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" id="terminalWindow"
+           @click.self="_activeCursor">
         <div class="log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
           <span v-if="item.type === 'cmdLine'" class="crude-font">
               <span class="prompt">{{ item.content }}</span>
@@ -96,7 +129,8 @@
         <p class="help-msg" v-if="searchCmd.item != null">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
-    <div class="cmd-help" v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
+    <div class="cmd-help" :style="`${showHeader ? '' : 'top:10px'}`"
+         v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
       <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
          v-html="searchCmd.item.description"></p>
       <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
@@ -139,6 +173,19 @@ export default TerminalJs
   margin-inline-end: 0;
 }
 
+.shell-dot-icon {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  -moz-transition: opacity 0.2s ease;
+  -ms-transition: opacity 0.2s ease;
+  -webkit-transition: opacity 0.2s ease;
+  -o-transition: opacity 0.2s ease;
+}
+
+.shell-dots:hover .shell-dot-icon {
+  opacity: 1;
+}
+
 .terminal-container {
   position: absolute;
   width: 100%;
@@ -179,10 +226,13 @@ export default TerminalJs
 
 .terminal-header ul.shell-dots li {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 10px;
   margin-left: 6px;
+  margin-top: 4px;
+  line-height: 15.5px;
+  cursor: pointer;
 }
 
 .terminal-header ul .shell-dots-red {
@@ -331,16 +381,6 @@ input {
 
 .help-msg {
   color: #ffffff87;
-}
-
-.page-close {
-  color: white;
-  font-size: 11px;
-  position: absolute;
-  left: 6px;
-  top: 3px;
-  text-shadow: 0 1px 6px black;
-  cursor: pointer;
 }
 
 /*手机*/
