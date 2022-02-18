@@ -1,6 +1,6 @@
 # vue-web-terminal
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️ 切换光标️。
+一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️ 切换光标️。
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
@@ -116,7 +116,7 @@ body, html {
 | execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)，`failed`回调参数为一个string | `(cmdKey, command, success, failed)` |
 | beforeExecCmd | 执行任意命令之前触发                                                                                                     | `(cmdKey, command)`                  |
 | onKeydown     | 当获取光标焦点时，按下任意键盘触发                                                                                              | `(event)`                            |
-| triggerClick  | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                 | `(key)`                              |
+| onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                 | `(key)`                              |
 
 ## Api
 
