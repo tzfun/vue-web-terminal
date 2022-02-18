@@ -1,4 +1,4 @@
-import 'vue-json-viewer/style.css'
+import './css/vue-json-viewer.css'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
 import historyStore from "./HistoryStore.js";
@@ -171,7 +171,7 @@ export default {
     },
     methods: {
         _triggerClick(key) {
-            this.$emit('triggerClick', key)
+            this.$emit('onClick', key)
         },
         _resetSearchKey() {
             this.searchCmd = {
@@ -287,15 +287,19 @@ export default {
                     default: {
                         this.showInputLine = false
                         let success = (message) => {
-                            this._pushMessage(message)
+                            if (message != null) {
+                                this._pushMessage(message)
+                            }
                             this.showInputLine = true
                             this._endExecCallBack()
                         }
 
                         let failed = (message = 'Failed to execute.') => {
-                            this._pushMessage({
-                                time: this._curTime(), type: 'normal', class: 'error', content: message
-                            })
+                            if (message != null) {
+                                this._pushMessage({
+                                    time: this._curTime(), type: 'normal', class: 'error', content: message
+                                })
+                            }
                             this.showInputLine = true
                             this._endExecCallBack()
                         }

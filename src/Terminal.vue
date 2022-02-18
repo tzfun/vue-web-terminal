@@ -81,8 +81,13 @@
                 </select>
             </span>
             <div v-else-if="item.type === 'code'"
-                 style="position: relative;max-height: 500px;overflow: auto;font-size: 20px" v-highlight>
-              <pre style="margin:0 0 0 30px"><code v-html="item.content"></code></pre>
+                 style="position: relative;max-height: 500px;overflow: auto;font-size: 20px">
+              <div v-if="$terminalOptions.highlight" v-highlight>
+                <pre style="margin:0 0 0 30px"><code v-html="item.content"></code></pre>
+              </div>
+              <div v-else style="background: rgb(39 50 58)">
+                <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
+              </div>
             </div>
             <div v-else-if="item.type === 'table'">
               <div class="t-table-container" @click.self="_activeCursor">
@@ -157,7 +162,7 @@
 
 <script>
 import TerminalJs from './Terminal.js'
-import './style.css'
+import './css/style.css'
 
 export default TerminalJs
 
@@ -231,7 +236,7 @@ export default TerminalJs
   border-radius: 10px;
   margin-left: 6px;
   margin-top: 4px;
-  line-height: 15.5px;
+  line-height: 16px;
   cursor: pointer;
 }
 

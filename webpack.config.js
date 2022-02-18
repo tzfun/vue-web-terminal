@@ -2,6 +2,7 @@ let path = require('path')
 let webpack = require('webpack')
 const {VueLoaderPlugin} = require("vue-loader");
 const name = "vue-web-terminal"
+const UglifyPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
     entry: './src/index.js',
@@ -22,6 +23,7 @@ module.exports = {
                     'vue-style-loader',
                     'css-loader'
                 ],
+                exclude: path.resolve(__dirname, "node_modules")
             },
             {
                 test: /\.vue$/,
@@ -35,7 +37,8 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                exclude: /node_modules/
+                exclude: path.resolve(__dirname, "node_modules"),
+                include: path.resolve(__dirname, "src"),
             },
             {
                 test: /\.(png|jpg|svg)$/,
@@ -72,6 +75,7 @@ module.exports = {
         new webpack.LoaderOptionsPlugin({
             minimize: true
         }),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new UglifyPlugin()
     ])
 }
