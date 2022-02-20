@@ -59,10 +59,11 @@
             <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
           <div v-else>
-            <span @click.self="_activeCursor" class="terminal-content-normal" v-show="item.type === 'normal'">
+            <span v-if="item.type === 'normal'" @click.self="_activeCursor" class="terminal-content-normal">
               <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
               <span :class="item.class"
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
+              <span v-html="item.content" @click="_activeCursor"></span>
             </span>
             <span v-if="item.type === 'json'" style="position: relative">
                 <json-viewer :expand-depth="item.depth"
@@ -107,6 +108,7 @@
                 </table>
               </div>
             </div>
+            <div v-else-if="item.type === 'html'" v-html="item.content" @click="_activeCursor"></div>
             <span v-else v-html="item.content" @click="_activeCursor"></span>
           </div>
         </div>

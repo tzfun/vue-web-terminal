@@ -1,3 +1,5 @@
+import historyStore from "./HistoryStore.js";
+
 const instance = new TerminalObj()
 
 function TerminalObj() {
@@ -29,12 +31,17 @@ function TerminalObj() {
         post(name, 'updateContext', context)
     }
 
+    let getHistory = function () {
+        return historyStore
+    }
+
     return {
         post: post,
         register: register,
         unregister: unregister,
         pushMessage: pushMessage,
-        updateContext: updateContext
+        updateContext: updateContext,
+        getHistory: getHistory
     }
 }
 

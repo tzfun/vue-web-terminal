@@ -1,6 +1,6 @@
 # vue-web-terminal
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️ 切换光标️。
+一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本、自定义html，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️ 切换光标️。
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
@@ -26,12 +26,7 @@ Vue.use(Terminal)
 
 <template>
   <div id="app">
-    <terminal name="my-terminal"
-              @execCmd="onExecCmd"
-              @onClick="onClick"
-              @onKeydown="onKeydown"
-              show-log-time
-              warnLogLimitEnable></terminal>
+    <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
   </div>
 </template>
 
@@ -63,20 +58,28 @@ export default {
               '\n' +
               'Vue.use(Terminal)'
         })
+      } else if (key === 'table') {
+        success({
+          type: 'table',
+          content: {
+            head: ['title1', 'title2', 'title3', 'title4'],
+            rows: [
+              ['name1', 'hello world', 'this is a test1', 'xxxxxxxx'],
+              ['name2', 'hello world', 'this is a test2 test2', 'xxxxxxxx']
+            ]
+          }
+        })
       } else {
+        let allClass = ['success', 'error', 'system', 'info', 'warning'];
+
+        let clazz = allClass[Math.floor(Math.random() * allClass.length)];
         success({
           type: 'normal',
-          class: 'success',
+          class: clazz,
           tag: '成功',
           content: command
         })
       }
-    },
-    onClick(key) {
-      console.log("trigger click: " + key)
-    },
-    onKeydown(event) {
-      console.log(event)
     }
   }
 }
@@ -93,6 +96,8 @@ body, html {
 # 插件文档
 
 ## Select Attributes
+
+terminal标签支持属性参数表
 
 | 参数                 | 说明                                      | 类型      | 默认值                |
 |--------------------|-----------------------------------------|---------|--------------------|
@@ -111,9 +116,12 @@ body, html {
 
 ## Select Events
 
+terminal标签支持事件表
+
 | 事件名称          | 说明                                                                                                             | 回调参数                                 |
 |---------------|----------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)，`failed`回调参数为一个string | `(cmdKey, command, success, failed)` |
+| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**
+必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)，`failed`回调参数为一个string | `(cmdKey, command, success, failed)` |
 | beforeExecCmd | 执行任意命令之前触发                                                                                                     | `(cmdKey, command)`                  |
 | onKeydown     | 当获取光标焦点时，按下任意键盘触发                                                                                              | `(event)`                            |
 | onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                 | `(key)`                              |
@@ -123,6 +131,7 @@ body, html {
 本插件提供了一些 Api 可以使用 Vue 主动向插件发起事件请求。
 
 Terminal在 Vue 的prototype中定义了一个变量可以获取Terminal对象
+
 ```js
 this.$terminal
 
@@ -149,6 +158,7 @@ this.$terminal.pushMessage(name, message)
 比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置 ，但是需使用`.sync`绑定一个变量
 
 ```vue
+
 <template>
   <div id="app">
     <terminal name="my-terminal" :context.sync="context"></terminal>
@@ -181,20 +191,10 @@ export default {
 | time    | 消息产生时间，仅类型为`normal`有效       | string                   | /                                 |
 | class   | 消息类别                        | string                   | success、error、system、info、warning |
 | tag     | 显示标签，仅类型为`normal`有效         | string                   | /                                 |
-| type    | 消息格式类型                      | string                   | normal、json、code、table            |
+| type    | 消息格式类型                      | string                   | normal、json、code、table、html       |
 | content | 具体内容，不同消息格式的内容类型不一样，具体规则见下文 | string、json、object、array | /                                 |
 
-### 初始化日志
-
-初始化日志比较特殊，只需要传`content`即可，格式为字符串
-
-```json
-{
-  "content": "这是一条欢迎日志"
-}
-```
-
-### 普通文本
+### normal 普通文本
 
 content为字符串格式，支持html标签，time字段会在push时自动填充，class、content、type必填，其他选填
 
@@ -238,6 +238,7 @@ type为`code`时content类型为字符串，直接传入文本或代码即可
 code类型消息支持 `highlight.js` 高亮显示
 
 首先你需要配置 **Highlight.js**
+
 ```js
 import Hljs from 'highlight.js';
 import 'highlight.js/styles/tomorrow-night-bright.css';
@@ -274,12 +275,13 @@ export default Highlight;
 ```
 
 然后在载入 Terminal 的入口修改配置就可以高亮显示了
+
 ```js
 import Terminal from 'vue-web-terminal'
 import Hljs from '@/Highlight.js'
 
 Vue.use(Hljs)
-Vue.use(Terminal, { highlight:true })
+Vue.use(Terminal, {highlight: true})
 ```
 
 ### table
@@ -311,6 +313,31 @@ type为`table`时content为表格配置，`head`为表头，`rows`为每行的�
       ]
     ]
   }
+}
+```
+
+### html
+
+type为`html`时可自定义内容格式，content为html标签构成
+
+```js
+execCmd(key, command, success) 
+{
+    // ...
+    success({
+        type: 'html',
+        content: `
+          <ul class="custom-content">
+            <li class="t-dir">目录1</li>
+            <li class="t-dir">目录2</li>
+            <li class="t-dir">目录3</li>
+            <li class="t-file">文件1</li>
+            <li class="t-file">文件2</li>
+            <li class="t-file">文件3</li>
+          </ul>
+          `
+    })
+    // ...
 }
 ```
 
