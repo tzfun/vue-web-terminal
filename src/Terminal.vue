@@ -65,7 +65,7 @@
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
               <span v-html="item.content" @click="_activeCursor"></span>
             </span>
-            <span v-if="item.type === 'json'" style="position: relative">
+            <span v-else-if="item.type === 'json'" style="position: relative">
                 <json-viewer :expand-depth="item.depth"
                              sort boxed copyable expanded
                              :key="idx + '_' + item.depth"
@@ -109,7 +109,6 @@
               </div>
             </div>
             <div v-else-if="item.type === 'html'" v-html="item.content" @click="_activeCursor"></div>
-            <span v-else v-html="item.content" @click="_activeCursor"></span>
           </div>
         </div>
         <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
