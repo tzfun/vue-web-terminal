@@ -91,6 +91,9 @@ export default {
         }, //  命令行搜索以及help指令用
         commandStore: {
             type: Array
+        }, //   命令行排序方式
+        commandStoreSort: {
+            type: Function
         }, //  记录大小超出此限制会发出警告，单位byte
         warnLogByteLimit: {
             type: Number, default: 1024 * 1024 * 10
@@ -110,6 +113,10 @@ export default {
         showHeader: {
             type: Boolean,
             default: true
+        },
+        helpStyle:{
+            type: String,
+            default: ''
         }
     },
     created() {
@@ -129,6 +136,9 @@ export default {
         }
 
         if (this.commandStore != null) {
+            if (this.commandStoreSort != null) {
+                this.commandStore.sort(this.commandStoreSort)
+            }
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
     },

@@ -63,7 +63,7 @@
               <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
               <span :class="item.class"
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
-              <span v-html="item.content" @click="_activeCursor"></span>
+              <span v-html="item.content"></span>
             </span>
             <span v-else-if="item.type === 'json'" style="position: relative">
                 <json-viewer :expand-depth="item.depth"
@@ -108,7 +108,7 @@
                 </table>
               </div>
             </div>
-            <div v-else-if="item.type === 'html'" v-html="item.content"></div>
+            <div v-else-if="item.type === 'html'" v-html="item.content" @click.self="_activeCursor"></div>
           </div>
         </div>
         <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
@@ -135,7 +135,7 @@
         <p class="help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
-    <div class="cmd-help" :style="`${showHeader ? '' : 'top:10px'}`"
+    <div class="cmd-help" :style="helpStyle"
          v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
       <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
          v-html="searchCmd.item.description"></p>
@@ -193,7 +193,7 @@ export default TerminalJs
 }
 
 .terminal-container {
-  position: absolute;
+  position: relative;
   width: 100%;
   min-height: 100%;
   margin: 0;
