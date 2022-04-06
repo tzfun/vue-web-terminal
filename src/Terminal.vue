@@ -81,12 +81,14 @@
                   </option>
                 </select>
             </span>
-            <div v-else-if="item.type === 'code'"
-                 style="position: relative;max-height: 500px;overflow: auto;font-size: 20px">
-              <div v-if="$terminalOptions.highlight" v-highlight>
-                <pre style="margin:0 0 0 30px"><code v-html="item.content"></code></pre>
+            <div v-else-if="item.type === 'code'" class="t-code">
+              <div v-if="$terminalOptions.highlight">
+                <highlightjs ref="highlightjs" autodetect :code="item.content"/>
               </div>
-              <div v-else style="background: rgb(39 50 58)">
+              <div v-else-if="$terminalOptions.codemirror">
+                <codemirror ref="codemirror" v-model="item.content" :options="$terminalOptions.codemirror"/>
+              </div>
+              <div v-else style="background: rgb(39 50 58);">
                 <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
               </div>
             </div>

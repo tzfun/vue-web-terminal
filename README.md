@@ -241,51 +241,51 @@ type为`code`时content类型为字符串，直接传入文本或代码即可
 
 code类型消息支持 `highlight.js` 高亮显示
 
-首先你需要配置 **Highlight.js**
-
-```js
-import Hljs from 'highlight.js';
-import 'highlight.js/styles/tomorrow-night-bright.css';
-
-let Highlight = {};
-Highlight.install = function (Vue) {
-    Vue.directive('highlight', {
-        inserted: function (el) {
-            let blocks = el.querySelectorAll('pre code');
-            blocks.forEach(block => {
-                let ul = document.createElement("ul");
-                let rowCount = block.outerHTML.split('\n').length;
-                for (let i = 1; i <= rowCount; i++) {
-                    let li = document.createElement("li")
-                    let text = document.createTextNode(i)
-                    li.appendChild(text)
-                    ul.appendChild(li)
-                }
-                ul.className = 'pre-numbering'
-                block.parentNode.appendChild(ul)
-                Hljs.highlightBlock(block)
-            })
-        },
-        componentUpdated: function (el) {
-            let blocks = el.querySelectorAll('pre code');
-            for (let i = 0; i < blocks.length; i++) {
-                Hljs.highlightBlock(blocks[i]);
-            }
-        }
-    })
-};
-
-export default Highlight;
-```
-
-然后在载入 Terminal 的入口修改配置就可以高亮显示了
+首先你需要配置 **Highlight.js**，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
 
 ```js
 import Terminal from 'vue-web-terminal'
-import Hljs from '@/Highlight.js'
+import hljs from 'highlight.js'
+import java from 'highlight.js/lib/languages/java'
+import vuePlugin from "@highlightjs/vue-plugin"
+import 'highlight.js/styles/tomorrow-night-bright.css'
 
-Vue.use(Hljs)
+hljs.registerLanguage('java', java)
+Vue.use(vuePlugin)
 Vue.use(Terminal, {highlight: true})
+```
+
+vue2版本推荐
+```json
+{
+  "@highlightjs/vue-plugin": "^1.0.2",
+  "highlight.js": "^10.7.3"
+}
+```
+
+#### codemirror 代码高亮
+
+code类型消息也支持 `codemirror` 高亮显示，详细配置见[https://www.npmjs.com/package/vue-codemirror](https://www.npmjs.com/package/vue-codemirror)
+
+同样只需要在main.js入口安装即可，版本推荐：`"vue-codemirror": "^4.0.6"`
+```js
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/darcula.css'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/addon/edit/closebrackets.js'
+
+Vue.use(VueCodemirror)
+Vue.use(Terminal, {
+    codemirror: {
+        tabSize: 4,
+        mode: 'text/x-java',
+        theme: "darcula",
+        lineNumbers: true,
+        line: true,
+        smartIndent: true
+    }
+})
 ```
 
 ### table

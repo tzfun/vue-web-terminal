@@ -103,3 +103,10 @@ pre {
 .t-a:hover {
     color: white;
 }
+
+.t-code {
+    position: relative;
+    max-height: 500px;
+    overflow: auto;
+    font-size: 20px;
+}
