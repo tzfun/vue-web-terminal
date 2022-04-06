@@ -64,10 +64,13 @@ export default {
         initLog: {
             type: Array, default: () => {
                 return [{
+                    type: 'normal',
                     content: "Terminal Initializing ..."
                 }, {
+                    type: 'normal',
                     content: "Current login time: " + new Date().toLocaleString()
                 }, {
+                    type: 'normal',
                     content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-teach'>help</span> command to learn.Thanks for your star support: <a href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
                 }]
             }
@@ -332,7 +335,15 @@ export default {
                     return obj;
                 }
             }
-        }, /**
+        },
+        isValidType(type) {
+            let valid = /^(normal|html|code|table|json)$/.test(type)
+            if (!valid) {
+                console.warn("Invalid terminal message type: " + type)
+            }
+            return valid
+        },
+        /**
          * message内容：
          *
          * time: 当前时间
@@ -354,6 +365,9 @@ export default {
          * @private
          */
         _pushMessage(message) {
+            if (!this.isValidType(message.type)) {
+                return
+            }
             if (this.showLogTime) {
                 message.time = this._curTime()
             }
@@ -371,9 +385,12 @@ export default {
             }, 100)
         },
         async _pushMessageBatch(messages, time) {
-            for (let m in messages) {
-                this.terminalLog.push(messages[m]);
-                this.terminalSize += sizeof(messages)
+            for (let m of messages) {
+                if (!this.isValidType(m.type)) {
+                    continue
+                }
+                this.terminalLog.push(m);
+                this.terminalSize += sizeof(m)
                 if (time != null) {
                     await _sleep(time);
                 }
