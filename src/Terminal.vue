@@ -59,7 +59,7 @@
             <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
           <div v-else @click.self="_activeCursor">
-            <span v-if="item.type === 'normal'" @click.self="_activeCursor" class="terminal-content-normal">
+            <span v-if="item.type === 'normal'" class="terminal-content-normal">
               <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
               <span :class="item.class"
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
@@ -108,7 +108,7 @@
                 </table>
               </div>
             </div>
-            <div v-else-if="item.type === 'html'" v-html="item.content" @click.self="_activeCursor"></div>
+            <div v-else-if="item.type === 'html'" v-html="item.content"></div>
           </div>
         </div>
         <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
