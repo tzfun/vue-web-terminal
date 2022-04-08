@@ -1,7 +1,8 @@
-import './css/vue-json-viewer.css'
+import 'vue-json-viewer/style.css'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
 import historyStore from "./HistoryStore.js";
+import TerminalObj from './TerminalObj.js'
 
 export default {
     name: 'Terminal',
@@ -120,7 +121,7 @@ export default {
         }
     },
     created() {
-        this.$terminal.register(this.name, (type, options) => {
+        TerminalObj.register(this.name, (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
             } else if (type === 'updateContext') {
@@ -166,7 +167,7 @@ export default {
         window.addEventListener('keydown', this.keydownListener);
     }, destroyed() {
         window.removeEventListener('keydown', this.keydownListener)
-        this.$terminal.unregister(this.name)
+        TerminalObj.unregister(this.name)
     }, watch: {
         command(val, oldVal) {
             if (!this.cmdChange) {

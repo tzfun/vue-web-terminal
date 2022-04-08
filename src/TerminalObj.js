@@ -4,6 +4,15 @@ const instance = new TerminalObj()
 
 function TerminalObj() {
     let pool = {}
+    let options = {}
+
+    let setOptions = function (ops) {
+        options = ops
+    }
+
+    let getOptions = function () {
+        return options
+    }
 
     let register = function (name, listener) {
         if (pool[name] != null) {
@@ -36,6 +45,8 @@ function TerminalObj() {
     }
 
     return {
+        setOptions: setOptions,
+        getOptions: getOptions,
         post: post,
         register: register,
         unregister: unregister,

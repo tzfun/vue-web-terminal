@@ -82,11 +82,11 @@
                 </select>
             </span>
             <div v-else-if="item.type === 'code'" class="t-code">
-              <div v-if="$terminalOptions.highlight">
+              <div v-if="require('./TerminalObj').getOptions().highlight">
                 <highlightjs ref="highlightjs" autodetect :code="item.content"/>
               </div>
-              <div v-else-if="$terminalOptions.codemirror">
-                <codemirror ref="codemirror" v-model="item.content" :options="$terminalOptions.codemirror"/>
+              <div v-else-if="require('./TerminalObj').getOptions().codemirror">
+                <codemirror ref="codemirror" v-model="item.content" :options="require('./TerminalObj').getOptions().codemirror"/>
               </div>
               <div v-else style="background: rgb(39 50 58);">
                 <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
