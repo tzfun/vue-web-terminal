@@ -2,12 +2,31 @@ import Terminal from './Terminal.vue'
 import TerminalObj from './TerminalObj.js'
 import JsonViewer from 'vue-json-viewer'
 
-let terminal = {}
-terminal.install = function (Vue, options) {
-    Vue.use(JsonViewer)
+Terminal.install = (app, options) => {
+    app.use(JsonViewer)
+    let confHljs = false
+    let confCodemirror = false
     if (options != null) {
         TerminalObj.setOptions(options)
+        if (options.highlight) {
+            confHljs = true
+        }
+        if (options.codemirror) {
+            confCodemirror = true
+        }
     }
-    Vue.component(Terminal.name, Terminal)
+    if (!confHljs) {
+        // eslint-disable-next-line vue/multi-word-component-names
+        app.component("highlightjs", {
+            template: `<div></div>`
+        })
+    }
+    if(!confCodemirror) {
+        // eslint-disable-next-line vue/multi-word-component-names
+        app.component("codemirror", {
+            template: `<div></div>`
+        })
+    }
 }
-export default terminal
+
+export default Terminal

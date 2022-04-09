@@ -1,4 +1,4 @@
-import 'vue-json-viewer/style.css'
+import {ref, nextTick} from 'vue'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
 import historyStore from "./HistoryStore.js";
@@ -115,9 +115,27 @@ export default {
             type: Boolean,
             default: true
         },
-        helpStyle:{
+        helpStyle: {
             type: String,
             default: ''
+        }
+    },
+    emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd"],
+    setup() {
+        const terminalContainer = ref(null)
+        const terminalWindow = ref(null)
+        const inputCmd = ref(null)
+        const terminalEnFlag = ref(null)
+        const terminalCnFlag = ref(null)
+        const terminalObj = TerminalObj
+
+        return {
+            terminalContainer,
+            terminalWindow,
+            inputCmd,
+            terminalEnFlag,
+            terminalCnFlag,
+            terminalObj
         }
     },
     created() {
@@ -144,15 +162,15 @@ export default {
         }
     },
     mounted() {
-        this.byteLen = {
-            en: document.getElementById("terminal-en-flag").getBoundingClientRect().width / 2,
-            cn: document.getElementById("terminal-cn-flag").getBoundingClientRect().width / 2
-        }
-        this.$nextTick(() => {
-            let el = document.getElementsByClassName("terminal-window")[0]
-            if (el != null) {
-                document.documentElement.scrollTop = el.offsetHeight;
+        // this.byteLen = {
+        //     en: this.terminalEnFlag.value.getBoundingClientRect().width / 2,
+        //     cn: this.terminalCnFlag.value.getBoundingClientRect().width / 2
+        // }
+        nextTick(() => {
+            if (this.terminalWindow != null) {
+                document.documentElement.scrollTop = this.terminalWindow.offsetHeight;
             }
+        }).then(() => {
         })
 
         this.keydownListener = event => {
@@ -219,8 +237,8 @@ export default {
             }
         },
         _activeCursor() {
-            this.$nextTick(function () {
-                this.$refs.inputCmd.focus()
+            nextTick(() => {
+                this.inputCmd.focus()
             })
         },
         _printHelp() {
@@ -389,9 +407,9 @@ export default {
 
             //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
             setTimeout(() => {
-                this.$nextTick(() => {
-                    let container = this.$refs['terminal-container']
-                    container.scrollTop += 1000
+                nextTick(() => {
+                    this.terminalContainer.scrollTop += 1000
+                }).then(() => {
                 })
             }, 100)
         },

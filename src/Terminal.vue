@@ -1,5 +1,5 @@
 <template>
-  <div class="terminal-container" ref="terminal-container" @click.self="_activeCursor">
+  <div class="terminal-container" ref="terminalContainer" @click.self="_activeCursor">
     <div class="terminal">
       <div class="terminal-header" v-if="showHeader">
         <h4>
@@ -49,7 +49,7 @@
           </li>
         </ul>
       </div>
-      <div class="terminal-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" ref="terminal-window"
+      <div class="terminal-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" ref="terminalWindow"
            @click.self="_activeCursor">
         <div class="log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
           <span v-if="item.type === 'cmdLine'" class="crude-font">
@@ -82,11 +82,11 @@
                 </select>
             </span>
             <div v-else-if="item.type === 'code'" class="t-code">
-              <div v-if="require('./TerminalObj').getOptions().highlight">
-                <highlightjs ref="highlightjs" autodetect :code="item.content"/>
+              <div v-if="terminalObj.getOptions().highlight">
+                <highlightjs autodetect :code="item.content"/>
               </div>
-              <div v-else-if="require('./TerminalObj').getOptions().codemirror">
-                <codemirror ref="codemirror" v-model="item.content" :options="require('./TerminalObj').getOptions().codemirror"/>
+              <div v-else-if="terminalObj.getOptions().codemirror">
+                <codemirror v-model="item.content" :options="require('./TerminalObj').getOptions().codemirror"/>
               </div>
               <div v-else style="background: rgb(39 50 58);">
                 <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
@@ -131,8 +131,8 @@
                  @keyup.down.exact="switchNextCmd"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
-          <span id="terminal-en-flag" @click.self="_activeCursor">aa</span>
-          <span id="terminal-cn-flag" @click.self="_activeCursor">你好</span>
+          <span class="terminal-flag" @click.self="_activeCursor">aa</span>
+          <span class="terminal-flag" @click.self="_activeCursor">你好</span>
         </p>
         <p class="help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
@@ -164,11 +164,11 @@
 </template>
 
 <script>
-import TerminalJs from './Terminal.js'
 import './css/style.css'
+import 'vue-json-viewer/style.css'
+import TerminalJs from './script.js'
 
 export default TerminalJs
-
 </script>
 
 <style scoped>
@@ -383,7 +383,7 @@ input {
   font-weight: 600;
 }
 
-#terminal-en-flag, #terminal-cn-flag {
+.terminal-flag {
   opacity: 0;
 }
 

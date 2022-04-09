@@ -1,8 +1,9 @@
 let path = require('path')
-let webpack = require('webpack')
 const {VueLoaderPlugin} = require("vue-loader");
 const name = "vue-web-terminal"
-const UglifyPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 module.exports = {
     entry: './src/index.js',
@@ -13,14 +14,14 @@ module.exports = {
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
-    externals: {
-    },
+    externals: {},
     module: {
         rules: [
             {
                 test: /\.css$/,
                 use: [
                     'vue-style-loader',
+                    'style-loader',
                     'css-loader'
                 ]
             },
@@ -42,16 +43,18 @@ module.exports = {
             {
                 test: /\.(png|jpg|svg)$/,
                 loader: 'file-loader',
+                type: 'asset',
                 options: {
                     name: '[name].[ext]?[hash]'
                 },
+                include: path.resolve(__dirname, "node_modules/vue3-json-viewer"),
                 exclude: path.resolve(__dirname, "node_modules")
             }
         ],
     },
     resolve: {
         alias: {
-            'vue$': 'vue/dist/vue.esm.js',
+            'vue$': "vue/dist/vue.esm-bundler.js",
             '@': './src/'
         },
         extensions: ['*', '.js', '.vue', '.json', '.css']
@@ -66,15 +69,19 @@ module.exports = {
     },
     devtool: 'nosources-source-map',
     plugins: (module.exports.plugins || []).concat([
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        }),
-        new webpack.LoaderOptionsPlugin({
-            minimize: true
-        }),
         new VueLoaderPlugin(),
-        new UglifyPlugin()
-    ])
+        new TerserPlugin({
+            terserOptions: {
+                // https://github.com/terser/terser#minify-options
+                compress: {
+                    warnings: false, // 删除无用代码时是否给出警告
+                    drop_debugger: true, // 删除所有的debugger
+                    // drop_console: true, // 删除所有的console.*
+                    pure_funcs: [''],
+                    // pure_funcs: ['console.log'], // 删除所有的console.log
+                },
+            },
+        }),
+        new CssMinimizerPlugin()
+    ]),
 }
