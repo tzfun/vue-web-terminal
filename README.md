@@ -19,7 +19,6 @@ npm install vue-web-terminal@3.xx --save
 main.js中载入 Terminal 插件
 
 ```js
-
 import Terminal from 'vue-web-terminal'
 
 // for vue2
@@ -33,7 +32,6 @@ app.use(Terminal)
 使用示例
 
 ```vue
-
 <template>
   <div id="app">
     <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
@@ -41,9 +39,11 @@ app.use(Terminal)
 </template>
 
 <script>
+import Terminal from "vue-web-terminal"
 
 export default {
   name: 'App',
+  components:{Terminal},
   methods: {
     onExecCmd(key, command, success, failed) {
       if (key === 'fail') {
@@ -143,14 +143,11 @@ terminal标签支持事件表
 
 本插件提供了一些 Api 可以使用 Vue 主动向插件发起事件请求。
 
-Terminal在 Vue 的prototype中定义了一个变量可以获取Terminal对象
-
 ```js
-this.$terminal
+import Terminal from "vue-web-terminal"
 
-//  or
-
-Vue.prototype.$terminal
+//  获取api
+Terminal.$api
 ```
 
 ### 向Terminal推送一条消息
@@ -163,7 +160,7 @@ let message = {
     content: 'This is a wanning message.'
 }
 
-this.$terminal.pushMessage(name, message)
+Terminal.$api.pushMessage(name, message)
 ```
 
 ### 修改上下文
@@ -171,7 +168,6 @@ this.$terminal.pushMessage(name, message)
 比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置 ，但是需使用`.sync`绑定一个变量
 
 ```vue
-
 <template>
   <div id="app">
     <terminal name="my-terminal" :context.sync="context"></terminal>
@@ -179,6 +175,8 @@ this.$terminal.pushMessage(name, message)
 </template>
 
 <script>
+import Terminal from "vue-web-terminal"
+
 export default {
   name: 'App',
   data() {
@@ -188,7 +186,7 @@ export default {
   },
   methods: {
     _updateContext(newCtx) {
-      this.$terminal.updateContext("my-terminal", newCtx)
+      Terminal.$api.updateContext("my-terminal", newCtx)
     }
   }
 }

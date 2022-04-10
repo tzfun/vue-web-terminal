@@ -1,4 +1,3 @@
-let path = require('path')
 const name = "vue-web-terminal"
 
 module.exports = {
@@ -22,17 +21,6 @@ module.exports = {
         config.plugins.delete('preload')
         config.plugins.delete('prefetch')
         config.plugins.delete('html')
-
-        config.module
-            .rule('svg')
-            .test(/\.svg$/)
-            .exclude.add(path.resolve(__dirname, "node_modules/vue3-json-viewer/dist"))
-            .end()
-
-        const svgRule = config.module.rule('svg')
-        svgRule.uses.clear()
-
-        svgRule.use('file-loader').loader('file-loader')
 
         config.module
             .rule('vue')

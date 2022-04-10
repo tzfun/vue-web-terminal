@@ -1,6 +1,6 @@
 {
   "name": "vue-web-terminal",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "网页端命令行插件，适配vue3",
   "private": false,
   "scripts": {

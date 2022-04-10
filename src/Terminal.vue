@@ -166,7 +166,7 @@
 <script>
 import './css/style.css'
 import 'vue-json-viewer/style.css'
-import TerminalJs from './script.js'
+import TerminalJs from './Terminal.js'
 
 export default TerminalJs
 </script>

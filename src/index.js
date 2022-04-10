@@ -29,4 +29,6 @@ Terminal.install = (app, options) => {
     }
 }
 
+Terminal.$api = TerminalObj
+
 export default Terminal
