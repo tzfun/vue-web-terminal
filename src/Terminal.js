@@ -1,4 +1,3 @@
-import 'vue-json-viewer/style.css'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
 import historyStore from "./HistoryStore.js";

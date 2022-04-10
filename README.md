@@ -9,7 +9,11 @@
 npm安装vue-web-terminal
 
 ```shell
-npm install vue-web-terminal --save 
+//  vue2安装
+npm install vue-web-terminal@2.xx --save
+
+//  vue3安装
+npm install vue-web-terminal@3.xx --save 
 ```
 
 main.js中载入 Terminal 插件
@@ -17,13 +21,17 @@ main.js中载入 Terminal 插件
 ```js
 import Terminal from 'vue-web-terminal'
 
+// for vue2
 Vue.use(Terminal)
+
+// for vue3
+const app = createApp(App)
+app.use(Terminal)
 ```
 
 使用示例
 
 ```vue
-
 <template>
   <div id="app">
     <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
@@ -31,9 +39,11 @@ Vue.use(Terminal)
 </template>
 
 <script>
+import Terminal from "vue-web-terminal"
 
 export default {
   name: 'App',
+  components:{Terminal},
   methods: {
     onExecCmd(key, command, success, failed) {
       if (key === 'fail') {
@@ -115,7 +125,7 @@ terminal标签支持属性参数表
 | warnLogLimitEnable  | 是否开启日志限制警告                              | boolean  | true              |
 | auto-help           | 是否打开命令行自动搜索提示功能                         | boolean  | true              |
 | help-style          | help自定义样式                               | string   |                   |
-| command-store       | 自定义的命令行库，见[命令行定义格式](#命令行定义)             | array    | [内置命令行](#内置命令行)   |
+| command-store       | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)   |
 | command-store-sort  | 命令行库排序                                  | function | function(a,b) {}  |
 
 ## Select Events
@@ -133,14 +143,11 @@ terminal标签支持事件表
 
 本插件提供了一些 Api 可以使用 Vue 主动向插件发起事件请求。
 
-Terminal在 Vue 的prototype中定义了一个变量可以获取Terminal对象
-
 ```js
-this.$terminal
+import Terminal from "vue-web-terminal"
 
-//  or
-
-Vue.prototype.$terminal
+//  获取api
+Terminal.$api
 ```
 
 ### 向Terminal推送一条消息
@@ -153,7 +160,7 @@ let message = {
     content: 'This is a wanning message.'
 }
 
-this.$terminal.pushMessage(name, message)
+Terminal.$api.pushMessage(name, message)
 ```
 
 ### 修改上下文
@@ -161,7 +168,6 @@ this.$terminal.pushMessage(name, message)
 比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置 ，但是需使用`.sync`绑定一个变量
 
 ```vue
-
 <template>
   <div id="app">
     <terminal name="my-terminal" :context.sync="context"></terminal>
@@ -169,6 +175,8 @@ this.$terminal.pushMessage(name, message)
 </template>
 
 <script>
+import Terminal from "vue-web-terminal"
+
 export default {
   name: 'App',
   data() {
@@ -178,7 +186,7 @@ export default {
   },
   methods: {
     _updateContext(newCtx) {
-      this.$terminal.updateContext("my-terminal", newCtx)
+      Terminal.$api.updateContext("my-terminal", newCtx)
     }
   }
 }
@@ -344,22 +352,22 @@ execCmd(key, command, success)
 }
 ```
 
-## 命令行定义
+## 命令定义
 
-如果开启了命令行帮助搜索功能，在实例化Terminal之前需要传入自定义命令行库，传入的命令行库为 N 个命令行的数组，以下是命令行格式定义规则：
+如果开启了命令帮助搜索功能，在实例化Terminal之前需要传入自定义命令库，传入的命令库为 N 个命令的数组，以下是命令格式定义规则：
 
-| 参数          | 说明                        | 类型     |
-|-------------|---------------------------|--------|
-| key         | 命令行关键字，必填                 | string |
-| title       | 显示标题                      | string |
-| group       | 分组，可自定义，默认为 `local`       | string |
-| usage       | 使用方法                      | string |
-| description | 详细描述                      | string |
-| example     | 使用示例，见[命令行示例格式](#命令行示例格式) | array  |
+| 参数          | 说明                      | 类型     |
+|-------------|-------------------------|--------|
+| key         | 命令关键字，必填                | string |
+| title       | 显示标题                    | string |
+| group       | 分组，可自定义，默认为 `local`     | string |
+| usage       | 使用方法                    | string |
+| description | 详细描述                    | string |
+| example     | 使用示例，见[命令示例格式](#命令示例格式) | array  |
 
-### 命令行示例格式
+### 命令示例格式
 
-示例格式比较简单，`des`为描述，`cmd`为具体的命令行，json格式如下：
+示例格式比较简单，`des`为描述，`cmd`为具体的命令，json格式如下：
 
 ```json
 [
@@ -374,7 +382,7 @@ execCmd(key, command, success)
 ]
 ```
 
-### 内置命令行
+### 内置命令
 
 Terminal默认内置有以下命令，且不可替代
 
