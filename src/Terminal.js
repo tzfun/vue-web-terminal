@@ -1,6 +1,6 @@
 import {ref, nextTick} from 'vue'
 import sizeof from 'object-sizeof'
-import {_dateFormat, _isEmpty, _nonEmpty, _sleep} from "./Util.js";
+import {_dateFormat, _html, _isEmpty, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 
@@ -26,6 +26,22 @@ export default {
                 item: null
             },
             allCommandStore: [{
+                key: 'help',
+                title: 'Help',
+                group: 'local',
+                usage: 'help [pattern]',
+                description: 'Show command document.',
+                example: [
+                    {
+                        des: "Get help documentation for exact match commands.",
+                        cmd: 'help refresh'
+                    },
+                    {
+                        des:"Get help documentation for fuzzy matching commands.",
+                        cmd: 'help *e*'
+                    }
+                ]
+            }, {
                 key: 'clear',
                 title: 'Clear logs',
                 group: 'local',
@@ -241,14 +257,17 @@ export default {
                 this.inputCmd.focus()
             })
         },
-        _printHelp() {
+        _printHelp(regExp) {
             let content = {
                 head: ['KEY', 'GROUP', 'DETAIL'],
                 rows: []
             }
             this.allCommandStore.forEach(command => {
+                if (!regExp.test(command.key)) {
+                    return
+                }
                 let row = []
-                row.push(command.key)
+                row.push(`<span class='t-teach'>${command.key}</span>`)
                 row.push(command.group)
 
                 let detail = ''
@@ -256,7 +275,7 @@ export default {
                     detail += `Description: ${command.description}<br>`
                 }
                 if (_nonEmpty(command.usage)) {
-                    detail += `Usage: <code>${command.usage}</code><br>`
+                    detail += `Usage: <code>${_unHtml(command.usage)}</code><br>`
                 }
                 if (command.example != null) {
                     if (command.example.length > 0) {
@@ -266,15 +285,15 @@ export default {
                     for (let idx in command.example) {
                         let eg = command.example[idx]
                         detail += `
-                    <div>
-                        <div style="float:left;width: 30px;display:flex;font-size: 12px;line-height: 18px;">
-                          eg${parseInt(idx) + 1}:
-                        </div>
-                        <div style="float:left;width: calc(100% - 30px);display: flex">
-                          <ul class="example-ul">
-                            <li class="example-li"><code>${eg.cmd}</code></li>
-                            <li class="example-li"><span></span></li>
-                    `
+                        <div>
+                            <div style="float:left;width: 30px;display:flex;font-size: 12px;line-height: 18px;">
+                              eg${parseInt(idx) + 1}:
+                            </div>
+                            <div style="float:left;width: calc(100% - 30px);display: flex">
+                              <ul class="example-ul">
+                                <li class="example-li"><code>${eg.cmd}</code></li>
+                                <li class="example-li"><span></span></li>
+                        `
 
                         if (_nonEmpty(eg.des)) {
                             detail += `<li class="example-li"><span>${eg.des}</span></li>`
@@ -299,46 +318,59 @@ export default {
         execute() {
             this._resetSearchKey()
             if (this.command.trim() !== "") {
-                let split = this.command.split(" ")
-                let cmdKey = split[0];
-                this.saveCurCommand();
-                this.$emit("beforeExecCmd", cmdKey, this.command)
-                switch (cmdKey) {
-                    case 'refresh':
-                        location.reload()
-                        break;
-                    case 'help':
-                        this._printHelp()
-                        break;
-                    case 'clear':
-                        this._doClear(split);
-                        break;
-                    case 'open':
-                        this.openUrl(split[1]);
-                        break;
-                    default: {
-                        this.showInputLine = false
-                        let success = (message) => {
-                            if (message != null) {
-                                this._pushMessage(message)
-                            }
-                            this.showInputLine = true
-                            this._endExecCallBack()
+                try {
+                    let split = this.command.split(" ")
+                    let cmdKey = split[0];
+                    this.saveCurCommand();
+                    this.$emit("beforeExecCmd", cmdKey, this.command)
+                    switch (cmdKey) {
+                        case 'refresh':
+                            location.reload()
+                            break;
+                        case 'help': {
+                            let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
+                            reg = reg.replace(/\*/g, ".*")
+                            this._printHelp(new RegExp(reg, "i"))
+                            break;
                         }
-
-                        let failed = (message = 'Failed to execute.') => {
-                            if (message != null) {
-                                this._pushMessage({
-                                    time: this._curTime(), type: 'normal', class: 'error', content: message
-                                })
+                        case 'clear':
+                            this._doClear(split);
+                            break;
+                        case 'open':
+                            this.openUrl(split[1]);
+                            break;
+                        default: {
+                            this.showInputLine = false
+                            let success = (message) => {
+                                if (message != null) {
+                                    this._pushMessage(message)
+                                }
+                                this.showInputLine = true
+                                this._endExecCallBack()
                             }
-                            this.showInputLine = true
-                            this._endExecCallBack()
-                        }
 
-                        this.$emit("execCmd", cmdKey, this.command, success, failed)
-                        return
+                            let failed = (message = 'Failed to execute.') => {
+                                if (message != null) {
+                                    this._pushMessage({
+                                        time: this._curTime(), type: 'normal', class: 'error', content: message
+                                    })
+                                }
+                                this.showInputLine = true
+                                this._endExecCallBack()
+                            }
+
+                            this.$emit("execCmd", cmdKey, this.command, success, failed)
+                            return
+                        }
                     }
+                } catch (e) {
+                    console.error(e)
+                    this._pushMessage({
+                        type: 'normal',
+                        class: 'error',
+                        content: _html(_unHtml(e.stack)),
+                        tag: 'Console Error'
+                    })
                 }
             }
             this._activeCursor()
