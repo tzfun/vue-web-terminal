@@ -389,6 +389,23 @@ Terminal默认内置有以下命令，且不可替代
 ```json
 [
   {
+    "key": "help",
+    "title": "Help",
+    "group": "local",
+    "usage": "help [pattern]",
+    "description": "Show command document.",
+    "example": [
+      {
+        "des": "Get help documentation for exact match commands.",
+        "cmd": "help refresh"
+      },
+      {
+        "des":"Get help documentation for fuzzy matching commands.",
+        "cmd": "help *e*"
+      }
+    ]
+  },
+  {
     "key": "clear",
     "title": "Clear logs",
     "group": "local",
