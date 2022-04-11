@@ -7,6 +7,7 @@ export default {
     name: 'Terminal',
     data() {
         return {
+            terminalObj: TerminalObj,
             command: "",
             commandLog: [],
             cmdChange: false,
@@ -114,7 +115,7 @@ export default {
             type: Boolean,
             default: true
         },
-        helpStyle:{
+        helpStyle: {
             type: String,
             default: ''
         }
