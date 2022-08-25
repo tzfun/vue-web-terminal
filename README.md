@@ -111,22 +111,23 @@ body, html, #app {
 
 terminal标签支持属性参数表
 
-| 参数                  | 说明                                      | 类型       | 默认值               |
-|---------------------|-----------------------------------------|----------|-------------------|
-| name                | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值 | string   | terminal          |
-| context             | 初始化上下文文本                                | string   | /vue-web-terminal |
-| title               | header中显示的标题                            | string   | vue-web-terminal  |
-| show-header         | 是否显示header                              | boolean  | true              |
-| init-log            | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组  | array    | 略                 |
-| init-log-delay      | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms             | number   | 150               |
-| show-log-time       | 当消息**type**为`normal`时是否显示时间             | boolean  | true              |
-| warnLogByteLimit    | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`   | number   | 1024 * 1024 * 10  |
-| warnLogCountLimit   | 当前Terminal日志条数超出此限制会发出警告                | number   | 200               |
-| warnLogLimitEnable  | 是否开启日志限制警告                              | boolean  | true              |
-| auto-help           | 是否打开命令行自动搜索提示功能                         | boolean  | true              |
-| help-style          | help自定义样式                               | string   |                   |
-| command-store       | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)   |
-| command-store-sort  | 命令行库排序                                  | function | function(a,b) {}  |
+| 参数                 | 说明                                      | 类型       | 默认值                                                |
+|--------------------|-----------------------------------------|----------|----------------------------------------------------|
+| name               | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值 | string   | terminal                                           |
+| context            | 初始化上下文文本                                | string   | /vue-web-terminal                                  |
+| title              | header中显示的标题                            | string   | vue-web-terminal                                   |
+| show-header        | 是否显示header                              | boolean  | true                                               |
+| init-log           | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组  | array    | 略                                                  |
+| init-log-delay     | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms             | number   | 150                                                |
+| show-log-time      | 当消息**type**为`normal`时是否显示时间             | boolean  | true                                               |
+| warnLogByteLimit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`   | number   | 1024 * 1024 * 10                                   |
+| warnLogCountLimit  | 当前Terminal日志条数超出此限制会发出警告                | number   | 200                                                |
+| warnLogLimitEnable | 是否开启日志限制警告                              | boolean  | true                                               |
+| auto-help          | 是否打开命令行自动搜索提示功能                         | boolean  | true                                               |
+| enableExampleHint  | 是否显示样例提示                                | boolean  | true                                               |
+| command-store      | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)                                    |
+| command-store-sort | 命令行库排序                                  | function | function(a,b) {}                                   |
+| inputFilter        | 自定义输入过滤，返回值为过滤后的字符串                     | function | function(当前输入字符char,输入框内字符串value, input时间event) {} |
 
 ## Select Events
 
@@ -382,6 +383,25 @@ execCmd(key, command, success)
 ]
 ```
 
+### 命令Help
+
+插件内置了help命令可以方便使用者搜索命令库，通过help命令可以查看命令的key、分组、解释样例信息。
+```shell
+
+# 显示全部命令信息
+help
+
+# 模糊搜索命令，搜索build前缀的命令
+help build*
+
+# 模糊搜索名，搜索带有event的命令
+help *event*
+
+# 按分组搜索，搜索关键词需要以":"开头，搜索分组为server的所有命令
+help :server
+
+```
+
 ### 内置命令
 
 Terminal默认内置有以下命令，且不可替代
@@ -402,6 +422,10 @@ Terminal默认内置有以下命令，且不可替代
       {
         "des":"Get help documentation for fuzzy matching commands.",
         "cmd": "help *e*"
+      },
+      {
+        "des": "Get help documentation for specified group, match key must start with ':'.",
+        "cmd": "help :groupA"
       }
     ]
   },

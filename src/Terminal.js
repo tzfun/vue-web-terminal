@@ -37,8 +37,12 @@ export default {
                         cmd: 'help refresh'
                     },
                     {
-                        des:"Get help documentation for fuzzy matching commands.",
+                        des: "Get help documentation for fuzzy matching commands.",
                         cmd: 'help *e*'
+                    },
+                    {
+                        des: "Get help documentation for specified group, match key must start with ':'.",
+                        cmd: 'help :groupA'
                     }
                 ]
             }, {
@@ -131,9 +135,12 @@ export default {
             type: Boolean,
             default: true
         },
-        helpStyle: {
-            type: String,
-            default: ''
+        enableExampleHint: {
+            type: Boolean,
+            default: true
+        },
+        inputFilter: {
+            type: Function
         }
     },
     emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd"],
@@ -257,13 +264,26 @@ export default {
                 this.inputCmd.focus()
             })
         },
-        _printHelp(regExp) {
+        /**
+         * help命令执行后调用此方法
+         *
+         * 命令搜索：comm*、command
+         * 分组搜索：:groupA
+         */
+        _printHelp(regExp, srcStr) {
             let content = {
                 head: ['KEY', 'GROUP', 'DETAIL'],
                 rows: []
             }
+            let findGroup = srcStr && srcStr.length > 1 && srcStr.startsWith(":")
+                ? srcStr.substring(1).toLowerCase()
+                : null
             this.allCommandStore.forEach(command => {
-                if (!regExp.test(command.key)) {
+                if (findGroup) {
+                    if (_isEmpty(command.group) || findGroup !== command.group.toLowerCase()) {
+                        return;
+                    }
+                } else if (!regExp.test(command.key)) {
                     return
                 }
                 let row = []
@@ -330,7 +350,7 @@ export default {
                         case 'help': {
                             let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
                             reg = reg.replace(/\*/g, ".*")
-                            this._printHelp(new RegExp(reg, "i"))
+                            this._printHelp(new RegExp(reg, "i"), split[1])
                             break;
                         }
                         case 'clear':
@@ -642,6 +662,16 @@ export default {
                 } else {
                     this._searchCmd()
                 }
+            }
+        },
+        _onInput(e) {
+            if (this.inputFilter != null) {
+                let value = e.target.value
+                let newStr = this.inputFilter(e.data, value, e)
+                if (newStr == null) {
+                    newStr = value
+                }
+                this.command = newStr
             }
         }
     }
