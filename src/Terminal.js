@@ -42,7 +42,7 @@ export default {
                     },
                     {
                         des: "Get help documentation for specified group, match key must start with ':'.",
-                        cmd: 'help groupA:'
+                        cmd: 'help :groupA'
                     }
                 ]
             }, {

@@ -422,6 +422,10 @@ Terminal默认内置有以下命令，且不可替代
       {
         "des":"Get help documentation for fuzzy matching commands.",
         "cmd": "help *e*"
+      },
+      {
+        "des": "Get help documentation for specified group, match key must start with ':'.",
+        "cmd": "help :groupA"
       }
     ]
   },
