@@ -119,7 +119,7 @@
             <span> > </span>
           </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
                                                                                  :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" id="command-input" v-model="command" class="input-box"
+          <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput" class="input-box"
                  ref="inputCmd"
                  autocomplete="off"
                  auto-complete="new-password"
@@ -137,8 +137,7 @@
         <p class="help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
-    <div class="cmd-help" :style="helpStyle"
-         v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
+    <div class="cmd-help" v-if="enableExampleHint && searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
       <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
          v-html="searchCmd.item.description"></p>
       <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
