@@ -25,55 +25,61 @@ export default {
             searchCmd: {
                 item: null
             },
-            allCommandStore: [{
-                key: 'help',
-                title: 'Help',
-                group: 'local',
-                usage: 'help [pattern]',
-                description: 'Show command document.',
-                example: [
-                    {
-                        des: "Get help documentation for exact match commands.",
-                        cmd: 'help refresh'
-                    },
-                    {
-                        des: "Get help documentation for fuzzy matching commands.",
-                        cmd: 'help *e*'
-                    },
-                    {
-                        des: "Get help documentation for specified group, match key must start with ':'.",
-                        cmd: 'help :groupA'
-                    }
-                ]
-            }, {
-                key: 'clear',
-                title: 'Clear logs',
-                group: 'local',
-                usage: 'clear [history]',
-                description: 'Clear screen or history.',
-                example: [{
-                    cmd: 'clear', des: 'Clear all records on the current screen.'
+            allCommandStore: [
+                {
+                    key: 'help',
+                    title: 'Help',
+                    group: 'local',
+                    usage: 'help [pattern]',
+                    description: 'Show command document.',
+                    example: [
+                        {
+                            des: "Get help documentation for exact match commands.",
+                            cmd: 'help refresh'
+                        },
+                        {
+                            des: "Get help documentation for fuzzy matching commands.",
+                            cmd: 'help *e*'
+                        },
+                        {
+                            des: "Get help documentation for specified group, match key must start with ':'.",
+                            cmd: 'help :groupA'
+                        }
+                    ]
                 }, {
-                    cmd: 'clear history', des: 'Clear command history'
-                }]
-            }, {
-                key: 'refresh',
-                title: 'Refresh page',
-                group: 'local',
-                usage: 'refresh',
-                description: 'Refresh current page.',
-                example: null
-            }, {
-                key: 'open',
-                title: 'Open page',
-                group: 'local',
-                usage: 'open <url>',
-                description: 'Open a specified page.',
-                example: [{
-                    cmd: 'open blog.beifengtz.com'
-                }]
-            }],
-            fullscreen: false
+                    key: 'clear',
+                    title: 'Clear logs',
+                    group: 'local',
+                    usage: 'clear [history]',
+                    description: 'Clear screen or history.',
+                    example: [{
+                        cmd: 'clear', des: 'Clear all records on the current screen.'
+                    }, {
+                        cmd: 'clear history', des: 'Clear command history'
+                    }]
+                }, {
+                    key: 'refresh',
+                    title: 'Refresh page',
+                    group: 'local',
+                    usage: 'refresh',
+                    description: 'Refresh current page.',
+                    example: null
+                }, {
+                    key: 'open',
+                    title: 'Open page',
+                    group: 'local',
+                    usage: 'open <url>',
+                    description: 'Open a specified page.',
+                    example: [{
+                        cmd: 'open blog.beifengtz.com'
+                    }]
+                }
+            ],
+            fullscreen: false,
+            perfWarningRate: {
+                size: 0,
+                count: 0
+            }
         }
     },
     props: {
@@ -433,9 +439,10 @@ export default {
          * }
          *
          * @param message
+         * @param ignoreCheck
          * @private
          */
-        _pushMessage(message) {
+        _pushMessage(message, ignoreCheck = false) {
             if (!this.isValidType(message.type)) {
                 return
             }
@@ -445,7 +452,9 @@ export default {
 
             this.terminalLog.push(message);
             this.terminalSize += sizeof(message)
-            this.checkTerminalLog()
+            if (!ignoreCheck) {
+                this.checkTerminalLog()
+            }
 
             //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
             setTimeout(() => {
@@ -472,21 +481,30 @@ export default {
             if (!this.warnLogLimitEnable) {
                 return
             }
-            let length = this.terminalLog.length
-            if (this.terminalSize > this.warnLogByteLimit) {
+            let count = this.terminalLog.length
+            let size = this.terminalSize
+            if (this.warnLogCountLimit > 0
+                && count > this.warnLogCountLimit
+                && Math.floor(count / this.warnLogCountLimit) !== this.perfWarningRate.count) {
+                this.perfWarningRate.count = Math.floor(count / this.warnLogCountLimit)
                 this._pushMessage({
                     time: this._curTime(),
-                    content: `Terminal log size exceeded <strong style="color: red">${this.warnLogByteLimit}(byte)</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
+                    content: `Terminal log count exceeded <strong style="color: red">${count}/${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
                     class: 'system',
                     type: 'normal'
-                })
-            } else if (length > this.warnLogCountLimit) {
-                this._pushMessage({
-                    time: this._curTime(),
-                    content: `Terminal log count exceeded <strong style="color: red">${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
-                    class: 'system',
-                    type: 'normal'
-                })
+                }, true)
+            } else if (this.warnLogByteLimit > 0
+                && size > this.warnLogByteLimit) {
+                let rate = Math.floor(size / this.warnLogByteLimit);
+                if (this.perfWarningRate.size !== rate) {
+                    this.perfWarningRate.size = rate
+                    this._pushMessage({
+                        time: this._curTime(),
+                        content: `Terminal log size exceeded <strong style="color: red">${size}/${this.warnLogByteLimit}(byte)</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
+                        class: 'system',
+                        type: 'normal'
+                    }, true)
+                }
             }
         },
         saveCurCommand() {
@@ -537,6 +555,8 @@ export default {
             } else if (args.length === 2 && args[1] === 'history') {
                 historyStore.clearLog(this.name)
             }
+            this.perfWarningRate.size = 0
+            this.perfWarningRate.count = 0
         },
         openUrl(url) {
             let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
