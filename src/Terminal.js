@@ -211,6 +211,11 @@ export default {
     },
     methods: {
         _triggerClick(key) {
+            if (key === 'fullScreen' && !this.fullscreen) {
+                this._fullscreen()
+            } else if (key === 'minScreen' && this.fullscreen) {
+                this._fullscreen()
+            }
             this.$emit('onClick', key)
         },
         _resetSearchKey() {
