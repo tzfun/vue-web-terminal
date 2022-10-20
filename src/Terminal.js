@@ -178,7 +178,7 @@ export default {
         })
 
         if (this.initLog != null) {
-            this._pushMessageBatch(this.initLog, this.initLogDelay).then(() => {
+            this._pushMessageBatch(this.initLog, this.initLogDelay, true).then(() => {
             })
         }
 
@@ -427,10 +427,11 @@ export default {
                 }
             }
         },
-        isValidType(type) {
-            let valid = /^(normal|html|code|table|json)$/.test(type)
+        filterMessageType(message) {
+            let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
             if (!valid) {
-                console.warn("Invalid terminal message type: " + type)
+                console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
+                message.type = 'normal'
             }
             return valid
         },
@@ -457,9 +458,11 @@ export default {
          * @private
          */
         _pushMessage(message, ignoreCheck = false) {
-            if (!this.isValidType(message.type)) {
-                return
-            }
+            if (message == null) return
+            if (message instanceof Array) return this._pushMessageBatch(message, null, ignoreCheck)
+
+            this.filterMessageType(message)
+
             if (this.showLogTime) {
                 message.time = this._curTime()
             }
@@ -478,18 +481,18 @@ export default {
                 })
             }, 100)
         },
-        async _pushMessageBatch(messages, time) {
+        async _pushMessageBatch(messages, time, ignoreCheck = false) {
             for (let m of messages) {
-                if (!this.isValidType(m.type)) {
-                    continue
-                }
+                this.filterMessageType(m)
                 this.terminalLog.push(m);
                 this.terminalSize += sizeof(m)
                 if (time != null) {
                     await _sleep(time);
                 }
             }
-            this.checkTerminalLog()
+            if (!ignoreCheck) {
+                this.checkTerminalLog()
+            }
         },
         checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
