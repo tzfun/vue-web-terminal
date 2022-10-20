@@ -1,9 +1,219 @@
+.t-log-box {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+.t-shell-dot {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    -moz-transition: opacity 0.2s ease;
+    -ms-transition: opacity 0.2s ease;
+    -webkit-transition: opacity 0.2s ease;
+    -o-transition: opacity 0.2s ease;
+}
+
+.t-shell-dots:hover .t-shell-dot {
+    opacity: 1;
+}
+
+.t-container {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #191b24;
+    overflow: auto;
+}
+
+.t-header {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    left: 0;
+    background-color: #959598;
+    text-align: center;
+    padding: 2px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.t-header h4 {
+    font-size: 14px;
+    margin: 5px;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.t-header ul.t-shell-dots {
+    position: absolute;
+    top: 5px;
+    left: 8px;
+    padding-left: 0;
+    margin: 0;
+}
+
+.t-header ul.t-shell-dots li {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    margin-left: 6px;
+    margin-top: 4px;
+    line-height: 16px;
+    cursor: pointer;
+}
+
+.t-header ul .t-shell-dots-red {
+    background-color: #c83030;
+}
+
+.t-header ul .t-shell-dots-yellow {
+    background-color: #f7db60;
+}
+
+.t-header ul .t-shell-dots-green {
+    background-color: #2ec971;
+}
+
+.t-window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    z-index: 1;
+    max-height: none;
+    background-color: #191b24;
+    min-height: 140px;
+    padding: 50px 20px 20px 20px;
+    font-weight: 400;
+    font-family: Monaco, Menlo, Consolas, monospace;
+    color: #fff;
+}
+
+.t-window .prompt:before {
+    content: "$";
+    margin-right: 10px;
+}
+
+.t-window p {
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+.t-window p, .t-window div {
+    font-size: 13px;
+}
+
+.t-window p .cmd {
+    line-height: 24px;
+}
+
+.t-window .cursor {
+    background-color: #fff;
+    animation: step-end 1s infinite;
+    -webkit-animation: step-end 1s infinite;
+    -o-animation: step-end 1s infinite;
+    -moz-animation: step-end 1s infinite;
+    position: absolute;
+    height: 16px;
+    margin-top: 1px;
+}
+
+.t-input-box {
+    position: relative;
+    background: #030924;
+    border: none;
+    width: 1px;
+    opacity: 0;
+    /*user-select:none;*/
+
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: -internal-light-dark(black, white);
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    appearance: textfield;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    margin: 0;
+    font: 400 13.3333px Arial;
+    padding: 1px 2px;
+    border-image: initial;
+}
+
+.t-content-normal .success {
+    padding: 2px 3px;
+    background: #27ae60;
+}
+
+.t-content-normal .error {
+    padding: 2px 3px;
+    background: #c0392b;
+}
+
+.t-content-normal .warning {
+    padding: 2px 3px;
+    background: #f39c12;
+}
+
+.t-content-normal .info {
+    padding: 2px 3px;
+    background: #2980b9;
+}
+
+.t-content-normal .system {
+    padding: 2px 3px;
+    background: #8697a2;
+}
+
+.t-crude-font {
+    font-weight: 600;
+}
+
+#t-en-flag, #t-cn-flag {
+    opacity: 0;
+}
+
+.t-last-line {
+    font-size: 0;
+    word-spacing: 0;
+    letter-spacing: 0;
+    position: relative;
+}
+
+.t-help-msg {
+    color: #ffffff87;
+}
+
+/*手机*/
+@media screen and (max-width: 768px ) {
+    .t-window {
+        padding: 40px 10px 10px 10px;
+    }
+}
+
+/*平板*/
+@media screen and (max-width: 992px) and (min-width: 768.1px) {
+
+}
+
 .t-teach {
     font-weight: 700;
     color: yellow;
 }
 
-.help-list {
+.t-help-list {
     margin: 0;
     list-style: none;
     padding-left: 0;
@@ -12,23 +222,16 @@
     display: -ms-inline-grid;
 }
 
-.help-list li {
+.t-help-list li {
     margin: 3px 0;
 }
 
-.tag-danger {
-    background: red;
-    margin: 0 8px;
-    padding: 1px 8px;
-    border-radius: 3px;
-}
-
-.json-deep-selector {
+.t-json-deep-selector {
     margin-top: 5px;
     width: 140px;
 }
 
-.cmd-help {
+.t-cmd-help {
     position: fixed;
     right: 10px;
     top: 40px;
@@ -40,14 +243,14 @@
     box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
 }
 
-.cmd-help code {
+.t-cmd-help code {
     color: white;
     background-color: rgba(0, 0, 0, 0) !important;
     border: none;
     padding: 0;
 }
 
-.pre-numbering {
+.t-pre-numbering {
     margin-top: 0;
     position: absolute;
     top: 0;
@@ -59,7 +262,7 @@
     padding: 1em 0;
 }
 
-.pre-numbering li {
+.t-pre-numbering li {
     list-style: none;
     color: #AAA;
     font-size: 1em;
@@ -69,7 +272,7 @@ pre {
     position: relative;
 }
 
-.example-ul {
+.t-example-ul {
     padding: 0 0 0 10px;
     margin: 0;
     list-style: none;
@@ -109,4 +312,13 @@ pre {
     max-height: 500px;
     overflow: auto;
     font-size: 20px;
+}
+
+@keyframes step-end {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
 }

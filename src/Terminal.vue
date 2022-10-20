@@ -1,14 +1,14 @@
 <template>
-  <div class="terminal-container" ref="terminal-container" @click.self="_activeCursor">
+  <div class="t-container" ref="t-container" @click.self="_activeCursor">
     <div class="terminal">
-      <div class="terminal-header" v-if="showHeader">
+      <div class="t-header" v-if="showHeader">
         <h4>
           <span @click="_triggerClick('title')" style="cursor: pointer">{{ title }}</span>
         </h4>
-        <ul class="shell-dots">
-          <li class="shell-dot-item shell-dots-red">
+        <ul class="t-shell-dots">
+          <li class="shell-dot-item t-shell-dots-red">
             <svg t="1645078279626"
-                 class="shell-dot-icon"
+                 class="t-shell-dot"
                  viewBox="0 0 1024 1024"
                  version="1.1"
                  xmlns="http://www.w3.org/2000/svg"
@@ -20,9 +20,9 @@
                   p-id="1865" fill="#1413139c"></path>
             </svg>
           </li>
-          <li class="shell-dot-item shell-dots-yellow">
+          <li class="shell-dot-item t-shell-dots-yellow">
             <svg t="1645078503601"
-                 class="shell-dot-icon"
+                 class="t-shell-dot"
                  viewBox="0 0 1024 1024"
                  version="1.1"
                  xmlns="http://www.w3.org/2000/svg"
@@ -33,9 +33,9 @@
                     p-id="2763" fill="#1413139c"></path>
             </svg>
           </li>
-          <li class="shell-dot-item shell-dots-green">
+          <li class="shell-dot-item t-shell-dots-green">
             <svg t="1645078604258"
-                 class="shell-dot-icon"
+                 class="t-shell-dot"
                  viewBox="0 0 1024 1024"
                  version="1.1"
                  xmlns="http://www.w3.org/2000/svg"
@@ -49,17 +49,17 @@
           </li>
         </ul>
       </div>
-      <div class="terminal-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" ref="terminal-window"
+      <div class="t-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" ref="t-window"
            @click.self="_activeCursor">
-        <div class="log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
-          <span v-if="item.type === 'cmdLine'" class="crude-font">
+        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
+          <span v-if="item.type === 'cmdLine'" class="t-crude-font">
               <span class="prompt">{{ item.content }}</span>
           </span>
           <span v-else-if="item.type === 'splitLine'">
             <span style="line-height: 60px">====> {{ item.content }}</span>
           </span>
           <div v-else @click.self="_activeCursor">
-            <span v-if="item.type === 'normal'" class="terminal-content-normal">
+            <span v-if="item.type === 'normal'" class="t-content-normal">
               <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
               <span :class="item.class"
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
@@ -71,7 +71,7 @@
                              :key="idx + '_' + item.depth"
                              :value="parseToJson(item.content)">
                 </json-viewer>
-                <select class="json-deep-selector" v-model="item.depth">
+                <select class="t-json-deep-selector" v-model="item.depth">
                   <option value="" disabled selected hidden label="Choose a display deep"></option>
                   <option
                       v-for="i in jsonViewDepth"
@@ -113,13 +113,13 @@
             <div v-else-if="item.type === 'html'" v-html="item.content" @click.self="_activeCursor"></div>
           </div>
         </div>
-        <p class="terminal-last-line crude-font" v-show="showInputLine" @click.self="_activeCursor">
+        <p class="t-last-line t-crude-font" v-show="showInputLine" @click.self="_activeCursor">
           <span class="prompt">
             <span>{{ context }}</span>
             <span> > </span>
           </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
                                                                                  :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput" class="input-box"
+          <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput" class="t-input-box"
                  ref="inputCmd"
                  autocomplete="off"
                  auto-complete="new-password"
@@ -131,13 +131,13 @@
                  @keyup.down.exact="switchNextCmd"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
-          <span id="terminal-en-flag" @click.self="_activeCursor">aa</span>
-          <span id="terminal-cn-flag" @click.self="_activeCursor">你好</span>
+          <span id="t-en-flag" @click.self="_activeCursor">aa</span>
+          <span id="t-cn-flag" @click.self="_activeCursor">你好</span>
         </p>
-        <p class="help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
+        <p class="t-help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
-    <div class="cmd-help" v-if="enableExampleHint && searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
+    <div class="t-cmd-help" v-if="enableExampleHint && searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
       <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
          v-html="searchCmd.item.description"></p>
       <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
@@ -150,7 +150,7 @@
               eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}:
             </div>
             <div style="float:left;width: calc(100% - 30px);display: flex">
-              <ul class="example-ul">
+              <ul class="t-example-ul">
                 <li class="example-li"><code>{{ it.cmd }}</code></li>
                 <li class="example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
               </ul>
@@ -173,234 +173,8 @@ export default TerminalJs
 
 <style scoped>
 
-.log-box {
-  display: block;
-  margin-block-start: 1em;
-  margin-block-end: 1em;
-  margin-inline-start: 0;
-  margin-inline-end: 0;
-}
-
-.shell-dot-icon {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  -moz-transition: opacity 0.2s ease;
-  -ms-transition: opacity 0.2s ease;
-  -webkit-transition: opacity 0.2s ease;
-  -o-transition: opacity 0.2s ease;
-}
-
-.shell-dots:hover .shell-dot-icon {
-  opacity: 1;
-}
-
-.terminal-container {
-  position: relative;
-  width: 100%;
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: #191b24;
-  overflow: auto;
-}
-
-.terminal-header {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  right: 0;
-  left: 0;
-  background-color: #959598;
-  text-align: center;
-  padding: 2px;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.terminal-header h4 {
-  font-size: 14px;
-  margin: 5px;
-  letter-spacing: 1px;
-  color: white;
-}
-
-.terminal-header ul.shell-dots {
-  position: absolute;
-  top: 5px;
-  left: 8px;
-  padding-left: 0;
-  margin: 0;
-}
-
-.terminal-header ul.shell-dots li {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 10px;
-  margin-left: 6px;
-  margin-top: 4px;
-  line-height: 16px;
-  cursor: pointer;
-}
-
-.terminal-header ul .shell-dots-red {
-  background-color: #c83030;
-}
-
-.terminal-header ul .shell-dots-yellow {
-  background-color: #f7db60;
-}
-
-.terminal-header ul .shell-dots-green {
-  background-color: #2ec971;
-}
-
-.terminal-window {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  overflow: auto;
-  z-index: 1;
-  max-height: none;
-  background-color: #191b24;
-  min-height: 140px;
-  padding: 50px 20px 20px 20px;
-  font-weight: 400;
-  font-family: Monaco, Menlo, Consolas, monospace;
-  color: #fff;
-}
-
-.terminal-window .prompt:before {
-  content: "$";
-  margin-right: 10px;
-}
-
-.terminal-window p {
-  overflow-wrap: break-word;
-  word-break: break-all;
-}
-
-.terminal-window p, .terminal-window div {
-  font-size: 13px;
-}
-
-.terminal-window p .cmd {
-  line-height: 24px;
-}
-
-.terminal-window .cursor {
-  background-color: #fff;
-  animation: step-end 1s infinite;
-  -webkit-animation: step-end 1s infinite;
-  -o-animation: step-end 1s infinite;
-  -moz-animation: step-end 1s infinite;
-  position: absolute;
-  height: 16px;
-  margin-top: 1px;
-}
-
-.input-box {
-  position: relative;
-  background: #030924;
-  border: none;
-  width: 1px;
-  opacity: 0;
-  cursor: default;
-  /*user-select:none;*/
-}
-
 input[type="text" i] {
   padding: 1px 2px;
-}
-
-input {
-  -webkit-writing-mode: horizontal-tb !important;
-  text-rendering: auto;
-  color: -internal-light-dark(black, white);
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-transform: none;
-  text-indent: 0;
-  text-shadow: none;
-  display: inline-block;
-  text-align: start;
-  appearance: textfield;
-  background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));
-  -webkit-rtl-ordering: logical;
-  cursor: text;
-  margin: 0;
-  font: 400 13.3333px Arial;
-  padding: 1px 2px;
-  border-width: 2px;
-  border-style: inset;
-  border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));
-  border-image: initial;
-}
-
-.terminal-last-line {
-  font-size: 0;
-  word-spacing: 0;
-  letter-spacing: 0;
-  position: relative;
-}
-
-@keyframes step-end {
-  0%, 100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.terminal-content-normal .success {
-  padding: 2px 3px;
-  background: #27ae60;
-}
-
-.terminal-content-normal .error {
-  padding: 2px 3px;
-  background: #c0392b;
-}
-
-.terminal-content-normal .warning {
-  padding: 2px 3px;
-  background: #f39c12;
-}
-
-.terminal-content-normal .info {
-  padding: 2px 3px;
-  background: #2980b9;
-}
-
-.terminal-content-normal .system {
-  padding: 2px 3px;
-  background: #8697a2;
-}
-
-.crude-font {
-  font-weight: 600;
-}
-
-#terminal-en-flag, #terminal-cn-flag {
-  opacity: 0;
-}
-
-.help-msg {
-  color: #ffffff87;
-}
-
-/*手机*/
-@media screen and (max-width: 768px ) {
-  .terminal-window {
-    padding: 40px 10px 10px 10px;
-  }
-}
-
-/*平板*/
-@media screen and (max-width: 992px) and (min-width: 768.1px) {
-
 }
 
 select:invalid {

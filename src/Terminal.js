@@ -72,7 +72,8 @@ export default {
                 example: [{
                     cmd: 'open blog.beifengtz.com'
                 }]
-            }]
+            }],
+            fullscreen: false
         }
     },
     props: {
@@ -149,6 +150,8 @@ export default {
                 this._pushMessage(options)
             } else if (type === 'updateContext') {
                 this.$emit("update:context", options)
+            } else if (type === 'fullscreen') {
+                this._fullscreen()
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -168,11 +171,11 @@ export default {
     },
     mounted() {
         this.byteLen = {
-            en: document.getElementById("terminal-en-flag").getBoundingClientRect().width / 2,
-            cn: document.getElementById("terminal-cn-flag").getBoundingClientRect().width / 2
+            en: document.getElementById("t-en-flag").getBoundingClientRect().width / 2,
+            cn: document.getElementById("t-cn-flag").getBoundingClientRect().width / 2
         }
         this.$nextTick(() => {
-            let el = document.getElementsByClassName("terminal-window")[0]
+            let el = document.getElementsByClassName("t-window")[0]
             if (el != null) {
                 document.documentElement.scrollTop = el.offsetHeight;
             }
@@ -442,7 +445,7 @@ export default {
             //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
             setTimeout(() => {
                 this.$nextTick(() => {
-                    let container = this.$refs['terminal-container']
+                    let container = this.$refs['t-container']
                     container.scrollTop += 1000
                 })
             }, 100)
@@ -655,6 +658,34 @@ export default {
                 }
                 this.command = newStr
             }
+        },
+        _fullscreen() {
+            let fullArea = this.$refs['t-container']
+            if (this.fullscreen) {
+                //  退出全屏
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            } else {
+                //  进入全屏
+                if (fullArea.requestFullscreen) {
+                    fullArea.requestFullscreen();
+                } else if (fullArea.webkitRequestFullScreen) {
+                    fullArea.webkitRequestFullScreen();
+                } else if (fullArea.mozRequestFullScreen) {
+                    fullArea.mozRequestFullScreen();
+                } else if (fullArea.msRequestFullscreen) {
+                    // IE11
+                    fullArea.msRequestFullscreen();
+                }
+            }
+            this.fullscreen = !this.fullscreen
         }
     }
 }
