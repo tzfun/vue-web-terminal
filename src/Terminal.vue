@@ -1,5 +1,5 @@
 <template>
-  <div class="t-container" ref="t-container" @click.self="_activeCursor">
+  <div class="t-container" ref="terminalContainer" @click.self="_activeCursor">
     <div class="terminal">
       <div class="t-header" v-if="showHeader">
         <h4>
@@ -131,8 +131,8 @@
                  @keyup.down.exact="switchNextCmd"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
-          <span class="terminal-flag" @click.self="_activeCursor">aa</span>
-          <span class="terminal-flag" @click.self="_activeCursor">你好</span>
+          <span class="t-flag" @click.self="_activeCursor">aa</span>
+          <span class="t-flag" @click.self="_activeCursor">你好</span>
         </p>
         <p class="t-help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
@@ -151,8 +151,8 @@
             </div>
             <div style="float:left;width: calc(100% - 30px);display: flex">
               <ul class="t-example-ul">
-                <li class="example-li"><code>{{ it.cmd }}</code></li>
-                <li class="example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
+                <li class="t-example-li"><code>{{ it.cmd }}</code></li>
+                <li class="t-example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
               </ul>
             </div>
           </div>

@@ -149,16 +149,12 @@ export default {
         const terminalContainer = ref(null)
         const terminalWindow = ref(null)
         const inputCmd = ref(null)
-        const terminalEnFlag = ref(null)
-        const terminalCnFlag = ref(null)
         const terminalObj = TerminalObj
 
         return {
             terminalContainer,
             terminalWindow,
             inputCmd,
-            terminalEnFlag,
-            terminalCnFlag,
             terminalObj
         }
     },
@@ -318,13 +314,13 @@ export default {
                               eg${parseInt(idx) + 1}:
                             </div>
                             <div style="float:left;width: calc(100% - 30px);display: flex">
-                              <ul class="example-ul">
-                                <li class="example-li"><code>${eg.cmd}</code></li>
-                                <li class="example-li"><span></span></li>
+                              <ul class="t-example-ul">
+                                <li class="t-example-li"><code>${eg.cmd}</code></li>
+                                <li class="t-example-li"><span></span></li>
                         `
 
                         if (_nonEmpty(eg.des)) {
-                            detail += `<li class="example-li"><span>${eg.des}</span></li>`
+                            detail += `<li class="t-example-li"><span>${eg.des}</span></li>`
                         }
                         detail += `
                             </ul>
@@ -683,7 +679,7 @@ export default {
             }
         },
         _fullscreen() {
-            let fullArea = this.$refs['t-container']
+            let fullArea = this.terminalContainer
             if (this.fullscreen) {
                 //  退出全屏
                 if (document.exitFullscreen) {
