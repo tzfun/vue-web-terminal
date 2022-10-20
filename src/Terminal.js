@@ -300,13 +300,13 @@ export default {
                               eg${parseInt(idx) + 1}:
                             </div>
                             <div style="float:left;width: calc(100% - 30px);display: flex">
-                              <ul class="example-ul">
-                                <li class="example-li"><code>${eg.cmd}</code></li>
-                                <li class="example-li"><span></span></li>
+                              <ul class="t-example-ul">
+                                <li class="t-example-li"><code>${eg.cmd}</code></li>
+                                <li class="t-example-li"><span></span></li>
                         `
 
                         if (_nonEmpty(eg.des)) {
-                            detail += `<li class="example-li"><span>${eg.des}</span></li>`
+                            detail += `<li class="t-example-li"><span>${eg.des}</span></li>`
                         }
                         detail += `
                             </ul>
