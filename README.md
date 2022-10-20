@@ -199,7 +199,7 @@ export default {
 使当前terminal进入或退出全屏
 
 ```js
-Terminal.$api.toggleScreenFull(name)
+Terminal.$api.fullscreen(name)
 ```
 
 ## 消息对象
