@@ -44,6 +44,10 @@ function TerminalObj() {
         return historyStore
     }
 
+    let fullscreen = function (name) {
+        post(name, "fullscreen")
+    }
+
     return {
         setOptions: setOptions,
         getOptions: getOptions,
@@ -52,7 +56,8 @@ function TerminalObj() {
         unregister: unregister,
         pushMessage: pushMessage,
         updateContext: updateContext,
-        getHistory: getHistory
+        getHistory: getHistory,
+        fullscreen: fullscreen
     }
 }
 

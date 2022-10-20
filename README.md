@@ -194,6 +194,14 @@ export default {
 </script>
 ```
 
+### Fullscreen
+
+使当前terminal进入或退出全屏
+
+```js
+Terminal.$api.toggleScreenFull(name)
+```
+
 ## 消息对象
 
 本插件定义了消息对象，任何消息需按照此格式定义才能正确显示。

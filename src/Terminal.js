@@ -72,7 +72,8 @@ export default {
                 example: [{
                     cmd: 'open blog.beifengtz.com'
                 }]
-            }]
+            }],
+            fullscreen: false
         }
     },
     props: {
@@ -167,6 +168,8 @@ export default {
                 this._pushMessage(options)
             } else if (type === 'updateContext') {
                 this.$emit("update:context", options)
+            } else if (type === 'fullscreen') {
+                this._fullscreen()
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -673,6 +676,34 @@ export default {
                 }
                 this.command = newStr
             }
+        },
+        _fullscreen() {
+            let fullArea = this.$refs['t-container']
+            if (this.fullscreen) {
+                //  退出全屏
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            } else {
+                //  进入全屏
+                if (fullArea.requestFullscreen) {
+                    fullArea.requestFullscreen();
+                } else if (fullArea.webkitRequestFullScreen) {
+                    fullArea.webkitRequestFullScreen();
+                } else if (fullArea.mozRequestFullScreen) {
+                    fullArea.mozRequestFullScreen();
+                } else if (fullArea.msRequestFullscreen) {
+                    // IE11
+                    fullArea.msRequestFullscreen();
+                }
+            }
+            this.fullscreen = !this.fullscreen
         }
     }
 }
