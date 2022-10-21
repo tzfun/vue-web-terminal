@@ -148,6 +148,16 @@ export default {
         },
         inputFilter: {
             type: Function
+        },
+        dragConf: {
+            type: Object,
+            default: () => {
+                return {
+                    enable: false,
+                    width: 700,
+                    height: 500
+                }
+            }
         }
     },
     created() {
@@ -158,6 +168,8 @@ export default {
                 this.$emit("update:context", options)
             } else if (type === 'fullscreen') {
                 this._fullscreen()
+            } else if (type === 'isFullscreen') {
+                return this.fullscreen
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -197,10 +209,13 @@ export default {
             }
         }
         window.addEventListener('keydown', this.keydownListener);
-    }, destroyed() {
+        this._initDrag()
+    },
+    destroyed() {
         window.removeEventListener('keydown', this.keydownListener)
         TerminalObj.unregister(this.name)
-    }, watch: {
+    },
+    watch: {
         command(val, oldVal) {
             if (!this.cmdChange) {
                 let changeStr = this.getDifferent(val, oldVal)
@@ -462,7 +477,7 @@ export default {
             //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
             setTimeout(() => {
                 this.$nextTick(() => {
-                    let container = this.$refs['t-container']
+                    let container = this.$refs['t-window']
                     container.scrollTop += 1000
                 })
             }, 100)
@@ -714,6 +729,77 @@ export default {
                 }
             }
             this.fullscreen = !this.fullscreen
+        },
+        _draggable() {
+            return this.showHeader && this.dragConf && this.dragConf.enable
+        },
+        _initDrag() {
+            if (!this._draggable()) {
+                return
+            }
+            // 记录当前鼠标位置
+            let mouseOffsetX = 0;
+            let mouseOffsetY = 0;
+            let clientWidth = document.body.clientWidth
+            let clientHeight = document.body.clientHeight
+
+            let dragArea = this.$refs['t-header']
+            let box = this.$refs['t-container']
+
+            let isDragging = false;
+
+            dragArea.onmousedown = e1 => {
+                if (this.fullscreen) {
+                    return
+                }
+                let e = e1 || window.event;
+                mouseOffsetX = e.clientX - box.offsetLeft;
+                mouseOffsetY = e.clientY - box.offsetTop;
+
+                isDragging = true
+            }
+
+            document.onmousemove = e2 => {
+                if (isDragging) {
+                    let e = e2 || window.event;
+                    let moveX = e.clientX - mouseOffsetX;
+                    let moveY = e.clientY - mouseOffsetY;
+                    if (moveX > clientWidth - box.clientWidth) {
+                        box.style.left = (clientWidth - box.clientWidth) + "px";
+                    } else {
+                        box.style.left = Math.max(0, moveX) + "px";
+                    }
+
+                    if (moveY > clientHeight - box.clientHeight) {
+                        box.style.top = (clientHeight - box.clientHeight) + "px";
+                    } else {
+                        box.style.top = Math.max(0, moveY) + "px";
+                    }
+                }
+            }
+
+            document.onmouseup = () => {
+                isDragging = false
+            }
+
+        },
+        _getDragStyle() {
+            let clientWidth = document.body.clientWidth
+            let clientHeight = document.body.clientHeight
+
+            let width = this.dragConf.width == null ? 700 : this.dragConf.width
+            let height = this.dragConf.height == null ? 500 : this.dragConf.height
+
+            return `position:fixed;
+            width:${width}px;
+            height:${height}px;
+            z-index: 100;
+            left:${(clientWidth - width) / 2}px;
+            top:${(clientHeight - height) / 2}px;
+            `
+        },
+        _nonEmpty(obj) {
+            return _nonEmpty(obj)
         }
     }
 }

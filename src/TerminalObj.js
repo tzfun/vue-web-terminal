@@ -28,7 +28,7 @@ function TerminalObj() {
     let post = function (name = 'terminal', event, options) {
         let listener = pool[name]
         if (listener != null) {
-            listener(event, options)
+            return listener(event, options)
         }
     }
 
@@ -48,6 +48,10 @@ function TerminalObj() {
         post(name, "fullscreen")
     }
 
+    let isFullscreen = function (name) {
+        return post(name, 'isFullscreen')
+    }
+
     return {
         setOptions: setOptions,
         getOptions: getOptions,
@@ -57,7 +61,8 @@ function TerminalObj() {
         pushMessage: pushMessage,
         updateContext: updateContext,
         getHistory: getHistory,
-        fullscreen: fullscreen
+        fullscreen: fullscreen,
+        isFullscreen: isFullscreen
     }
 }
 
