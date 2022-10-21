@@ -211,7 +211,7 @@ export default {
                 event.preventDefault()
             }
             if (this.cursorConf.show) {
-                this.$emit('onKeydown', event)
+                this.$emit('onKeydown', event, this.name)
             }
         }
         window.addEventListener('keydown', this.keydownListener);
@@ -280,7 +280,7 @@ export default {
             } else if (key === 'minScreen' && this.fullscreen) {
                 this._fullscreen()
             }
-            this.$emit('onClick', key)
+            this.$emit('onClick', key, this.name)
         },
         _resetSearchKey() {
             this.searchCmd = {
@@ -396,7 +396,7 @@ export default {
                     let split = this.command.split(" ")
                     let cmdKey = split[0];
                     this.saveCurCommand();
-                    this.$emit("beforeExecCmd", cmdKey, this.command)
+                    this.$emit("beforeExecCmd", cmdKey, this.command, this.name)
                     switch (cmdKey) {
                         case 'refresh':
                             location.reload()
@@ -433,7 +433,7 @@ export default {
                                 this._endExecCallBack()
                             }
 
-                            this.$emit("execCmd", cmdKey, this.command, success, failed)
+                            this.$emit("execCmd", cmdKey, this.command, success, failed, this.name)
                             return
                         }
                     }
