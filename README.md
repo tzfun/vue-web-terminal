@@ -1,6 +1,7 @@
 # vue-web-terminal
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本、自定义html，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️ 切换光标️。
+一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本、自定义html，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️
+切换光标️。
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
@@ -32,6 +33,7 @@ app.use(Terminal)
 使用示例
 
 ```vue
+
 <template>
   <div id="app">
     <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
@@ -43,7 +45,7 @@ import Terminal from "vue-web-terminal"
 
 export default {
   name: 'App',
-  components:{Terminal},
+  components: {Terminal},
   methods: {
     onExecCmd(key, command, success, failed) {
       if (key === 'fail') {
@@ -111,23 +113,24 @@ body, html, #app {
 
 terminal标签支持属性参数表
 
-| 参数                 | 说明                                      | 类型       | 默认值                                                |
-|--------------------|-----------------------------------------|----------|----------------------------------------------------|
-| name               | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值 | string   | terminal                                           |
-| context            | 初始化上下文文本                                | string   | /vue-web-terminal                                  |
-| title              | header中显示的标题                            | string   | vue-web-terminal                                   |
-| show-header        | 是否显示header                              | boolean  | true                                               |
-| init-log           | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组  | array    | 略                                                  |
-| init-log-delay     | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms             | number   | 150                                                |
-| show-log-time      | 当消息**type**为`normal`时是否显示时间             | boolean  | true                                               |
-| warnLogByteLimit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`   | number   | 1024 * 1024 * 10                                   |
-| warnLogCountLimit  | 当前Terminal日志条数超出此限制会发出警告                | number   | 200                                                |
-| warnLogLimitEnable | 是否开启日志限制警告                              | boolean  | true                                               |
-| auto-help          | 是否打开命令行自动搜索提示功能                         | boolean  | true                                               |
-| enableExampleHint  | 是否显示样例提示                                | boolean  | true                                               |
-| command-store      | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)                                    |
-| command-store-sort | 命令行库排序                                  | function | function(a,b) {}                                   |
-| inputFilter        | 自定义输入过滤，返回值为过滤后的字符串                     | function | function(当前输入字符char,输入框内字符串value, input时间event) {} |
+| 参数                 | 说明                                      | 类型       | 默认值                                                 |
+|--------------------|-----------------------------------------|----------|-----------------------------------------------------|
+| name               | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值 | string   | terminal                                            |
+| context            | 初始化上下文文本                                | string   | /vue-web-terminal                                   |
+| title              | header中显示的标题                            | string   | vue-web-terminal                                    |
+| show-header        | 是否显示header                              | boolean  | true                                                |
+| init-log           | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组  | array    | 略                                                   |
+| init-log-delay     | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms             | number   | 150                                                 |
+| show-log-time      | 当消息**type**为`normal`时是否显示时间             | boolean  | true                                                |
+| warnLogByteLimit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`   | number   | 1024 * 1024 * 10                                    |
+| warnLogCountLimit  | 当前Terminal日志条数超出此限制会发出警告                | number   | 200                                                 |
+| warnLogLimitEnable | 是否开启日志限制警告                              | boolean  | true                                                |
+| auto-help          | 是否打开命令行自动搜索提示功能                         | boolean  | true                                                |
+| enableExampleHint  | 是否显示样例提示                                | boolean  | true                                                |
+| command-store      | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)                                     |
+| command-store-sort | 命令行库排序                                  | function | function(a,b) {}                                    |
+| inputFilter        | 自定义输入过滤，返回值为过滤后的字符串                     | function | function(当前输入字符char, 输入框内字符串value, input时间event) {} |
+| dragConf           | 拖拽配置项                                   | object   | 见[拖拽功能](#拖拽功能)                                      |
 
 ## Select Events
 
@@ -166,9 +169,11 @@ Terminal.$api.pushMessage(name, message)
 
 ### 修改上下文
 
-比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置 ，但是需使用`.sync`绑定一个变量
+比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置
+，但是需使用`.sync`绑定一个变量
 
 ```vue
+
 <template>
   <div id="app">
     <terminal name="my-terminal" :context.sync="context"></terminal>
@@ -199,7 +204,25 @@ export default {
 使当前terminal进入或退出全屏
 
 ```js
-Terminal.$api.fullscreen(name)
+Terminal.$api.fullscreen('my-terminal')
+```
+
+判断当前是否处于全屏状态
+
+```js
+Terminal.$api.isFullscreen('my-terminal')
+```
+
+### 拖拽
+
+当开启[拖拽功能](#拖拽功能)时可以使用下面这种方式模拟拖拽来改变窗口位置，其中参数`x`
+是terminal左边框到浏览器可视范围左边框的距离，单位px，`y`是terminal上边框到浏览器可视范围上边框的距离。
+
+```js
+Terminal.$api.dragging('my-terminal', {
+    x: 100,
+    y: 200
+})
 ```
 
 ## 消息对象
@@ -257,7 +280,8 @@ type为`code`时content类型为字符串，直接传入文本或代码即可
 
 code类型消息支持 `highlight.js` 高亮显示
 
-首先你需要配置 **Highlight.js**，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
+首先你需要配置 **Highlight.js**
+，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
 
 ```js
 import Terminal from 'vue-web-terminal'
@@ -272,6 +296,7 @@ Vue.use(Terminal, {highlight: true})
 ```
 
 vue2版本推荐
+
 ```json
 {
   "@highlightjs/vue-plugin": "^1.0.2",
@@ -281,9 +306,11 @@ vue2版本推荐
 
 #### codemirror 代码高亮
 
-code类型消息也支持 `codemirror` 高亮显示，详细配置见[https://www.npmjs.com/package/vue-codemirror](https://www.npmjs.com/package/vue-codemirror)
+code类型消息也支持 `codemirror`
+高亮显示，详细配置见[https://www.npmjs.com/package/vue-codemirror](https://www.npmjs.com/package/vue-codemirror)
 
 同样只需要在main.js入口安装即可，版本推荐：`"vue-codemirror": "^4.0.6"`
+
 ```js
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
@@ -394,6 +421,7 @@ execCmd(key, command, success)
 ### 命令Help
 
 插件内置了help命令可以方便使用者搜索命令库，通过help命令可以查看命令的key、分组、解释样例信息。
+
 ```shell
 
 # 显示全部命令信息
@@ -428,7 +456,7 @@ Terminal默认内置有以下命令，且不可替代
         "cmd": "help refresh"
       },
       {
-        "des":"Get help documentation for fuzzy matching commands.",
+        "des": "Get help documentation for fuzzy matching commands.",
         "cmd": "help *e*"
       },
       {
@@ -475,3 +503,15 @@ Terminal默认内置有以下命令，且不可替代
   }
 ]
 ```
+
+## 拖拽功能
+
+开启拖拽功能需要同时将`showHeader`和`dragConf.enable`设置为true，你可以通过dragConf的`width`和`height`来配置窗口大小，单位为px，开启拖拽功能后窗口初始化位于浏览器正中央。
+
+```vue
+<terminal name="my-terminal" show-header :drag-conf="{enable: true, width: 700, height: 500}"></terminal>
+```
+
+![dragging.gif](public/dragging.gif)
+
+除了鼠标控制之外你还可以[调用API模拟拖拽](#拖拽)
