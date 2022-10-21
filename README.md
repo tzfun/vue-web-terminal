@@ -3,6 +3,8 @@
 一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本、自定义html，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️
 切换光标️。
 
+在线体验：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
+
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
 # 快速上手
