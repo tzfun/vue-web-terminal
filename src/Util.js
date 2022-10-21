@@ -93,3 +93,7 @@ export function _screenType(width = document.body.clientWidth) {
     }
     return result
 }
+
+export function _isSafari() {
+    return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
+}
