@@ -239,7 +239,7 @@ export default {
                 if (isFullScreen) {
                     //  进入全屏
                     if (_isSafari()) {
-                        let container = this.$refs['t-container']
+                        let container = this.terminalContainer
                         safariStyleCache = {
                             position: container.style.position,
                             width: container.style.width,
@@ -257,7 +257,7 @@ export default {
                     //  退出全屏
                     this.fullscreen = false
                     if (_isSafari()) {
-                        let container = this.$refs['t-container']
+                        let container = this.terminalContainer
                         container.style.position = safariStyleCache.position
                         container.style.width = safariStyleCache.width
                         container.style.height = safariStyleCache.height
@@ -832,7 +832,7 @@ export default {
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
-            let box = this.$refs['t-container']
+            let box = this.terminalContainer
 
             if (x > clientWidth - box.clientWidth) {
                 box.style.left = (clientWidth - box.clientWidth) + "px";
