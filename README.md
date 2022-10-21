@@ -138,12 +138,12 @@ terminal标签支持属性参数表
 
 terminal标签支持事件表
 
-| 事件名称          | 说明                                                                                                             | 回调参数                                  |
-|---------------|----------------------------------------------------------------------------------------------------------------|---------------------------------------|
-| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)，`failed`回调参数为一个string | `(cmdKey, command, success, failed)`  |
-| beforeExecCmd | 执行任意命令之前触发                                                                                                     | `(cmdKey, command)`                   |
-| onKeydown     | 当获取光标焦点时，按下任意键盘触发                                                                                              | `(event)`                             |
-| onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                 | `(key)`                               |
+| 事件名称          | 说明                                                                                                                    | 回调参数                                  |
+|---------------|-----------------------------------------------------------------------------------------------------------------------|---------------------------------------|
+| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)或消息对象数组，`failed`回调参数为一个string | `(cmdKey, command, success, failed)`  |
+| beforeExecCmd | 执行任意命令之前触发                                                                                                            | `(cmdKey, command)`                   |
+| onKeydown     | 当获取光标焦点时，按下任意键盘触发                                                                                                     | `(event)`                             |
+| onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                        | `(key)`                               |
 
 ## Api
 
@@ -236,7 +236,7 @@ Terminal.$api.dragging('my-terminal', {
 | time    | 消息产生时间，仅类型为`normal`有效       | string                   | /                                 |
 | class   | 消息类别                        | string                   | success、error、system、info、warning |
 | tag     | 显示标签，仅类型为`normal`有效         | string                   | /                                 |
-| type    | 消息格式类型                      | string                   | normal、json、code、table、html       |
+| type    | 消息格式类型，默认值为`normal`         | string                   | normal、json、code、table、html       |
 | content | 具体内容，不同消息格式的内容类型不一样，具体规则见下文 | string、json、object、array | /                                 |
 
 ### normal 普通文本
