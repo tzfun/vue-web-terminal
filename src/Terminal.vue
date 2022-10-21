@@ -1,9 +1,11 @@
 <template>
-  <div class="t-container" ref="terminalContainer" @click.self="_activeCursor">
+  <div class="t-container"
+       :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%'"
+       ref="terminalContainer" @click.self="_activeCursor">
     <div class="terminal">
-      <div class="t-header" v-if="showHeader">
+      <div class="t-header" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
         <h4>
-          <span @click="_triggerClick('title')" style="cursor: pointer">{{ title }}</span>
+          <span @click="_triggerClick('title')" style="cursor: pointer;user-select: none;">{{ title }}</span>
         </h4>
         <ul class="t-shell-dots">
           <li class="shell-dot-item t-shell-dots-red">
@@ -49,7 +51,8 @@
           </li>
         </ul>
       </div>
-      <div class="t-window" :style="`${showHeader ? '' : 'padding-top:20px'}`" ref="t-window"
+      <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
+           ref="terminalWindow"
            @click.self="_activeCursor">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font">
@@ -61,7 +64,8 @@
           <div v-else @click.self="_activeCursor">
             <span v-if="item.type === 'normal'" class="t-content-normal">
               <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
-              <span :class="item.class"
+              <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)"
+                    :class="item.class"
                     style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
               <span v-html="item.content"></span>
             </span>
@@ -119,7 +123,8 @@
             <span> > </span>
           </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
                                                                                  :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput" class="t-input-box"
+          <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput"
+                 class="t-input-box"
                  ref="inputCmd"
                  autocomplete="off"
                  auto-complete="new-password"
@@ -137,7 +142,9 @@
         <p class="t-help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
       </div>
     </div>
-    <div class="t-cmd-help" v-if="enableExampleHint && searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
+    <div class="t-cmd-help"
+         :style="showHeader ? 'top: 40px;' : 'top: 15px;'"
+         v-if="enableExampleHint && searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
       <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
          v-html="searchCmd.item.description"></p>
       <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">

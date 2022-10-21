@@ -21,16 +21,15 @@
 
 .t-container {
     position: relative;
-    width: 100%;
-    min-height: 100%;
     margin: 0;
     padding: 0;
     background-color: #191b24;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .t-header {
     position: absolute;
+    height: 30px;
     z-index: 2;
     top: 0;
     right: 0;
@@ -90,7 +89,7 @@
     max-height: none;
     background-color: #191b24;
     min-height: 140px;
-    padding: 50px 20px 20px 20px;
+    padding: 0 20px 0 20px;
     font-weight: 400;
     font-family: Monaco, Menlo, Consolas, monospace;
     color: #fff;
@@ -232,9 +231,8 @@
 }
 
 .t-cmd-help {
-    position: fixed;
-    right: 10px;
-    top: 40px;
+    position: absolute;
+    right: 15px;
     z-index: 99;
     background-color: black !important;
     max-width: 50%;
@@ -321,4 +319,8 @@ pre {
     50% {
         opacity: 1;
     }
+}
+
+.CodeMirror {
+    height: unset !important;
 }
