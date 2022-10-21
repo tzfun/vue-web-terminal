@@ -9,7 +9,7 @@ module.exports = {
             })
     },
     devServer: {
-        port: 81
+        port: 8888
     },
     publicPath: './',
     configureWebpack: config => {
