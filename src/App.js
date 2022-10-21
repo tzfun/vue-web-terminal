@@ -10,34 +10,77 @@ export default {
             context: '/hello',
             cmdStore: [
                 {
-                    "key": "task",
-                    "belong": "game",
-                    "onlineCheck": "withoutPack",
-                    "title": "任务系统操作（非经营任务）",
-                    "usage": "task -u <userId> -o <query|set|pack> [-id <taskId>] [-v <taskVal>] [-t <ctype>]",
-                    "example": [
+                    "key": "fail",
+                    "group": "demo",
+                    "usage":'fail',
+                    "description":"模拟错误结果返回"
+                },
+                {
+                    "key":"json",
+                    "group": "demo",
+                    "usage":'json',
+                    "description":"模拟json结果显示"
+                },
+                {
+                    "key":"code",
+                    "group": "demo",
+                    "usage":'code',
+                    "description":"模拟code结果显示"
+                },
+                {
+                    "key":"table",
+                    "group": "demo",
+                    "usage":'table',
+                    "description":"模拟表格结果显示"
+                },
+                {
+                    "key":"html",
+                    "group": "demo",
+                    "usage":'html',
+                    "description":"模拟自定义html结果显示"
+                },
+                {
+                    "key":"loop",
+                    "group": "demo",
+                    "usage":'loop <n>',
+                    "description":"模拟批量结果显示",
+                    "example":[
                         {
-                            "des": "获取玩家所有任务信息",
-                            "cmd": "task -u 11001 -o pack"
-                        },
-                        {
-                            "des": "获取任务进度",
-                            "cmd": "task -u 11001 -o query -id 1001"
-                        },
-                        {
-                            "des": "设置任务进度，参数 -v 兼容大数值写法，但只能大数值统计类型的任务才能设置大数值",
-                            "cmd": "task -u 11001 -o set -id 1001 -v 500"
-                        },
-                        {
-                            "des": "重置所有任务",
-                            "cmd": "task -u 11001 -o reset"
-                        },
-                        {
-                            "des": "重置 ctype 为101（成长任务）的所有任务",
-                            "cmd": "task -u 11001 -o reset -t 101"
+                            "cmd":"loop 10",
+                            "des":"模拟批量返回10条消息"
                         }
                     ]
-                }
+                },
+                {
+                    "key":"context",
+                    "group": "demo",
+                    "usage":'context <ctx>',
+                    "description":"修改上下文",
+                    "example":[
+                        {
+                            "cmd":"context /vue/terminal/dev",
+                            "des":"修改上下文为'/vue/terminal/dev'"
+                        }
+                    ]
+                },
+                {
+                    "key":"fullscreen",
+                    "group": "demo",
+                    "usage":'fullscreen',
+                    "description":"切换全屏模式"
+                },
+                {
+                    "key":"drag",
+                    "group": "demo",
+                    "usage":'drag <x> <y>',
+                    "description":"模拟拖拽窗口，x为左边界，y为右边界，单位px",
+                    "example":[
+                        {
+                            "cmd":"drag 20 100",
+                            "des":"拖拽位置到（20,100）"
+                        }
+                    ]
+                },
             ],
             dragConf: {
                 enable: true,
@@ -45,6 +88,12 @@ export default {
                 height: 500
             }
         }
+    },
+    mounted() {
+        let clientWidth = document.body.clientWidth
+        let clientHeight = document.body.clientHeight
+        this.dragConf.width = clientWidth * 0.7
+        this.dragConf.height = clientHeight * 0.7
     },
     methods: {
         /**
@@ -104,7 +153,7 @@ export default {
                     class: 'success',
                     content: "ok"
                 })
-            } else if (key === 'html') {
+            } else if (key === 'html' || key === 'ls') {
                 success({
                     type: 'html',
                     content: `
