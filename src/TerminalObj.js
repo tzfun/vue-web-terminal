@@ -56,6 +56,10 @@ function TerminalObj() {
         post(name, 'dragging', options)
     }
 
+    let execute = function (name, options) {
+        post(name, 'execute', options)
+    }
+
     return {
         setOptions: setOptions,
         getOptions: getOptions,
@@ -67,7 +71,8 @@ function TerminalObj() {
         getHistory: getHistory,
         fullscreen: fullscreen,
         isFullscreen: isFullscreen,
-        dragging: dragging
+        dragging: dragging,
+        execute: execute
     }
 }
 

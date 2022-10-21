@@ -176,14 +176,21 @@ export default {
                 } else {
                     console.warn("Terminal is not draggable")
                 }
+            } else if (type === 'execute') {
+                if (_nonEmpty(options)) {
+                    this.command = options
+                    this.execute()
+                }
             } else {
                 console.error("Unsupported event type: " + type)
             }
         })
+    },
+    async mounted() {
+        this.$emit('initBefore')
 
         if (this.initLog != null) {
-            this._pushMessageBatch(this.initLog, this.initLogDelay, true).then(() => {
-            })
+            await this._pushMessageBatch(this.initLog, this.initLogDelay, true)
         }
 
         if (this.commandStore != null) {
@@ -192,8 +199,7 @@ export default {
             }
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
-    },
-    mounted() {
+
         this.byteLen = {
             en: document.getElementById("t-en-flag").getBoundingClientRect().width / 2,
             cn: document.getElementById("t-cn-flag").getBoundingClientRect().width / 2
@@ -253,6 +259,7 @@ export default {
         })
 
         this._initDrag()
+        this.$emit('initComplete')
     },
     destroyed() {
         window.removeEventListener('keydown', this.keydownListener)
