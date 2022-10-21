@@ -16,7 +16,7 @@ function TerminalObj() {
 
     let register = function (name, listener) {
         if (pool[name] != null) {
-            throw Error("Unable to register a listener with the same name: " + name)
+            console.warn(`Register an existing terminal: ${name}`)
         }
         pool[name] = listener
     }
