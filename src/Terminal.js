@@ -1,5 +1,5 @@
 import sizeof from 'object-sizeof'
-import {_dateFormat, _html, _isEmpty, _nonEmpty, _sleep, _unHtml} from "./Util.js";
+import {_dateFormat, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 
@@ -170,6 +170,12 @@ export default {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
                 return this.fullscreen
+            } else if (type === 'dragging') {
+                if (this._draggable()) {
+                    this._dragging(options.x, options.y)
+                } else {
+                    console.warn("Terminal is not draggable")
+                }
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -209,6 +215,43 @@ export default {
             }
         }
         window.addEventListener('keydown', this.keydownListener);
+        let safariStyleCache = {};
+        //  监听全屏事件，用户ESC退出时需要设置全屏状态
+        ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
+            window.addEventListener(item, () => {
+                let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
+                if (isFullScreen) {
+                    //  进入全屏
+                    if (_isSafari()) {
+                        let container = this.$refs['t-container']
+                        safariStyleCache = {
+                            position: container.style.position,
+                            width: container.style.width,
+                            height: container.style.height,
+                            left: container.style.left,
+                            top: container.style.top
+                        }
+                        container.style.position = 'fixed'
+                        container.style.width = '100%'
+                        container.style.height = '100%'
+                        container.style.left = '0'
+                        container.style.top = '0'
+                    }
+                } else {
+                    //  退出全屏
+                    this.fullscreen = false
+                    if (_isSafari()) {
+                        let container = this.$refs['t-container']
+                        container.style.position = safariStyleCache.position
+                        container.style.width = safariStyleCache.width
+                        container.style.height = safariStyleCache.height
+                        container.style.left = safariStyleCache.left
+                        container.style.top = safariStyleCache.top
+                    }
+                }
+            });
+        })
+
         this._initDrag()
     },
     destroyed() {
@@ -705,7 +748,6 @@ export default {
         _fullscreen() {
             let fullArea = this.$refs['t-container']
             if (this.fullscreen) {
-                //  退出全屏
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.webkitCancelFullScreen) {
@@ -716,7 +758,6 @@ export default {
                     document.msExitFullscreen();
                 }
             } else {
-                //  进入全屏
                 if (fullArea.requestFullscreen) {
                     fullArea.requestFullscreen();
                 } else if (fullArea.webkitRequestFullScreen) {
@@ -740,8 +781,6 @@ export default {
             // 记录当前鼠标位置
             let mouseOffsetX = 0;
             let mouseOffsetY = 0;
-            let clientWidth = document.body.clientWidth
-            let clientHeight = document.body.clientHeight
 
             let dragArea = this.$refs['t-header']
             let box = this.$refs['t-container']
@@ -764,17 +803,8 @@ export default {
                     let e = e2 || window.event;
                     let moveX = e.clientX - mouseOffsetX;
                     let moveY = e.clientY - mouseOffsetY;
-                    if (moveX > clientWidth - box.clientWidth) {
-                        box.style.left = (clientWidth - box.clientWidth) + "px";
-                    } else {
-                        box.style.left = Math.max(0, moveX) + "px";
-                    }
+                    this._dragging(moveX, moveY)
 
-                    if (moveY > clientHeight - box.clientHeight) {
-                        box.style.top = (clientHeight - box.clientHeight) + "px";
-                    } else {
-                        box.style.top = Math.max(0, moveY) + "px";
-                    }
                 }
             }
 
@@ -782,6 +812,23 @@ export default {
                 isDragging = false
             }
 
+        },
+        _dragging(x, y) {
+            let clientWidth = document.body.clientWidth
+            let clientHeight = document.body.clientHeight
+            let box = this.$refs['t-container']
+
+            if (x > clientWidth - box.clientWidth) {
+                box.style.left = (clientWidth - box.clientWidth) + "px";
+            } else {
+                box.style.left = Math.max(0, x) + "px";
+            }
+
+            if (y > clientHeight - box.clientHeight) {
+                box.style.top = (clientHeight - box.clientHeight) + "px";
+            } else {
+                box.style.top = Math.max(0, y) + "px";
+            }
         },
         _getDragStyle() {
             let clientWidth = document.body.clientWidth
