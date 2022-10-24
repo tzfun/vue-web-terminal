@@ -149,7 +149,7 @@ terminal标签支持事件表
 
 ## 拖拽功能
 
-开启拖拽功能需要同时将`showHeader`和`dragConf.enable`设置为true，你可以通过dragConf的`width`和`height`来配置窗口大小，单位为px，开启拖拽功能后窗口初始化位于浏览器正中央。
+开启拖拽功能需要将`showHeader`设置为true并配置`dragConf`，你可以通过dragConf的`width`和`height`来配置窗口大小。
 
 ```vue
 <terminal name="my-terminal" 
