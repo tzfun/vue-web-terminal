@@ -34,36 +34,34 @@ export default {
                     description: 'Show command document.',
                     example: [
                         {
+                            des: "Get all commands.",
+                            cmd: 'help'
+                        }, {
                             des: "Get help documentation for exact match commands.",
                             cmd: 'help refresh'
-                        },
-                        {
+                        }, {
                             des: "Get help documentation for fuzzy matching commands.",
                             cmd: 'help *e*'
-                        },
-                        {
+                        }, {
                             des: "Get help documentation for specified group, match key must start with ':'.",
                             cmd: 'help :groupA'
                         }
                     ]
                 }, {
                     key: 'clear',
-                    title: 'Clear logs',
+                    title: 'Clear screen or history logs',
                     group: 'local',
                     usage: 'clear [history]',
                     description: 'Clear screen or history.',
-                    example: [{
-                        cmd: 'clear', des: 'Clear all records on the current screen.'
-                    }, {
-                        cmd: 'clear history', des: 'Clear command history'
-                    }]
-                }, {
-                    key: 'refresh',
-                    title: 'Refresh page',
-                    group: 'local',
-                    usage: 'refresh',
-                    description: 'Refresh current page.',
-                    example: null
+                    example: [
+                        {
+                            cmd: 'clear',
+                            des: 'Clear all records on the current screen.'
+                        }, {
+                            cmd: 'clear history',
+                            des: 'Clear command history'
+                        }
+                    ]
                 }, {
                     key: 'open',
                     title: 'Open page',
@@ -85,10 +83,12 @@ export default {
     props: {
         name: {
             type: String, default: 'terminal'
-        }, //  终端标题
+        },
+        //  终端标题
         title: {
             type: String, default: 'vue-web-terminal'
-        }, //  初始化日志内容
+        },
+        //  初始化日志内容
         initLog: {
             type: Array, default: () => {
                 return [{
@@ -116,23 +116,29 @@ export default {
         showLogTime: {
             type: Boolean,
             default: true
-        }, //  命令行搜索以及help指令用
+        },
+        //  命令行搜索以及help指令用
         commandStore: {
             type: Array
-        }, //   命令行排序方式
+        },
+        //   命令行排序方式
         commandStoreSort: {
             type: Function
-        }, //  记录大小超出此限制会发出警告，单位byte
+        },
+        //  记录大小超出此限制会发出警告，单位byte
         warnLogByteLimit: {
             type: Number, default: 1024 * 1024 * 10
-        }, //  记录条数超出此限制会发出警告
+        },
+        //  记录条数超出此限制会发出警告
         warnLogCountLimit: {
             type: Number, default: 200
-        }, //  记录限制警告开关
+        },
+        //  记录限制警告开关
         warnLogLimitEnable: {
             type: Boolean,
             default: true
-        }, //  自动搜索帮助
+        },
+        //  自动搜索帮助
         autoHelp: {
             type: Boolean,
             default: true
@@ -142,13 +148,16 @@ export default {
             type: Boolean,
             default: true
         },
+        //  是否开启命令提示
         enableExampleHint: {
             type: Boolean,
             default: true
         },
+        //  输入过滤器
         inputFilter: {
             type: Function
         },
+        //  拖拽配置
         dragConf: {
             type: Object,
             default: () => {
@@ -432,9 +441,6 @@ export default {
                     this.saveCurCommand();
                     this.$emit("beforeExecCmd", cmdKey, this.command, this.name)
                     switch (cmdKey) {
-                        case 'refresh':
-                            location.reload()
-                            break;
                         case 'help': {
                             let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
                             reg = reg.replace(/\*/g, ".*")
@@ -477,7 +483,7 @@ export default {
                         type: 'normal',
                         class: 'error',
                         content: _html(_unHtml(e.stack)),
-                        tag: 'Console Error'
+                        tag: 'error'
                     })
                 }
             }
