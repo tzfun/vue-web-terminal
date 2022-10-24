@@ -16,7 +16,7 @@ function TerminalObj() {
 
     let register = function (name, listener) {
         if (pool[name] != null) {
-            console.warn(`Register an existing terminal: ${name}`)
+            throw Error(`Unable to register an existing terminal: ${name}`)
         }
         pool[name] = listener
     }
@@ -33,11 +33,11 @@ function TerminalObj() {
     }
 
     let pushMessage = function (name, options) {
-        post(name, 'pushMessage', options)
+        return post(name, 'pushMessage', options)
     }
 
     let updateContext = function (name, context) {
-        post(name, 'updateContext', context)
+        return post(name, 'updateContext', context)
     }
 
     let getHistory = function () {
@@ -45,7 +45,7 @@ function TerminalObj() {
     }
 
     let fullscreen = function (name) {
-        post(name, "fullscreen")
+        return post(name, "fullscreen")
     }
 
     let isFullscreen = function (name) {
@@ -53,13 +53,16 @@ function TerminalObj() {
     }
 
     let dragging = function (name, options) {
-        post(name, 'dragging', options)
+        return post(name, 'dragging', options)
     }
 
     let execute = function (name, options) {
-        post(name, 'execute', options)
+        return post(name, 'execute', options)
     }
 
+    let getPosition = function (name) {
+        return post(name, 'getPosition')
+    }
     return {
         setOptions: setOptions,
         getOptions: getOptions,
@@ -72,7 +75,8 @@ function TerminalObj() {
         fullscreen: fullscreen,
         isFullscreen: isFullscreen,
         dragging: dragging,
-        execute: execute
+        execute: execute,
+        getPosition: getPosition
     }
 }
 

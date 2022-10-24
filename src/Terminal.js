@@ -153,9 +153,13 @@ export default {
             type: Object,
             default: () => {
                 return {
-                    enable: false,
                     width: 700,
-                    height: 500
+                    height: 500,
+                    zIndex: 100,
+                    init: {
+                        x: null,
+                        y: null
+                    }
                 }
             }
         }
@@ -181,13 +185,20 @@ export default {
                     this.command = options
                     this.execute()
                 }
+            } else if (type === 'getPosition') {
+                if (this._draggable()) {
+                    let box = this.$refs['t-container']
+                    return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
+                } else {
+                    return {x: 0, y: 0}
+                }
             } else {
                 console.error("Unsupported event type: " + type)
             }
         })
     },
     async mounted() {
-        this.$emit('initBefore')
+        this.$emit('initBefore', this.name)
 
         if (this.initLog != null) {
             await this._pushMessageBatch(this.initLog, this.initLogDelay, true)
@@ -259,9 +270,10 @@ export default {
         })
 
         this._initDrag()
-        this.$emit('initComplete')
+        this.$emit('initComplete', this.name)
     },
     destroyed() {
+        this.$emit('destroyed', this.name)
         window.removeEventListener('keydown', this.keydownListener)
         TerminalObj.unregister(this.name)
     },
@@ -779,7 +791,7 @@ export default {
             this.fullscreen = !this.fullscreen
         },
         _draggable() {
-            return this.showHeader && this.dragConf && this.dragConf.enable
+            return this.showHeader && this.dragConf
         },
         _initDrag() {
             if (!this._draggable()) {
@@ -791,6 +803,7 @@ export default {
 
             let dragArea = this.$refs['t-header']
             let box = this.$refs['t-container']
+            let window = this.$refs['t-window']
 
             let isDragging = false;
 
@@ -803,6 +816,7 @@ export default {
                 mouseOffsetY = e.clientY - box.offsetTop;
 
                 isDragging = true
+                window.style['user-select'] = 'none'
             }
 
             document.onmousemove = e2 => {
@@ -811,12 +825,12 @@ export default {
                     let moveX = e.clientX - mouseOffsetX;
                     let moveY = e.clientY - mouseOffsetY;
                     this._dragging(moveX, moveY)
-
                 }
             }
 
             document.onmouseup = () => {
                 isDragging = false
+                window.style['user-select'] = 'unset'
             }
 
         },
@@ -841,15 +855,36 @@ export default {
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
 
-            let width = this.dragConf.width == null ? 700 : this.dragConf.width
-            let height = this.dragConf.height == null ? 500 : this.dragConf.height
+            let confWidth = this.dragConf.width
+            let width = confWidth == null ? 700 : confWidth
 
+            if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
+                width = clientWidth * (parseInt(confWidth) / 100)
+            }
+            let confHeight = this.dragConf.height
+            let height = confHeight == null ? 500 : confHeight
+            if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
+                height = clientHeight * (parseInt(confHeight) / 100)
+            }
+
+            let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
+
+            let initX, initY
+
+            let initPos = this.dragConf.init
+            if (initPos && initPos.x && initPos.y) {
+                initX = initPos.x
+                initY = initPos.y
+            } else {
+                initX = (clientWidth - width) / 2
+                initY = (clientHeight - height) / 2
+            }
             return `position:fixed;
             width:${width}px;
             height:${height}px;
-            z-index: 100;
-            left:${(clientWidth - width) / 2}px;
-            top:${(clientHeight - height) / 2}px;
+            z-index: ${zIndex};
+            left:${initX}px;
+            top:${initY}px;
             `
         },
         _nonEmpty(obj) {

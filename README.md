@@ -132,20 +132,43 @@ terminal标签支持属性参数表
 | command-store      | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)                                     |
 | command-store-sort | 命令行库排序                                  | function | function(a,b) {}                                    |
 | inputFilter        | 自定义输入过滤，返回值为过滤后的字符串                     | function | function(当前输入字符char, 输入框内字符串value, input时间event) {} |
-| dragConf           | 拖拽配置项                                   | object   | 见[拖拽功能](#拖拽功能)                                      |
+| dragConf           | 拖拽窗口配置项                                 | object   | 见[拖拽功能](#拖拽功能)                                      |
 
 ## Select Events
 
 terminal标签支持事件表
 
-| 事件名称           | 说明                                                                                                                    | 回调参数                                 |
-|----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| execCmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)或消息对象数组，`failed`回调参数为一个string | `(cmdKey, command, success, failed)` |
-| beforeExecCmd  | 执行任意命令之前触发                                                                                                            | `(cmdKey, command)`                  |
-| onKeydown      | 当获取光标焦点时，按下任意键盘触发                                                                                                     | `(event)`                            |
-| onClick        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                        | `(key)`                              |
-| initBefore     | 生命周期函数，插件初始化之前触发                                                                                                      | /                                    |
-| initComplete   | 生命周期函数，插件初始化完成之后触发                                                                                                    | /                                    |
+| 事件名称           | 说明                                                                                                                    | 回调参数                                       |
+|----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)或消息对象数组，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd  | 执行任意命令之前触发                                                                                                            | `(cmdKey, command, name)`                  |
+| onKeydown      | 当获取光标焦点时，按下任意键盘触发                                                                                                     | `(event, name)`                            |
+| onClick        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                        | `(key, name)`                              |
+| initBefore     | 生命周期函数，插件初始化之前触发                                                                                                      | `(name)`                                   |
+| initComplete   | 生命周期函数，插件初始化完成之后触发                                                                                                    | `(name)`                                   |
+
+## 拖拽功能
+
+开启拖拽功能需要同时将`showHeader`和`dragConf.enable`设置为true，你可以通过dragConf的`width`和`height`来配置窗口大小，单位为px，开启拖拽功能后窗口初始化位于浏览器正中央。
+
+```vue
+<terminal name="my-terminal" 
+          show-header 
+          :drag-conf="{width: 700, height: 500}"></terminal>
+```
+
+dragConf结构如下：
+
+| 参数     | 说明                                                                | 类型            |
+|--------|-------------------------------------------------------------------|---------------|
+| width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）                               | number/string |
+| height | 拖拽窗口高度，同宽度                                                        | number/string |
+| zIndex | 窗口层级，默认100                                                        | number        |
+| init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px，``` {"x": 700, "y": 500}``` | object        |
+
+![dragging.gif](public/dragging.gif)
+
+除了鼠标控制之外你还可以[调用API模拟拖拽](#拖拽)
 
 ## Api
 
@@ -177,7 +200,6 @@ Terminal.$api.pushMessage(name, message)
 ，但是需使用`.sync`绑定一个变量
 
 ```vue
-
 <template>
   <div id="app">
     <terminal name="my-terminal" :context.sync="context"></terminal>
@@ -214,7 +236,8 @@ Terminal.$api.fullscreen('my-terminal')
 判断当前是否处于全屏状态
 
 ```js
-Terminal.$api.isFullscreen('my-terminal')
+//  true or false
+let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 ```
 
 ### 拖拽
@@ -231,10 +254,19 @@ Terminal.$api.dragging('my-terminal', {
 
 ### 执行命令
 
-可以使用api向Terminal执行一个命令
+可以使用api向Terminal执行一个命令，执行过程会回显在Terminal窗口中，这是一种用脚本模拟用户执行命令的方式
 
 ```js
 Terminal.$api.execute('my-terminal', 'help :local')
+```
+
+### 获取位置
+
+当处于拖拽模式时，此接口可获取窗口所在位置
+
+```js
+let pos = Terminal.$api.getPosition('my-terminal')
+console.log(pos.x, pos.y)
 ```
 
 ## 消息对象
@@ -251,7 +283,7 @@ Terminal.$api.execute('my-terminal', 'help :local')
 
 ### normal 普通文本
 
-content为字符串格式，支持html标签，time字段会在push时自动填充，content、type必填，其他选填
+content为字符串格式，支持html标签，time字段会在push时自动填充，content必填，其他选填
 
 ```json
 {
@@ -307,7 +339,7 @@ Vue.use(vuePlugin)
 Vue.use(Terminal, {highlight: true})
 ```
 
-vue2版本推荐
+vue2版本依赖推荐
 
 ```json
 {
@@ -515,15 +547,3 @@ Terminal默认内置有以下命令，且不可替代
   }
 ]
 ```
-
-## 拖拽功能
-
-开启拖拽功能需要同时将`showHeader`和`dragConf.enable`设置为true，你可以通过dragConf的`width`和`height`来配置窗口大小，单位为px，开启拖拽功能后窗口初始化位于浏览器正中央。
-
-```vue
-<terminal name="my-terminal" show-header :drag-conf="{enable: true, width: 700, height: 500}"></terminal>
-```
-
-![dragging.gif](public/dragging.gif)
-
-除了鼠标控制之外你还可以[调用API模拟拖拽](#拖拽)
