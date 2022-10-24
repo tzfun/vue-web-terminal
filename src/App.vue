@@ -13,7 +13,10 @@
         :warnLogCountLimit="200"
         :showLogTime="true"
         :dragConf="dragConf"
-        show-header>
+        show-header
+        @initBefore="initBefore"
+        @initComplete="initComplete"
+    >
     </terminal>
   </div>
 </template>

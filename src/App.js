@@ -5,9 +5,13 @@ export default {
     components: {Terminal},
     data() {
         return {
+            version:{
+                vue2: '2.0.9',
+                vue3: '3.0.7'
+            },
             show: true,
             name: 'my-terminal',
-            context: '/hello',
+            context: '/vue-web-terminal/demo',
             cmdStore: [
                 {
                     "key": "fail",
@@ -81,19 +85,36 @@ export default {
                         }
                     ]
                 },
+                {
+                    "key":"pos",
+                    "group": "demo",
+                    "usage":'pos',
+                    "description":"获取当前窗口位置"
+                },
+                {
+                    "key":"random",
+                    "group": "demo",
+                    "usage":'random',
+                    "description":"随机生成标签"
+                },
             ],
             dragConf: {
-                enable: true,
                 width: 700,
                 height: 500
             }
         }
     },
     mounted() {
-        let clientWidth = document.body.clientWidth
-        let clientHeight = document.body.clientHeight
-        this.dragConf.width = clientWidth * 0.7
-        this.dragConf.height = clientHeight * 0.7
+        let width = document.body.clientWidth
+        if (width < 960) {
+            this.dragConf = null
+        } else if (width >= 960 && width < 1264) {
+            this.dragConf.width = "80%"
+            this.dragConf.height = "80%"
+        } else if (width >= 1264) {
+            this.dragConf.width = "60%"
+            this.dragConf.height = "60%"
+        }
     },
     methods: {
         /**
@@ -175,10 +196,6 @@ export default {
                     class: 'success',
                     content: "ok"
                 })
-            } else if (key === 'tag') {
-                success({
-                    content: "ok"
-                })
             } else if (key === 'loop') {
                 let loop = parseInt(command.split(" ")[1])
                 for (let i = 0; i < loop; i++) {
@@ -192,24 +209,32 @@ export default {
                 let split = command.split(" ");
                 Terminal.$api.dragging(this.name, {x: parseInt(split[1]), y: parseInt(split[2])})
                 success()
-            } else {
+            } else if (key === 'pos') {
+                let pos = Terminal.$api.getPosition(this.name)
+                success({content: JSON.stringify(pos)})
+            } else if (key === 'random') {
                 let allClass = ['success', 'error', 'system', 'info', 'warning'];
 
                 let clazz = allClass[Math.floor(Math.random() * allClass.length)];
                 success({
                     type: 'normal',
                     class: clazz,
-                    tag: '成功',
-                    content: command
+                    tag: "随机标签：" + clazz,
+                    content: 'random number: ' + Math.floor(Math.random() * 10)
                 })
+            } else {
+                failed("Unknown command")
             }
         },
         onClick(key) {
-            console.log("trigger click: " + key)
             if (key === "close") {
                 this.show = false
             } else {
-                Terminal.$api.pushMessage(this.name, {content: `用户点击了 ${key}`})
+                Terminal.$api.pushMessage(this.name, {
+                    tag: 'success',
+                    class: 'system',
+                    content: `用户点击了 ${key}`
+                })
             }
         },
         onKeydown() {
@@ -217,6 +242,19 @@ export default {
         },
         inputFilter(data, value) {
             return value.replace(/[\u4e00-\u9fa5]/g, "")
+        },
+        initBefore() {
+
+        },
+        initComplete() {
+            Terminal.$api.execute(this.name, "help help")
+
+            Terminal.$api.pushMessage(this.name,{
+                content: `Current demo version: vue2(${this.version.vue2}), vue3(${this.version.vue3})`
+            })
+            Terminal.$api.pushMessage(this.name,{
+                content: `当前Demo输入规则已加入禁止中文输入`
+            })
         }
     }
 }
