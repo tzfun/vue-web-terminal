@@ -226,8 +226,6 @@ export default {
             }
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
-    },
-    mounted() {
         // this.byteLen = {
         //     en: this.terminalEnFlag.value.getBoundingClientRect().width / 2,
         //     cn: this.terminalCnFlag.value.getBoundingClientRect().width / 2
