@@ -1,46 +1,48 @@
+[中文版](./README_ZH.md) | English
+
 # vue-web-terminal
 
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dm/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/v/vue-web-terminal.svg" alt="Version"></a>
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← → 光标切换和 ↑ ↓ 历史命令切换。
+A web-side command line plugin built by `Vue`, supports multiple message formats such as tables, json, and codes, supports custom message styles, command line libraries, typing search prompts, etc., and simulates native terminal support ← → cursor toggle and ↑ ↓ history command toggle.
 
-## 功能支持
+## Feature Support
 
-* 支持消息格式：文本、表格、json、代码/多行文本、html
-* Highlight、Codemirror代码高亮
-* ← → 键光标切换
-* ↑ ↓ 键历史命令切换
-* Fullscreen全屏显示
-* 窗口拖拽
-* 自定义命令库
-* 用户键入过滤
-* 命令搜索提示，Tab键快捷填充
-* 多个Slots插槽支持自定义样式
-* 支持API接口：执行命令、推送消息、模拟拖拽、获取位置、全屏、修改上下文等
+* Supported message formats: `text`, `table`, `json`, `code`/multiline text, `html`
+* `Highlight`, `Codemirror` code highlighting
+* ← → key cursor switch
+* ↑ ↓ key history command toggle
+* Full-screen display
+* Window drag
+* Custom command library
+* User inputting filter
+* Command search prompt, use the `Tab` key to quickly fill
+* Multiple lots support custom styles
+* Support API interface: execute command, push message, simulate drag and drop, get position, full screen, modify context, etc.
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
-# 在线体验
+# Online Experience
 
-在线Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
+Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
 
 [![Edit Vue Template](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silly-scooby-l8wk9b)
 
-# 快速上手
+# Quick Start
 
-npm安装vue-web-terminal
+Install vue-web-terminal by npm
 
 ```shell
-//  vue2安装
+//  install for vue2
 npm install vue-web-terminal@2.xx --save
 
-//  vue3安装
+//  install for vue3
 npm install vue-web-terminal@3.xx --save 
 ```
 
-main.js中载入 Terminal 插件
+Use Terminal plugin in `main.js`
 
 ```js
 import Terminal from 'vue-web-terminal'
@@ -53,7 +55,7 @@ const app = createApp(App)
 app.use(Terminal)
 ```
 
-使用示例
+Example:
 
 ```vue
 
@@ -130,57 +132,57 @@ body, html, #app {
 </style>
 ```
 
-# 插件文档
+# Document
 
 ## Attributes
 
-terminal标签支持属性参数表
+Terminal tag supports attribute parameter table.
 
-| 参数                    | 说明                                               | 类型       | 默认值                                              |
-|-----------------------|--------------------------------------------------|----------|--------------------------------------------------|
-| name                  | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值          | string   | terminal                                         |
-| context               | 初始化上下文文本                                         | string   | /vue-web-terminal                                |
-| title                 | header中显示的标题                                     | string   | vue-web-terminal                                 |
-| show-header           | 是否显示header，此开关会影响拖拽功能                            | boolean  | true                                             |
-| init-log              | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，`null`不显示 | array    | 略                                                |
-| init-log-delay        | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms                      | number   | 150                                              |
-| show-log-time         | 当消息**type**为`normal`时是否显示时间                      | boolean  | true                                             |
-| warn-log-byte-limit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`            | number   | 1024 * 1024 * 10                                 |
-| warn-log-count-limit  | 当前Terminal日志条数超出此限制会发出警告                         | number   | 200                                              |
-| warn-log-limit-enable | 是否开启日志限制警告                                       | boolean  | true                                             |
-| auto-help             | 是否打开命令行自动搜索提示功能                                  | boolean  | true                                             |
-| enable-example-hint   | 是否显示样例提示                                         | boolean  | true                                             |
-| command-store         | 自定义的命令库，搜索提示功能会扫描本库，见[命令定义格式](#命令定义)             | array    | [内置命令](#内置命令)                                    |
-| command-store-sort    | 命令行库排序                                           | function | function(a,b)                                    |
-| input-filter          | 自定义输入过滤，返回值为过滤后的字符串                              | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf             | 拖拽窗口配置项                                          | object   | 见[拖拽功能](#拖拽功能)                                   |
+| Argument              | Description                                                                                                              | Type     | Default                                          |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
+| name                  | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                | string   | terminal                                         |
+| context               | Initialize context text.                                                                                                 | string   | /vue-web-terminal                                |
+| title                 | The title displayed in the header.                                                                                       | string   | vue-web-terminal                                 |
+| show-header           | Whether to display the header, this switch will affect the drag and drop function.                                       | boolean  | true                                             |
+| init-log              | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed. | array    | /                                                |
+| init-log-delay        | The interval between each log when initializing the display log, in milliseconds.                                        | number   | 150                                              |
+| show-log-time         | Whether to display the time when the message **type** is `normal`.                                                       | boolean  | true                                             |
+| warn-log-byte-limit   | The current Terminal log occupied memory size exceeds this limit will issue a warning, the unit `byte`.                  | number   | 1024 * 1024 * 10                                 |
+| warn-log-count-limit  | If the current Terminal log number exceeds this limit, a warning will be issued.                                         | number   | 200                                              |
+| warn-log-limit-enable | Whether to enable log limit warning.                                                                                     | boolean  | true                                             |
+| auto-help             | Whether to enable the command line automatic search prompt function.                                                     | boolean  | true                                             |
+| enable-example-hint   | Whether to show sample prompts.                                                                                          | boolean  | true                                             |
+| command-store         | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)        | array    | [Local Commands](#Local)                         |
+| command-store-sort    | Command line library sorting function.                                                                                   | function | function(a,b)                                    |
+| input-filter          | Custom input filter, the return value is the filtered string.                                                            | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf             | Drag and drop window configuration items.                                                                                | object   | [Drag](#Drag)                                    |
 
 ## Events
 
-terminal标签支持事件表
+Terminal tag support event table
 
-| 事件名称           | 说明                                                                                                                    | 回调参数                                       |
-|----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)或消息对象数组，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd  | 用户回车执行命令之前触发                                                                                                          | `(cmdKey, command, name)`                  |
-| onKeydown      | 当获取光标焦点时，按下任意键盘触发                                                                                                     | `(event, name)`                            |
-| onClick        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                        | `(key, name)`                              |
-| initBefore     | 生命周期函数，插件初始化之前触发                                                                                                      | `(name)`                                   |
-| initComplete   | 生命周期函数，插件初始化完成之后触发                                                                                                    | `(name)`                                   |
+| Event name    | Description                                                                                                                                                                                                                                                                                      | Callback arguments                         |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd       | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, where the `success` callback parameter is a [Message](#Message) or an array of message objects, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                                                  | `(cmdKey, command, name)`                  |
+| onKeydown     | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                                                | `(event, name)`                            |
+| onClick       | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                                                       | `(key, name)`                              |
+| initBefore    | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                                                      | `(name)`                                   |
+| initComplete  | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                                                           | `(name)`                                   |
 
 ## Slots
 
-Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之后支持。
+Terminal supports the following custom slots, this feature is supported in `2.0.11` and `3.0.8` versions and later.
 
-| 插槽名称    | 参数                   | 说明                     |
-|---------|----------------------|------------------------|
-| header  | /                    | 自定义header样式，仍然会保留拖拽区域  |
-| helpBox | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
-| normal  | { message }          | 自定义`normal`类型消息        |
-| json    | { message }          | 自定义`json`类型消息          |
-| table   | { message }          | 自定义`table`类型消息         |
-| code    | { message }          | 自定义`code`类型消息          |
-| html    | { message }          | 自定义`html`类型消息          |
+| Slot name | Arguments            | Description                                                         |
+|-----------|----------------------|---------------------------------------------------------------------|
+| header    | /                    | Customize the header style, still retain the drag area.             |
+| helpBox   | { showHeader, item } | Custom command search result prompt box, item is the search result. |
+| normal    | { message }          | Custom `normal` type message.                                       |
+| json      | { message }          | Custom `json` type message.                                         |
+| table     | { message }          | Custom `table` type message.                                        |
+| code      | { message }          | Custom `code` type message.                                         |
+| html      | { message }          | Custom `html` type message.                                         |
 
 example:
 
@@ -200,9 +202,9 @@ example:
 </terminal>
 ```
 
-## 拖拽功能
+## Drag
 
-开启拖拽功能需要将`showHeader`设置为true并配置`dragConf`，你可以通过dragConf的`width`和`height`来配置窗口大小。
+To enable drag and drop, you need to set `showHeader` to true and configure `dragConf`. You can configure the window size through `width` and `height` of dragConf.
 
 ```vue
 <terminal name="my-terminal" 
@@ -210,34 +212,35 @@ example:
           :drag-conf="{width: 700, height: 500}"></terminal>
 ```
 
-dragConf结构如下：
+The dragConf structure is as follows:
 
-| 参数     | 说明                                                                | 类型            |
-|--------|-------------------------------------------------------------------|---------------|
-| width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）                               | number/string |
-| height | 拖拽窗口高度，同宽度                                                        | number/string |
-| zIndex | 窗口层级，默认100                                                        | number        |
-| init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px，``` {"x": 700, "y": 500}``` | object        |
+| Prop   | Description                                                                                                                                                      | type          |
+|--------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| width  | The width of the drag window, which can be a number (in px) or a percentage (relative to the browser window).                                                    | number/string |
+| height | Drag window height, which can be a number (in px) or a percentage (relative to the browser window).                                                              | number/string |
+| zIndex | Window level, default 100.                                                                                                                                       | number        |
+| init   | Window initialization position, if not filled, the default position is in the center of the browser window, where x and y are in px. ``` {"x": 700, "y": 500}``` | object        |
 
 ![dragging.gif](public/dragging.gif)
 
-除了鼠标控制之外你还可以[调用API模拟拖拽](#拖拽)
+In addition to mouse control, you can also [call API to simulate dragging](#dragging)
 
 ## Api
 
-本插件提供了一些 Api 可以使用 Vue 主动向插件发起事件请求。
+This plugin provides some APIs that can use Vue to actively initiate event requests to the plugin.
 
 ```js
 import Terminal from "vue-web-terminal"
 
-//  获取api
+//  det api
 Terminal.$api
 ```
 
-### 向Terminal推送一条消息
+### pushMessage
 
 ```js
-let name = 'my-terminal'   //  每一个terminal都会定义一个name，详情见前面文档
+//  Each terminal will define a name, see the previous document for details
+let name = 'my-terminal'
 let message = {
     type: 'normal',
     class: 'warning',
@@ -247,10 +250,9 @@ let message = {
 Terminal.$api.pushMessage(name, message)
 ```
 
-### 修改上下文
+### updateContext
 
-比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置
-，但是需使用`.sync`绑定一个变量
+For example, */vue-web-terminal/tzfun* in the current input line `$ /vue-web-terminal/tzfun > ` is the context, and the context text can be freely set by the developer, but you need to use `.sync` to bind a variable.
 
 ```vue
 <template>
@@ -278,25 +280,24 @@ export default {
 </script>
 ```
 
-### Fullscreen
+### fullscreen
 
-使当前terminal进入或退出全屏
+Make the current terminal enter or exit full screen.
 
 ```js
 Terminal.$api.fullscreen('my-terminal')
 ```
 
-判断当前是否处于全屏状态
+Determine if the current state is full screen.
 
 ```js
 //  true or false
 let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 ```
 
-### 拖拽
+### dragging
 
-当开启[拖拽功能](#拖拽功能)时可以使用下面这种方式模拟拖拽来改变窗口位置，其中参数`x`
-是terminal左边框到浏览器可视范围左边框的距离，单位px，`y`是terminal上边框到浏览器可视范围上边框的距离。
+When [Feature Drag](#Drag) is enabled, you can use the following method to simulate drag to change the window position, where the parameter `x` is the distance from the left border of the terminal to the left border of the browser's visible range, in px, `y ` is the distance from the upper border of the terminal to the upper border of the browser's visible range.
 
 ```js
 Terminal.$api.dragging('my-terminal', {
@@ -305,38 +306,38 @@ Terminal.$api.dragging('my-terminal', {
 })
 ```
 
-### 执行命令
+### execute
 
-可以使用api向Terminal执行一个命令，执行过程会回显在Terminal窗口中，这是一种用脚本模拟用户执行命令的方式
+You can use the api to execute a command to the Terminal, and the execution process will be echoed in the Terminal window. This is a way to use a script to simulate the user executing the command.
 
 ```js
 Terminal.$api.execute('my-terminal', 'help :local')
 ```
 
-### 获取位置
+### getPosition
 
-当处于拖拽模式时，此接口可获取窗口所在位置
+When in drag mode, this interface can get the position of the window.
 
 ```js
 let pos = Terminal.$api.getPosition('my-terminal')
 console.log(pos.x, pos.y)
 ```
 
-## 消息对象
+## Message
 
-本插件定义了消息对象，任何消息需按照此格式定义才能正确显示。
+This plugin defines a message object, any message must be defined in this format to display correctly.
 
-| 属性      | 说明                          | 类型                       | 可选值                               |
-|---------|-----------------------------|--------------------------|-----------------------------------|
-| time    | 消息产生时间，仅类型为`normal`有效       | string                   | /                                 |
-| class   | 消息类别                        | string                   | success、error、system、info、warning |
-| tag     | 显示标签，仅类型为`normal`有效         | string                   | /                                 |
-| type    | 消息格式类型，默认值为`normal`         | string                   | normal、json、code、table、html       |
-| content | 具体内容，不同消息格式的内容类型不一样，具体规则见下文 | string、json、object、array | /                                 |
+| Prop    | Description                                                                                                          | Type                     | Options                           |
+|---------|----------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------------|
+| time    | Message generation time, only valid for type `normal`.                                                               | string                   | /                                 |
+| class   | Message class.                                                                                                       | string                   | success、error、system、info、warning |
+| tag     | Display label, only valid for type `normal`.                                                                         | string                   | /                                 |
+| type    | Message format type, default is `normal`.                                                                            | string                   | normal、json、code、table、html       |
+| content | The specific content, the content type of different message formats is different, the specific rules are as follows. | string、json、object、array | /                                 |
 
-### normal 普通文本
+### normal
 
-content为字符串格式，支持html标签，time字段会在push时自动填充，content必填，其他选填
+The content is in string format and supports html tags. The time field will be automatically filled in when pushing. The content is required, and the others are optional.
 
 ```json
 {
@@ -350,7 +351,7 @@ content为字符串格式，支持html标签，time字段会在push时自动填�
 
 ### json
 
-type为`json`时content需传一个json对象
+When type is `json`, content needs to pass a json object.
 
 ```json
 {
@@ -364,7 +365,7 @@ type为`json`时content需传一个json对象
 
 ### code
 
-type为`code`时content类型为字符串，直接传入文本或代码即可
+When type is `code`, the content type is a string, and you can directly pass in text or code.
 
 ```json
 {
@@ -373,12 +374,11 @@ type为`code`时content类型为字符串，直接传入文本或代码即可
 }
 ```
 
-#### highlight.js 代码高亮
+#### highlight.js
 
-code类型消息支持 `highlight.js` 高亮显示
+`code` type messages support `highlight.js` highlighting.
 
-首先你需要配置 **Highlight.js**
-，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
+First you need to configure **Highlight.js**, install it at the main.js entry, see [https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/ package/highlight.js)
 
 ```js
 import Terminal from 'vue-web-terminal'
@@ -392,7 +392,7 @@ Vue.use(vuePlugin)
 Vue.use(Terminal, {highlight: true})
 ```
 
-vue2版本依赖推荐
+vue2 version dependency recommendation:
 
 ```json
 {
@@ -401,12 +401,11 @@ vue2版本依赖推荐
 }
 ```
 
-#### codemirror 代码高亮
+#### codemirror.js
 
-code类型消息也支持 `codemirror`
-高亮显示，详细配置见[https://www.npmjs.com/package/vue-codemirror](https://www.npmjs.com/package/vue-codemirror)
+`code` type messages also support `codemirror` highlighting. For detailed configuration, see [https://www.npmjs.com/package/vue-codemirror](https://www.npmjs.com/package/vue-codemirror)
 
-同样只需要在main.js入口安装即可，版本推荐：`"vue-codemirror": "^4.0.6"`
+It also only needs to be installed at the main.js entry. Recommended version: `"vue-codemirror": "^4.0.6"`
 
 ```js
 import VueCodemirror from 'vue-codemirror'
@@ -430,7 +429,7 @@ Vue.use(Terminal, {
 
 ### table
 
-type为`table`时content为表格配置，`head`为表头，`rows`为每行的数据，支持html标签
+When type is `table`, content is the table configuration, `head` is the table header, `rows` is the data of each row, and html tags are supported.
 
 ```json
 {
@@ -462,7 +461,7 @@ type为`table`时content为表格配置，`head`为表头，`rows`为每行的�
 
 ### html
 
-type为`html`时可自定义内容格式，content为html标签构成
+When type is `html`, the content format can be customized, and content is composed of html tags.
 
 ```js
 execCmd(key, command, success)
@@ -485,59 +484,59 @@ execCmd(key, command, success)
 }
 ```
 
-## 命令定义
+## Command
 
-如果开启了命令帮助搜索功能，在实例化Terminal之前需要传入自定义命令库，传入的命令库为 N 个命令的数组，以下是命令格式定义规则：
+If the command help search function is enabled, you need to pass in a custom command library before instantiating Terminal. The incoming command library is an array of N commands. The following are the rules for defining the command format:
 
-| 参数          | 说明                      | 类型     |
-|-------------|-------------------------|--------|
-| key         | 命令关键字，必填                | string |
-| title       | 显示标题                    | string |
-| group       | 分组，可自定义，默认为 `local`     | string |
-| usage       | 使用方法                    | string |
-| description | 详细描述                    | string |
-| example     | 使用示例，见[命令示例格式](#命令示例格式) | array  |
+| Prop        | Description                                                  | Type   |
+|-------------|--------------------------------------------------------------|--------|
+| key         | Command keyword, required.                                   | string |
+| title       | Display title.                                               | string |
+| group       | grouping, customizable, defaults to `local`.                 | string |
+| usage       | How to use the command.                                      | string |
+| description | Detailed description of the command.                         | string |
+| example     | For usage examples, see[Command example](#CommandExample)    | array  |
 
-### 命令示例格式
+### CommandExample
 
-示例格式比较简单，`des`为描述，`cmd`为具体的命令，json格式如下：
+The format of the example is relatively simple, `des` is a description, `cmd` is a specific command, and the json format is as follows:
 
 ```json
 [
   {
-    "des": "获取所有任务信息",
-    "cmd": "task -u 11001 -o pack"
+    "des": "Get all network information",
+    "cmd": "netstat -a"
   },
   {
-    "des": "获取任务进度",
-    "cmd": "task -u 11001 -o query -id 1001"
+    "des": "Open a website",
+    "cmd": "open blog.beifengtz.com"
   }
 ]
 ```
 
-### 命令Help
+### Help
 
-插件内置了help命令可以方便使用者搜索命令库，通过help命令可以查看命令的key、分组、解释样例信息。
+The plugin has a built-in help command to facilitate users to search the command library. Through the help command, you can view the key, grouping, and explanation sample information of the command.
 
 ```shell
 
-# 显示全部命令信息
+# Show all command information
 help
 
-# 模糊搜索命令，搜索build前缀的命令
+# Fuzzy search command, search for build prefixed commands
 help build*
 
-# 模糊搜索名，搜索带有event的命令
-help *event*
+# Fuzzy search name, search for commands with build
+help *build*
 
-# 按分组搜索，搜索关键词需要以":"开头，搜索分组为server的所有命令
-help :server
+# Search by group, search keywords need to start with ":", search for all commands grouped as build
+help :build
 
 ```
 
-### 内置命令
+### Local
 
-Terminal默认内置有以下命令，且不可替代
+Terminal has the following built-in commands by default and cannot be replaced.
 
 ```json
 [
@@ -593,3 +592,7 @@ Terminal默认内置有以下命令，且不可替代
   }
 ]
 ```
+
+# License
+
+[Apache License 2.0](LICENSE)
