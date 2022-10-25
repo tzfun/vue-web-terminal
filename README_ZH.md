@@ -75,37 +75,6 @@ export default {
     onExecCmd(key, command, success, failed) {
       if (key === 'fail') {
         failed('Something wrong!!!')
-      } else if (key === 'json') {
-        //  do something here
-        success({
-          type: 'json',
-          class: 'success',
-          content: {
-            k1: 'welcome to vue-web-terminal',
-            k2: 120,
-            k3: ['h', 'e', 'l', 'l', 'o'],
-            k4: {k41: 2, k42: '200'}
-          }
-        })
-      } else if (key === 'code') {
-        success({
-          type: 'code',
-          class: 'system',
-          content: 'import Terminal from \'vue-web-terminal\'\n' +
-              '\n' +
-              'Vue.use(Terminal)'
-        })
-      } else if (key === 'table') {
-        success({
-          type: 'table',
-          content: {
-            head: ['title1', 'title2', 'title3', 'title4'],
-            rows: [
-              ['name1', 'hello world', 'this is a test1', 'xxxxxxxx'],
-              ['name2', 'hello world', 'this is a test2 test2', 'xxxxxxxx']
-            ]
-          }
-        })
       } else {
         let allClass = ['success', 'error', 'system', 'info', 'warning'];
 
