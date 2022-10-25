@@ -5,9 +5,9 @@ export default {
     components: {Terminal},
     data() {
         return {
-            version:{
-                vue2: '2.0.9',
-                vue3: '3.0.7'
+            version: {
+                vue2: '2.0.11',
+                vue3: '3.0.9'
             },
             show: true,
             name: 'my-terminal',
@@ -16,93 +16,114 @@ export default {
                 {
                     "key": "fail",
                     "group": "demo",
-                    "usage":'fail',
-                    "description":"模拟错误结果返回"
+                    "usage": 'fail',
+                    "description": "模拟错误结果返回"
                 },
                 {
-                    "key":"json",
+                    "key": "json",
                     "group": "demo",
-                    "usage":'json',
-                    "description":"模拟json结果显示"
+                    "usage": 'json',
+                    "description": "模拟json结果显示"
                 },
                 {
-                    "key":"code",
+                    "key": "code",
                     "group": "demo",
-                    "usage":'code',
-                    "description":"模拟code结果显示"
+                    "usage": 'code',
+                    "description": "模拟code结果显示"
                 },
                 {
-                    "key":"table",
+                    "key": "table",
                     "group": "demo",
-                    "usage":'table',
-                    "description":"模拟表格结果显示"
+                    "usage": 'table',
+                    "description": "模拟表格结果显示"
                 },
                 {
-                    "key":"html",
+                    "key": "html",
                     "group": "demo",
-                    "usage":'html',
-                    "description":"模拟自定义html结果显示"
+                    "usage": 'html',
+                    "description": "模拟自定义html结果显示"
                 },
                 {
-                    "key":"loop",
+                    "key": "loop",
                     "group": "demo",
-                    "usage":'loop <n>',
-                    "description":"模拟批量结果显示",
-                    "example":[
+                    "usage": 'loop <n>',
+                    "description": "模拟批量结果显示",
+                    "example": [
                         {
-                            "cmd":"loop 10",
-                            "des":"模拟批量返回10条消息"
+                            "cmd": "loop 10",
+                            "des": "模拟批量返回10条消息"
                         }
                     ]
                 },
                 {
-                    "key":"context",
+                    "key": "context",
                     "group": "demo",
-                    "usage":'context <ctx>',
-                    "description":"修改上下文",
-                    "example":[
+                    "usage": 'context <ctx>',
+                    "description": "修改上下文",
+                    "example": [
                         {
-                            "cmd":"context /vue/terminal/dev",
-                            "des":"修改上下文为'/vue/terminal/dev'"
+                            "cmd": "context /vue/terminal/dev",
+                            "des": "修改上下文为'/vue/terminal/dev'"
                         }
                     ]
                 },
                 {
-                    "key":"fullscreen",
+                    "key": "fullscreen",
                     "group": "demo",
-                    "usage":'fullscreen',
-                    "description":"切换全屏模式"
+                    "usage": 'fullscreen',
+                    "description": "切换全屏模式"
                 },
                 {
-                    "key":"drag",
+                    "key": "drag",
                     "group": "demo",
-                    "usage":'drag <x> <y>',
-                    "description":"模拟拖拽窗口，x为左边界，y为右边界，单位px",
-                    "example":[
+                    "usage": 'drag <x> <y>',
+                    "description": "模拟拖拽窗口，x为左边界，y为右边界，单位px",
+                    "example": [
                         {
-                            "cmd":"drag 20 100",
-                            "des":"拖拽位置到（20,100）"
+                            "cmd": "drag 20 100",
+                            "des": "拖拽位置到（20,100）"
                         }
                     ]
                 },
                 {
-                    "key":"pos",
+                    "key": "pos",
                     "group": "demo",
-                    "usage":'pos',
-                    "description":"获取当前窗口位置"
+                    "usage": 'pos',
+                    "description": "获取当前窗口位置"
                 },
                 {
-                    "key":"random",
+                    "key": "random",
                     "group": "demo",
-                    "usage":'random',
-                    "description":"随机生成标签"
+                    "usage": 'random',
+                    "description": "随机生成标签"
                 },
             ],
             dragConf: {
                 width: 700,
                 height: 500
-            }
+            },
+            initLog: null
         }
+    },
+    created() {
+        this.initLog = [
+            {
+                content: 'Terminal initializing...'
+            },
+            {
+                content: "Welcome to vue-web-terminal! If you are using for the first time, you can use the <span class='t-teach'>help</span> command to learn."
+            },
+            {
+                type: 'html',
+                content: `
+                <div class='demo-init-box'>
+                    <p>Hello vue-web-terminal! ✋</p>
+                    <p>Demo version: vue2(<span class="t-teach">${this.version.vue2}</span>), vue3(<span class="t-teach">${this.version.vue3}</span>)</p>
+                    <p>⭐️Github: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a></p>
+                </div>
+                `
+            }
+        ]
     },
     mounted() {
         let width = document.body.clientWidth
@@ -113,7 +134,7 @@ export default {
             this.dragConf.height = "80%"
         } else if (width >= 1264) {
             this.dragConf.width = "60%"
-            this.dragConf.height = "60%"
+            this.dragConf.height = "65%"
         }
     },
     methods: {
@@ -233,7 +254,7 @@ export default {
                 Terminal.$api.pushMessage(this.name, {
                     tag: 'success',
                     class: 'system',
-                    content: `用户点击了 ${key}`
+                    content: `User clicked <span class="t-teach">${key}</span>`
                 })
             }
         },
@@ -241,20 +262,14 @@ export default {
             // console.log(event)
         },
         inputFilter(data, value) {
-            return value.replace(/[\u4e00-\u9fa5]/g, "")
+            // return value.replace(/[\u4e00-\u9fa5]/g, "")
+            return value
         },
         initBefore() {
 
         },
         initComplete() {
-            Terminal.$api.execute(this.name, "help help")
 
-            Terminal.$api.pushMessage(this.name,{
-                content: `Current demo version: vue2(${this.version.vue2}), vue3(${this.version.vue3})`
-            })
-            Terminal.$api.pushMessage(this.name,{
-                content: `当前Demo输入规则已加入禁止中文输入`
-            })
         }
     }
 }

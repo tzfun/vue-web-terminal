@@ -4,6 +4,7 @@
     <terminal
         v-if="show"
         :name="name"
+        :init-log="initLog"
         @execCmd="onExecCmd"
         @onClick="onClick"
         @onKeydown="onKeydown"
@@ -79,5 +80,22 @@ body, html, #app {
 
 .t-file {
   color: greenyellow;
+}
+
+.demo-init-box {
+  border-radius: 5px;
+  border: 1px yellow solid;
+  border-left: 1px dashed yellow;
+  border-right: 1px dashed yellow;
+  color: white;
+  align-content: center;
+  text-align: center;
+  padding: 40px 15px;
+  width: 400px;
+  margin: 30px 0;
+}
+
+.t-a {
+  color: #77cfff;
 }
 </style>
