@@ -560,7 +560,7 @@ export default {
             //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
             setTimeout(() => {
                 this.$nextTick(() => {
-                    let container = this.$refs['t-window']
+                    let container = this.terminalWindow
                     container.scrollTop += 1000
                 })
             }, 100)
