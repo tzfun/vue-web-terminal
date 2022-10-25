@@ -786,7 +786,7 @@ export default {
             }
         },
         _fullscreen() {
-            let fullArea = this.$refs['t-container']
+            let fullArea = this.terminalContainer
             if (this.fullscreen) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();

@@ -119,7 +119,7 @@ body, html, #app {
 
 # 插件文档
 
-## Select Attributes
+## Attributes
 
 terminal标签支持属性参数表
 
@@ -142,7 +142,7 @@ terminal标签支持属性参数表
 | input-filter          | 自定义输入过滤，返回值为过滤后的字符串                     | function | function(当前输入字符char, 输入框内字符串value, input时间event) {} |
 | drag-conf             | 拖拽窗口配置项                                 | object   | 见[拖拽功能](#拖拽功能)                                      |
 
-## Select Events
+## Events
 
 terminal标签支持事件表
 
