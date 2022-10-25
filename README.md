@@ -155,6 +155,38 @@ terminal标签支持事件表
 | initBefore     | 生命周期函数，插件初始化之前触发                                                                                                      | `(name)`                                   |
 | initComplete   | 生命周期函数，插件初始化完成之后触发                                                                                                    | `(name)`                                   |
 
+## Slots
+
+Terminal支持以下自定义插槽，此功能在`2.0.10`和`3.0.8`版本及之后支持。
+
+| 插槽名称    | 参数                   | 说明                     |
+|---------|----------------------|------------------------|
+| header  | /                    | 自定义header样式，仍然会保留拖拽区域  |
+| helpBox | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
+| normal  | { message }          | 自定义`normal`类型消息        |
+| json    | { message }          | 自定义`json`类型消息          |
+| table   | { message }          | 自定义`table`类型消息         |
+| code    | { message }          | 自定义`code`类型消息          |
+| html    | { message }          | 自定义`html`类型消息          |
+
+example:
+
+```vue
+<terminal :name="name" @execCmd="onExecCmd">
+  <template #header>
+    This is my custom header
+  </template>
+
+  <template #json="data">
+    {{ data.message }}
+  </template>
+
+  <template #helpBox="{showHeader, item}">
+    {{ item }}
+  </template>
+</terminal>
+```
+
 ## 拖拽功能
 
 开启拖拽功能需要将`showHeader`设置为true并配置`dragConf`，你可以通过dragConf的`width`和`height`来配置窗口大小。
