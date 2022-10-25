@@ -148,7 +148,7 @@
                                                                                  :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
           <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput"
                  class="t-input-box"
-                 ref="inputCmd"
+                 ref="cmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
                  @keyup="onKey"

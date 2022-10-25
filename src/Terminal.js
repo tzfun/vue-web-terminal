@@ -227,7 +227,7 @@ export default {
         this.$nextTick(() => {
             let el = document.getElementsByClassName("t-window")[0]
             if (el != null) {
-                document.documentElement.scrollTop = el.offsetHeight;
+                el.scrollTop = el.offsetHeight;
             }
         })
 
@@ -343,7 +343,7 @@ export default {
         },
         _activeCursor() {
             this.$nextTick(function () {
-                this.$refs.inputCmd.focus()
+                this.$refs.cmdInput.focus()
             })
         },
         /**
@@ -541,16 +541,10 @@ export default {
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
-
-            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
-            setTimeout(() => {
-                this.$nextTick(() => {
-                    let container = this.$refs['t-window']
-                    container.scrollTop += 1000
-                })
-            }, 100)
+            this._jumpToBottom()
         },
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
+            let count = 0;
             for (let m of messages) {
                 this.filterMessageType(m)
                 this.terminalLog.push(m);
@@ -558,10 +552,22 @@ export default {
                 if (time != null) {
                     await _sleep(time);
                 }
+                if (++count % 10 === 0) {
+                    this._jumpToBottom()
+                }
             }
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
+            this._jumpToBottom()
+        },
+        _jumpToBottom() {
+            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
+            setTimeout(() => {
+                this.$nextTick(() => {
+                    this.$refs['t-window'].scrollTop += 1000
+                })
+            }, 100)
         },
         checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
