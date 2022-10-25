@@ -178,14 +178,14 @@ export default {
         const terminalContainer = ref(null)
         const terminalHeader = ref(null)
         const terminalWindow = ref(null)
-        const inputCmd = ref(null)
+        const cmdInput = ref(null)
         const terminalObj = TerminalObj
 
         return {
             terminalContainer,
             terminalHeader,
             terminalWindow,
-            inputCmd,
+            cmdInput,
             terminalObj
         }
     },
@@ -241,7 +241,7 @@ export default {
         // }
         nextTick(() => {
             if (this.terminalWindow != null) {
-                document.documentElement.scrollTop = this.terminalWindow.offsetHeight;
+                this.terminalWindow.scrollTop = this.terminalWindow.offsetHeight;
             }
         }).then(() => {
         })
@@ -345,6 +345,7 @@ export default {
                     let o = this.allCommandStore[i]
                     if (o.key.trim().toLowerCase().indexOf(cmd.trim().toLowerCase()) >= 0) {
                         this.searchCmd.item = o
+                        this._jumpToBottom()
                         return
                     }
                 }
@@ -357,8 +358,9 @@ export default {
             }
         },
         _activeCursor() {
-            this.$nextTick(function () {
-                this.$refs.inputCmd.focus()
+            nextTick(() => {
+                this.cmdInput.focus()
+            }).then(() => {
             })
         },
         /**
@@ -557,15 +559,10 @@ export default {
                 this.checkTerminalLog()
             }
 
-            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
-            setTimeout(() => {
-                this.$nextTick(() => {
-                    let container = this.terminalWindow
-                    container.scrollTop += 1000
-                })
-            }, 100)
+            this._jumpToBottom()
         },
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
+            let count = 1;
             for (let m of messages) {
                 this.filterMessageType(m)
                 this.terminalLog.push(m);
@@ -573,10 +570,23 @@ export default {
                 if (time != null) {
                     await _sleep(time);
                 }
+                if (++count % 10 === 0) {
+                    this._jumpToBottom()
+                }
             }
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
+            this._jumpToBottom()
+        },
+        _jumpToBottom() {
+            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
+            setTimeout(() => {
+                nextTick(() => {
+                    this.terminalWindow.scrollTop += 2000
+                }).then(() => {
+                })
+            }, 50)
         },
         checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
