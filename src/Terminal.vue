@@ -63,48 +63,56 @@
               <span class="prompt">{{ item.content }}</span>
           </span>
           <div v-else @click.self="_activeCursor">
-            <slot name="normal" :message="item">
-              <span v-if="item.type === 'normal'" class="t-content-normal">
-                <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
-                <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)"
-                      :class="item.class"
-                      style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
-                <span v-html="item.content"></span>
-              </span>
-            </slot>
-            <slot name="json" :message="item">
-              <span v-if="item.type === 'json'" style="position: relative">
-                <json-viewer :expand-depth="item.depth"
-                             sort boxed copyable expanded
-                             :key="idx + '_' + item.depth"
-                             :value="parseToJson(item.content)">
-                </json-viewer>
-                <select class="t-json-deep-selector" v-model="item.depth">
-                  <option value="" disabled selected hidden label="Choose a display deep"></option>
-                  <option
-                      v-for="i in jsonViewDepth"
-                      :key="i"
-                      :label="`Deep ${i}`"
-                      :value="i">
-                  </option>
-                </select>
-              </span>
-            </slot>
-            <slot name="code" :message="item">
-              <div v-if="item.type === 'code'" class="t-code">
-                <div v-if="terminalObj.getOptions().highlight">
-                  <highlightjs ref="highlightjs" autodetect :code="item.content"/>
+            <div v-if="item.type === 'normal'">
+              <slot name="normal" :message="item">
+                <span class="t-content-normal">
+                  <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
+                  <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)"
+                        :class="item.class"
+                        style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
+                  <span v-html="item.content"></span>
+                </span>
+              </slot>
+            </div>
+
+            <div v-else-if="item.type === 'json'">
+              <slot name="json" :message="item">
+                <span style="position: relative">
+                  <json-viewer :expand-depth="item.depth"
+                               sort boxed copyable expanded
+                               :key="idx + '_' + item.depth"
+                               :value="parseToJson(item.content)">
+                  </json-viewer>
+                  <select class="t-json-deep-selector" v-model="item.depth">
+                    <option value="" disabled selected hidden label="Choose a display deep"></option>
+                    <option
+                        v-for="i in jsonViewDepth"
+                        :key="i"
+                        :label="`Deep ${i}`"
+                        :value="i">
+                    </option>
+                  </select>
+                </span>
+              </slot>
+            </div>
+            <div v-else-if="item.type === 'code'">
+              <slot name="code" :message="item">
+                <div class="t-code">
+                  <div v-if="terminalObj.getOptions().highlight">
+                    <highlightjs ref="highlightjs" autodetect :code="item.content"/>
+                  </div>
+                  <div v-else-if="terminalObj.getOptions().codemirror">
+                    <codemirror ref="codemirror" v-model="item.content" :options="terminalObj.getOptions().codemirror"/>
+                  </div>
+                  <div v-else style="background: rgb(39 50 58);">
+                    <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
+                  </div>
                 </div>
-                <div v-else-if="terminalObj.getOptions().codemirror">
-                  <codemirror ref="codemirror" v-model="item.content" :options="terminalObj.getOptions().codemirror"/>
-                </div>
-                <div v-else style="background: rgb(39 50 58);">
-                  <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
-                </div>
-              </div>
-            </slot>
-            <slot name="table" :message="item">
-              <div v-if="item.type === 'table'">
+              </slot>
+            </div>
+
+            <div v-else-if="item.type === 'table'">
+              <slot name="table" :message="item">
                 <div class="t-table-container" @click.self="_activeCursor">
                   <table class="t-table t-border-dashed">
                     <thead>
@@ -121,11 +129,15 @@
                     </tbody>
                   </table>
                 </div>
-              </div>
-            </slot>
-            <slot name="html" :message="item">
-              <div v-if="item.type === 'html'" v-html="item.content" @click.self="_activeCursor"></div>
-            </slot>
+              </slot>
+            </div>
+
+            <div v-else-if="item.type === 'html'">
+              <slot name="html" :message="item">
+                <div  v-html="item.content" @click.self="_activeCursor"></div>
+              </slot>
+            </div>
+
           </div>
         </div>
         <p class="t-last-line t-crude-font" v-show="showInputLine" @click.self="_activeCursor">
@@ -171,8 +183,8 @@
                 </div>
                 <div style="float:left;width: calc(100% - 30px);display: flex">
                   <ul class="t-example-ul">
-                    <li class="example-li"><code>{{ it.cmd }}</code></li>
-                    <li class="example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
+                    <li class="t-example-li"><code>{{ it.cmd }}</code></li>
+                    <li class="t-example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
                   </ul>
                 </div>
               </div>
@@ -181,7 +193,6 @@
         </div>
       </slot>
     </div>
-
   </div>
 </template>
 
