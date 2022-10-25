@@ -27,13 +27,16 @@
     overflow: hidden;
 }
 
-.t-header {
+.t-header-container {
     position: absolute;
     height: 30px;
     z-index: 2;
     top: 0;
     right: 0;
     left: 0;
+}
+
+.t-header {
     background-color: #959598;
     text-align: center;
     padding: 2px;
@@ -206,7 +209,7 @@
 /*手机*/
 @media screen and (max-width: 768px ) {
     .t-window {
-        padding: 40px 10px 10px 10px;
+        padding: 0 15px 0 15px;
     }
 }
 
