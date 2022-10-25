@@ -1,11 +1,19 @@
 # vue-web-terminal
 
+<a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dm/vue-web-terminal.svg" alt="Downloads"></a>
+<a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
+<a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/v/vue-web-terminal.svg" alt="Version"></a>
+
 一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本、自定义html，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️
 切换光标️。
 
-在线体验：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
-
 ![vue-web-terminal](./public/vue-web-terminal.gif)
+
+# 在线体验
+
+Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
+
+[![Edit Vue Template](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silly-scooby-l8wk9b)
 
 # 快速上手
 
