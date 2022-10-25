@@ -4,14 +4,27 @@
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/v/vue-web-terminal.svg" alt="Version"></a>
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持格式：普通文本、表格、json、代码/多行文本、自定义html，支持自定义命令行库、键入搜索提示等，支持⬆️、⬇️、⬅️、➡️
-切换光标️。
+一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← → 光标切换和 ↑ ↓ 历史命令切换。
+
+## 功能支持
+
+* 支持消息格式：文本、表格、json、代码/多行文本、html
+* Highlight、Codemirror代码高亮
+* ← → 键光标切换
+* ↑ ↓ 键历史命令切换
+* Fullscreen全屏显示
+* 窗口拖拽
+* 自定义命令库
+* 用户键入过滤
+* 命令搜索提示，Tab键快捷填充
+* 多个Slots插槽支持自定义样式
+* 支持API接口：执行命令、推送消息、模拟拖拽、获取位置、全屏、修改上下文等
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
 # 在线体验
 
-Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
+在线Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-web-terminal/)
 
 [![Edit Vue Template](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/silly-scooby-l8wk9b)
 
@@ -119,37 +132,37 @@ body, html, #app {
 
 # 插件文档
 
-## Select Attributes
+## Attributes
 
 terminal标签支持属性参数表
 
-| 参数                    | 说明                                      | 类型       | 默认值                                                 |
-|-----------------------|-----------------------------------------|----------|-----------------------------------------------------|
-| name                  | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值 | string   | terminal                                            |
-| context               | 初始化上下文文本                                | string   | /vue-web-terminal                                   |
-| title                 | header中显示的标题                            | string   | vue-web-terminal                                    |
-| show-header           | 是否显示header                              | boolean  | true                                                |
-| init-log              | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组  | array    | 略                                                   |
-| init-log-delay        | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms             | number   | 150                                                 |
-| show-log-time         | 当消息**type**为`normal`时是否显示时间             | boolean  | true                                                |
-| warn-log-byte-limit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`   | number   | 1024 * 1024 * 10                                    |
-| warn-log-count-limit  | 当前Terminal日志条数超出此限制会发出警告                | number   | 200                                                 |
-| warn-log-limit-enable | 是否开启日志限制警告                              | boolean  | true                                                |
-| auto-help             | 是否打开命令行自动搜索提示功能                         | boolean  | true                                                |
-| enable-example-hint   | 是否显示样例提示                                | boolean  | true                                                |
-| command-store         | 自定义的命令库，见[命令定义格式](#命令定义)                | array    | [内置命令行](#内置命令行)                                     |
-| command-store-sort    | 命令行库排序                                  | function | function(a,b) {}                                    |
-| input-filter          | 自定义输入过滤，返回值为过滤后的字符串                     | function | function(当前输入字符char, 输入框内字符串value, input时间event) {} |
-| drag-conf             | 拖拽窗口配置项                                 | object   | 见[拖拽功能](#拖拽功能)                                      |
+| 参数                    | 说明                                               | 类型       | 默认值                                              |
+|-----------------------|--------------------------------------------------|----------|--------------------------------------------------|
+| name                  | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值          | string   | terminal                                         |
+| context               | 初始化上下文文本                                         | string   | /vue-web-terminal                                |
+| title                 | header中显示的标题                                     | string   | vue-web-terminal                                 |
+| show-header           | 是否显示header，此开关会影响拖拽功能                            | boolean  | true                                             |
+| init-log              | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，`null`不显示 | array    | 略                                                |
+| init-log-delay        | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms                      | number   | 150                                              |
+| show-log-time         | 当消息**type**为`normal`时是否显示时间                      | boolean  | true                                             |
+| warn-log-byte-limit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`            | number   | 1024 * 1024 * 10                                 |
+| warn-log-count-limit  | 当前Terminal日志条数超出此限制会发出警告                         | number   | 200                                              |
+| warn-log-limit-enable | 是否开启日志限制警告                                       | boolean  | true                                             |
+| auto-help             | 是否打开命令行自动搜索提示功能                                  | boolean  | true                                             |
+| enable-example-hint   | 是否显示样例提示                                         | boolean  | true                                             |
+| command-store         | 自定义的命令库，搜索提示功能会扫描本库，见[命令定义格式](#命令定义)             | array    | [内置命令](#内置命令)                                    |
+| command-store-sort    | 命令行库排序                                           | function | function(a,b)                                    |
+| input-filter          | 自定义输入过滤，返回值为过滤后的字符串                              | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf             | 拖拽窗口配置项                                          | object   | 见[拖拽功能](#拖拽功能)                                   |
 
-## Select Events
+## Events
 
 terminal标签支持事件表
 
 | 事件名称           | 说明                                                                                                                    | 回调参数                                       |
 |----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
 | execCmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数为一个[消息对象](#消息对象)或消息对象数组，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd  | 执行任意命令之前触发                                                                                                            | `(cmdKey, command, name)`                  |
+| beforeExecCmd  | 用户回车执行命令之前触发                                                                                                          | `(cmdKey, command, name)`                  |
 | onKeydown      | 当获取光标焦点时，按下任意键盘触发                                                                                                     | `(event, name)`                            |
 | onClick        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                        | `(key, name)`                              |
 | initBefore     | 生命周期函数，插件初始化之前触发                                                                                                      | `(name)`                                   |
