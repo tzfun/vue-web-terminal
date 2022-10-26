@@ -287,6 +287,9 @@ export default {
         TerminalObj.unregister(this.name)
     },
     watch: {
+        terminalLog() {
+            this._jumpToBottom()
+        },
         command(val, oldVal) {
             if (!this.cmdChange) {
                 let changeStr = this.getDifferent(val, oldVal)
@@ -542,10 +545,8 @@ export default {
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
-            this._jumpToBottom()
         },
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
-            let count = 0;
             for (let m of messages) {
                 this.filterMessageType(m)
                 this.terminalLog.push(m);
@@ -553,22 +554,16 @@ export default {
                 if (time != null) {
                     await _sleep(time);
                 }
-                if (++count % 10 === 0) {
-                    this._jumpToBottom()
-                }
             }
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
-            this._jumpToBottom()
         },
         _jumpToBottom() {
-            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
-            setTimeout(() => {
-                this.$nextTick(() => {
-                    this.$refs['t-window'].scrollTop += 2000
-                })
-            }, 100)
+            this.$nextTick(() => {
+                let box = this.$refs['t-window']
+                box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+            })
         },
         checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
