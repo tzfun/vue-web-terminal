@@ -330,6 +330,7 @@ export default {
                     let o = this.allCommandStore[i]
                     if (o.key.trim().toLowerCase().indexOf(cmd.trim().toLowerCase()) >= 0) {
                         this.searchCmd.item = o
+                        this._jumpToBottom()
                         return
                     }
                 }
@@ -565,7 +566,7 @@ export default {
             //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
             setTimeout(() => {
                 this.$nextTick(() => {
-                    this.$refs['t-window'].scrollTop += 1000
+                    this.$refs['t-window'].scrollTop += 2000
                 })
             }, 100)
         },
