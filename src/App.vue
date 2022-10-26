@@ -17,6 +17,7 @@
         show-header
         @initBefore="initBefore"
         @initComplete="initComplete"
+        style="position: fixed"
     >
     </terminal>
   </div>
@@ -93,6 +94,12 @@ body, html, #app {
   padding: 40px 15px;
   width: 400px;
   margin: 30px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .demo-init-box {
+    width: 92%;
+  }
 }
 
 .t-a {

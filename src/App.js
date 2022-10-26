@@ -7,7 +7,7 @@ export default {
         return {
             version: {
                 vue2: '2.0.11',
-                vue3: '3.0.9'
+                vue3: '3.0.10'
             },
             show: true,
             name: 'my-terminal',
