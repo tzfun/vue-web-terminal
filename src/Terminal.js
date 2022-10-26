@@ -1,4 +1,4 @@
-import {ref, nextTick} from 'vue'
+import {nextTick, ref} from 'vue'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
@@ -305,6 +305,12 @@ export default {
         TerminalObj.unregister(this.name)
     },
     watch: {
+        terminalLog: {
+            handler() {
+                this._jumpToBottom()
+            },
+            deep: true
+        },
         command(val, oldVal) {
             if (!this.cmdChange) {
                 let changeStr = this.getDifferent(val, oldVal)
@@ -561,11 +567,8 @@ export default {
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
-
-            this._jumpToBottom()
         },
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
-            let count = 1;
             for (let m of messages) {
                 this.filterMessageType(m)
                 this.terminalLog.push(m);
@@ -573,23 +576,17 @@ export default {
                 if (time != null) {
                     await _sleep(time);
                 }
-                if (++count % 10 === 0) {
-                    this._jumpToBottom()
-                }
             }
             if (!ignoreCheck) {
                 this.checkTerminalLog()
             }
-            this._jumpToBottom()
         },
         _jumpToBottom() {
-            //  为了修复某些情况下显示过慢无法实时获取到scrollTop的情况
-            setTimeout(() => {
-                nextTick(() => {
-                    this.terminalWindow.scrollTop += 2000
-                }).then(() => {
-                })
-            }, 50)
+            nextTick(() => {
+                let box = this.terminalWindow
+                box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+            }).then(() => {
+            })
         },
         checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
