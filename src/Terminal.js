@@ -161,7 +161,8 @@ export default {
         dragConf: {
             type: Object,
             default: () => {
-                return {
+                /*
+                {
                     width: 700,
                     height: 500,
                     zIndex: 100,
@@ -170,10 +171,12 @@ export default {
                         y: null
                     }
                 }
+                **/
+                return null
             }
         }
     },
-    emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd"],
+    emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd", "destroyed", "initBefore", "initComplete"],
     setup() {
         const terminalContainer = ref(null)
         const terminalHeader = ref(null)
@@ -296,7 +299,7 @@ export default {
         this._initDrag()
         this.$emit('initComplete', this.name)
     },
-    destroyed() {
+    unmounted() {
         this.$emit('destroyed', this.name)
         window.removeEventListener('keydown', this.keydownListener)
         TerminalObj.unregister(this.name)
