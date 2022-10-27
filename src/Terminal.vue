@@ -161,8 +161,8 @@
                  @keyup.down.exact="switchNextCmd"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
-          <span class="t-flag" @click.self="_focus">aa</span>
-          <span class="t-flag" @click.self="_focus">你好</span>
+          <span class="t-flag" ref="terminalEnFlag" @click.self="_focus">aa</span>
+          <span class="t-flag" ref="terminalCnFlag" @click.self="_focus">你好</span>
         </p>
         <p class="t-help-msg" @click.self="_focus">
           {{ searchCmd.item == null ? '' : searchCmd.item.usage }}

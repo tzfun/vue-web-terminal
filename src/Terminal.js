@@ -185,6 +185,8 @@ export default {
         const terminalHeader = ref(null)
         const terminalWindow = ref(null)
         const cmdInput = ref(null)
+        const terminalEnFlag = ref(null)
+        const terminalCnFlag = ref(null)
         const terminalObj = TerminalObj
 
         return {
@@ -192,7 +194,9 @@ export default {
             terminalHeader,
             terminalWindow,
             cmdInput,
-            terminalObj
+            terminalObj,
+            terminalEnFlag,
+            terminalCnFlag
         }
     },
     created() {
@@ -243,10 +247,10 @@ export default {
             }
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
-        // this.byteLen = {
-        //     en: this.terminalEnFlag.value.getBoundingClientRect().width / 2,
-        //     cn: this.terminalCnFlag.value.getBoundingClientRect().width / 2
-        // }
+        this.byteLen = {
+            en: this.terminalEnFlag.getBoundingClientRect().width / 2,
+            cn: this.terminalCnFlag.getBoundingClientRect().width / 2
+        }
         nextTick(() => {
             if (this.terminalWindow != null) {
                 this.terminalWindow.scrollTop = this.terminalWindow.offsetHeight;
