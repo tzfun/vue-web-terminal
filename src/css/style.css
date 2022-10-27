@@ -101,6 +101,7 @@
 .t-window .prompt:before {
     content: "$";
     margin-right: 10px;
+    word-wrap : break-word;
 }
 
 .t-window p {
@@ -160,6 +161,7 @@
     font: 400 13.3333px Arial;
     padding: 1px 2px;
     border-image: initial;
+    word-wrap : break-word;
 }
 
 .t-content-normal .success {
@@ -220,9 +222,13 @@
 
 }
 
-.t-teach {
+.t-cmd-key {
     font-weight: 700;
     color: yellow;
+}
+
+.t-cmd-arg {
+    color: #959598;
 }
 
 .t-help-list {

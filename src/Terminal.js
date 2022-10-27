@@ -99,7 +99,7 @@ export default {
                     content: "Current login time: " + new Date().toLocaleString()
                 }, {
                     type: 'normal',
-                    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-teach'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
+                    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
                 }]
             }
         },
@@ -174,6 +174,9 @@ export default {
                 **/
                 return null
             }
+        },
+        commandFormatter: {
+            type: Function
         }
     },
     emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd", "destroyed", "initBefore", "initComplete"],
@@ -397,7 +400,7 @@ export default {
                     return
                 }
                 let row = []
-                row.push(`<span class='t-teach'>${command.key}</span>`)
+                row.push(`<span class='t-cmd-key'>${command.key}</span>`)
                 row.push(command.group)
 
                 let detail = ''
@@ -626,7 +629,8 @@ export default {
             historyStore.pushCmd(this.name, this.command)
 
             this.terminalLog.push({
-                content: `${this.context} > ${this.command}`, type: "cmdLine"
+                type: "cmdLine",
+                content: `${this.context} > ${this._commandFormatter(this.command)}`
             });
         },
         _curTime() {
@@ -703,7 +707,9 @@ export default {
                 this.cursorConf.idx++;
                 let wordByte = this.getByteLen(this.command[this.cursorConf.idx])
                 this.cursorConf.left += (curWordByte === 1 ? this.byteLen.en : this.byteLen.cn);
-                this.cursorConf.width = (this.cursorConf.idx === this.command.length ? this.cursorConf.defaultWidth : (wordByte === 1 ? this.byteLen.en : this.byteLen.cn))
+                this.cursorConf.width = (this.cursorConf.idx === this.command.length
+                    ? this.cursorConf.defaultWidth
+                    : (wordByte === 1 ? this.byteLen.en : this.byteLen.cn))
             } else {
                 this.cursorConf.idx = this.command.length;
                 this.cursorConf.left = 0;
@@ -714,9 +720,9 @@ export default {
             let len = 0;
             for (let i = 0; i < val.length; i++) {
                 // eslint-disable-next-line no-control-regex
-                if (val[i].match(/[^\x00-\xff]/ig) != null) //全角
-                    len += 2; //如果是全角，占用两个字节
-                else len += 1; //半角占用一个字节
+                if (val[i].match(/[^\x00-\xff]/ig) != null) //  全角
+                    len += 2; //    如果是全角，占用两个字节
+                else len += 1; //   半角占用一个字节
             }
             return len;
         },
@@ -760,7 +766,7 @@ export default {
             return diff;
         },
         onKey(e) {
-            let eIn = document.getElementById("command-input")
+            let eIn = this.cmdInput
             if (eIn.selectionStart !== this.cursorConf.idx) {
                 this.cursorConf.idx = eIn.selectionStart
                 let idx = this.cursorConf.idx;
@@ -780,8 +786,8 @@ export default {
                     this.cursorConf.left = 0;
                 }
             }
-            let reg = /^(\w|\d)?$/
-            if (reg.test(e.key) || e.key.toLowerCase() === 'backspace') {
+
+            if (/^(\w|\d)?$/.test(e.key) || e.key.toLowerCase() === 'backspace') {
                 if (_isEmpty(this.command)) {
                     this._resetSearchKey();
                 } else {
@@ -924,6 +930,26 @@ export default {
         },
         _nonEmpty(obj) {
             return _nonEmpty(obj)
+        },
+        _commandFormatter(cmd) {
+            if (this.commandFormatter != null) {
+                return this.commandFormatter(cmd)
+            }
+            let split = cmd.split(" ")
+            let formatted = []
+            for (let i = 0; i < split.length; i++) {
+                let char = _html(split[i])
+                if (i === 0) {
+                    formatted.push(`<span class='t-cmd-key'>${char}</span>`)
+                } else if (char.startsWith("-")) {
+                    formatted.push(`<span class="t-cmd-arg">${char}</span>`)
+                } else if (char.length === 0 && i < split.length - 1) {
+                    formatted.push("&nbsp;")
+                } else {
+                    formatted.push(char)
+                }
+            }
+            return formatted.join("&nbsp;")
         }
     }
 }
