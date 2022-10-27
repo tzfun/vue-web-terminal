@@ -11,7 +11,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 ## Feature Support
 
 * Supported message formats: `text`, `table`, `json`, `code`/multiline text, `html`
-* `Highlight`, `Codemirror` code highlighting
+* `Highlight.js`, `Codemirror.js` code highlighting
 * ← → key cursor switch
 * ↑ ↓ key history command toggle
 * Full-screen display
@@ -192,11 +192,13 @@ The dragConf structure is as follows:
 
 ![dragging.gif](public/dragging.gif)
 
-In addition to mouse control, you can also [call API to simulate dragging](#dragging)
+In addition to mouse control, you can also [call API to simulate dragging](#dragging())
 
 ## Api
 
 This plugin provides some APIs that can use Vue to actively initiate event requests to the plugin.
+
+PS：**All api calls require the name of the terminal.**
 
 ```js
 import Terminal from "vue-web-terminal"
@@ -205,7 +207,7 @@ import Terminal from "vue-web-terminal"
 Terminal.$api
 ```
 
-### pushMessage
+### pushMessage()
 
 ```js
 //  Each terminal will define a name, see the previous document for details
@@ -219,7 +221,7 @@ let message = {
 Terminal.$api.pushMessage(name, message)
 ```
 
-### updateContext
+### updateContext()
 
 For example, */vue-web-terminal/tzfun* in the current input line `$ /vue-web-terminal/tzfun > ` is the context, and the context text can be freely set by the developer, but you need to use `.sync` to bind a variable.
 
@@ -249,13 +251,15 @@ export default {
 </script>
 ```
 
-### fullscreen
+### fullscreen()
 
 Make the current terminal enter or exit full screen.
 
 ```js
 Terminal.$api.fullscreen('my-terminal')
 ```
+
+### isFullscreen()
 
 Determine if the current state is full screen.
 
@@ -264,7 +268,7 @@ Determine if the current state is full screen.
 let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 ```
 
-### dragging
+### dragging()
 
 When [Feature Drag](#Drag) is enabled, you can use the following method to simulate drag to change the window position, where the parameter `x` is the distance from the left border of the terminal to the left border of the browser's visible range, in px, `y ` is the distance from the upper border of the terminal to the upper border of the browser's visible range.
 
@@ -275,7 +279,7 @@ Terminal.$api.dragging('my-terminal', {
 })
 ```
 
-### execute
+### execute()
 
 You can use the api to execute a command to the Terminal, and the execution process will be echoed in the Terminal window. This is a way to use a script to simulate the user executing the command.
 
@@ -283,13 +287,20 @@ You can use the api to execute a command to the Terminal, and the execution proc
 Terminal.$api.execute('my-terminal', 'help :local')
 ```
 
-### getPosition
+### getPosition()
 
 When in drag mode, this interface can get the position of the window.
 
 ```js
 let pos = Terminal.$api.getPosition('my-terminal')
 console.log(pos.x, pos.y)
+```
+
+### focus()
+
+Get input focus
+```js
+Terminal.$api.focus('my-terminal')
 ```
 
 ## Message
