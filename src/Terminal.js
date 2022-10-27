@@ -201,6 +201,8 @@ export default {
                 } else {
                     return {x: 0, y: 0}
                 }
+            } else if (type === 'focus') {
+                this._focus()
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -345,7 +347,7 @@ export default {
                 this.command = this.searchCmd.item.key
             }
         },
-        _activeCursor() {
+        _focus() {
             this.$nextTick(function () {
                 this.$refs.cmdInput.focus()
             })
@@ -395,7 +397,7 @@ export default {
                             <div style="float:left;width: 30px;display:flex;font-size: 12px;line-height: 18px;">
                               eg${parseInt(idx) + 1}:
                             </div>
-                            <div style="float:left;width: calc(100% - 30px);display: flex">
+                            <div class="t-cmd-help-example">
                               <ul class="t-example-ul">
                                 <li class="t-example-li"><code>${eg.cmd}</code></li>
                                 <li class="t-example-li"><span></span></li>
@@ -476,7 +478,7 @@ export default {
                     })
                 }
             }
-            this._activeCursor()
+            this._focus()
             this._endExecCallBack()
         },
         _endExecCallBack() {
@@ -487,7 +489,7 @@ export default {
                 width: this.cursorConf.defaultWidth,
                 show: true,
             }
-            this._activeCursor()
+            this._focus()
         },
         parseToJson(obj) {
             if (typeof obj === 'object' && obj) {
@@ -562,7 +564,9 @@ export default {
         _jumpToBottom() {
             this.$nextTick(() => {
                 let box = this.$refs['t-window']
-                box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+                if (box != null) {
+                    box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+                }
             })
         },
         checkTerminalLog() {
