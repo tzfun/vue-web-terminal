@@ -1,7 +1,7 @@
 <template>
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%'"
-       ref="terminalContainer" @click.self="_activeCursor">
+       ref="terminalContainer" @click.self="_focus">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
         <slot name="header">
@@ -57,12 +57,12 @@
       </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
            ref="terminalWindow"
-           @click.self="_activeCursor">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_activeCursor">
+           @click.self="_focus">
+        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_focus">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font">
               <span class="prompt">{{ item.content }}</span>
           </span>
-          <div v-else @click.self="_activeCursor">
+          <div v-else @click.self="_focus">
 
             <div v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
@@ -115,7 +115,7 @@
 
             <div v-if="item.type === 'table'">
               <slot name="table" :message="item">
-                <div class="t-table-container" @click.self="_activeCursor">
+                <div class="t-table-container" @click.self="_focus">
                   <table class="t-table t-border-dashed">
                     <thead>
                     <tr class="t-border-dashed">
@@ -136,13 +136,13 @@
 
             <div v-if="item.type === 'html'">
               <slot name="html" :message="item">
-                <div v-html="item.content" @click.self="_activeCursor"></div>
+                <div v-html="item.content" @click.self="_focus"></div>
               </slot>
             </div>
 
           </div>
         </div>
-        <p class="t-last-line t-crude-font" v-show="showInputLine" @click.self="_activeCursor">
+        <p class="t-last-line t-crude-font" v-show="showInputLine" @click.self="_focus">
           <span class="prompt">
             <span>{{ context }}</span>
             <span> > </span>
@@ -161,16 +161,18 @@
                  @keyup.down.exact="switchNextCmd"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
-          <span class="t-flag" @click.self="_activeCursor">aa</span>
-          <span class="t-flag" @click.self="_activeCursor">你好</span>
+          <span class="t-flag" @click.self="_focus">aa</span>
+          <span class="t-flag" @click.self="_focus">你好</span>
         </p>
-        <p class="t-help-msg" v-if="searchCmd.item != null" @click.self="_activeCursor">{{ searchCmd.item.usage }}</p>
+        <p class="t-help-msg" @click.self="_focus">
+          {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
+        </p>
       </div>
     </div>
     <div v-if="enableExampleHint">
       <slot name="helpBox" :showHeader="showHeader" :item="searchCmd.item">
         <div class="t-cmd-help"
-             :style="showHeader ? 'top: 40px;' : 'top: 15px;'"
+             :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
              v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
           <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
              v-html="searchCmd.item.description"></p>
@@ -180,13 +182,13 @@
                 <span>Example: <code>{{ it.cmd }}</code> {{ it.des }}</span>
               </div>
               <div v-else>
-                <div style="float:left;width: 30px;display:flex;font-size: 16px;line-height: 26px;">
+                <div class="t-cmd-help-eg">
                   eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}:
                 </div>
-                <div style="float:left;width: calc(100% - 30px);display: flex">
+                <div class="t-cmd-help-example">
                   <ul class="t-example-ul">
                     <li class="t-example-li"><code>{{ it.cmd }}</code></li>
-                    <li class="t-example-li"><span v-if="it.des != null">{{ it.des }}</span></li>
+                    <li class="t-example-li"><span v-if="it.des != null" class="t-cmd-help-des">{{ it.des }}</span></li>
                   </ul>
                 </div>
               </div>
