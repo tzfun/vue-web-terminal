@@ -192,11 +192,13 @@ dragConf结构如下：
 
 ![dragging.gif](public/dragging.gif)
 
-除了鼠标控制之外你还可以[调用API模拟拖拽](#拖拽)
+除了鼠标控制之外你还可以[调用API模拟拖拽](#dragging())
 
 ## Api
 
 本插件提供了一些 Api 可以使用 Vue 主动向插件发起事件请求。
+
+注意：**所有的API接口调用都需要用到Terminal的`name`**
 
 ```js
 import Terminal from "vue-web-terminal"
@@ -205,7 +207,9 @@ import Terminal from "vue-web-terminal"
 Terminal.$api
 ```
 
-### 向Terminal推送一条消息
+### pushMessage()
+
+向Terminal推送一条消息
 
 ```js
 let name = 'my-terminal'   //  每一个terminal都会定义一个name，详情见前面文档
@@ -218,7 +222,7 @@ let message = {
 Terminal.$api.pushMessage(name, message)
 ```
 
-### 修改上下文
+### updateContext()
 
 比如当前输入行`$ /vue-web-terminal/tzfun > `的 */vue-web-terminal/tzfun* 就是上下文，上下文文本可以由开发者自由设置
 ，但是需使用`.sync`绑定一个变量
@@ -249,13 +253,15 @@ export default {
 </script>
 ```
 
-### Fullscreen
+### fullscreen()
 
 使当前terminal进入或退出全屏
 
 ```js
 Terminal.$api.fullscreen('my-terminal')
 ```
+
+### isFullscreen()
 
 判断当前是否处于全屏状态
 
@@ -264,7 +270,7 @@ Terminal.$api.fullscreen('my-terminal')
 let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 ```
 
-### 拖拽
+### dragging()
 
 当开启[拖拽功能](#拖拽功能)时可以使用下面这种方式模拟拖拽来改变窗口位置，其中参数`x`
 是terminal左边框到浏览器可视范围左边框的距离，单位px，`y`是terminal上边框到浏览器可视范围上边框的距离。
@@ -276,7 +282,7 @@ Terminal.$api.dragging('my-terminal', {
 })
 ```
 
-### 执行命令
+### execute()
 
 可以使用api向Terminal执行一个命令，执行过程会回显在Terminal窗口中，这是一种用脚本模拟用户执行命令的方式
 
@@ -284,13 +290,21 @@ Terminal.$api.dragging('my-terminal', {
 Terminal.$api.execute('my-terminal', 'help :local')
 ```
 
-### 获取位置
+### getPosition()
 
 当处于拖拽模式时，此接口可获取窗口所在位置
 
 ```js
 let pos = Terminal.$api.getPosition('my-terminal')
 console.log(pos.x, pos.y)
+```
+
+### focus()
+
+获取输入焦点
+
+```js
+Terminal.$api.focus('my-terminal')
 ```
 
 ## 消息对象
