@@ -1,5 +1,5 @@
 import sizeof from 'object-sizeof'
-import {_dateFormat, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
+import {_dateFormat, _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 
@@ -10,9 +10,13 @@ export default {
             terminalObj: TerminalObj,
             command: "",
             commandLog: [],
-            cmdChange: false,
             cursorConf: {
-                defaultWidth: 6, width: 6, left: 0, idx: 0, show: false
+                defaultWidth: 6,
+                width: 6,
+                left: 'unset',
+                top: 'unset',
+                idx: 0, //  从0开始
+                show: false
             },
             byteLen: {
                 en: 8, cn: 13
@@ -77,6 +81,12 @@ export default {
             perfWarningRate: {
                 size: 0,
                 count: 0
+            },
+            inputBoxParam: {
+                boxWidth: 0,
+                boxHeight: 0,
+                promptWidth: 0,
+                promptHeight: 0
             }
         }
     },
@@ -174,7 +184,7 @@ export default {
         },
         //  命令格式化显示函数
         commandFormatter: {
-            type:Function
+            type: Function
         }
     },
     created() {
@@ -183,6 +193,9 @@ export default {
                 this._pushMessage(options)
             } else if (type === 'updateContext') {
                 this.$emit("update:context", options)
+                this.$nextTick(() => {
+                    this.inputBoxParam.promptWidth = this.$refs['t-input-prompt'].getBoundingClientRect().width
+                })
             } else if (type === 'fullscreen') {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
@@ -227,15 +240,18 @@ export default {
         }
 
         this.byteLen = {
-            en: document.getElementById("t-en-flag").getBoundingClientRect().width / 2,
-            cn: document.getElementById("t-cn-flag").getBoundingClientRect().width / 2
+            en: this.$refs['t-en-flag'].getBoundingClientRect().width / 2,
+            cn: this.$refs['t-cn-flag'].getBoundingClientRect().width / 2
         }
-        this.$nextTick(() => {
-            let el = document.getElementsByClassName("t-window")[0]
-            if (el != null) {
-                el.scrollTop = el.offsetHeight;
-            }
-        })
+        this.cursorConf.defaultWidth = this.byteLen.en
+
+        let el = this.$refs['t-window']
+        el.scrollTop = el.offsetHeight;
+
+        let promptRect = this.$refs['t-input-prompt'].getBoundingClientRect()
+        this.inputBoxParam.promptWidth = promptRect.width
+        this.inputBoxParam.promptHeight = promptRect.height
+
 
         this.keydownListener = event => {
             if (event.key.toLowerCase() === 'tab') {
@@ -295,20 +311,7 @@ export default {
     watch: {
         terminalLog() {
             this._jumpToBottom()
-        },
-        command(val, oldVal) {
-            if (!this.cmdChange) {
-                let changeStr = this.getDifferent(val, oldVal)
-                let increase = val.length > oldVal.length;
-                if (increase) {
-                    this.cursorConf.idx += changeStr.length;
-                } else {
-                    this.cursorConf.idx -= changeStr.length;
-                }
-            } else {
-                this.cmdChange = false;
-            }
-        },
+        }
     },
     methods: {
         _triggerClick(key) {
@@ -487,12 +490,8 @@ export default {
         },
         _endExecCallBack() {
             this.command = ""
-            this.cursorConf = {
-                idx: 0,
-                left: 0,
-                width: this.cursorConf.defaultWidth,
-                show: true,
-            }
+            this._resetCursorPos()
+            this.cursorConf.show = true
             this._focus()
         },
         _parseToJson(obj) {
@@ -614,37 +613,6 @@ export default {
         _curTime() {
             return _dateFormat("YYYY-mm-dd HH:MM:SS", new Date())
         },
-        _switchPreCmd() {
-            let cmdLog = historyStore.getLog(this.name)
-            let cmdIdx = historyStore.getIdx(this.name)
-            if (cmdLog.length !== 0 && cmdIdx > 0) {
-                cmdIdx -= 1;
-                this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
-                this.cursorConf = {
-                    idx: this.command.length, left: 0, width: this.cursorConf.defaultWidth, show: true
-                }
-                this.cmdChange = true;
-            }
-            historyStore.setIdx(this.name, cmdIdx)
-            this._searchCmd(this.command.trim().split(" ")[0])
-        },
-        _switchNextCmd() {
-            let cmdLog = historyStore.getLog(this.name)
-            let cmdIdx = historyStore.getIdx(this.name)
-            if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
-                cmdIdx += 1;
-                this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
-                this.cursorConf.idx = this.command.length;
-                this.cmdChange = true;
-            } else {
-                cmdIdx = cmdLog.length;
-                this.command = '';
-                this.cursorConf.idx = this.command.length;
-                this.cmdChange = true;
-            }
-            historyStore.setIdx(this.name, cmdIdx)
-            this._searchCmd(this.command.trim().split(" ")[0])
-        },
         _doClear(args) {
             if (args.length === 1) {
                 this.terminalLog = [];
@@ -669,106 +637,88 @@ export default {
                 })
             }
         },
-        onDownLeft() {
+        _resetCursorPos(cmd) {
+            this.cursorConf.idx = (cmd == null ? this.command : cmd).length
+            this.cursorConf.left = 'unset'
+            this.cursorConf.top = 'unset'
+            this.cursorConf.width = this.cursorConf.defaultWidth
+        },
+        _calculateCursorPos(cmd) {
+            //  idx可以认为是需要光标覆盖字符的索引
+            let idx = this.cursorConf.idx
+            let command = cmd == null ? this.command : cmd
+
+            if (idx < 0 || idx >= command.length) {
+                this._resetCursorPos()
+                return
+            }
+
+            let lineWidth = this.$refs['t-input-box'].getBoundingClientRect().width
+
+            let pos = {left: this.inputBoxParam.promptWidth, top: 0}
+            let charWidth = this.cursorConf.defaultWidth;
+            if (idx > 0) {
+                //  先找到被覆盖字符的位置
+                for (let i = 1; i <= idx; i++) {
+                    charWidth = this._calculateStringWidth(command[i])
+                    pos.left += charWidth
+
+                    if (pos.left > lineWidth) {
+                        //  行高是20px
+                        pos.top += 20
+                        pos.left = charWidth
+                    }
+                }
+            }
+
+            this.cursorConf.left = pos.left + 'px'
+            this.cursorConf.top = pos.top + 'px'
+            this.cursorConf.width = charWidth
+        },
+        _cursorGoLeft() {
             if (this.cursorConf.idx > 0) {
                 this.cursorConf.idx--;
-                if (this.command[this.cursorConf.idx] != null) {
-                    let wordByte = this.getByteLen(this.command[this.cursorConf.idx])
-                    this.cursorConf.left -= (wordByte === 1 ? this.byteLen.en : this.byteLen.cn);
-                    this.cursorConf.width = (wordByte === 1 ? this.byteLen.en : this.byteLen.cn);
-                }
             }
+            this._calculateCursorPos()
         },
-        onDownRight() {
-            if (this.cursorConf.idx < this.command.length - 1) {
-                let curWordByte = this.getByteLen(this.command[this.cursorConf.idx])
+        _cursorGoRight() {
+            if (this.cursorConf.idx < this.command.length) {
                 this.cursorConf.idx++;
-                let wordByte = this.getByteLen(this.command[this.cursorConf.idx])
-                this.cursorConf.left += (curWordByte === 1 ? this.byteLen.en : this.byteLen.cn);
-                this.cursorConf.width = (this.cursorConf.idx === this.command.length ? this.cursorConf.defaultWidth : (wordByte === 1 ? this.byteLen.en : this.byteLen.cn))
+            }
+            this._calculateCursorPos()
+        },
+
+        _switchPreCmd() {
+            let cmdLog = historyStore.getLog(this.name)
+            let cmdIdx = historyStore.getIdx(this.name)
+            if (cmdLog.length !== 0 && cmdIdx > 0) {
+                cmdIdx -= 1;
+                this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
+            }
+            this._resetCursorPos()
+            historyStore.setIdx(this.name, cmdIdx)
+            this._searchCmd(this.command.trim().split(" ")[0])
+        },
+        _switchNextCmd() {
+            let cmdLog = historyStore.getLog(this.name)
+            let cmdIdx = historyStore.getIdx(this.name)
+            if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
+                cmdIdx += 1;
+                this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
             } else {
-                this.cursorConf.idx = this.command.length;
-                this.cursorConf.left = 0;
-                this.cursorConf.width = this.cursorConf.defaultWidth;
+                cmdIdx = cmdLog.length;
+                this.command = '';
             }
+            this._resetCursorPos()
+            historyStore.setIdx(this.name, cmdIdx)
+            this._searchCmd(this.command.trim().split(" ")[0])
         },
-        getByteLen(val) {
-            let len = 0;
-            for (let i = 0; i < val.length; i++) {
-                // eslint-disable-next-line no-control-regex
-                if (val[i].match(/[^\x00-\xff]/ig) != null) //全角
-                    len += 2; //如果是全角，占用两个字节
-                else len += 1; //半角占用一个字节
+        _calculateStringWidth(str) {
+            let width = 0
+            for (let char of str) {
+                width += (_getByteLen(char) === 1 ? this.byteLen.en : this.byteLen.cn)
             }
-            return len;
-        },
-        /**
-         * 获取两个连续字符串的不同部分
-         *
-         * @param one
-         * @param two
-         * @returns {string}
-         */
-        getDifferent(one, two) {
-            if (one === two) {
-                return '';
-            }
-            let i = 0, j = 0;
-            let longOne = one.length > two.length ? one : two;
-            let shortOne = one.length > two.length ? two : one;
-
-            let diff = '', nextChar = '';
-            let hasDiff = false;
-            while (i < shortOne.length || j < longOne.length) {
-                if (shortOne[i] === longOne[j]) {
-                    if (hasDiff) {
-                        break;
-                    }
-                    i++;
-                    j++;
-                } else {
-                    if (i < shortOne.length - 1) {
-                        nextChar = shortOne[i + 1]
-                    }
-                    if (longOne[j] === nextChar || j >= longOne.length) {
-                        break;
-                    } else {
-                        diff += longOne[j];
-                    }
-                    j++;
-                    hasDiff = true;
-                }
-            }
-            return diff;
-        },
-        onKey(e) {
-            let eIn = this.$refs.cmdInput
-            if (eIn.selectionStart !== this.cursorConf.idx) {
-                this.cursorConf.idx = eIn.selectionStart
-                let idx = this.cursorConf.idx;
-
-                if (this.command.length !== idx && this.command.length > 0) {
-                    if (this.command[idx] != null) {
-                        this.cursorConf.width = (this.getByteLen(this.command[idx]) === 1 ? this.byteLen.en : this.byteLen.cn)
-                        let left = 0;
-                        for (let i = this.command.length - 1; i >= idx; --i) {
-                            let byteLen = this.getByteLen(this.command[i]);
-                            left -= (byteLen === 1 ? this.byteLen.en : this.byteLen.cn)
-                        }
-                        this.cursorConf.left = left;
-                    }
-                } else {
-                    this.cursorConf.width = this.cursorConf.defaultWidth;
-                    this.cursorConf.left = 0;
-                }
-            }
-            if (/^(\w|\d)?$/.test(e.key) || e.key.toLowerCase() === 'backspace') {
-                if (_isEmpty(this.command)) {
-                    this._resetSearchKey();
-                } else {
-                    this._searchCmd()
-                }
-            }
+            return width
         },
         _onInput(e) {
             if (this.inputFilter != null) {
@@ -778,6 +728,32 @@ export default {
                     newStr = value
                 }
                 this.command = newStr
+            }
+
+            if (_isEmpty(this.command)) {
+                this._resetSearchKey();
+            } else {
+                this._searchCmd()
+            }
+
+            this.$nextTick(() => {
+                this._checkInputCursor()
+                this._calculateCursorPos()
+            })
+        },
+        _checkInputCursor() {
+            let eIn = this.$refs['cmdInput']
+            if (eIn.selectionStart !== this.cursorConf.idx) {
+                this.cursorConf.idx = eIn.selectionStart
+            }
+        },
+        _onInputKeydown(e) {
+            if (e.key.toLowerCase() === 'arrowleft') {
+                this._checkInputCursor()
+                this._cursorGoLeft()
+            } else if (e.key.toLowerCase() === 'arrowright') {
+                this._checkInputCursor()
+                this._cursorGoRight()
             }
         },
         _fullscreen() {
@@ -911,20 +887,21 @@ export default {
                 return this.commandFormatter(cmd)
             }
             let split = cmd.split(" ")
-            let formatted = []
+            let formatted = ''
             for (let i = 0; i < split.length; i++) {
                 let char = _html(split[i])
                 if (i === 0) {
-                    formatted.push(`<span class='t-cmd-key'>${char}</span>`)
+                    formatted += `<span class='t-cmd-key'>&ZeroWidthSpace;${char}</span>`
                 } else if (char.startsWith("-")) {
-                    formatted.push(`<span class="t-cmd-arg">${char}</span>`)
-                } else if (char.length === 0 && i < split.length - 1) {
-                    formatted.push("&nbsp;")
-                } else {
-                    formatted.push(char)
+                    formatted += `<span class="t-cmd-arg">&ZeroWidthSpace;${char}</span>`
+                } else if (char.length > 0) {
+                    formatted += `<span>&ZeroWidthSpace;${char}</span>`
+                }
+                if (i < split.length - 1) {
+                    formatted += "<span>&ZeroWidthSpace;&nbsp;</span>"
                 }
             }
-            return formatted.join("&nbsp;")
+            return formatted
         }
     }
 }

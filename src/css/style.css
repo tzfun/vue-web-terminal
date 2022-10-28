@@ -194,7 +194,7 @@
     font-weight: 600;
 }
 
-#t-en-flag, #t-cn-flag {
+.t-flag {
     opacity: 0;
 }
 
