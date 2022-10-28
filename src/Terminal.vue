@@ -60,7 +60,7 @@
            @click.self="_focus">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_focus">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font">
-              <span class="prompt">{{ item.content }}</span>
+              <span class="prompt"><span v-html="item.content"></span></span>
           </span>
           <div v-else @click.self="_focus">
             <div v-if="item.type === 'normal'">
@@ -81,7 +81,7 @@
                   <json-viewer :expand-depth="item.depth"
                                sort boxed copyable expanded
                                :key="idx + '_' + item.depth"
-                               :value="parseToJson(item.content)">
+                               :value="_parseToJson(item.content)">
                   </json-viewer>
                   <select class="t-json-deep-selector" v-model="item.depth">
                     <option value="" disabled selected hidden label="Choose a display deep"></option>
@@ -145,9 +145,9 @@
           <span class="prompt">
             <span>{{ context }}</span>
             <span> > </span>
-          </span><span v-html="require('./Util.js')._html(command)"></span><span v-show="cursorConf.show" class="cursor"
+          </span><span v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor"
                                                                                  :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" id="command-input" v-model="command" @input="_onInput"
+          <input type="text" autofocus="autofocus" v-model="command" @input="_onInput"
                  class="t-input-box"
                  ref="cmdInput"
                  autocomplete="off"
@@ -155,9 +155,9 @@
                  @keyup="onKey"
                  @focusin="cursorConf.show = true"
                  @focusout="cursorConf.show = false"
-                 @keyup.enter="execute"
-                 @keyup.up.exact="switchPreCmd"
-                 @keyup.down.exact="switchNextCmd"
+                 @keyup.enter="_execute"
+                 @keyup.up.exact="_switchPreCmd"
+                 @keyup.down.exact="_switchNextCmd"
                  @keydown.left.exact="onDownLeft"
                  @keydown.right.exact="onDownRight">
           <span id="t-en-flag" @click.self="_focus">aa</span>

@@ -99,7 +99,7 @@ export default {
                     content: "Current login time: " + new Date().toLocaleString()
                 }, {
                     type: 'normal',
-                    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-teach'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
+                    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
                 }]
             }
         },
@@ -171,6 +171,10 @@ export default {
                     }
                 }
             }
+        },
+        //  命令格式化显示函数
+        commandFormatter: {
+            type:Function
         }
     },
     created() {
@@ -192,7 +196,7 @@ export default {
             } else if (type === 'execute') {
                 if (_nonEmpty(options)) {
                     this.command = options
-                    this.execute()
+                    this._execute()
                 }
             } else if (type === 'getPosition') {
                 if (this._draggable()) {
@@ -375,7 +379,7 @@ export default {
                     return
                 }
                 let row = []
-                row.push(`<span class='t-teach'>${command.key}</span>`)
+                row.push(`<span class='t-cmd-key'>${command.key}</span>`)
                 row.push(command.group)
 
                 let detail = ''
@@ -423,13 +427,13 @@ export default {
                 content: content
             })
         },
-        execute() {
+        _execute() {
             this._resetSearchKey()
             if (this.command.trim() !== "") {
                 try {
                     let split = this.command.split(" ")
                     let cmdKey = split[0];
-                    this.saveCurCommand();
+                    this._saveCurCommand();
                     this.$emit("beforeExecCmd", cmdKey, this.command, this.name)
                     switch (cmdKey) {
                         case 'help': {
@@ -442,7 +446,7 @@ export default {
                             this._doClear(split);
                             break;
                         case 'open':
-                            this.openUrl(split[1]);
+                            this._openUrl(split[1]);
                             break;
                         default: {
                             this.showInputLine = false
@@ -491,7 +495,7 @@ export default {
             }
             this._focus()
         },
-        parseToJson(obj) {
+        _parseToJson(obj) {
             if (typeof obj === 'object' && obj) {
                 return obj;
             } else if (typeof obj === 'string') {
@@ -502,7 +506,7 @@ export default {
                 }
             }
         },
-        filterMessageType(message) {
+        _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
             if (!valid) {
                 console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
@@ -536,7 +540,7 @@ export default {
             if (message == null) return
             if (message instanceof Array) return this._pushMessageBatch(message, null, ignoreCheck)
 
-            this.filterMessageType(message)
+            this._filterMessageType(message)
 
             if (this.showLogTime) {
                 message.time = this._curTime()
@@ -545,12 +549,12 @@ export default {
             this.terminalLog.push(message);
             this.terminalSize += sizeof(message)
             if (!ignoreCheck) {
-                this.checkTerminalLog()
+                this._checkTerminalLog()
             }
         },
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
             for (let m of messages) {
-                this.filterMessageType(m)
+                this._filterMessageType(m)
                 this.terminalLog.push(m);
                 this.terminalSize += sizeof(m)
                 if (time != null) {
@@ -558,7 +562,7 @@ export default {
                 }
             }
             if (!ignoreCheck) {
-                this.checkTerminalLog()
+                this._checkTerminalLog()
             }
         },
         _jumpToBottom() {
@@ -569,7 +573,7 @@ export default {
                 }
             })
         },
-        checkTerminalLog() {
+        _checkTerminalLog() {
             if (!this.warnLogLimitEnable) {
                 return
             }
@@ -599,17 +603,18 @@ export default {
                 }
             }
         },
-        saveCurCommand() {
+        _saveCurCommand() {
             historyStore.pushCmd(this.name, this.command)
 
             this.terminalLog.push({
-                content: `${this.context} > ${this.command}`, type: "cmdLine"
+                type: "cmdLine",
+                content: `${this.context} > ${this._commandFormatter(this.command)}`
             });
         },
         _curTime() {
             return _dateFormat("YYYY-mm-dd HH:MM:SS", new Date())
         },
-        switchPreCmd() {
+        _switchPreCmd() {
             let cmdLog = historyStore.getLog(this.name)
             let cmdIdx = historyStore.getIdx(this.name)
             if (cmdLog.length !== 0 && cmdIdx > 0) {
@@ -623,7 +628,7 @@ export default {
             historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
-        switchNextCmd() {
+        _switchNextCmd() {
             let cmdLog = historyStore.getLog(this.name)
             let cmdIdx = historyStore.getIdx(this.name)
             if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
@@ -650,7 +655,7 @@ export default {
             this.perfWarningRate.size = 0
             this.perfWarningRate.count = 0
         },
-        openUrl(url) {
+        _openUrl(url) {
             let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
             if (match.test(url)) {
                 if (!url.startsWith("http") && !url.startsWith("https")) {
@@ -737,7 +742,7 @@ export default {
             return diff;
         },
         onKey(e) {
-            let eIn = document.getElementById("command-input")
+            let eIn = this.$refs.cmdInput
             if (eIn.selectionStart !== this.cursorConf.idx) {
                 this.cursorConf.idx = eIn.selectionStart
                 let idx = this.cursorConf.idx;
@@ -757,8 +762,7 @@ export default {
                     this.cursorConf.left = 0;
                 }
             }
-            let reg = /^(\w|\d)?$/
-            if (reg.test(e.key) || e.key.toLowerCase() === 'backspace') {
+            if (/^(\w|\d)?$/.test(e.key) || e.key.toLowerCase() === 'backspace') {
                 if (_isEmpty(this.command)) {
                     this._resetSearchKey();
                 } else {
@@ -901,6 +905,26 @@ export default {
         },
         _nonEmpty(obj) {
             return _nonEmpty(obj)
+        },
+        _commandFormatter(cmd) {
+            if (this.commandFormatter != null) {
+                return this.commandFormatter(cmd)
+            }
+            let split = cmd.split(" ")
+            let formatted = []
+            for (let i = 0; i < split.length; i++) {
+                let char = _html(split[i])
+                if (i === 0) {
+                    formatted.push(`<span class='t-cmd-key'>${char}</span>`)
+                } else if (char.startsWith("-")) {
+                    formatted.push(`<span class="t-cmd-arg">${char}</span>`)
+                } else if (char.length === 0 && i < split.length - 1) {
+                    formatted.push("&nbsp;")
+                } else {
+                    formatted.push(char)
+                }
+            }
+            return formatted.join("&nbsp;")
         }
     }
 }
