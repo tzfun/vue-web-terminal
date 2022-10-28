@@ -10,7 +10,6 @@ export default {
         return {
             command: "",
             commandLog: [],
-            cmdChange: false,
             cursorConf: {
                 defaultWidth: 6,
                 width: 6,
@@ -726,8 +725,8 @@ export default {
             if (cmdLog.length !== 0 && cmdIdx > 0) {
                 cmdIdx -= 1;
                 this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
-                this._resetCursorPos()
             }
+            this._resetCursorPos()
             historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
@@ -737,11 +736,11 @@ export default {
             if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
                 cmdIdx += 1;
                 this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
-                this._resetCursorPos()
             } else {
                 cmdIdx = cmdLog.length;
                 this.command = '';
             }
+            this._resetCursorPos()
             historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
