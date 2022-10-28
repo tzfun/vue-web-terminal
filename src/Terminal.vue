@@ -59,8 +59,8 @@
            ref="terminalWindow"
            @click.self="_focus">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_focus">
-          <span v-if="item.type === 'cmdLine'" class="t-crude-font">
-              <span class="prompt"><span v-html="item.content"></span></span>
+          <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
+              <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
           <div v-else @click.self="_focus">
 
@@ -82,7 +82,7 @@
                   <json-viewer :expand-depth="item.depth"
                                sort boxed copyable expanded
                                :key="idx + '_' + item.depth"
-                               :value="parseToJson(item.content)">
+                               :value="_parseToJson(item.content)">
                   </json-viewer>
                   <select class="t-json-deep-selector" v-model="item.depth">
                     <option value="" disabled selected hidden label="Choose a display deep"></option>
@@ -142,27 +142,29 @@
 
           </div>
         </div>
-        <p class="t-last-line t-crude-font" v-show="showInputLine" @click.self="_focus">
-          <span class="prompt">
+        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">
+          <span class="prompt t-cmd-line-content" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
-          </span><span v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor"
-                                                                                 :style="`width:${cursorConf.width}px;margin-left:${cursorConf.left}px`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" v-model="command" @input="_onInput"
+          </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor"
+                                                                                                 :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
+          <input type="text" autofocus="autofocus" v-model="command"
                  class="t-input-box"
                  ref="cmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
-                 @keyup="onKey"
+                 @keydown="_onInputKeydown"
+                 @input="_onInput"
                  @focusin="cursorConf.show = true"
                  @focusout="cursorConf.show = false"
-                 @keyup.enter="execute"
-                 @keyup.up.exact="switchPreCmd"
-                 @keyup.down.exact="switchNextCmd"
-                 @keydown.left.exact="onDownLeft"
-                 @keydown.right.exact="onDownRight">
-          <span class="t-flag" ref="terminalEnFlag" @click.self="_focus">aa</span>
-          <span class="t-flag" ref="terminalCnFlag" @click.self="_focus">你好</span>
+                 @keyup.up.exact="_switchPreCmd"
+                 @keyup.down.exact="_switchNextCmd"
+                 @keyup.enter="_execute">
+          <span class="t-flag t-cmd-line">
+            <span class="t-cmd-line-content" ref="terminalEnFlag" @click.self="_focus">aa</span>
+            <span class="t-cmd-line-content" ref="terminalCnFlag" @click.self="_focus">你好</span>
+          </span>
+
         </p>
         <p class="t-help-msg" @click.self="_focus">
           {{ searchCmd.item == null ? '' : searchCmd.item.usage }}

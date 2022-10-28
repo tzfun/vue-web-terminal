@@ -97,3 +97,54 @@ export function _screenType(width = document.body.clientWidth) {
 export function _isSafari() {
     return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
 }
+
+export function _getByteLen(val) {
+    let len = 0;
+    for (let i = 0; i < val.length; i++) {
+        // eslint-disable-next-line no-control-regex
+        if (val[i].match(/[^\x00-\xff]/ig) != null) //  全角
+            len += 2; //    如果是全角，占用两个字节
+        else len += 1; //   半角占用一个字节
+    }
+    return len;
+}
+
+export function /**
+ * 获取两个连续字符串的不同部分
+ *
+ * @param one
+ * @param two
+ * @returns {string}
+ */
+_getStrDifferent(one, two) {
+    if (one === two) {
+        return '';
+    }
+    let i = 0, j = 0;
+    let longOne = one.length > two.length ? one : two;
+    let shortOne = one.length > two.length ? two : one;
+
+    let diff = '', nextChar = '';
+    let hasDiff = false;
+    while (i < shortOne.length || j < longOne.length) {
+        if (shortOne[i] === longOne[j]) {
+            if (hasDiff) {
+                break;
+            }
+            i++;
+            j++;
+        } else {
+            if (i < shortOne.length - 1) {
+                nextChar = shortOne[i + 1]
+            }
+            if (longOne[j] === nextChar || j >= longOne.length) {
+                break;
+            } else {
+                diff += longOne[j];
+            }
+            j++;
+            hasDiff = true;
+        }
+    }
+    return diff;
+}
