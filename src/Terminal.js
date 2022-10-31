@@ -194,7 +194,7 @@ export default {
             } else if (type === 'updateContext') {
                 this.$emit("update:context", options)
                 this.$nextTick(() => {
-                    this.inputBoxParam.promptWidth = this.$refs['t-input-prompt'].getBoundingClientRect().width
+                    this.inputBoxParam.promptWidth = this.$refs.terminalInputPrompt.getBoundingClientRect().width
                 })
             } else if (type === 'fullscreen') {
                 this._fullscreen()
@@ -213,7 +213,7 @@ export default {
                 }
             } else if (type === 'getPosition') {
                 if (this._draggable()) {
-                    let box = this.$refs['t-container']
+                    let box = this.$refs.terminalContainer
                     return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
                 } else {
                     return {x: 0, y: 0}
@@ -240,15 +240,15 @@ export default {
         }
 
         this.byteLen = {
-            en: this.$refs['t-en-flag'].getBoundingClientRect().width / 2,
-            cn: this.$refs['t-cn-flag'].getBoundingClientRect().width / 2
+            en: this.$refs.terminalEnFlag.getBoundingClientRect().width / 2,
+            cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
         }
         this.cursorConf.defaultWidth = this.byteLen.en
 
-        let el = this.$refs['t-window']
+        let el = this.$refs.terminalWindow
         el.scrollTop = el.offsetHeight;
 
-        let promptRect = this.$refs['t-input-prompt'].getBoundingClientRect()
+        let promptRect = this.$refs.terminalInputPrompt.getBoundingClientRect()
         this.inputBoxParam.promptWidth = promptRect.width
         this.inputBoxParam.promptHeight = promptRect.height
 
@@ -271,7 +271,7 @@ export default {
                 if (isFullScreen) {
                     //  进入全屏
                     if (_isSafari()) {
-                        let container = this.$refs['t-container']
+                        let container = this.$refs.terminalContainer
                         safariStyleCache = {
                             position: container.style.position,
                             width: container.style.width,
@@ -289,7 +289,7 @@ export default {
                     //  退出全屏
                     this.fullscreen = false
                     if (_isSafari()) {
-                        let container = this.$refs['t-container']
+                        let container = this.$refs.terminalContainer
                         container.style.position = safariStyleCache.position
                         container.style.width = safariStyleCache.width
                         container.style.height = safariStyleCache.height
@@ -566,7 +566,7 @@ export default {
         },
         _jumpToBottom() {
             this.$nextTick(() => {
-                let box = this.$refs['t-window']
+                let box = this.$refs.terminalWindow
                 if (box != null) {
                     box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
                 }
@@ -653,21 +653,23 @@ export default {
                 return
             }
 
-            let lineWidth = this.$refs['t-input-box'].getBoundingClientRect().width
+            let lineWidth = this.$refs.terminalInputBox.getBoundingClientRect().width
 
-            let pos = {left: this.inputBoxParam.promptWidth, top: 0}
-            let charWidth = this.cursorConf.defaultWidth;
-            if (idx > 0) {
-                //  先找到被覆盖字符的位置
-                for (let i = 1; i <= idx; i++) {
-                    charWidth = this._calculateStringWidth(command[i])
-                    pos.left += charWidth
+            let pos = {left: 0, top: 0}
+            //  当前字符长度
+            let charWidth = this.cursorConf.defaultWidth
+            //  前一个字符的长度
+            let preWidth = this.inputBoxParam.promptWidth
 
-                    if (pos.left > lineWidth) {
-                        //  行高是20px
-                        pos.top += 20
-                        pos.left = charWidth
-                    }
+            //  先找到被覆盖字符的位置
+            for (let i = 0; i<= idx; i++) {
+                charWidth = this._calculateStringWidth(command[i])
+                pos.left += preWidth
+                preWidth = charWidth
+                if (pos.left > lineWidth) {
+                    //  行高是20px
+                    pos.top += 20
+                    pos.left = charWidth
                 }
             }
 
@@ -757,7 +759,7 @@ export default {
             }
         },
         _fullscreen() {
-            let fullArea = this.$refs['t-container']
+            let fullArea = this.$refs.terminalContainer
             if (this.fullscreen) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -793,9 +795,9 @@ export default {
             let mouseOffsetX = 0;
             let mouseOffsetY = 0;
 
-            let dragArea = this.$refs['t-header']
-            let box = this.$refs['t-container']
-            let window = this.$refs['t-window']
+            let dragArea = this.$refs.terminalHeader
+            let box = this.$refs.terminalContainer
+            let window = this.$refs.terminalWindow
 
             let isDragging = false;
 
@@ -829,7 +831,7 @@ export default {
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
-            let box = this.$refs['t-container']
+            let box = this.$refs.terminalContainer
 
             if (x > clientWidth - box.clientWidth) {
                 box.style.left = (clientWidth - box.clientWidth) + "px";

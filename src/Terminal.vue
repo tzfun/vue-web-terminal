@@ -1,9 +1,9 @@
 <template>
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%'"
-       ref="t-container" @click.self="_focus">
+       ref="terminalContainer" @click.self="_focus">
     <div class="terminal">
-      <div class="t-header-container" ref="t-header" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
+      <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
         <slot name="header">
           <div class="t-header">
             <h4>
@@ -56,7 +56,7 @@
         </slot>
       </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
-           ref="t-window"
+           ref="terminalWindow"
            @click.self="_focus">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_focus">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
@@ -141,8 +141,8 @@
 
           </div>
         </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="t-input-box" v-show="showInputLine" @click.self="_focus">
-          <span class="prompt t-cmd-line-content" ref="t-input-prompt">
+        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">
+          <span class="prompt t-cmd-line-content" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor"
@@ -160,8 +160,8 @@
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
           <span class="t-flag t-cmd-line">
-            <span class="t-cmd-line-content" ref="t-en-flag" @click.self="_focus">aa</span>
-            <span class="t-cmd-line-content" ref="t-cn-flag" @click.self="_focus">你好</span>
+            <span class="t-cmd-line-content" ref="terminalEnFlag" @click.self="_focus">aa</span>
+            <span class="t-cmd-line-content" ref="terminalCnFlag" @click.self="_focus">你好</span>
           </span>
         </p>
         <p class="t-help-msg" @click.self="_focus">
