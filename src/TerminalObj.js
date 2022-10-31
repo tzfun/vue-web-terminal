@@ -68,6 +68,10 @@ function TerminalObj() {
         return post(name, 'focus')
     }
 
+    let elementInfo = function (name) {
+        return post(name, 'elementInfo')
+    }
+
     return {
         setOptions: setOptions,
         getOptions: getOptions,
@@ -82,7 +86,8 @@ function TerminalObj() {
         dragging: dragging,
         execute: execute,
         getPosition: getPosition,
-        focus: focus
+        focus: focus,
+        elementInfo: elementInfo
     }
 }
 

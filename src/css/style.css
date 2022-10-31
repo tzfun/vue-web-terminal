@@ -168,6 +168,10 @@
     word-wrap: break-word;
 }
 
+.t-content-normal {
+
+}
+
 .t-content-normal .success {
     padding: 2px 3px;
     background: #27ae60;
@@ -231,7 +235,7 @@
 }
 
 .t-cmd-line-content {
-    font-size: 12px;
+    font-size: 13px;
     word-break: break-all;
 }
 
@@ -286,7 +290,7 @@
     float: left;
     width: 30px;
     display: flex;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 26px;
 }
 
