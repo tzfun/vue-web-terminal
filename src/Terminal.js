@@ -687,19 +687,21 @@ export default {
 
             let lineWidth = this.terminalInputBox.getBoundingClientRect().width
 
-            let pos = {left: this.inputBoxParam.promptWidth, top: 0}
-            let charWidth = this.cursorConf.defaultWidth;
-            if (idx > 0) {
-                //  先找到被覆盖字符的位置
-                for (let i = 1; i <= idx; i++) {
-                    charWidth = this._calculateStringWidth(command[i])
-                    pos.left += charWidth
+            let pos = {left: 0, top: 0}
+            //  当前字符长度
+            let charWidth = this.cursorConf.defaultWidth
+            //  前一个字符的长度
+            let preWidth = this.inputBoxParam.promptWidth
 
-                    if (pos.left > lineWidth) {
-                        //  行高是20px
-                        pos.top += 20
-                        pos.left = charWidth
-                    }
+            //  先找到被覆盖字符的位置
+            for (let i = 0; i<= idx; i++) {
+                charWidth = this._calculateStringWidth(command[i])
+                pos.left += preWidth
+                preWidth = charWidth
+                if (pos.left > lineWidth) {
+                    //  行高是20px
+                    pos.top += 20
+                    pos.left = charWidth
                 }
             }
 
