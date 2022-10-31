@@ -25,6 +25,11 @@
     padding: 0;
     background-color: #191b24;
     overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -moz-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -webkit-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -o-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
 }
 
 .t-header-container {
@@ -40,8 +45,6 @@
     background-color: #959598;
     text-align: center;
     padding: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
 }
 
 .t-header h4 {
