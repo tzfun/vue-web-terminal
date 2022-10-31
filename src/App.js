@@ -6,11 +6,12 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.0.11',
-                vue3: '3.0.10'
+                vue2: '2.0.13',
+                vue3: '3.0.12'
             },
             show: true,
             name: 'my-terminal',
+            title:'👌vue-web-terminal',
             context: '/vue-web-terminal/demo',
             cmdStore: [
                 {
@@ -111,14 +112,14 @@ export default {
                 content: 'Terminal initializing...'
             },
             {
-                content: "Welcome to vue-web-terminal! If you are using for the first time, you can use the <span class='t-teach'>help</span> command to learn."
+                content: "Welcome to vue-web-terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn."
             },
             {
                 type: 'html',
                 content: `
                 <div class='demo-init-box'>
                     <p>Hello vue-web-terminal! ✋</p>
-                    <p>Demo version: vue2(<span class="t-teach">${this.version.vue2}</span>), vue3(<span class="t-teach">${this.version.vue3}</span>)</p>
+                    <p>Demo version: vue2(<span class="t-cmd-key">${this.version.vue2}</span>), vue3(<span class="t-cmd-key">${this.version.vue3}</span>)</p>
                     <p>⭐️Github: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a></p>
                 </div>
                 `
@@ -254,7 +255,7 @@ export default {
                 Terminal.$api.pushMessage(this.name, {
                     tag: 'success',
                     class: 'system',
-                    content: `User clicked <span class="t-teach">${key}</span>`
+                    content: `User clicked <span class="t-cmd-key">${key}</span>`
                 })
             }
         },

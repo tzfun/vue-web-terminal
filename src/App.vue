@@ -4,6 +4,7 @@
     <terminal
         v-if="show"
         :name="name"
+        :title="title"
         :init-log="initLog"
         @execCmd="onExecCmd"
         @onClick="onClick"
@@ -61,6 +62,7 @@ body, html, #app {
   padding: 0;
   width: 100%;
   height: 100%;
+  background-color: #b3ffff;
 }
 
 .custom-content {
