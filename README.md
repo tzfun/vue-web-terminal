@@ -125,7 +125,7 @@ Terminal tag supports attribute parameter table.
 | command-store-sort    | Command line library sorting function.                                                                                   | function | function(a,b)                                    |
 | input-filter          | Custom input filter, the return value is the filtered string.                                                            | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
 | drag-conf             | Drag and drop window configuration items.                                                                                | object   | [Drag](#Drag)                                    |
-
+| command-formatter     | Command display formatting function, pass in the current command and return a new command, support html                  | function | function(cmd)                                    |
 ## Events
 
 Terminal tag support event table
