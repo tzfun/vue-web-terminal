@@ -1,22 +1,14 @@
-class TerminalFlash {
+import TerminalCallback from "@/TerminalCallback";
+
+class TerminalFlash extends TerminalCallback  {
     flush (msg) {
-        if (this.onFlushListener != null) {
-            this.onFlushListener(msg)
+        if (this.handler != null) {
+            this.handler(msg)
         }
     }
 
     onFlush (callback) {
-        this.onFlushListener = callback
-    }
-
-    finish () {
-        if (this.onFlushListener != null) {
-            this.onFinishListener()
-        }
-    }
-
-    onFinish (callback) {
-        this.onFinishListener = callback
+        this.handler = callback
     }
 }
 

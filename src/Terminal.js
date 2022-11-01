@@ -4,6 +4,7 @@ import {_dateFormat, _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep,
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js';
 import TerminalFlash from "./TerminalFlash.js";
+import TerminalAsk from "@/TerminalAsk";
 
 export default {
     name: 'Terminal',
@@ -92,6 +93,15 @@ export default {
             flash: {
                 open: false,
                 content: null
+            },
+            ask: {
+                open: false,
+                question: null,
+                showCursor: false,
+                isPassword: false,
+                callback: null,
+                autoReview: false,
+                input: ''
             }
         }
     },
@@ -200,6 +210,7 @@ export default {
         const terminalHeader = ref(null)
         const terminalWindow = ref(null)
         const cmdInput = ref(null)
+        const askInput = ref(null)
         const terminalInputBox = ref(null)
         const terminalInputPrompt = ref(null)
         const terminalEnFlag = ref(null)
@@ -211,6 +222,7 @@ export default {
             terminalHeader,
             terminalWindow,
             cmdInput,
+            askInput,
             terminalInputBox,
             terminalInputPrompt,
             terminalObj,
@@ -398,7 +410,11 @@ export default {
         },
         _focus() {
             nextTick(() => {
-                this.cmdInput.focus()
+                if (this.ask.open) {
+                    this.askInput.focus()
+                } else {
+                    this.cmdInput.focus()
+                }
             }).then(() => {
             })
         },
@@ -497,6 +513,11 @@ export default {
                         default: {
                             this.showInputLine = false
                             let success = (message) => {
+                                let finish = () => {
+                                    this.showInputLine = true
+                                    this._endExecCallBack()
+                                }
+
                                 if (message != null) {
                                     //  实时回显处理
                                     if (message instanceof TerminalFlash) {
@@ -505,17 +526,32 @@ export default {
                                         })
                                         message.onFinish(() => {
                                             this.flash.open = false
-                                            this.showInputLine = true
-                                            this._endExecCallBack()
+                                            finish()
                                         })
                                         this.flash.open = true
+                                        return
+                                    } else if (message instanceof TerminalAsk) {
+
+                                        message.onAsk((options) => {
+                                            this.ask.input = ''
+                                            this.ask.isPassword = options.isPassword
+                                            this.ask.question = options.question
+                                            this.ask.callback = options.callback
+                                            this.ask.autoReview = options.autoReview
+                                            this._focus()
+                                        })
+
+                                        message.onFinish(() => {
+                                            this.ask.open = false
+                                            finish()
+                                        })
+                                        this.ask.open = true
                                         return
                                     } else {
                                         this._pushMessage(message)
                                     }
                                 }
-                                this.showInputLine = true
-                                this._endExecCallBack()
+                                finish()
                             }
 
                             let failed = (message = 'Failed to execute.') => {
@@ -598,7 +634,7 @@ export default {
 
             this._filterMessageType(message)
 
-            if (this.showLogTime) {
+            if (this.showLogTime && !message.time) {
                 message.time = this._curTime()
             }
 
@@ -977,6 +1013,18 @@ export default {
                 return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
             } else {
                 return {x: 0, y: 0}
+            }
+        },
+        _onAskInput() {
+            if (this.ask.autoReview) {
+                this._pushMessage({
+                    time: '',
+                    content: this.ask.question + (this.ask.isPassword ? '*'.repeat(this.ask.input.length) : this.ask.input)
+                })
+            }
+            this.ask.question = null
+            if (this.ask.callback) {
+                this.ask.callback(this.ask.input)
             }
         }
     }

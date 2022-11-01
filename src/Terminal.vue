@@ -147,6 +147,14 @@
             <div v-html="flash.content"></div>
           </slot>
         </div>
+        <div v-if="ask.open && ask.question"  style="display: flex">
+          <span>{{ ask.question }}</span>
+          <input :type="ask.isPassword ? 'password' : 'text'"
+                 ref="askInput"
+                 v-model="ask.input"
+                 class="t-ask-input"
+                 @keyup.enter="_onAskInput">
+        </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">
           <span class="prompt t-cmd-line-content" ref="terminalInputPrompt">
             <span>{{ context }}</span>
@@ -154,7 +162,7 @@
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor"
                                                                                                  :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
-                 class="t-input-box"
+                 class="t-cmd-input"
                  ref="cmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
@@ -216,14 +224,6 @@ export default TerminalJs
 </script>
 
 <style scoped>
-
-input[type="text" i] {
-  padding: 1px 2px;
-}
-
-select:invalid {
-  color: gray;
-}
 
 </style>
 

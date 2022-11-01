@@ -2,6 +2,7 @@ import Terminal from './Terminal.vue'
 import TerminalObj from './TerminalObj.js'
 import JsonViewer from 'vue-json-viewer'
 import TerminalFlash from "@/TerminalFlash";
+import TerminalAsk from "@/TerminalAsk";
 
 Terminal.install = (app, options) => {
     app.use(JsonViewer)
@@ -32,5 +33,6 @@ Terminal.install = (app, options) => {
 
 Terminal.$api = TerminalObj
 Terminal.$Flash = TerminalFlash
+Terminal.$Ask = TerminalAsk
 
 export default Terminal
