@@ -66,7 +66,6 @@
             <div v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
                 <span class="t-content-normal">
-                  <span v-show="showLogTime">{{ item.time == null ? "" : (item.time + " ") }}</span>
                   <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)"
                         :class="item.class"
                         style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
