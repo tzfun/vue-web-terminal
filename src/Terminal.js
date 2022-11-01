@@ -2,7 +2,8 @@ import {nextTick, ref} from 'vue'
 import sizeof from 'object-sizeof'
 import {_dateFormat, _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
-import TerminalObj from './TerminalObj.js'
+import TerminalObj from './TerminalObj.js';
+import TerminalFlash from "./TerminalFlash.js";
 
 export default {
     name: 'Terminal',
@@ -87,6 +88,10 @@ export default {
                 boxHeight: 0,
                 promptWidth: 0,
                 promptHeight: 0
+            },
+            flash: {
+                open: false,
+                content: null
             }
         }
     },
@@ -238,12 +243,19 @@ export default {
                     this.command = options
                     this._execute()
                 }
-            } else if (type === 'getPosition') {
-                if (this._draggable()) {
-                    let box = this.terminalContainer
-                    return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
-                } else {
-                    return {x: 0, y: 0}
+            } else if (type === 'elementInfo') {
+                let windowRect = this.terminalWindow.getBoundingClientRect()
+                let containerRect = this.terminalContainer.getBoundingClientRect()
+                return {
+                    pos: this._getPosition(),           //  窗口所在位置
+                    screenWidth: containerRect.width,   //  窗口整体宽度
+                    screenHeight: containerRect.height, //  窗口整体高度
+                    clientWidth: windowRect.width - 40, //  可显示内容范围高度，减去padding值
+                    clientHeight: windowRect.height,    //  可显示内容范围高度
+                    charWidth: {
+                        en: this.byteLen.en,            //  单个英文字符宽度
+                        cn: this.byteLen.cn             //  单个中文字符宽度
+                    }
                 }
             } else if (type === 'focus') {
                 this._focus()
@@ -486,7 +498,21 @@ export default {
                             this.showInputLine = false
                             let success = (message) => {
                                 if (message != null) {
-                                    this._pushMessage(message)
+                                    //  实时回显处理
+                                    if (message instanceof TerminalFlash) {
+                                        message.onFlush(msg => {
+                                            this.flash.content = msg
+                                        })
+                                        message.onFinish(() => {
+                                            this.flash.open = false
+                                            this.showInputLine = true
+                                            this._endExecCallBack()
+                                        })
+                                        this.flash.open = true
+                                        return
+                                    } else {
+                                        this._pushMessage(message)
+                                    }
                                 }
                                 this.showInputLine = true
                                 this._endExecCallBack()
@@ -580,6 +606,12 @@ export default {
             this.terminalSize += sizeof(message)
             if (!ignoreCheck) {
                 this._checkTerminalLog()
+            }
+
+            if (message.type === 'json') {
+                setTimeout(() => {
+                    this._jumpToBottom()
+                }, 80)
             }
         },
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
@@ -912,6 +944,7 @@ export default {
             z-index: ${zIndex};
             left:${initX}px;
             top:${initY}px;
+            border-radius:15px;
             `
         },
         _nonEmpty(obj) {
@@ -937,6 +970,14 @@ export default {
                 }
             }
             return formatted
+        },
+        _getPosition() {
+            if (this._draggable()) {
+                let box = this.terminalContainer
+                return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
+            } else {
+                return {x: 0, y: 0}
+            }
         }
     }
 }

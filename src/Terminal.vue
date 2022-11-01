@@ -1,6 +1,6 @@
 <template>
   <div class="t-container"
-       :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%'"
+       :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="terminalContainer" @click.self="_focus">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
@@ -141,6 +141,11 @@
             </div>
 
           </div>
+        </div>
+        <div v-if="flash.open && flash.content">
+          <slot name="flash" :content="flash.content">
+            <div v-html="flash.content"></div>
+          </slot>
         </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">
           <span class="prompt t-cmd-line-content" ref="terminalInputPrompt">
