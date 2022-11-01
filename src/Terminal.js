@@ -217,7 +217,7 @@ export default {
                     console.warn("Terminal is not draggable")
                 }
             } else if (type === 'execute') {
-                if (_nonEmpty(options)) {
+                if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
                     this.command = options
                     this._execute()
                 }
