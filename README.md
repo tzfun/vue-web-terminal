@@ -115,7 +115,7 @@ Terminal tag supports attribute parameter table.
 | show-header           | Whether to display the header, this switch will affect the drag and drop function.                                       | boolean  | true                                             |
 | init-log              | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed. | array    | /                                                |
 | init-log-delay        | The interval between each log when initializing the display log, in milliseconds.                                        | number   | 150                                              |
-| show-log-time         | Whether to display the time when the message **type** is `normal`.                                                       | boolean  | true                                             |
+| ~~show-log-time~~     | ~~Whether to display the time when the message **type** is `normal`.~~ `2.0.13`和`3.0.13`版本开始移除                           | boolean  | true                                             |
 | warn-log-byte-limit   | The current Terminal log occupied memory size exceeds this limit will issue a warning, the unit `byte`.                  | number   | 1024 * 1024 * 10                                 |
 | warn-log-count-limit  | If the current Terminal log number exceeds this limit, a warning will be issued.                                         | number   | 200                                              |
 | warn-log-limit-enable | Whether to enable log limit warning.                                                                                     | boolean  | true                                             |

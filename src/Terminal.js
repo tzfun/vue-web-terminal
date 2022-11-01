@@ -137,11 +137,6 @@ export default {
         initLogDelay: {
             type: Number, default: 150
         },
-        //  是否显示记录结果的时间
-        showLogTime: {
-            type: Boolean,
-            default: true
-        },
         //  命令行搜索以及help指令用
         commandStore: {
             type: Array
@@ -557,7 +552,7 @@ export default {
                             let failed = (message = 'Failed to execute.') => {
                                 if (message != null) {
                                     this._pushMessage({
-                                        time: this._curTime(), type: 'normal', class: 'error', content: message
+                                        type: 'normal', class: 'error', content: message
                                     })
                                 }
                                 this.showInputLine = true
@@ -634,10 +629,6 @@ export default {
 
             this._filterMessageType(message)
 
-            if (this.showLogTime && !message.time) {
-                message.time = this._curTime()
-            }
-
             this.terminalLog.push(message);
             this.terminalSize += sizeof(message)
             if (!ignoreCheck) {
@@ -683,7 +674,6 @@ export default {
                 && Math.floor(count / this.warnLogCountLimit) !== this.perfWarningRate.count) {
                 this.perfWarningRate.count = Math.floor(count / this.warnLogCountLimit)
                 this._pushMessage({
-                    time: this._curTime(),
                     content: `Terminal log count exceeded <strong style="color: red">${count}/${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
                     class: 'system',
                     type: 'normal'
@@ -694,7 +684,6 @@ export default {
                 if (this.perfWarningRate.size !== rate) {
                     this.perfWarningRate.size = rate
                     this._pushMessage({
-                        time: this._curTime(),
                         content: `Terminal log size exceeded <strong style="color: red">${size}/${this.warnLogByteLimit}(byte)</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
                         class: 'system',
                         type: 'normal'
@@ -709,9 +698,6 @@ export default {
                 type: "cmdLine",
                 content: `${this.context} > ${this._commandFormatter(this.command)}`
             });
-        },
-        _curTime() {
-            return _dateFormat("YYYY-mm-dd HH:MM:SS", new Date())
         },
         _doClear(args) {
             if (args.length === 1) {
@@ -733,7 +719,7 @@ export default {
                 }
             } else {
                 this._pushMessage({
-                    time: this._curTime(), class: 'error', type: 'normal', content: "Invalid website url"
+                    class: 'error', type: 'normal', content: "Invalid website url"
                 })
             }
         },
