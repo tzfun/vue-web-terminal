@@ -85,6 +85,11 @@
     background-color: #2ec971;
 }
 
+.t-window,.t-ask-input, .t-window p,.t-window div {
+    font-size: 13px;
+    font-family: Monaco, Menlo, Consolas, monospace;
+}
+
 .t-window {
     position: absolute;
     top: 0;
@@ -97,7 +102,6 @@
     min-height: 140px;
     padding: 0 20px 0 20px;
     font-weight: 400;
-    font-family: Monaco, Menlo, Consolas, monospace;
     color: #fff;
     line-height: 20px;
 }
@@ -111,10 +115,6 @@
 .t-window p {
     overflow-wrap: break-word;
     word-break: break-all;
-}
-
-.t-window p, .t-window div {
-    font-size: 13px;
 }
 
 .t-window p .cmd {
@@ -141,7 +141,21 @@
     margin-top: 1px;
 }
 
-.t-input-box {
+.t-ask-input {
+    border: none;
+    width: 400px;
+    color: white;
+    background: none;
+    outline:none;
+    padding: 0;
+}
+
+.t-ask-input:focus,.t-ask-input:focus-visible {
+    border: none;
+    outline:none;
+}
+
+.t-cmd-input {
     position: relative;
     background: #030924;
     border: none;
