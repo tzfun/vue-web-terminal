@@ -1,6 +1,6 @@
 import {nextTick, ref} from 'vue'
 import sizeof from 'object-sizeof'
-import {_dateFormat, _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
+import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js';
 import TerminalFlash from "./TerminalFlash.js";
@@ -748,7 +748,7 @@ export default {
             let preWidth = this.inputBoxParam.promptWidth
 
             //  先找到被覆盖字符的位置
-            for (let i = 0; i<= idx; i++) {
+            for (let i = 0; i <= idx; i++) {
                 charWidth = this._calculateStringWidth(command[i])
                 pos.left += preWidth
                 preWidth = charWidth
@@ -836,7 +836,6 @@ export default {
             }
         },
         _onInputKeydown(e) {
-            console.log(this.cmdInput.selectionStart, e)
             if (e.key.toLowerCase() === 'arrowleft') {
                 this._checkInputCursor()
                 this._cursorGoLeft()
