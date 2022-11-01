@@ -97,7 +97,6 @@ export default {
             ask: {
                 open: false,
                 question: null,
-                showCursor: false,
                 isPassword: false,
                 callback: null,
                 autoReview: false,
