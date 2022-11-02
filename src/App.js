@@ -210,7 +210,18 @@ export default {
                     class: 'success',
                     content: "ok"
                 })
-            } else if (key === 'html' || key === 'ls') {
+            } else if (key === 'html') {
+                success({
+                    type: 'html',
+                    content: `
+                            <div class='demo-init-box'>
+                                <p>Hello vue-web-terminal! ✋</p>
+                                <p>Demo version: vue2(<span class="t-cmd-key">${this.version.vue2}</span>), vue3(<span class="t-cmd-key">${this.version.vue3}</span>)</p>
+                                <p>⭐️Github: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a></p>
+                            </div>
+                            `
+                })
+            } else if (key === 'ls') {
                 success({
                     type: 'html',
                     content: `
@@ -348,7 +359,7 @@ export default {
             let message = null
             if (this.guide.step === 1) {
                 this.guide.command = 'random'
-                message = `👉 [${this.guide.step}] 首先带你认识一下支持的消息格式，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+                message = `👉 [${this.guide.step}] 首先带你认识一下支持的消息格式，默认的消息是普通文本格式，请输入<span class="t-cmd-key">${this.guide.command}</span>随机一条文本消息`
             } else if (this.guide.step === 2) {
                 this.guide.command = 'json'
                 message = `👉 [${this.guide.step}] 接下来是json格式数据，请输入<span class="t-cmd-key">${this.guide.command}</span>`
@@ -362,12 +373,15 @@ export default {
                 this.guide.command = 'loop'
                 message = `👉 [${this.guide.step}] Terminal支持批量插入多条消息，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 6) {
+                this.guide.command = 'html'
+                message = `👉 [${this.guide.step}] 接下来是自定义html消息，你可以在此基础上构建任意你需要的样式，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+            } else if (this.guide.step === 7) {
                 this.guide.command = 'flash'
                 message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件Flash功能，请输入<span class="t-cmd-key">${this.guide.command}</span>`
-            } else if (this.guide.step === 7) {
+            } else if (this.guide.step === 8) {
                 this.guide.command = 'ask'
                 message = `👉 [${this.guide.step}] 如果你想获取到用户输入可以使用插件Ask功能，请输入<span class="t-cmd-key">${this.guide.command}</span>`
-            } else if (this.guide.step === 8) {
+            } else if (this.guide.step === 9) {
                 this.guide.command = null
                 message = `🎉 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。
                         <br>🤗 更多关于插件的内容请前往 <a class='t-a' target='_blank' href="https://github.com/tzfun/vue-web-terminal">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐️支持一下吧~`
