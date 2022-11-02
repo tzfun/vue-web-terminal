@@ -6,8 +6,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.0.14',
-                vue3: '3.0.13'
+                vue2: '2.1.0',
+                vue3: '3.1.0'
             },
             show: true,
             name: 'my-terminal',
