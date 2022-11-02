@@ -340,7 +340,7 @@ export default {
             success(asker)
 
             asker.ask({
-                question: '你是否需要引导？(Y/n)：',
+                question: '为了帮助你对插件功能有个大概的了解，你是否需要引导？(Y/n)：',
                 autoReview: true,
                 callback: value => {
                     if (value === 'Y') {
@@ -374,10 +374,10 @@ export default {
                 message = `👉 [${this.guide.step}] Terminal支持批量插入多条消息，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 6) {
                 this.guide.command = 'html'
-                message = `👉 [${this.guide.step}] 接下来是自定义html消息，你可以在此基础上构建任意你需要的样式，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+                message = `👉 [${this.guide.step}] 接下来是自定义html消息，你可以在此基础上构建任意你需要的消息样式，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 7) {
                 this.guide.command = 'flash'
-                message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件Flash功能，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+                message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Falsh使用，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 8) {
                 this.guide.command = 'ask'
                 message = `👉 [${this.guide.step}] 如果你想获取到用户输入可以使用插件Ask功能，请输入<span class="t-cmd-key">${this.guide.command}</span>`
@@ -386,7 +386,11 @@ export default {
                 message = `🎉 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。
                         <br>🤗 更多关于插件的内容请前往 <a class='t-a' target='_blank' href="https://github.com/tzfun/vue-web-terminal">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐️支持一下吧~`
                 Terminal.$api.execute(this.name, 'help')
+                Terminal.$api.pushMessage(this.name, {
+                    content: message
+                })
                 this.guide.step = 0
+                return
             } else {
                 return
             }
