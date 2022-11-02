@@ -1,5 +1,4 @@
 import {nextTick, ref} from 'vue'
-import sizeof from 'object-sizeof'
 import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js';
@@ -26,7 +25,6 @@ export default {
             jsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             showInputLine: true,
             terminalLog: [],
-            terminalSize: 0,
             keydownListener: null,
             searchCmd: {
                 item: null
@@ -81,7 +79,6 @@ export default {
             ],
             fullscreen: false,
             perfWarningRate: {
-                size: 0,
                 count: 0
             },
             inputBoxParam: {
@@ -143,10 +140,6 @@ export default {
         //   命令行排序方式
         commandStoreSort: {
             type: Function
-        },
-        //  记录大小超出此限制会发出警告，单位byte
-        warnLogByteLimit: {
-            type: Number, default: 1024 * 1024 * 10
         },
         //  记录条数超出此限制会发出警告
         warnLogCountLimit: {
@@ -529,7 +522,7 @@ export default {
                                         message.onAsk((options) => {
                                             this.ask.input = ''
                                             this.ask.isPassword = options.isPassword
-                                            this.ask.question = options.question
+                                            this.ask.question = _html(options.question)
                                             this.ask.callback = options.callback
                                             this.ask.autoReview = options.autoReview
                                             this._focus()
@@ -628,8 +621,7 @@ export default {
 
             this._filterMessageType(message)
 
-            this.terminalLog.push(message);
-            this.terminalSize += sizeof(message)
+            this.terminalLog.push(message)
             if (!ignoreCheck) {
                 this._checkTerminalLog()
             }
@@ -643,8 +635,7 @@ export default {
         async _pushMessageBatch(messages, time, ignoreCheck = false) {
             for (let m of messages) {
                 this._filterMessageType(m)
-                this.terminalLog.push(m);
-                this.terminalSize += sizeof(m)
+                this.terminalLog.push(m)
                 if (time != null) {
                     await _sleep(time);
                 }
@@ -667,7 +658,6 @@ export default {
                 return
             }
             let count = this.terminalLog.length
-            let size = this.terminalSize
             if (this.warnLogCountLimit > 0
                 && count > this.warnLogCountLimit
                 && Math.floor(count / this.warnLogCountLimit) !== this.perfWarningRate.count) {
@@ -677,17 +667,6 @@ export default {
                     class: 'system',
                     type: 'normal'
                 }, true)
-            } else if (this.warnLogByteLimit > 0
-                && size > this.warnLogByteLimit) {
-                let rate = Math.floor(size / this.warnLogByteLimit);
-                if (this.perfWarningRate.size !== rate) {
-                    this.perfWarningRate.size = rate
-                    this._pushMessage({
-                        content: `Terminal log size exceeded <strong style="color: red">${size}/${this.warnLogByteLimit}(byte)</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
-                        class: 'system',
-                        type: 'normal'
-                    }, true)
-                }
             }
         },
         _saveCurCommand() {
@@ -701,7 +680,6 @@ export default {
         _doClear(args) {
             if (args.length === 1) {
                 this.terminalLog = [];
-                this.terminalSize = 0;
             } else if (args.length === 2 && args[1] === 'history') {
                 historyStore.clearLog(this.name)
             }

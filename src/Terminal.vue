@@ -147,11 +147,13 @@
           </slot>
         </div>
         <div v-if="ask.open && ask.question"  style="display: flex">
-          <span>{{ ask.question }}</span>
+          <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
                  ref="askInput"
                  v-model="ask.input"
                  class="t-ask-input"
+                 autocomplete="off"
+                 auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">

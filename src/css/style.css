@@ -143,11 +143,12 @@
 
 .t-ask-input {
     border: none;
-    width: 400px;
+    max-width: 300px;
     color: white;
     background: none;
     outline:none;
     padding: 0;
+    display: inline-block;
 }
 
 .t-ask-input:focus,.t-ask-input:focus-visible {
@@ -176,14 +177,9 @@
     -webkit-rtl-ordering: logical;
     cursor: text;
     margin: 0;
-    font: 400 13.3333px Arial;
     padding: 1px 2px;
     border-image: initial;
     word-wrap: break-word;
-}
-
-.t-content-normal {
-
 }
 
 .t-content-normal .success {
