@@ -85,6 +85,34 @@
     background-color: #2ec971;
 }
 
+.t-window::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.t-window::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.t-window::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    border-style: dashed;
+    border-color: transparent;
+    border-width: 2px;
+    background-color: rgba(157, 165, 183, 0.4);
+    background-clip: padding-box;
+}
+
+.t-window::-webkit-scrollbar-thumb:hover {
+    background: rgba(157, 165, 183, 0.7);
+}
+
+.t-window::-webkit-scrollbar-track {
+    border-radius: 6px;
+}
+
 .t-window,.t-ask-input, .t-window p,.t-window div {
     font-size: 13px;
     font-family: Monaco, Menlo, Consolas, monospace;
