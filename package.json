@@ -1,7 +1,7 @@
 {
   "name": "vue-web-terminal",
-  "version": "2.0.14",
-  "description": "网页端命令行插件，适配vue3",
+  "version": "2.1.0",
+  "description": "A lightweight and powerful web terminal plugin, suitable for vue3. 轻量、功能强大的网页端Terminal插件，适配vue3",
   "license":"Apache-2.0",
   "private": false,
   "scripts": {
@@ -57,13 +57,15 @@
   "bugs": {
     "url": "https://github.com/tzfun/vue-web-terminal/issues"
   },
-  "homepage": "https://github.com/tzfun/vue-web-terminal#readme",
+  "homepage": "https://tzfun.github.io/vue-web-terminal/",
   "keywords": [
-    "web-terminal",
     "terminal",
+    "vue",
+    "vue3",
+    "web-terminal",
+    "vue-terminal",
     "console",
     "web-console",
-    "vue-terminal",
     "vue-console"
   ],
   "author": "beifengtz",
