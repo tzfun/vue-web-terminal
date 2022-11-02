@@ -11,7 +11,6 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "object-sizeof": "^1.6.2",
     "vue-json-viewer": "^2.2.22"
   },
   "devDependencies": {

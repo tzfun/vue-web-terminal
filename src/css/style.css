@@ -143,11 +143,12 @@
 
 .t-ask-input {
     border: none;
-    width: 400px;
+    max-width: 300px;
     color: white;
     background: none;
     outline:none;
     padding: 0;
+    display: inline-block;
 }
 
 .t-ask-input:focus,.t-ask-input:focus-visible {
@@ -163,6 +164,8 @@
     opacity: 0;
     /*user-select:none;*/
 
+    cursor: text;
+    padding: 1px 2px;
     -webkit-writing-mode: horizontal-tb !important;
     text-rendering: auto;
     letter-spacing: normal;
@@ -174,16 +177,9 @@
     text-align: start;
     appearance: textfield;
     -webkit-rtl-ordering: logical;
-    cursor: text;
-    margin: 0;
-    font: 400 13.3333px Arial;
-    padding: 1px 2px;
     border-image: initial;
     word-wrap: break-word;
-}
-
-.t-content-normal {
-
+    margin: 0;
 }
 
 .t-content-normal .success {

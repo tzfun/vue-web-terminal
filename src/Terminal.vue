@@ -2,6 +2,7 @@
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="terminalContainer" @click.self="_focus">
+    <meta content="yes" name="apple-mobile-web-app-capable">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
         <slot name="header">
@@ -144,12 +145,14 @@
             <div v-html="flash.content"></div>
           </slot>
         </div>
-        <div v-if="ask.open && ask.question"  style="display: flex">
-          <span>{{ ask.question }}</span>
+        <div v-if="ask.open && ask.question">
+          <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
                  ref="askInput"
                  v-model="ask.input"
                  class="t-ask-input"
+                 autocomplete="off"
+                 auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">
