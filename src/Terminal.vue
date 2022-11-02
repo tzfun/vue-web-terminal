@@ -2,7 +2,6 @@
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="terminalContainer" @click.self="_focus">
-    <meta content="yes" name="apple-mobile-web-app-capable">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
         <slot name="header">
