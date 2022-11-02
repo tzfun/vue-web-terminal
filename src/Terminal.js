@@ -245,11 +245,13 @@ export default {
             } else if (type === 'elementInfo') {
                 let windowRect = this.terminalWindow.getBoundingClientRect()
                 let containerRect = this.terminalContainer.getBoundingClientRect()
+                let hasScroll = this.terminalWindow.scrollHeight > this.terminalWindow.clientHeight
+                    || this.terminalWindow.offsetHeight > this.terminalWindow.clientHeight
                 return {
                     pos: this._getPosition(),           //  窗口所在位置
                     screenWidth: containerRect.width,   //  窗口整体宽度
                     screenHeight: containerRect.height, //  窗口整体高度
-                    clientWidth: windowRect.width - 40, //  可显示内容范围高度，减去padding值
+                    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
                     clientHeight: windowRect.height,    //  可显示内容范围高度
                     charWidth: {
                         en: this.byteLen.en,            //  单个英文字符宽度
