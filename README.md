@@ -109,25 +109,25 @@ body, html, #app {
 
 Terminal tag supports attribute parameter table.
 
-| Argument              | Description                                                                                                              | Type     | Default                                          |
-|-----------------------|--------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
-| name                  | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                | string   | terminal                                         |
-| context               | Initialize context text.                                                                                                 | string   | /vue-web-terminal                                |
-| title                 | The title displayed in the header.                                                                                       | string   | vue-web-terminal                                 |
-| show-header           | Whether to display the header, this switch will affect the drag and drop function.                                       | boolean  | true                                             |
-| init-log              | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed. | array    | /                                                |
-| init-log-delay        | The interval between each log when initializing the display log, in milliseconds.                                        | number   | 150                                              |
-| ~~show-log-time~~     | ~~Whether to display the time when the message **type** is `normal`.~~ `2.0.14` and `3.0.13` versions have been removed  | boolean  | true                                             |
-| warn-log-byte-limit   | The current Terminal log occupied memory size exceeds this limit will issue a warning, the unit `byte`.                  | number   | 1024 * 1024 * 10                                 |
-| warn-log-count-limit  | If the current Terminal log number exceeds this limit, a warning will be issued.                                         | number   | 200                                              |
-| warn-log-limit-enable | Whether to enable log limit warning.                                                                                     | boolean  | true                                             |
-| auto-help             | Whether to enable the command line automatic search prompt function.                                                     | boolean  | true                                             |
-| enable-example-hint   | Whether to show sample prompts.                                                                                          | boolean  | true                                             |
-| command-store         | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)        | array    | [Local Commands](#Local)                         |
-| command-store-sort    | Command line library sorting function.                                                                                   | function | function(a,b)                                    |
-| input-filter          | Custom input filter, the return value is the filtered string.                                                            | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf             | Drag and drop window configuration items.                                                                                | object   | [Drag](#Drag)                                    |
-| command-formatter     | Command display formatting function, pass in the current command and return a new command, support html                  | function | function(cmd)                                    |
+| Argument                | Description                                                                                                                                                  | Type     | Default                                          |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
+| name                    | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                                                    | string   | terminal                                         |
+| context                 | Initialize context text.                                                                                                                                     | string   | /vue-web-terminal                                |
+| title                   | The title displayed in the header.                                                                                                                           | string   | vue-web-terminal                                 |
+| show-header             | Whether to display the header, this switch will affect the drag and drop function.                                                                           | boolean  | true                                             |
+| init-log                | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                     | array    | /                                                |
+| init-log-delay          | The interval between each log when initializing the display log, in milliseconds.                                                                            | number   | 150                                              |
+| ~~show-log-time~~       | Whether to display the time when the message **type** is `normal`. **`2.0.14` and `3.0.13` versions have been removed**.                                     | boolean  | true                                             |
+| ~~warn-log-byte-limit~~ | The current Terminal log occupied memory size exceeds this limit will issue a warning, the unit `byte`. **`2.1.0` and `3.1.0` versions have been removed**.  | number   | 1024 * 1024 * 10                                 |
+| warn-log-count-limit    | If the current Terminal log number exceeds this limit, a warning will be issued.                                                                             | number   | 200                                              |
+| warn-log-limit-enable   | Whether to enable log limit warning.                                                                                                                         | boolean  | true                                             |
+| auto-help               | Whether to enable the command line automatic search prompt function.                                                                                         | boolean  | true                                             |
+| enable-example-hint     | Whether to show sample prompts.                                                                                                                              | boolean  | true                                             |
+| command-store           | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                            | array    | [Local Commands](#Local)                         |
+| command-store-sort      | Command line library sorting function.                                                                                                                       | function | function(a,b)                                    |
+| input-filter            | Custom input filter, the return value is the filtered string.                                                                                                | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf               | Drag and drop window configuration items.                                                                                                                    | object   | [Drag](#Drag)                                    |
+| command-formatter       | Command display formatting function, pass in the current command and return a new command, support html                                                      | function | function(cmd)                                    |
 ## Events
 
 Terminal tag support event table

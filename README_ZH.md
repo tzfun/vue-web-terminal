@@ -108,25 +108,25 @@ body, html, #app {
 
 terminal标签支持属性参数表
 
-| 参数                    | 说明                                                     | 类型       | 默认值                                              |
-|-----------------------|--------------------------------------------------------|----------|--------------------------------------------------|
-| name                  | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                | string   | terminal                                         |
-| context               | 初始化上下文文本                                               | string   | /vue-web-terminal                                |
-| title                 | header中显示的标题                                           | string   | vue-web-terminal                                 |
-| show-header           | 是否显示header，此开关会影响拖拽功能                                  | boolean  | true                                             |
-| init-log              | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，`null`不显示       | array    | 略                                                |
-| init-log-delay        | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms                            | number   | 150                                              |
-| ~~show-log-time~~     | ~~当消息**type**为`normal`时是否显示时间~~`2.0.14`和`3.0.13`版本开始移除 | boolean  | true                                             |
-| warn-log-byte-limit   | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`                  | number   | 1024 * 1024 * 10                                 |
-| warn-log-count-limit  | 当前Terminal日志条数超出此限制会发出警告                               | number   | 200                                              |
-| warn-log-limit-enable | 是否开启日志限制警告                                             | boolean  | true                                             |
-| auto-help             | 是否打开命令行自动搜索提示功能                                        | boolean  | true                                             |
-| enable-example-hint   | 是否显示样例提示                                               | boolean  | true                                             |
-| command-store         | 自定义的命令库，搜索提示功能会扫描本库，见[命令定义格式](#命令定义)                   | array    | [内置命令](#内置命令)                                    |
-| command-store-sort    | 命令行库排序                                                 | function | function(a,b)                                    |
-| input-filter          | 自定义输入过滤，返回值为过滤后的字符串                                    | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf             | 拖拽窗口配置项                                                | object   | 见[拖拽功能](#拖拽功能)                                   |
-| command-formatter     | 命令显示格式化函数，传入当前命令返回新的命令，支持html                          | function | function(cmd)                                    |
+| 参数                      | 说明                                                                | 类型       | 默认值                                              |
+|-------------------------|-------------------------------------------------------------------|----------|--------------------------------------------------|
+| name                    | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                           | string   | terminal                                         |
+| context                 | 初始化上下文文本                                                          | string   | /vue-web-terminal                                |
+| title                   | header中显示的标题                                                      | string   | vue-web-terminal                                 |
+| show-header             | 是否显示header，此开关会影响拖拽功能                                             | boolean  | true                                             |
+| init-log                | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，`null`不显示                  | array    | 略                                                |
+| init-log-delay          | 初始化显示日志时每条日志之间的间隔时间，单位毫秒 ms                                       | number   | 150                                              |
+| ~~show-log-time~~       | 当消息**type**为`normal`时是否显示时间。**`2.0.14`和`3.0.13`版本之后移除**。          | boolean  | true                                             |
+| ~~warn-log-byte-limit~~ | 当前Terminal日志占用内存大小超出此限制会发出警告，单位`byte`。**`2.1.0`和`3.1.0`版本之后移除**。  | number   | 1024 * 1024 * 10                                 |
+| warn-log-count-limit    | 当前Terminal日志条数超出此限制会发出警告                                          | number   | 200                                              |
+| warn-log-limit-enable   | 是否开启日志限制警告                                                        | boolean  | true                                             |
+| auto-help               | 是否打开命令行自动搜索提示功能                                                   | boolean  | true                                             |
+| enable-example-hint     | 是否显示样例提示                                                          | boolean  | true                                             |
+| command-store           | 自定义的命令库，搜索提示功能会扫描本库，见[命令定义格式](#命令定义)                              | array    | [内置命令](#内置命令)                                    |
+| command-store-sort      | 命令行库排序                                                            | function | function(a,b)                                    |
+| input-filter            | 自定义输入过滤，返回值为过滤后的字符串                                               | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf               | 拖拽窗口配置项                                                           | object   | 见[拖拽功能](#拖拽功能)                                   |
+| command-formatter       | 命令显示格式化函数，传入当前命令返回新的命令，支持html                                     | function | function(cmd)                                    |
 
 ## Events
 
