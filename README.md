@@ -11,8 +11,8 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 ## Feature Support
 
 * Supported message formats: `text`, `table`, `json`, `code`/multiline text, `html`
-* Support [Flash](#Flash)
-* Support user Q&A input
+* Support [Flash](#Flash) real-time echo
+* Support user input
 * `Highlight.js`, `Codemirror.js` code highlighting
 * ← → key cursor switch
 * ↑ ↓ key history command toggle
@@ -25,6 +25,8 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 * Support API interface: execute command, push message, simulate drag and drop, get position, full screen, modify context, etc.
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
+
+> It does not have the ability to execute a specific command. This ability needs to be implemented by the developer. What it is responsible for is to get the command to be executed from the user in the form of an interface, and then hand it over to the developer to implement and execute. After that, hand it over to show it to the user
 
 # Online Experience
 
@@ -143,6 +145,7 @@ Terminal tag support event table
 
 **Special note**: The `success` callback parameter of `execCmd` supports multiple data types, and the execution logic of different data types will be different:
 
+* If no parameters are passed, the execution will end immediately
 * Passing in a [Message](#Message) will append a message to the record and end the execution immediately
 * Pass in a [Message](#Message) array, which will append multiple messages to the record and end the execution immediately
 * Pass in a `Terminal.$Flash` object, it will enter the processing logic of [Real-time-echo(Flash)](#Flash), this execution will not end until `finish()` is called
