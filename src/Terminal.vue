@@ -63,7 +63,7 @@
               <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
           <div v-else @click.self="_focus">
-            <div v-if="item.type === 'normal'">
+            <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
                 <span class="t-content-normal">
                   <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)"
@@ -72,7 +72,7 @@
                   <span v-html="item.content"></span>
                 </span>
               </slot>
-            </div>
+            </span>
 
             <div v-else-if="item.type === 'json'">
               <slot name="json" :message="item">
