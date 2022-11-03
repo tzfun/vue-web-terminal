@@ -107,4 +107,24 @@ body, html, #app {
 .t-a {
   color: #77cfff;
 }
+
+.loading-flash {
+  position: relative;
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  transform: rotate(0deg);
+  top: 3px;
+  left: -3px;
+}
+
+.loading-flash:before {
+  content: '';
+  position: absolute;
+  width: 10.606px;
+  height: 10.606px;
+  border: 2px solid rgba(240, 236, 236, 0.3);
+  border-left-color: #a4eac8;
+  border-radius: 50%;
+}
 </style>

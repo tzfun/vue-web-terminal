@@ -401,54 +401,67 @@ export default {
             })
 
         },
-        showFlash(success) {
+        async showFlash(success) {
+            Terminal.$api.pushMessage(this.name, {
+                content: '🔍︎ Comparing versions, the relevant dependency files will be downloaded soon...'
+            })
+            Terminal.$api.pushMessage(this.name, {
+                content: '🚚 Start downloading dependent files'
+            })
+
             let flash = new Terminal.$Flash()
             success(flash)
-            let info = Terminal.$api.elementInfo(this.name)
-            Terminal.$api.pushMessage(this.name, {content: "⭐ ️Prepare to simulate downloading resources..."})
+
+            let terminalInfo = Terminal.$api.elementInfo(this.name)
             let start = new Date().getTime()
 
-            this.mockLoading(flash, info, 'vue', () => {
-                this.mockLoading(flash, info, 'core.js', () => {
-                    this.mockLoading(flash, info, 'vue-web-terminal', () => {
-                        this.mockLoading(flash, info, 'highlight.js', () => {
-                            flash.finish()
-                            let useTime = ((new Date().getTime() - start) / 1000).toFixed(2)
-                            Terminal.$api.pushMessage(this.name, {
-                                content: `🎉 Download <span style="color:green;">successful</span>! use ${useTime} s`
-                            })
-                            this.nextGuide()
-                        })
-                    })
-                })
+            await this.mockLoading(flash, 'vue', terminalInfo)
+            await this.mockLoading(flash, 'vue-web-terminal', terminalInfo)
+            await this.mockLoading(flash, 'core.js', terminalInfo)
+
+            let useTime = ((new Date().getTime() - start) / 1000).toFixed(2)
+            Terminal.$api.pushMessage(this.name, {
+                content: `🎉 All dependencies has downloaded <span style="color:green;">successful</span>, done in ${useTime} s`
             })
+            this.nextGuide()
+            flash.finish()
         },
-        mockLoading(flash, info, suffix, finish) {
-            let countMax = Math.floor(info.clientWidth / info.charWidth.en) - 6 - suffix.length
-            let count = 0
-            let str = '[' + suffix + '-'.repeat(countMax) + '  0%]'
-            str = str.split('')
+        mockLoading(flash, fileName, terminalInfo) {
+            // 固定宽度 = 加载动画 + fileName + '[' + ']' + '100%'
+            let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en
+            //  计算出进度条的 '-' 个数
+            let processDots = (terminalInfo.clientWidth - fixedWidth) / terminalInfo.charWidth.en
+            let prefix1 = '<span class="loading-flash" style="transform: rotate('
+            let prefix2 = `deg)"></span><span style="color: aqua">${fileName}</span>[`
 
-            let flashInterval = setInterval(() => {
-                ++count
-                str[suffix.length + count] = '='
-                let percent = count * 100 / countMax
-                let t = Math.floor(percent / 100)
-                str[str.length - 5] = t === 0 ? ' ' : t
-                percent %= 100
-                t = Math.floor(percent / 10)
-                str[str.length - 4] = t === 0 ? '0' : t
-                t = Math.floor(percent % 10)
-                str[str.length - 3] = t > 9 ? '0' : t
+            return new Promise(resolve => {
+                let startTime = new Date().getTime()
+                let count = 0
+                let flashInterval = setInterval(() => {
+                    ++count
 
-                let s = str.join('').replace(suffix, '<span style="color: aqua">' + suffix + '</span>')
-                flash.flush(s)
-                if (count >= countMax) {
-                    clearInterval(flashInterval)
-                    Terminal.$api.pushMessage(this.name, {content: s})
-                    finish()
-                }
-            }, Math.random() * 20)
+                    let percent = Math.floor(count * 100 / processDots)
+                    if (percent < 10) {
+                        percent = '  ' + percent
+                    } else if (percent < 100) {
+                        percent = ' ' + percent
+                    }
+
+                    let str = prefix1 + (90 * (count % 8)) + prefix2 + "#".repeat(count) + "-".repeat(processDots - count) + ']' + percent + '%';
+                    //  更新显示当前进度
+                    flash.flush(str)
+
+                    if (count >= processDots) {
+                        clearInterval(flashInterval)
+                        let useTime = ((new Date().getTime() - startTime) / 1000).toFixed(2)
+                        //  结束后向控制台追加成功日志
+                        Terminal.$api.pushMessage(this.name, {
+                            content: `✔︎ <span style="color: aqua">${fileName}</span> download successful! use <span>${useTime}</span> s`
+                        })
+                        resolve()
+                    }
+                }, Math.random() * 20)
+            })
         }
     }
 }
