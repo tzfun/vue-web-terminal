@@ -1,4 +1,4 @@
-import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
+import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 import TerminalFlash from "./TerminalFlash.js";
@@ -129,10 +129,6 @@ export default {
             type: String,
             default: '/vue-web-terminal'
         },
-        //  初始化日志每条延迟时间，单位毫秒
-        initLogDelay: {
-            type: Number, default: 150
-        },
         //  命令行搜索以及help指令用
         commandStore: {
             type: Array
@@ -144,11 +140,6 @@ export default {
         //  记录条数超出此限制会发出警告
         warnLogCountLimit: {
             type: Number, default: 200
-        },
-        //  记录限制警告开关
-        warnLogLimitEnable: {
-            type: Boolean,
-            default: true
         },
         //  自动搜索帮助
         autoHelp: {
@@ -240,7 +231,7 @@ export default {
         this.$emit('initBefore', this.name)
 
         if (this.initLog != null) {
-            await this._pushMessageBatch(this.initLog, this.initLogDelay, true)
+            await this._pushMessageBatch(this.initLog, true)
         }
 
         if (this.commandStore != null) {
@@ -584,7 +575,7 @@ export default {
          */
         _pushMessage(message, ignoreCheck = false) {
             if (message == null) return
-            if (message instanceof Array) return this._pushMessageBatch(message, null, ignoreCheck)
+            if (message instanceof Array) return this._pushMessageBatch(message, ignoreCheck)
 
             this._filterMessageType(message)
 
@@ -598,13 +589,10 @@ export default {
                 }, 80)
             }
         },
-        async _pushMessageBatch(messages, time, ignoreCheck = false) {
+        async _pushMessageBatch(messages, ignoreCheck = false) {
             for (let m of messages) {
                 this._filterMessageType(m)
                 this.terminalLog.push(m);
-                if (time != null) {
-                    await _sleep(time);
-                }
             }
             if (!ignoreCheck) {
                 this._checkTerminalLog()
@@ -619,9 +607,6 @@ export default {
             })
         },
         _checkTerminalLog() {
-            if (!this.warnLogLimitEnable) {
-                return
-            }
             let count = this.terminalLog.length
             if (this.warnLogCountLimit > 0
                 && count > this.warnLogCountLimit
@@ -854,7 +839,6 @@ export default {
                 isDragging = false
                 window.style['user-select'] = 'unset'
             }
-
         },
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
