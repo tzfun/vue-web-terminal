@@ -210,6 +210,8 @@ Terminal.$api
 
 ### pushMessage()
 
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=loop)
+
 Push one or more messages to Terminal.
 
 ```js
@@ -234,6 +236,8 @@ Terminal.$api.pushMessage(name, messages)
 ```
 
 ### updateContext()
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=context%20%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E)
 
 For example, */vue-web-terminal/beifengtz* in the current input line `$ /vue-web-terminal/beifengtz > ` is the context, and the context text can be freely set by the developer, but you need to use `.sync` to bind a variable.
 
@@ -307,6 +311,8 @@ Terminal.$api.focus('my-terminal')
 
 ### elementInfo()
 
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=info)
+
 Get the DOM information of the terminal window. You can use this api to get the terminal's screen width and height, the width and height of the displayed content, the location, the width of a single character, etc. The unit is px.
 
 ```js
@@ -362,6 +368,8 @@ The content is in string format and supports html tags. It supports slot rewriti
 
 ### json
 
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=json)
+
 Messages of json type will be displayed in the json editing window, the type is `json`, and a json object must be passed for content.
 
 ```json
@@ -375,6 +383,8 @@ Messages of json type will be displayed in the json editing window, the type is 
 ```
 
 ### code
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=code)
 
 The code type message can display code and multi-line text more friendly, the type is `code`, and the content type is a string. It supports highlighting and codemirror highlighting.
 
@@ -440,6 +450,8 @@ Vue.use(Terminal, {
 
 ### table
 
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=table)
+
 When type is `table`, content is the table configuration, `head` is the table header, `rows` is the data of each row, and html tags are supported.
 
 ```json
@@ -471,6 +483,8 @@ When type is `table`, content is the table configuration, `head` is the table he
 ```
 
 ### html
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=ls)
 
 When type is `html`, the content format can be customized, and content is composed of html tags.
 
@@ -527,6 +541,8 @@ The format of the example is relatively simple, it is a json array, `des` is a d
 ```
 
 ### Help
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=help%20open)
 
 The plugin has a built-in help command to facilitate users to view the usage of the commands. The premise is that these commands have been [defined](#Command) in advance. Through the help command, you can view the key, grouping, and sample information of the command.
 
@@ -633,6 +649,8 @@ In addition to mouse control, you can also [call API to simulate dragging](#drag
 
 ### Flash
 
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=flash)
+
 The default messages of Terminal are displayed in the append mode. When you only need to display the execution process, 
 and when the content does not want to exist in the record after the execution, real-time echo is a good choice. 
 For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
@@ -660,6 +678,8 @@ let flashInterval = setInterval(() => {
 ```
 
 ### User-input
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=ask)
 
 When you need to ask the user, you can use this function to get the content entered by the user, 
 such as the scenario where the user needs to enter the username and password when logging in.

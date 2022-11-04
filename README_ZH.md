@@ -209,6 +209,8 @@ Terminal.$api
 
 ### pushMessage()
 
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=loop)
+
 向Terminal推送一条或多条消息
 
 ```js
@@ -229,6 +231,8 @@ Terminal.$api.pushMessage('my-terminal', messages)
 ```
 
 ### updateContext()
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=context%20%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E)
 
 比如当前输入行`$ /vue-web-terminal/beifengtz > `的 */vue-web-terminal/beifengtz* 就是上下文，上下文文本可以由开发者自由设置
 ，但是需使用`.sync`绑定一个变量
@@ -304,6 +308,8 @@ Terminal.$api.focus('my-terminal')
 
 ### elementInfo()
 
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=info)
+
 获取Terminal窗口DOM信息，你可以通过此api获取Terminal的窗口宽度高度、显示内容的宽度高度、所在位置、单字符宽度等，单位为px
 
 ```js
@@ -361,6 +367,8 @@ content为字符串格式，支持html标签。它支持slot重写样式，详�
 
 ### json
 
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=json)
+
 json类型的消息会被显示为json编辑窗口，type为`json`，content需传一个json对象。
 
 ```json
@@ -374,6 +382,8 @@ json类型的消息会被显示为json编辑窗口，type为`json`，content需�
 ```
 
 ### code
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=code)
 
 code类型消息可以更友好的显示代码和多行文本，type为`code`，content类型为字符串。它支持highlight和codemirror的高亮显示。
 
@@ -440,6 +450,8 @@ Vue.use(Terminal, {
 
 ### table
 
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=table)
+
 type为`table`时content为表格配置，`head`为表头，`rows`为每行的数据，支持html标签
 
 ```json
@@ -471,6 +483,8 @@ type为`table`时content为表格配置，`head`为表头，`rows`为每行的�
 ```
 
 ### html
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=ls)
 
 type为`html`时可自定义内容格式，content为html标签构成
 
@@ -527,6 +541,8 @@ function execCmd(key, command, success) {
 ```
 
 ### 命令Help
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=help%20open)
 
 插件内置了help命令可以方便使用者查看命令的使用方法，前提是这些命令已经提前[定义](#命令定义)好了，通过help命令可以查看命令的key、分组、解释样例信息。
 
@@ -634,6 +650,8 @@ dragConf完整配置结构如下：
 
 ### 实时回显
 
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=flash)
+
 Terminal默认的消息都是以追加的模式显示，当你只需要显示执行的过程，执行结束后这些内容不想存在于记录中的时候，实时回显是不错的选择。 
 例如`gradle`或`npm`下载依赖包时，下载进度条动画展示的过程。
 
@@ -660,6 +678,8 @@ let flashInterval = setInterval(() => {
 ```
 
 ### 用户询问输入
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=ask)
 
 当需要向用户询问时，使用此功能可以获取到用户输入的内容，例如登录时需要用户输入用户名密码的场景。
 
