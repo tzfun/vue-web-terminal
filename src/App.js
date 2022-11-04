@@ -1,13 +1,10 @@
 import Terminal from "vue-web-terminal"
 
-export default {
-    name: 'App',
-    components: {Terminal},
-    data() {
+export default {name: 'App', components: {Terminal}, data() {
         return {
             version: {
-                vue2: '2.1.0',
-                vue3: '3.1.0'
+                vue2: '2.1.1',
+                vue3: '3.1.1'
             },
             show: true,
             name: 'my-terminal',
@@ -113,10 +110,10 @@ export default {
             guide: {
                 step: 0,
                 command: null
-            }
+            },
+            initCmd:null
         }
-    },
-    created() {
+    }, created: function () {
         this.initLog = [
             {
                 content: 'Terminal initializing...'
@@ -135,8 +132,11 @@ export default {
                 `
             }
         ]
-    },
-    mounted() {
+        let query = this.getQuery()
+        if (query.cmd && query.cmd.trim().length > 0) {
+            this.initCmd = query.cmd
+        }
+    }, mounted() {
         let width = document.body.clientWidth
         if (width < 960) {
             this.dragConf = null
@@ -147,8 +147,7 @@ export default {
             this.dragConf.width = "60%"
             this.dragConf.height = "65%"
         }
-    },
-    methods: {
+    }, methods: {
         /**
          * 当用户输入自定义命令时调用
          *
@@ -333,7 +332,12 @@ export default {
 
         },
         initComplete() {
-            Terminal.$api.execute(this.name, 'ask guide')
+            if (this.initCmd) {
+                Terminal.$api.execute(this.name, this.initCmd)
+                this.initCmd = null
+            } else {
+                Terminal.$api.execute(this.name, 'ask guide')
+            }
         },
         askGuide(key, command, success) {
             let asker = new Terminal.$Ask()
@@ -462,6 +466,17 @@ export default {
                     }
                 }, Math.random() * 20)
             })
+        },
+        getQuery() {
+            let search = location.search.replace('?','')
+            let query = {}
+            if (search.length > 0) {
+                let kvArr = search.split("&")
+                for (let kvs of kvArr) {
+                    let kv = kvs.split("=")
+                    query[kv[0]] = decodeURIComponent(kv[1])
+                }
+            }
+            return query
         }
-    }
-}
+    }}
