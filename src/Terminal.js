@@ -325,30 +325,55 @@ export default {
             this.$emit('onClick', key, this.name)
         },
         _resetSearchKey() {
-            this.searchCmd = {
-                item: null
-            }
+            this.searchCmd.item = null
         },
         _searchCmd(key) {
             if (!this.autoHelp) {
                 return;
             }
             let cmd = key
-            if (key == null) {
-                cmd = this.command
+            if (cmd == null) {
+                cmd = this.command.split(' ')[0]
             }
             if (_isEmpty(cmd)) {
                 this._resetSearchKey()
             } else if (cmd.trim().indexOf(" ") < 0) {
+                let reg = new RegExp(cmd, 'i')
+                let matchSet = []
+
+                let target = null
                 for (let i in this.allCommandStore) {
                     let o = this.allCommandStore[i]
-                    if (o.key.trim().toLowerCase().indexOf(cmd.trim().toLowerCase()) >= 0) {
-                        this.searchCmd.item = o
-                        this._jumpToBottom()
+                    if (_nonEmpty(o.key)) {
+                        let res = o.key.match(reg)
+                        if (res != null) {
+                            let score = res.index * 1000 + (cmd.length - res[0].length) + (o.key.length - res[0].length)
+                            if (score === 0) {
+                                //  完全匹配，直接返回
+                                target = o
+                                break
+                            } else {
+                                matchSet.push({
+                                    item: o,
+                                    score: score
+                                })
+                            }
+                        }
+                    }
+                }
+                if (target == null) {
+                    if (matchSet.length > 0) {
+                        matchSet.sort((a, b) => {
+                            return a.score - b.score
+                        })
+                        target = matchSet[0].item
+                    } else {
+                        this.searchCmd.item = null
                         return
                     }
                 }
-                this.searchCmd.item = null
+                this.searchCmd.item = target
+                this._jumpToBottom()
             }
         },
         _fillCmd() {
