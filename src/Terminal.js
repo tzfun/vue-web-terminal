@@ -788,12 +788,22 @@ export default {
             }
         },
         _onInputKeydown(e) {
-            if (e.key.toLowerCase() === 'arrowleft') {
+            let key = e.key.toLowerCase()
+            if (key === 'arrowleft') {
                 this._checkInputCursor()
                 this._cursorGoLeft()
-            } else if (e.key.toLowerCase() === 'arrowright') {
+            } else if (key === 'arrowright') {
                 this._checkInputCursor()
                 this._cursorGoRight()
+            }
+        },
+        _onInputKeyup(e) {
+            let key = e.key.toLowerCase()
+            let code = e.code.toLowerCase()
+            if (key === 'home' || key === 'end' || code === 'altleft' || code === 'metaleft' || code === 'controlleft'
+                || ((e.ctrlKey || e.metaKey || e.altKey) && (key === 'arrowright' || key === 'arrowleft'))) {
+                this._checkInputCursor()
+                this._calculateCursorPos()
             }
         },
         _fullscreen() {
