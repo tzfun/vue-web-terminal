@@ -1,5 +1,5 @@
 import {nextTick, ref} from 'vue'
-import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _sleep, _unHtml} from "./Util.js";
+import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js';
 import TerminalFlash from "./TerminalFlash.js";
