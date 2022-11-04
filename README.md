@@ -2,9 +2,11 @@
 
 # vue-web-terminal
 
-<a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dm/vue-web-terminal.svg" alt="Downloads"></a>
+<a href="https://github.com/tzfun/vue-web-terminal"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/master"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
+<a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
-<a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/v/vue-web-terminal.svg" alt="Version"></a>
+<a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
 
 A web-side command line plugin built by `Vue`, supports multiple message formats such as tables, json, and codes, supports custom message styles, command line libraries, typing search prompts, etc., and simulates native terminal support ← → cursor toggle and ↑ ↓ history command toggle.
 
@@ -12,20 +14,21 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 
 * Supported message formats: `text`, `table`, `json`, `code`/multiline text, `html`
 * Support [Flash](#Flash) real-time echo
-* Support user input
-* `Highlight.js`, `Codemirror.js` code highlighting
-* ← → key cursor switch
-* ↑ ↓ key history command toggle
-* Full-screen display
-* Window drag
-* Custom command library
-* User inputting filter
-* Command search prompt, use the `Tab` key to quickly fill
-* Multiple lots support custom styles
+* Support user input.(For example, enter username and password to log in)
+* Support `Highlight.js`, `Codemirror.js` code highlighting
+* Support ← → key cursor switch
+* Support ↑ ↓ key history command toggle
+* Support full-screen display
+* Support window drag
+* Support custom command library and search for help tips, use the `Tab` key to quickly fill
+* Support User inputting filter
 * Support API interface: execute command, push message, simulate drag and drop, get position, full screen, modify context, etc.
+* Provides multiple slots to support custom styles
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
+> One sentence description:
+>
 > It does not have the ability to execute a specific command. This ability needs to be implemented by the developer. What it is responsible for is to get the command to be executed from the user in the form of an interface, and then hand it over to the developer to implement and execute. After that, hand it over to show it to the user
 
 # Online Experience
@@ -36,13 +39,13 @@ Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-w
 
 # Quick Start
 
-Install vue-web-terminal by npm
+Install vue-web-terminal by npm. The `2.x.x` version corresponds to vue2, and the `3.x.x` version corresponds to vue3. It is recommended to download the latest version corresponding to the main version.
 
 ```shell
-//  install for vue2
+#  install for vue2
 npm install vue-web-terminal@2.xx --save
 
-//  install for vue3
+#  install for vue3
 npm install vue-web-terminal@3.xx --save 
 ```
 
@@ -111,25 +114,29 @@ body, html, #app {
 
 Terminal tag supports attribute parameter table.
 
-| Argument              | Description                                                                                                              | Type     | Default                                          |
-|-----------------------|--------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
-| name                  | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                | string   | terminal                                         |
-| context               | Initialize context text.                                                                                                 | string   | /vue-web-terminal                                |
-| title                 | The title displayed in the header.                                                                                       | string   | vue-web-terminal                                 |
-| show-header           | Whether to display the header, this switch will affect the drag and drop function.                                       | boolean  | true                                             |
-| init-log              | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed. | array    | /                                                |
-| init-log-delay        | The interval between each log when initializing the display log, in milliseconds.                                        | number   | 150                                              |
-| ~~show-log-time~~     | ~~Whether to display the time when the message **type** is `normal`.~~ `2.0.14` and `3.0.13` versions have been removed  | boolean  | true                                             |
-| warn-log-byte-limit   | The current Terminal log occupied memory size exceeds this limit will issue a warning, the unit `byte`.                  | number   | 1024 * 1024 * 10                                 |
-| warn-log-count-limit  | If the current Terminal log number exceeds this limit, a warning will be issued.                                         | number   | 200                                              |
-| warn-log-limit-enable | Whether to enable log limit warning.                                                                                     | boolean  | true                                             |
-| auto-help             | Whether to enable the command line automatic search prompt function.                                                     | boolean  | true                                             |
-| enable-example-hint   | Whether to show sample prompts.                                                                                          | boolean  | true                                             |
-| command-store         | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)        | array    | [Local Commands](#Local)                         |
-| command-store-sort    | Command line library sorting function.                                                                                   | function | function(a,b)                                    |
-| input-filter          | Custom input filter, the return value is the filtered string.                                                            | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf             | Drag and drop window configuration items.                                                                                | object   | [Drag](#Drag)                                    |
-| command-formatter     | Command display formatting function, pass in the current command and return a new command, support html                  | function | function(cmd)                                    |
+| Argument                | Description                                                                                                                                                                                                     | Type     | Default                                          |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
+| name                    | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                                                                                                       | string   | terminal                                         |
+| context                 | Initialize context text.                                                                                                                                                                                        | string   | /vue-web-terminal                                |
+| title                   | The title displayed in the header.                                                                                                                                                                              | string   | vue-web-terminal                                 |
+| show-header             | Whether to display the header, this switch will affect the drag and drop function.                                                                                                                              | boolean  | true                                             |
+| init-log                | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array    | /                                                |
+| warn-log-count-limit    | If the current Terminal log number exceeds this limit, a warning will be issued. Setting a value of `<= 0` will not issue a warning.                                                                            | number   | 200                                              |
+| auto-help               | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean  | true                                             |
+| enable-example-hint     | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean  | true                                             |
+| command-store           | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array    | [Local Commands](#Local)                         |
+| command-store-sort      | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function | function(a,b)                                    |
+| input-filter            | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf               | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object   | [Drag](#Drag)                                    |
+| command-formatter       | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function | function(cmd)                                    |
+
+> Below are the removed properties
+>
+> * show-log-time: **Removed after `2.0.14` and `3.0.13` versions**
+> * warn-log-byte-limit: **Removed after `2.1.0` and `3.1.0`**
+> * warn-log-limit-enable: **Removed after `2.1.1` and `3.1.1`**
+> * init-log-delay: **Removed after `2.1.1` and `3.1.1` versions**
+
 ## Events
 
 Terminal tag support event table
@@ -186,7 +193,7 @@ example:
 
 ## Api
 
-This plugin provides some APIs that can use Vue to actively initiate event requests to the plugin.
+This plugin provides some APIs that can use javascript to actively initiate event requests to the plugin.
 
 PS：**All api calls require the name of the terminal.**
 
@@ -197,23 +204,38 @@ import Terminal from "vue-web-terminal"
 Terminal.$api
 ```
 
+> Removed api
+>
+> * getPosition: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`
+
 ### pushMessage()
+
+Push one or more messages to Terminal.
 
 ```js
 //  Each terminal will define a name, see the previous document for details
 let name = 'my-terminal'
+
+// push a message
 let message = {
-    type: 'normal',
     class: 'warning',
     content: 'This is a wanning message.'
 }
 
 Terminal.$api.pushMessage(name, message)
+
+// push multiple messages
+let messages = [
+  {content: "message 1"},
+  {content: "message 2"},
+  {content: "message 3"}
+]
+Terminal.$api.pushMessage(name, messages)
 ```
 
 ### updateContext()
 
-For example, */vue-web-terminal/tzfun* in the current input line `$ /vue-web-terminal/tzfun > ` is the context, and the context text can be freely set by the developer, but you need to use `.sync` to bind a variable.
+For example, */vue-web-terminal/beifengtz* in the current input line `$ /vue-web-terminal/beifengtz > ` is the context, and the context text can be freely set by the developer, but you need to use `.sync` to bind a variable.
 
 ```vue
 <template>
@@ -232,10 +254,8 @@ export default {
       context: '/hello'
     }
   },
-  methods: {
-    _updateContext(newCtx) {
-      Terminal.$api.updateContext("my-terminal", newCtx)
-    }
+  mounted() {
+    Terminal.$api.updateContext("my-terminal", '/home/beifengtz')
   }
 }
 </script>
@@ -260,7 +280,7 @@ let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 
 ### dragging()
 
-When [Feature Drag](#Drag) is enabled, you can use the following method to simulate drag to change the window position, where the parameter `x` is the distance from the left border of the terminal to the left border of the browser's visible range, in px, `y ` is the distance from the upper border of the terminal to the upper border of the browser's visible range.
+When [Feature Drag](#Drag) is enabled, you can use the following method to simulate drag to change the window position, where the parameter `x` is the distance from the left border of the terminal to the left border of the browser's visible range, `y ` is the distance from the upper border of the terminal to the upper border of the browser's visible range, in px.
 
 ```js
 Terminal.$api.dragging('my-terminal', {
@@ -277,20 +297,10 @@ You can use the api to execute a command to the Terminal, and the execution proc
 Terminal.$api.execute('my-terminal', 'help :local')
 ```
 
-### ~~getPosition()~~
-
-**This api has been removed after `2.0.14` and `3.0.13` version, please use `elementInfo()`**
-
-When in drag mode, this interface can get the position of the window.
-
-```js
-let pos = Terminal.$api.getPosition('my-terminal')
-console.log(pos.x, pos.y)
-```
-
 ### focus()
 
-Get input focus
+Get the Terminal input focus. There are two input points in the plugin, one is command line input, the other is [User-input](#User-input).
+
 ```js
 Terminal.$api.focus('my-terminal')
 ```
@@ -328,32 +338,31 @@ The following image clearly describes what these values mean:
 
 ## Message
 
-This plugin defines a message object, any message must be defined in this format to display correctly.
+This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `execCmd` event and the `pushMessage` api.
 
-| Prop    | Description                                                                                                          | Type                     | Options                           |
-|---------|----------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------------|
-| class   | Message class.                                                                                                       | string                   | success、error、system、info、warning |
-| tag     | Display label, only valid for type `normal`.                                                                         | string                   | /                                 |
-| type    | Message format type, default is `normal`.                                                                            | string                   | normal、json、code、table、html       |
-| content | The specific content, the content type of different message formats is different, the specific rules are as follows. | string、json、object、array | /                                 |
+| Prop    | Description                                                                                                                    | Type                     | Options                           |
+|---------|--------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------------|
+| content | Required. The specific content, the content type of different message formats is different, the specific rules are as follows. | string、json、object、array | /                                 |
+| type    | Message format type, default is `normal`.                                                                                      | string                   | normal、json、code、table、html       |
+| class   | Message level, only valid for type `normal`.                                                                                   | string                   | success、error、system、info、warning |
+| tag     | Display label, only valid for type `normal`.                                                                                   | string                   | /                                 |
 
 ### normal
 
-The content is in string format and supports html tags. The content is required, and the others are optional.
+The content is in string format and supports html tags. It supports slot rewriting style, see [Slots](#Slots) for details.
 
 ```json
 {
-  "time": "2022-02-17 18:12:20",
-  "class": "success",
   "type": "normal",
   "content": "This is a text message",
+  "class": "success",
   "tag": "Tag success"
 }
 ```
 
 ### json
 
-When type is `json`, content needs to pass a json object.
+Messages of json type will be displayed in the json editing window, the type is `json`, and a json object must be passed for content.
 
 ```json
 {
@@ -367,7 +376,7 @@ When type is `json`, content needs to pass a json object.
 
 ### code
 
-When type is `code`, the content type is a string, and you can directly pass in text or code.
+The code type message can display code and multi-line text more friendly, the type is `code`, and the content type is a string. It supports highlighting and codemirror highlighting.
 
 ```json
 {
@@ -394,7 +403,7 @@ Vue.use(vuePlugin)
 Vue.use(Terminal, {highlight: true})
 ```
 
-vue2 version dependency recommendation:
+vue2 version dependency recommendation, vue3 just use the latest version.
 
 ```json
 {
@@ -466,19 +475,18 @@ When type is `table`, content is the table configuration, `head` is the table he
 When type is `html`, the content format can be customized, and content is composed of html tags.
 
 ```js
-execCmd(key, command, success)
-{
+function execCmd(key, command, success) {
     // ...
     success({
         type: 'html',
         content: `
           <ul class="custom-content">
-            <li class="t-dir">目录1</li>
-            <li class="t-dir">目录2</li>
-            <li class="t-dir">目录3</li>
-            <li class="t-file">文件1</li>
-            <li class="t-file">文件2</li>
-            <li class="t-file">文件3</li>
+            <li class="t-dir">dir 1</li>
+            <li class="t-dir">dir 2</li>
+            <li class="t-dir">dir 3</li>
+            <li class="t-file">file 1</li>
+            <li class="t-file">file 2</li>
+            <li class="t-file">file 3</li>
           </ul>
           `
     })
@@ -488,20 +496,22 @@ execCmd(key, command, success)
 
 ## Command
 
-If the command help search function is enabled, you need to pass in a custom command library before instantiating Terminal. The incoming command library is an array of N commands. The following are the rules for defining the command format:
+For help and command search, the command definition here is only for display, there is no specific execution logic, the execution logic of the command should be implemented in the `execCmd` event of [Events](#Events).
 
-| Prop        | Description                                                  | Type   |
-|-------------|--------------------------------------------------------------|--------|
-| key         | Command keyword, required.                                   | string |
-| title       | Display title.                                               | string |
-| group       | grouping, customizable, defaults to `local`.                 | string |
-| usage       | How to use the command.                                      | string |
-| description | Detailed description of the command.                         | string |
-| example     | For usage examples, see[Command example](#CommandExample)    | array  |
+If the command help search function is enabled, you need to pass in a custom command library before instantiating Terminal. The incoming command library is an array of commands. The following are the rules for defining the command format:
+
+| Prop        | Description                                                                   | Type   |
+|-------------|-------------------------------------------------------------------------------|--------|
+| key         | Command keyword, required.                                                    | string |
+| title       | Display title.                                                                | string |
+| group       | grouping, customizable, The built-in `help` command can filter by this field. | string |
+| usage       | How to use the command.                                                       | string |
+| description | Detailed description of the command.                                          | string |
+| example     | For usage examples, see[Command example](#CommandExample)                     | array  |
 
 ### CommandExample
 
-The format of the example is relatively simple, `des` is a description, `cmd` is a specific command, and the json format is as follows:
+The format of the example is relatively simple, it is a json array, `des` is a description, `cmd` is a specific command, and the json format is as follows:
 
 ```json
 [
@@ -518,7 +528,7 @@ The format of the example is relatively simple, `des` is a description, `cmd` is
 
 ### Help
 
-The plugin has a built-in help command to facilitate users to search the command library. Through the help command, you can view the key, grouping, and explanation sample information of the command.
+The plugin has a built-in help command to facilitate users to view the usage of the commands. The premise is that these commands have been [defined](#Command) in advance. Through the help command, you can view the key, grouping, and sample information of the command.
 
 ```shell
 
@@ -551,7 +561,7 @@ Terminal has the following built-in commands by default and cannot be replaced.
     "example": [
       {
         "des": "Get help documentation for exact match commands.",
-        "cmd": "help refresh"
+        "cmd": "help open"
       },
       {
         "des": "Get help documentation for fuzzy matching commands.",
@@ -599,15 +609,16 @@ Terminal has the following built-in commands by default and cannot be replaced.
 
 ### Drag
 
-To enable drag and drop, you need to set `showHeader` to true and configure `dragConf`. You can configure the window size through `width` and `height` of dragConf.
+To enable drag and drop, you need to set `showHeader` to true and configure `dragConf`. You can configure the window size through `width` and `height` of dragConf, and you can control the window initialization position through `init`, the following is a simple example.
 
 ```vue
-<terminal name="my-terminal" 
-          show-header 
-          :drag-conf="{width: 700, height: 500}"></terminal>
+<terminal name="my-terminal"
+          show-header
+          :drag-conf="{width: 700, height: 500, init:{ x: 50, y: 50 }}">
+</terminal>
 ```
 
-The dragConf structure is as follows:
+The complete configuration structure of `dragConf` is as follows:
 
 | Prop   | Description                                                                                                                                                      | type          |
 |--------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
@@ -622,9 +633,9 @@ In addition to mouse control, you can also [call API to simulate dragging](#drag
 
 ### Flash
 
-The default messages of Terminal are displayed in append mode. When you need to display only the execution process, 
-this process is only seen during execution. When the content does not want to exist in the record after the execution, 
-Flash is a good choice. For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
+The default messages of Terminal are displayed in the append mode. When you only need to display the execution process, 
+and when the content does not want to exist in the record after the execution, real-time echo is a good choice. 
+For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
 
