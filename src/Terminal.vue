@@ -73,7 +73,6 @@
                 </span>
               </slot>
             </span>
-
             <div v-if="item.type === 'json'">
               <slot name="json" :message="item">
                 <span style="position: relative">
@@ -94,7 +93,6 @@
                 </span>
               </slot>
             </div>
-
             <div v-if="item.type === 'code'">
               <slot name="code" :message="item">
                 <div class="t-code">
@@ -110,7 +108,6 @@
                 </div>
               </slot>
             </div>
-
             <div v-if="item.type === 'table'">
               <slot name="table" :message="item">
                 <div class="t-table-container" @click.self="_focus">
@@ -131,13 +128,11 @@
                 </div>
               </slot>
             </div>
-
             <div v-if="item.type === 'html'">
               <slot name="html" :message="item">
                 <div v-html="item.content" @click.self="_focus"></div>
               </slot>
             </div>
-
           </div>
         </div>
         <div v-if="flash.open && flash.content">
