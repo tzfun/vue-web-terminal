@@ -162,6 +162,7 @@
                  autocomplete="off"
                  auto-complete="new-password"
                  @keydown="_onInputKeydown"
+                 @keyup="_onInputKeyup"
                  @input="_onInput"
                  @focusin="cursorConf.show = true"
                  @focusout="cursorConf.show = false"
