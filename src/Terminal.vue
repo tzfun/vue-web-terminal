@@ -174,9 +174,11 @@
             <span class="t-cmd-line-content" ref="terminalCnFlag" @click.self="_focus">你好</span>
           </span>
         </p>
-        <p class="t-help-msg" @click.self="_focus">
-          {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
-        </p>
+        <slot name="helpCmd" :item="searchCmd.item">
+          <p class="t-help-msg" @click.self="_focus">
+            {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
+          </p>
+        </slot>
       </div>
     </div>
     <div v-if="enableExampleHint">

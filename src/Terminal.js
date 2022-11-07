@@ -178,6 +178,10 @@ export default {
         //  命令格式化显示函数
         commandFormatter: {
             type: Function
+        },
+        //  按下Tab键处理函数
+        tabKeyHandler: {
+            type:Function
         }
     },
     created() {
@@ -256,11 +260,15 @@ export default {
 
 
         this.keydownListener = event => {
-            if (event.key.toLowerCase() === 'tab') {
-                this._fillCmd()
-                event.preventDefault()
-            }
             if (this.cursorConf.show) {
+                if (event.key.toLowerCase() === 'tab') {
+                    if(this.tabKeyHandler == null) {
+                        this._fillCmd()
+                    } else {
+                        this.tabKeyHandler(event)
+                    }
+                    event.preventDefault()
+                }
                 this.$emit('onKeydown', event, this.name)
             }
         }
