@@ -491,11 +491,11 @@ export default {
         },
         _execute() {
             this._resetSearchKey()
-            if (this.command.trim() !== "") {
+            this._saveCurCommand();
+            if (_nonEmpty(this.command)) {
                 try {
                     let split = this.command.split(" ")
                     let cmdKey = split[0];
-                    this._saveCurCommand();
                     this.$emit("beforeExecCmd", cmdKey, this.command, this.name)
                     switch (cmdKey) {
                         case 'help': {
@@ -673,8 +673,9 @@ export default {
             }
         },
         _saveCurCommand() {
-            historyStore.pushCmd(this.name, this.command)
-
+            if (_nonEmpty(this.command)) {
+                historyStore.pushCmd(this.name, this.command)
+            }
             this.terminalLog.push({
                 type: "cmdLine",
                 content: `${this.context} > ${this._commandFormatter(this.command)}`
