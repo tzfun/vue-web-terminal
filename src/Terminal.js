@@ -98,6 +98,10 @@ export default {
                 callback: null,
                 autoReview: false,
                 input: ''
+            },
+            fullscreenEditor: {
+                open: false,
+                value: ''
             }
         }
     },
@@ -268,6 +272,10 @@ export default {
                         this.tabKeyHandler(event)
                     }
                     event.preventDefault()
+                } else {
+                    if (this.cursorConf.show && document.activeElement !== this.$refs.cmdInput) {
+                        this.$refs.cmdInput.focus()
+                    }
                 }
                 this.$emit('onKeydown', event, this.name)
             }
@@ -394,9 +402,21 @@ export default {
                 if (this.ask.open) {
                     this.$refs.askInput.focus()
                 } else {
-                    this.$refs.cmdInput.focus()
+                    //  没有被选中
+                    if (this._getSelection().isCollapsed) {
+                        this.$refs.cmdInput.focus()
+                    } else {
+                        this.cursorConf.show = true
+                    }
                 }
             })
+        },
+        _getSelection() {
+            if (window.getSelection) {
+                return window.getSelection()
+            } else {
+                return document.getSelection()
+            }
         },
         /**
          * help命令执行后调用此方法
@@ -949,14 +969,14 @@ export default {
             for (let i = 0; i < split.length; i++) {
                 let char = _html(split[i])
                 if (i === 0) {
-                    formatted += `<span class='t-cmd-key'>&ZeroWidthSpace;${char}</span>`
+                    formatted += `<span class='t-cmd-key'>${char}</span>`
                 } else if (char.startsWith("-")) {
-                    formatted += `<span class="t-cmd-arg">&ZeroWidthSpace;${char}</span>`
+                    formatted += `<span class="t-cmd-arg">${char}</span>`
                 } else if (char.length > 0) {
-                    formatted += `<span>&ZeroWidthSpace;${char}</span>`
+                    formatted += `<span>${char}</span>`
                 }
                 if (i < split.length - 1) {
-                    formatted += "<span>&ZeroWidthSpace;&nbsp;</span>"
+                    formatted += "<span>&nbsp;</span>"
                 }
             }
             return formatted

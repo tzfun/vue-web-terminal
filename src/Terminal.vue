@@ -1,13 +1,13 @@
 <template>
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
-       ref="terminalContainer" @click.self="_focus">
+       ref="terminalContainer" @click="_focus">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
         <slot name="header">
           <div class="t-header">
             <h4>
-              <span @click="_triggerClick('title')" style="cursor: pointer;user-select: none;">{{ title }}</span>
+              <span @click="_triggerClick('title')" class="disable-select" style="cursor: pointer;">{{ title }}</span>
             </h4>
             <ul class="t-shell-dots">
               <li class="shell-dot-item t-shell-dots-red">
@@ -57,12 +57,12 @@
       </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
            ref="terminalWindow"
-           @click.self="_focus">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" @click.self="_focus">
+           >
+        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" >
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
-          <div v-else @click.self="_focus">
+          <div v-else >
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
                 <span class="t-content-normal">
@@ -110,7 +110,7 @@
             </div>
             <div v-else-if="item.type === 'table'">
               <slot name="table" :message="item">
-                <div class="t-table-container" @click.self="_focus">
+                <div class="t-table-container" >
                   <table class="t-table t-border-dashed">
                     <thead>
                     <tr class="t-border-dashed">
@@ -130,7 +130,7 @@
             </div>
             <div v-else-if="item.type === 'html'">
               <slot name="html" :message="item">
-                <div v-html="item.content" @click.self="_focus"></div>
+                <div v-html="item.content" ></div>
               </slot>
             </div>
           </div>
@@ -150,14 +150,14 @@
                  auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" @click.self="_focus">
-          <span class="prompt t-cmd-line-content" ref="terminalInputPrompt">
+        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" >
+          <span class="prompt t-cmd-line-content disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
-          </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor"
+          </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor disable-select"
                                                                                  :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
-                 class="t-cmd-input"
+                 class="t-cmd-input disable-select"
                  ref="cmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
@@ -169,13 +169,13 @@
                  @keyup.up.exact="_switchPreCmd"
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
-          <span class="t-flag t-cmd-line">
-            <span class="t-cmd-line-content" ref="terminalEnFlag" @click.self="_focus">aa</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlag" @click.self="_focus">你好</span>
+          <span class="t-flag t-cmd-line disable-select">
+            <span class="t-cmd-line-content" ref="terminalEnFlag" >aa</span>
+            <span class="t-cmd-line-content" ref="terminalCnFlag" >你好</span>
           </span>
         </p>
         <slot name="helpCmd" :item="searchCmd.item">
-          <p class="t-help-msg" @click.self="_focus">
+          <p class="t-help-msg" >
             {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
           </p>
         </slot>
@@ -207,6 +207,11 @@
             </div>
           </div>
         </div>
+      </slot>
+    </div>
+    <div class="fullscreen-editor" v-if="fullscreenEditor.open">
+      <slot name="fullscreenEditor" :editor="fullscreenEditor">
+        <textarea name="editor" v-model="fullscreenEditor.value" cols="30" rows="10"></textarea>
       </slot>
     </div>
   </div>

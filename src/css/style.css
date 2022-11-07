@@ -113,7 +113,7 @@
     border-radius: 6px;
 }
 
-.t-window,.t-ask-input, .t-window p,.t-window div {
+.t-window, .t-ask-input, .t-window p, .t-window div {
     font-size: 13px;
     font-family: Monaco, Menlo, Consolas, monospace;
 }
@@ -132,6 +132,7 @@
     font-weight: 400;
     color: #fff;
     line-height: 20px;
+    cursor: text;
 }
 
 .t-window .prompt:before {
@@ -174,14 +175,14 @@
     max-width: 300px;
     color: white;
     background: none;
-    outline:none;
+    outline: none;
     padding: 0;
     display: inline-block;
 }
 
-.t-ask-input:focus,.t-ask-input:focus-visible {
+.t-ask-input:focus, .t-ask-input:focus-visible {
     border: none;
-    outline:none;
+    outline: none;
 }
 
 .t-cmd-input {
@@ -190,8 +191,6 @@
     border: none;
     width: 1px;
     opacity: 0;
-    /*user-select:none;*/
-
     cursor: text;
     padding: 1px 2px;
     -webkit-writing-mode: horizontal-tb !important;
@@ -408,4 +407,19 @@ pre {
 
 .CodeMirror {
     height: unset !important;
+}
+
+.fullscreen-editor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.disable-select {
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
