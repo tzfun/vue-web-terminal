@@ -5,11 +5,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
 import test.beifengtz.terminal.demo.entity.vo.SocketVO;
-import test.beifengtz.terminal.demo.ssh.SSHSignal;
 import test.beifengtz.terminal.demo.websocket.WebsocketHandler;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -99,9 +96,13 @@ public class Context {
         if (context != null) {
             String command = msg.getContent().toString();
             if (context.executing.get()) {
-                if (command.startsWith("signal:")) {
+                if (command.startsWith("ascii:")) {
                     try {
-                        context.channel.get().sendSignal(SSHSignal.valueOf(command.substring(7)).toString());
+                        String[] ascii = command.substring(6).split(",");
+                        for (String s : ascii) {
+                            context.out.write(Integer.parseInt(s));
+                        }
+                        context.out.flush();
                     } catch (Exception e) {
                         context.websocket.get().send(SocketVO.sshError(e.getMessage()));
                     }
@@ -120,10 +121,8 @@ public class Context {
         try {
             ChannelExec ch = (ChannelExec) sshSession.get().openChannel("exec");
             channel.set(ch);
-            ch.setInputStream(new ByteArrayInputStream(new byte[1024]));
-            ch.setOutputStream(new ByteArrayOutputStream());
-            ch.setErrStream(new ByteArrayOutputStream(), true);
             ch.setCommand(cmd);
+            ch.setPty(true);
             ch.connect();
 
             in = ch.getInputStream();

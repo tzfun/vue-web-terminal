@@ -4,6 +4,7 @@ import com.jcraft.jsch.*;
 
 import java.awt.*;
 import java.io.InputStream;
+import java.io.OutputStream;
 import javax.swing.*;
 
 /**
@@ -37,27 +38,37 @@ public class ExecTest {
             session.connect();
 
             Channel channel = session.openChannel("exec");
-            ((ChannelExec) channel).setCommand("vim test.txt");
+            ((ChannelExec) channel).setCommand("sudo ping 192.168.0.148");
 
             // X Forwarding
             // channel.setXForwarding(true);
 
-            channel.setInputStream(System.in);
+//            channel.setInputStream(System.in);
 
             channel.setOutputStream(System.out);
 
             ((ChannelExec) channel).setErrStream(System.err);
 
             InputStream in = channel.getInputStream();
+            ((ChannelExec) channel).setPty(true);
 
             channel.connect();
 
             byte[] tmp = new byte[1024];
+            int count = 0;
             while (true) {
                 while (in.available() > 0) {
                     int i = in.read(tmp, 0, 1024);
                     if (i < 0) break;
                     System.out.print(new String(tmp, 0, i));
+                    count++;
+                }
+                if (count > 5) {
+                    System.out.println("===> count: " + count);
+                    OutputStream out = channel.getOutputStream();
+                    out.write(3);
+                    out.write(13);
+                    out.flush();
                 }
                 if (channel.isClosed()) {
                     if (in.available() > 0) continue;
