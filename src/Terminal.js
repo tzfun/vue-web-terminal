@@ -180,6 +180,10 @@ export default {
         },
         commandFormatter: {
             type: Function
+        },
+        //  按下Tab键处理函数
+        tabKeyHandler: {
+            type:Function
         }
     },
     emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd", "destroyed", "initBefore", "initComplete"],
@@ -285,11 +289,15 @@ export default {
         this.inputBoxParam.promptWidth = promptRect.width
 
         this.keydownListener = event => {
-            if (event.key.toLowerCase() === 'tab') {
-                this._fillCmd()
-                event.preventDefault()
-            }
             if (this.cursorConf.show) {
+                if (event.key.toLowerCase() === 'tab') {
+                    if(this.tabKeyHandler == null) {
+                        this._fillCmd()
+                    } else {
+                        this.tabKeyHandler(event)
+                    }
+                    event.preventDefault()
+                }
                 this.$emit('onKeydown', event, this.name)
             }
         }

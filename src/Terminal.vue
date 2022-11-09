@@ -178,6 +178,11 @@
         <p class="t-help-msg" @click.self="_focus">
           {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
         </p>
+        <slot name="helpCmd" :item="searchCmd.item">
+          <p class="t-help-msg" @click.self="_focus">
+            {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
+          </p>
+        </slot>
       </div>
     </div>
     <div v-if="enableExampleHint">
