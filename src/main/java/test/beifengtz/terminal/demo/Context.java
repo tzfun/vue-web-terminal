@@ -36,6 +36,7 @@ public class Context {
     private final AtomicReference<Session> sshSession = new AtomicReference<>(null);
     private final AtomicBoolean executing = new AtomicBoolean(false);
     private final AtomicReference<ChannelExec> channel = new AtomicReference<>(null);
+    private final long createTime;
     private InputStream in;
     private OutputStream out;
     private InputStream err;
@@ -43,6 +44,7 @@ public class Context {
     static {
         Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(() -> {
             Iterator<Entry<String, Context>> it = CONTEXT_POOL.entrySet().iterator();
+            long now = System.currentTimeMillis();
             while (it.hasNext()) {
                 Entry<String, Context> entry = it.next();
                 Context ctx = entry.getValue();
@@ -53,11 +55,16 @@ public class Context {
                     log.info("SSH session closed by demon check: '{}'", entry.getKey());
                     it.remove();
                 }
+                if (ctx.websocket.get() == null && now - ctx.createTime > TimeUnit.MINUTES.toMillis(1)) {
+                    log.info("Context removed by idle timeout: '{}'", entry.getKey());
+                    it.remove();
+                }
             }
         }, 5, 1, TimeUnit.SECONDS);
     }
 
     Context(Session sshSession) {
+        createTime = System.currentTimeMillis();
         this.sshSession.set(sshSession);
     }
 
