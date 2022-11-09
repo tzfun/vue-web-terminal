@@ -8,7 +8,7 @@ export default {
     data() {
         return {
             showLocal: false,
-            showSsh: false,
+            showSsh: true,
             localInitCmd:null
         }
     },

@@ -10,7 +10,6 @@
       :context.sync="context"
       :commandStore="cmdStore"
       :warnLogCountLimit="200"
-      :showLogTime="true"
       :dragConf="dragConf"
       show-header
       @initBefore="initBefore"
