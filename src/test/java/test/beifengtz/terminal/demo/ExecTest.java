@@ -49,8 +49,8 @@ public class ExecTest {
 
             ((ChannelExec) channel).setErrStream(System.err);
 
-            InputStream in = channel.getInputStream();
             ((ChannelExec) channel).setPty(true);
+            InputStream in = channel.getInputStream();
 
             channel.connect();
 
