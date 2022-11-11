@@ -3,18 +3,17 @@
               :title="title"
               :show-header="showHeader"
               :drag-conf="dragConf"
-              ref="frame">
+              ref="frame"
+              @clickWindow="_focus">
     <template #header="data">
       <slot name="header" :title="data.title"></slot>
     </template>
     <template #window>
-      <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
-           ref="terminalWindow" @click="_focus">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
+      <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
-          <div v-else>
+        <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
                 <span class="t-content-normal">
@@ -25,8 +24,8 @@
                 </span>
               </slot>
             </span>
-            <div v-else-if="item.type === 'json'">
-              <slot name="json" :message="item">
+          <div v-else-if="item.type === 'json'">
+            <slot name="json" :message="item">
                 <span style="position: relative">
                   <json-viewer :expand-depth="item.depth"
                                sort boxed copyable expanded
@@ -43,96 +42,95 @@
                     </option>
                   </select>
                 </span>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'code'">
-              <slot name="code" :message="item">
-                <div class="t-code">
-                  <div v-if="_getTerminalOptions().highlight">
-                    <highlightjs ref="highlightjs" autodetect :code="item.content"/>
-                  </div>
-                  <div v-else-if="_getTerminalOptions().codemirror">
-                    <codemirror ref="codemirror" v-model="item.content" :options="_getTerminalOptions().codemirror"/>
-                  </div>
-                  <div v-else style="background: rgb(39 50 58);">
-                    <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
-                  </div>
+            </slot>
+          </div>
+          <div v-else-if="item.type === 'code'">
+            <slot name="code" :message="item">
+              <div class="t-code">
+                <div v-if="_getTerminalOptions().highlight">
+                  <highlightjs ref="highlightjs" autodetect :code="item.content"/>
                 </div>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'table'">
-              <slot name="table" :message="item">
-                <div class="t-table-container">
-                  <table class="t-table t-border-dashed">
-                    <thead>
-                    <tr class="t-border-dashed">
-                      <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
-                      <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
-                        <div v-html="it"></div>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
+                <div v-else-if="_getTerminalOptions().codemirror">
+                  <codemirror ref="codemirror" v-model="item.content" :options="_getTerminalOptions().codemirror"/>
                 </div>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'html'">
-              <slot name="html" :message="item">
-                <div v-html="item.content"></div>
-              </slot>
-            </div>
+                <div v-else style="background: rgb(39 50 58);">
+                  <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
+                </div>
+              </div>
+            </slot>
+          </div>
+          <div v-else-if="item.type === 'table'">
+            <slot name="table" :message="item">
+              <div class="t-table-container">
+                <table class="t-table t-border-dashed">
+                  <thead>
+                  <tr class="t-border-dashed">
+                    <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
+                    <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
+                      <div v-html="it"></div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </slot>
+          </div>
+          <div v-else-if="item.type === 'html'">
+            <slot name="html" :message="item">
+              <div v-html="item.content"></div>
+            </slot>
           </div>
         </div>
-        <div v-if="flash.open && flash.content">
-          <slot name="flash" :content="flash.content">
-            <div v-html="flash.content"></div>
-          </slot>
-        </div>
-        <div v-if="ask.open && ask.question">
-          <div v-html="ask.question" style="display: inline-block"></div>
-          <input :type="ask.isPassword ? 'password' : 'text'"
-                 ref="askInput"
-                 v-model="ask.input"
-                 class="t-ask-input"
-                 autocomplete="off"
-                 auto-complete="new-password"
-                 @keyup.enter="_onAskInput">
-        </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
+      </div>
+      <div v-if="flash.open && flash.content">
+        <slot name="flash" :content="flash.content">
+          <div v-html="flash.content"></div>
+        </slot>
+      </div>
+      <div v-if="ask.open && ask.question">
+        <div v-html="ask.question" style="display: inline-block"></div>
+        <input :type="ask.isPassword ? 'password' : 'text'"
+               ref="askInput"
+               v-model="ask.input"
+               class="t-ask-input"
+               autocomplete="off"
+               auto-complete="new-password"
+               @keyup.enter="_onAskInput">
+      </div>
+      <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
           <span class="prompt t-cmd-line-content disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" class="cursor disable-select"
-            :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" v-model="command"
-                 class="t-cmd-input disable-select"
-                 ref="cmdInput"
-                 autocomplete="off"
-                 auto-complete="new-password"
-                 @keydown="_onInputKeydown"
-                 @keyup="_onInputKeyup"
-                 @input="_onInput"
-                 @focusin="cursorConf.show = true"
-                 @focusout="cursorConf.show = false"
-                 @keyup.up.exact="_switchPreCmd"
-                 @keyup.down.exact="_switchNextCmd"
-                 @keyup.enter="_execute">
-          <span class="t-flag t-cmd-line disable-select">
+          v-show="cursorConf.show" class="cursor disable-select"
+          :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
+        <input type="text" autofocus="autofocus" v-model="command"
+               class="t-cmd-input disable-select"
+               ref="cmdInput"
+               autocomplete="off"
+               auto-complete="new-password"
+               @keydown="_onInputKeydown"
+               @keyup="_onInputKeyup"
+               @input="_onInput"
+               @focusin="cursorConf.show = true"
+               @focusout="cursorConf.show = false"
+               @keyup.up.exact="_switchPreCmd"
+               @keyup.down.exact="_switchNextCmd"
+               @keyup.enter="_execute">
+        <span class="t-flag t-cmd-line disable-select">
             <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
             <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
           </span>
+      </p>
+      <slot name="helpCmd" :item="searchCmd.item">
+        <p class="t-help-msg">
+          {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
         </p>
-        <slot name="helpCmd" :item="searchCmd.item">
-          <p class="t-help-msg">
-            {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
-          </p>
-        </slot>
-      </div>
+      </slot>
       <div v-if="enableExampleHint">
         <slot name="helpBox" :showHeader="showHeader" :item="searchCmd.item">
           <div class="t-cmd-help"
@@ -172,7 +170,8 @@
 </template>
 
 <script>
-import '../../css/terminal.css'
+import '@/css/common.css'
+import '@/css/terminal.css'
 import 'vue-json-viewer/style.css'
 import TerminalJs from './Terminal.js'
 

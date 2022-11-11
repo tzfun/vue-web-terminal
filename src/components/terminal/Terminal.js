@@ -130,7 +130,7 @@ export default {
                 this._focus()
             },
             elementInfo: () => {
-                let windowEle = this.$refs.terminalWindow
+                let windowEle = this.$refs.frame.$refs.window
                 let windowRect = windowEle.getBoundingClientRect()
                 let containerRect = this.$refs.frame.$refs.container.getBoundingClientRect()
                 let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
@@ -168,7 +168,7 @@ export default {
         }
         this.cursorConf.defaultWidth = this.byteLen.en
 
-        let el = this.$refs.terminalWindow
+        let el = this.$refs.frame.$refs.window
         el.scrollTop = el.offsetHeight;
 
         let promptRect = this.$refs.terminalInputPrompt.getBoundingClientRect()
@@ -277,7 +277,7 @@ export default {
                 } else {
                     //  没有被选中
                     if (this._getSelection().isCollapsed) {
-                        if (this.$refs.askInput) {
+                        if (this.$refs.cmdInput) {
                             this.$refs.cmdInput.focus()
                         }
                     } else {
@@ -529,7 +529,7 @@ export default {
         },
         _jumpToBottom() {
             this.$nextTick(() => {
-                let box = this.$refs.terminalWindow
+                let box = this.$refs.frame.$refs.window
                 if (box != null) {
                     box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
                 }

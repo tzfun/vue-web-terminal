@@ -89,3 +89,7 @@ export const terminalProps = {
         type:Function
     }
 }
+
+export const shellProps = {
+    ...containerProps
+}

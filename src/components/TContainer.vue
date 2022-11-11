@@ -7,7 +7,12 @@
         <THeader :title="title"></THeader>
       </slot>
     </div>
-    <slot name="window"></slot>
+    <div class="t-window"
+         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
+         ref="window"
+         @click="$emit('clickWindow')">
+      <slot name="window"></slot>
+    </div>
   </div>
 </template>
 
@@ -167,7 +172,7 @@ export default {
 
       let dragArea = this.$refs.header
       let box = this.$refs.container
-      let window = this.$parent.$refs.terminalWindow
+      let window = this.$refs.window
 
       let isDragging = false;
 
