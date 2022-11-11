@@ -121,10 +121,6 @@
                @keyup.up.exact="_switchPreCmd"
                @keyup.down.exact="_switchNextCmd"
                @keyup.enter="_execute">
-        <span class="t-flag t-cmd-line disable-select">
-            <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
-          </span>
       </p>
       <slot name="helpCmd" :item="searchCmd.item">
         <p class="t-help-msg">

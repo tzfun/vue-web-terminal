@@ -13,7 +13,8 @@ export default {
             lines: [],
             cursorConf: {
                 show: true
-            }
+            },
+            col: 0
         }
     },
     created() {
@@ -23,10 +24,14 @@ export default {
             },
             clear: () => {
                 this.lines = []
+            },
+            getCol: () => {
+                return this.col
             }
         })
     },
     mounted() {
+        this._calculateCols()
         this._focus()
     },
     destroyed() {
@@ -35,6 +40,17 @@ export default {
         ShellApi.unregister(this.name)
     },
     methods: {
+        _calculateCols() {
+            this.$nextTick(() => {
+                let windowRect = this.$refs.frame.$refs.window.getBoundingClientRect()
+                this.col = Math.floor((windowRect.width - 48) / this.$refs.frame._getCharWidth().en)
+                console.log("col",this.col)
+            })
+        },
+        _onFullscreenSwitch() {
+            this._calculateCols()
+            this.$emit('onColChange', this.col)
+        },
         _triggerClick(key) {
             this.$emit('onClick', key, this.name)
         },
@@ -54,13 +70,14 @@ export default {
             if (s) {
                 let chars = s.split('')
                 let lineChars = []
+                let _getCharWidth = this.$refs.frame._getCharWidth
                 for (let c of chars) {
                     if (c === '\n') {
                         this.lines.push(lineChars.join(''))
                         this._jumpToBottom()
                         lineChars = []
                     } else {
-                        lineChars.push(`<span class="shell-char">${c}</span>`)
+                        lineChars.push(`<span class="shell-char" style="width:${_getCharWidth(c)}px">${c}</span>`)
                     }
                 }
                 if (lineChars.length > 0) {

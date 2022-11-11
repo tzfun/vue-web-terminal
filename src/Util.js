@@ -80,14 +80,17 @@ export function _isSafari() {
 }
 
 export function _getByteLen(val) {
-    let len = 0;
-    for (let i = 0; i < val.length; i++) {
+    if (val.length === 1) {
+        //  全角，占用两个字节
         // eslint-disable-next-line no-control-regex
-        if (val[i].match(/[^\x00-\xff]/ig) != null) //全角
-            len += 2; //如果是全角，占用两个字节
-        else len += 1; //半角占用一个字节
+        if (val.match(/[^\x00-\xff]/ig) != null) {
+            return 2
+        }
+        //  半角占一个字节
+        else {
+            return 1
+        }
     }
-    return len;
 }
 
 /**

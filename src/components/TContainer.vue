@@ -2,6 +2,10 @@
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="container">
+    <span class="t-flag t-cmd-line disable-select">
+        <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
+        <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
+    </span>
     <div class="t-header-container" ref="header" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
       <slot name="header" :title="title">
         <THeader :title="title"></THeader>
@@ -20,7 +24,7 @@
 import {containerProps} from "@/components/TProps";
 import THeader from "@/components/THeader";
 import TerminalApi from "@/components/terminal/TerminalApi";
-import {_isSafari} from "@/Util";
+import {_getByteLen, _isSafari} from "@/Util";
 
 export default {
   name: "TContainer",
@@ -29,6 +33,10 @@ export default {
   data() {
     return {
       fullscreen: false,
+      charWidth: {
+        en: 8,
+        cn: 13
+      },
     }
   },
   created() {
@@ -45,10 +53,30 @@ export default {
         } else {
           console.warn("Terminal is not draggable")
         }
+      },
+      elementInfo: () => {
+        let windowEle = this.$parent.$refs.window
+        let windowRect = windowEle.getBoundingClientRect()
+        let containerRect = this.$parent.$refs.container.getBoundingClientRect()
+        let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
+        return {
+          pos: this._getPosition(),           //  窗口所在位置
+          screenWidth: containerRect.width,   //  窗口整体宽度
+          screenHeight: containerRect.height, //  窗口整体高度
+          clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+          clientHeight: windowRect.height,    //  可显示内容范围高度
+          charWidth: this._getCharWidth()
+        }
       }
     })
   },
   mounted() {
+
+    this.charWidth = {
+      en: this.$refs.terminalEnFlag.getBoundingClientRect().width / 2,
+      cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
+    }
+
     let safariStyleCache = {};
     //  监听全屏事件，用户ESC退出时需要设置全屏状态
     ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
@@ -83,11 +111,23 @@ export default {
             container.style.top = safariStyleCache.top
           }
         }
+        this.$emit('onFullscreenSwitch')
       });
     })
     this._initDrag()
   },
   methods: {
+    _getCharWidth(str) {
+      if (str) {
+        let width = 0
+        for (let char of str) {
+          width += (_getByteLen(char) === 1 ? this.charWidth.en : this.charWidth.cn)
+        }
+        return width
+      } else {
+        return this.charWidth
+      }
+    },
     _triggerClick(key) {
       if (key === 'fullScreen' && !this.fullscreen) {
         this._fullscreen()

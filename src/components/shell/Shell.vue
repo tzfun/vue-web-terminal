@@ -4,7 +4,8 @@
               :show-header="showHeader"
               :drag-conf="dragConf"
               ref="frame"
-              @clickWindow="_focus">
+              @clickWindow="_focus"
+              @onFullscreenSwitch="_onFullscreenSwitch">
     <template #header="data">
       <slot name="header" :title="data.title"></slot>
     </template>

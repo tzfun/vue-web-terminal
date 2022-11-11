@@ -1,4 +1,4 @@
-import {_commandFormatter, _getByteLen, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/Util";
+import {_commandFormatter, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/Util";
 import historyStore from "./HistoryStore.js";
 import TerminalApi from './TerminalApi.js'
 import TerminalFlash from "./TerminalFlash.js";
@@ -20,9 +20,6 @@ export default {
                 top: 'unset',
                 idx: 0, //  从0开始
                 show: false
-            },
-            byteLen: {
-                en: 8, cn: 13
             },
             jsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             showInputLine: true,
@@ -128,23 +125,6 @@ export default {
             },
             focus: () => {
                 this._focus()
-            },
-            elementInfo: () => {
-                let windowEle = this.$refs.frame.$refs.window
-                let windowRect = windowEle.getBoundingClientRect()
-                let containerRect = this.$refs.frame.$refs.container.getBoundingClientRect()
-                let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
-                return {
-                    pos: this._getPosition(),           //  窗口所在位置
-                    screenWidth: containerRect.width,   //  窗口整体宽度
-                    screenHeight: containerRect.height, //  窗口整体高度
-                    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-                    clientHeight: windowRect.height,    //  可显示内容范围高度
-                    charWidth: {
-                        en: this.byteLen.en,            //  单个英文字符宽度
-                        cn: this.byteLen.cn             //  单个中文字符宽度
-                    }
-                }
             }
         })
     },
@@ -162,11 +142,8 @@ export default {
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
 
-        this.byteLen = {
-            en: this.$refs.terminalEnFlag.getBoundingClientRect().width / 2,
-            cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
-        }
-        this.cursorConf.defaultWidth = this.byteLen.en
+
+        this.cursorConf.defaultWidth = this.$refs.frame._getCharWidth().en
 
         let el = this.$refs.frame.$refs.window
         el.scrollTop = el.offsetHeight;
@@ -594,7 +571,7 @@ export default {
 
             //  先找到被覆盖字符的位置
             for (let i = 0; i <= idx; i++) {
-                charWidth = this._calculateStringWidth(command[i])
+                charWidth = this.$refs.frame._getCharWidth(command[i])
                 pos.left += preWidth
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
@@ -645,13 +622,6 @@ export default {
             this._resetCursorPos()
             historyStore.setIdx(this.name, cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
-        },
-        _calculateStringWidth(str) {
-            let width = 0
-            for (let char of str) {
-                width += (_getByteLen(char) === 1 ? this.byteLen.en : this.byteLen.cn)
-            }
-            return width
         },
         _onInput(e) {
             if (this.inputFilter != null) {
