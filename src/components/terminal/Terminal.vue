@@ -106,7 +106,7 @@
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-          v-show="cursorConf.show" class="cursor disable-select"
+          v-show="cursorConf.show" class="t-cursor disable-select"
           :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
         <input type="text" autofocus="autofocus" v-model="command"
                class="t-cmd-input disable-select"

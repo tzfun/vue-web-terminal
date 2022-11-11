@@ -1,0 +1,19 @@
+
+.shell-row {
+    margin: 0;
+    padding: 0;
+    height: 20px;
+    line-height: 20px;
+    word-break: break-all;
+    font-size: 13px;
+    overflow: hidden;
+}
+
+.shell-char {
+    font-size: 13px;
+    display: inline-block;
+    height: 100%;
+    vertical-align: top;
+    width: 7.16px;
+    font-weight: bold;
+}

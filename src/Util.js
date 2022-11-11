@@ -129,3 +129,33 @@ export function _getDifferent(one, two) {
     }
     return diff;
 }
+
+export function _commandFormatter(cmd) {
+    if (cmd == null) {
+        return ''
+    }
+    let split = cmd.split(" ")
+    let formatted = ''
+    for (let i = 0; i < split.length; i++) {
+        let char = _html(split[i])
+        if (i === 0) {
+            formatted += `<span class='t-cmd-key'>${char}</span>`
+        } else if (char.startsWith("-")) {
+            formatted += `<span class="t-cmd-arg">${char}</span>`
+        } else if (char.length > 0) {
+            formatted += `<span>${char}</span>`
+        }
+        if (i < split.length - 1) {
+            formatted += "<span>&nbsp;</span>"
+        }
+    }
+    return formatted
+}
+
+export function _getSelection() {
+    if (window.getSelection) {
+        return window.getSelection()
+    } else {
+        return document.getSelection()
+    }
+}

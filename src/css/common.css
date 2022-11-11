@@ -151,7 +151,7 @@
     }
 }
 
-.t-window .cursor {
+.t-cursor {
     background-color: #fff;
     animation: cursor-flash 1s infinite;
     -webkit-animation: cursor-flash 1s infinite;
@@ -173,6 +173,48 @@
 /*平板*/
 @media screen and (max-width: 992px) and (min-width: 768.1px) {
 
+}
+
+.t-cmd-line {
+    font-size: 0;
+}
+
+.t-cmd-line-content {
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.t-cmd-input {
+    position: relative;
+    background: #030924;
+    border: none;
+    width: 1px;
+    opacity: 0;
+    cursor: text;
+    padding: 1px 2px;
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    appearance: textfield;
+    -webkit-rtl-ordering: logical;
+    border-image: initial;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.t-cmd-key {
+    font-weight: 700;
+    color: yellow;
+}
+
+.t-cmd-arg {
+    color: #c0c0ff;
 }
 
 .disable-select {

@@ -21,30 +21,6 @@
     outline: none;
 }
 
-.t-cmd-input {
-    position: relative;
-    background: #030924;
-    border: none;
-    width: 1px;
-    opacity: 0;
-    cursor: text;
-    padding: 1px 2px;
-    -webkit-writing-mode: horizontal-tb !important;
-    text-rendering: auto;
-    letter-spacing: normal;
-    word-spacing: normal;
-    text-transform: none;
-    text-indent: 0;
-    text-shadow: none;
-    display: inline-block;
-    text-align: start;
-    appearance: textfield;
-    -webkit-rtl-ordering: logical;
-    border-image: initial;
-    word-wrap: break-word;
-    margin: 0;
-}
-
 .t-content-normal .success {
     padding: 2px 3px;
     background: #27ae60;
@@ -89,24 +65,6 @@
     color: #ffffff87;
     min-height: 20px;
     margin: -8px 0 10px 0;
-}
-
-.t-cmd-line {
-    font-size: 0;
-}
-
-.t-cmd-line-content {
-    font-size: 13px;
-    word-break: break-all;
-}
-
-.t-cmd-key {
-    font-weight: 700;
-    color: yellow;
-}
-
-.t-cmd-arg {
-    color: #c0c0ff;
 }
 
 .t-help-list {

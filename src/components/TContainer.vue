@@ -96,6 +96,14 @@ export default {
       }
       this.$parent._triggerClick(key)
     },
+    _jumpToBottom() {
+      this.$nextTick(() => {
+        let box = this.$refs.window
+        if (box != null) {
+          box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+        }
+      })
+    },
     _draggable() {
       return this.showHeader && this.dragConf
     },

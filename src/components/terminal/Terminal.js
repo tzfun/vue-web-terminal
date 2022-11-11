@@ -1,4 +1,4 @@
-import {_getByteLen, _html, _isEmpty, _nonEmpty, _unHtml} from "@/Util";
+import {_commandFormatter, _getByteLen, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/Util";
 import historyStore from "./HistoryStore.js";
 import TerminalApi from './TerminalApi.js'
 import TerminalFlash from "./TerminalFlash.js";
@@ -276,7 +276,7 @@ export default {
                     this.$refs.askInput.focus()
                 } else {
                     //  没有被选中
-                    if (this._getSelection().isCollapsed) {
+                    if (_getSelection().isCollapsed) {
                         if (this.$refs.cmdInput) {
                             this.$refs.cmdInput.focus()
                         }
@@ -286,13 +286,6 @@ export default {
                 }
             })
 
-        },
-        _getSelection() {
-            if (window.getSelection) {
-                return window.getSelection()
-            } else {
-                return document.getSelection()
-            }
         },
         /**
          * help命令执行后调用此方法
@@ -528,12 +521,7 @@ export default {
             }
         },
         _jumpToBottom() {
-            this.$nextTick(() => {
-                let box = this.$refs.frame.$refs.window
-                if (box != null) {
-                    box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
-                }
-            })
+            this.$refs.frame._jumpToBottom()
         },
         _checkTerminalLog() {
             let count = this.terminalLog.length
@@ -718,22 +706,7 @@ export default {
             if (this.commandFormatter != null) {
                 return this.commandFormatter(cmd)
             }
-            let split = cmd.split(" ")
-            let formatted = ''
-            for (let i = 0; i < split.length; i++) {
-                let char = _html(split[i])
-                if (i === 0) {
-                    formatted += `<span class='t-cmd-key'>${char}</span>`
-                } else if (char.startsWith("-")) {
-                    formatted += `<span class="t-cmd-arg">${char}</span>`
-                } else if (char.length > 0) {
-                    formatted += `<span>${char}</span>`
-                }
-                if (i < split.length - 1) {
-                    formatted += "<span>&nbsp;</span>"
-                }
-            }
-            return formatted
+            return _commandFormatter(cmd)
         },
         _getPosition() {
             if (this.$refs.frame._draggable()) {

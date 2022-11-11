@@ -3,12 +3,28 @@
               :title="title"
               :show-header="showHeader"
               :drag-conf="dragConf"
-              ref="frame">
+              ref="frame"
+              @clickWindow="_focus">
     <template #header="data">
       <slot name="header" :title="data.title"></slot>
     </template>
     <template #window>
+      <div class="shell-log t-cmd-line">
+        <div class="shell-row t-cmd-line-content" v-for="(item, idx) in lines" :key="idx" v-html="item"></div>
 
+        <span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
+          v-show="cursorConf.show"
+          class="t-cursor disable-select">&nbsp;</span>
+
+        <input type="text" autofocus="autofocus" v-model="command"
+               class="t-cmd-input disable-select"
+               ref="cmdInput"
+               autocomplete="off"
+               auto-complete="new-password"
+               @focusin="cursorConf.show = true"
+               @focusout="cursorConf.show = false"
+               @keyup.enter="_execute">
+      </div>
     </template>
   </TContainer>
 </template>
@@ -16,17 +32,9 @@
 <script>
 import '@/css/common.css'
 import '@/css/shell.css'
-import TContainer from "@/components/TContainer";
-import {shellProps} from "@/components/TProps";
+import ShellJs from '@/components/shell/Shell.js'
 
-export default {
-  name: "Shell",
-  components:{TContainer},
-  props: shellProps,
-  methods: {
-
-  }
-}
+export default ShellJs
 </script>
 
 <style scoped>
