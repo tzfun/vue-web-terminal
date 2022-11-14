@@ -4,4 +4,6 @@ class ShellApi extends TApi {
 
 }
 
-export default new ShellApi()
+const api = new ShellApi()
+
+export default api

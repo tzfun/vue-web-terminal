@@ -30,6 +30,14 @@ export const containerProps = {
             }
         }
     },
+    shell: {
+        type: Boolean,
+        default: false
+    },
+    terminal: {
+        type: Boolean,
+        default: false
+    }
 }
 
 export const terminalProps = {
@@ -86,7 +94,7 @@ export const terminalProps = {
     },
     //  按下Tab键处理函数
     tabKeyHandler: {
-        type:Function
+        type: Function
     }
 }
 

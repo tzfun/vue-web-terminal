@@ -9,6 +9,9 @@ export default {
     name: "Shell",
     components: {TContainer},
     props: shellProps,
+    getApi: (name) => {
+        return ShellApi.getApi(name)
+    },
     data() {
         return {
             command: '',
@@ -17,7 +20,7 @@ export default {
                 show: true
             },
             col: 0,
-            windowWidth:0,
+            windowWidth: 0,
             ansiControl: {
                 styleFlag: [],
                 attachStyle: '',
@@ -26,17 +29,18 @@ export default {
         }
     },
     created() {
+        // ShellApi.unregister(this.name)
         ShellApi.register(this.name, {
             output: str => {
                 this._pushANSI(str)
             },
             clear: () => {
-                this.lines = []
+                this._clearScreen()
             },
             getCol: () => {
                 return this.col
             }
-        })
+        }, true)
     },
     mounted() {
         this._calculateCols()
@@ -88,12 +92,20 @@ export default {
         _jumpToBottom() {
             this.$refs.frame._jumpToBottom()
         },
+        _clearScreen() {
+            this.lines = []
+            this.ansiControl.styleFlag = []
+            this.ansiControl.attachStyle = ''
+        },
         _pushANSI(str) {
             if (this.lines.length === 0) {
                 this.lines.push([])
             }
             // eslint-disable-next-line no-control-regex
-            let flagReg = new RegExp(/\x1B\[(\d+;)*\d+m/)
+            const styleReg = new RegExp(/\x1B\[(\d+;)*\d+m/)
+            // eslint-disable-next-line no-control-regex
+            const clearReg = new RegExp(/\x1B\[\d+J/)
+
             let arr = Array.from(str)
             let getCharWidth = this.$refs.frame._getCharWidth
 
@@ -104,10 +116,11 @@ export default {
                     let a = [c]
                     let y = i
                     let end = Math.min(arr.length - 1, i + 13)
-                    while (y <= end && arr[y] !== 'm') {
+                    while (y <= end && arr[y] !== 'm' && arr[y] !== 'J') {
                         a.push(arr[++y])
                     }
-                    if (flagReg.test(a.join(''))) {
+                    let tmpStr = a.join('')
+                    if (styleReg.test(tmpStr)) {
                         this.ansiControl.styleFlag = a.slice(2, a.length - 1).join('').split(';')
                         if (this.ansiControl.styleFlag.length === 1 && this.ansiControl.styleFlag[0] === '0') {
                             this.ansiControl.styleFlag = []
@@ -132,9 +145,16 @@ export default {
                         if (i >= arr.length) {
                             break
                         }
+                        c = arr[i]
+                        cWidth = getCharWidth(c)
+                    } else if (clearReg.test(tmpStr)) {
+                        this._clearScreen()
+                        i = y + 1
+                        if (i >= arr.length) {
+                            break
+                        }
+                        continue
                     }
-                    c = arr[i]
-                    cWidth = getCharWidth(c)
                 } else if (c === '\r') {
                     if (i + 1 < arr.length && arr[i + 1] === '\n') {    //  \r\n换行
                         this.lines.push([])

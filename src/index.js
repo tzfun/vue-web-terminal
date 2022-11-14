@@ -4,7 +4,6 @@ import JsonViewer from 'vue-json-viewer'
 import TerminalFlash from "@/components/terminal/TerminalFlash.js";
 import TerminalAsk from "@/components/terminal/TerminalAsk.js";
 import Shell from "@/components/shell/Shell.vue";
-import ShellApi from "@/components/shell/ShellApi";
 
 Terminal.install = function (Vue, options) {
     Vue.use(JsonViewer)
@@ -13,16 +12,8 @@ Terminal.install = function (Vue, options) {
     }
 }
 
-Terminal.getApi = function (name) {
-    return TerminalApi.getApi(name)
-}
-
 Shell.install = function () {
 
-}
-
-Shell.getApi = function (name) {
-    return ShellApi.getApi(name)
 }
 
 export {

@@ -9,6 +9,9 @@ import TContainer from "@/components/TContainer";
 export default {
     name: 'Terminal',
     components: {TContainer},
+    getApi: (name) => {
+        return TerminalApi.getApi(name)
+    },
     data() {
         return {
             command: "",
@@ -126,7 +129,7 @@ export default {
             focus: () => {
                 this._focus()
             }
-        })
+        }, true)
     },
     mounted() {
         this.$emit('initBefore', this.name)
@@ -184,7 +187,7 @@ export default {
         }
     },
     methods: {
-        _getTerminalOptions(){
+        _getTerminalOptions() {
             return TerminalApi.getOptions()
         },
         _triggerClick(key) {

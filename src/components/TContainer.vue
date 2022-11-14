@@ -25,6 +25,7 @@ import {containerProps} from "@/components/TProps";
 import THeader from "@/components/THeader";
 import TerminalApi from "@/components/terminal/TerminalApi";
 import {_getByteLen, _isSafari} from "@/tools/Util";
+import ShellApi from "@/components/shell/ShellApi";
 
 export default {
   name: "TContainer",
@@ -40,7 +41,7 @@ export default {
     }
   },
   created() {
-    TerminalApi.register(this.name, {
+    let listener = {
       fullscreen: () => {
         this._fullscreen()
       },
@@ -68,7 +69,13 @@ export default {
           charWidth: this._getCharWidth()
         }
       }
-    })
+    }
+    if (this.terminal) {
+      TerminalApi.register(this.name, listener)
+    }
+    if (this.shell) {
+      ShellApi.register(this.name, listener)
+    }
   },
   mounted() {
 

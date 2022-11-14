@@ -1,5 +1,6 @@
 <template>
-  <TContainer :name="name"
+  <TContainer terminal
+              :name="name"
               :title="title"
               :show-header="showHeader"
               :drag-conf="dragConf"

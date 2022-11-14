@@ -12,4 +12,6 @@ class TerminalApi extends TApi {
 
 }
 
-export default new TerminalApi()
+const api = new TerminalApi()
+
+export default api

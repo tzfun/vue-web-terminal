@@ -3,9 +3,15 @@ class TApi {
         this.pool = {}
     }
 
-    register(name, listener) {
+    register(name, listener, unique = false) {
         if (this.pool[name] != null) {
-            this.pool[name] = {...this.pool[name], ...listener}
+            if (unique) {
+                throw Error(`Unable to register an existing api: '${name}'. Please check:
+                1. If you are in a development environment with a hot update, please refresh the page.
+                2. If you are using it in a production environment, please check whether a Terminal or Shell with the same name exists.`)
+            } else {
+                this.pool[name] = {...this.pool[name], ...listener}
+            }
         } else {
             this.pool[name] = listener
         }

@@ -165,14 +165,31 @@ export function _getSelection() {
 }
 
 /**
+ *
  * 过滤ANSI字符
  *
  * 单个 \r 是回到行首
  * windows下 \r\n 和 \n 都是换行
  *
  * ANSI控制序列开始符号：\u001B \033 \e \x1B
+ *
+ * 样式规则：https://misc.flogisoft.com/bash/tip_colors_and_formatting
  * ANSI样式控制格式：\e[1;2;3m
+ *
+ * 光标规则
  * ANSI换行控制格式(y是行号，x是列号）：\e[y:xH
+ *
+ *         \033[nA             光标上移n行
+ *         \033[nB             光标下移n行
+ *         \033[nC             光标右移n行
+ *         \033[nD             光标左移n行
+ *         \033[y;xH           设置光标位置
+ *         \033[2J             清屏
+ *         \033[K              清除从光标到行尾的内容
+ *         \033[s              保存光标位置
+ *         \033[u              恢复光标位置
+ *         \033[?25l           隐藏光标
+ *         \033[?25h           显示光标
  *
  * @param str
  * @private
