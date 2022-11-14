@@ -11,7 +11,7 @@
     </template>
     <template #window>
       <div class="shell-log t-cmd-line">
-        <div class="shell-row t-cmd-line-content" v-for="(item, idx) in lines" :key="idx" v-html="item"></div>
+        <div class="shell-row t-cmd-line-content" v-for="(line, idx) in lines" :key="idx" v-html="line.join('')"></div>
 
         <span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
           v-show="cursorConf.show"
@@ -33,6 +33,7 @@
 <script>
 import '@/css/common.css'
 import '@/css/shell.css'
+import '@/css/ansi.css'
 import ShellJs from '@/components/shell/Shell.js'
 
 export default ShellJs

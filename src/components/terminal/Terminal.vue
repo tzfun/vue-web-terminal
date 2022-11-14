@@ -131,7 +131,7 @@
         <slot name="helpBox" :showHeader="showHeader" :item="searchCmd.item">
           <div class="t-cmd-help"
                :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
-               v-if="searchCmd.item != null && !(require('../../Util.js'))._screenType().xs">
+               v-if="searchCmd.item != null && !(require('../../tools/Util.js'))._screenType().xs">
             <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
                v-html="searchCmd.item.description"></p>
             <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">

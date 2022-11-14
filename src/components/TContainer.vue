@@ -24,7 +24,7 @@
 import {containerProps} from "@/components/TProps";
 import THeader from "@/components/THeader";
 import TerminalApi from "@/components/terminal/TerminalApi";
-import {_getByteLen, _isSafari} from "@/Util";
+import {_getByteLen, _isSafari} from "@/tools/Util";
 
 export default {
   name: "TContainer",

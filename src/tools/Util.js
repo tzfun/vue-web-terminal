@@ -13,6 +13,7 @@ export function _html(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;')
+        .replace(/\r\n/g, '<br>')
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 }
@@ -161,4 +162,41 @@ export function _getSelection() {
     } else {
         return document.getSelection()
     }
+}
+
+/**
+ * 过滤ANSI字符
+ *
+ * 单个 \r 是回到行首
+ * windows下 \r\n 和 \n 都是换行
+ *
+ * ANSI控制序列开始符号：\u001B \033 \e \x1B
+ * ANSI样式控制格式：\e[1;2;3m
+ * ANSI换行控制格式(y是行号，x是列号）：\e[y:xH
+ *
+ * @param str
+ * @private
+ */
+export function _ANSI2String(str) {
+    // eslint-disable-next-line no-control-regex
+    let flagReg = new RegExp(/\x1B\[(\d+;)*\d+m/)
+
+    let arr = Array.from(str)
+    let newArr = []
+    for (let i = 0; i < arr.length; i++) {
+        let c = arr[i]
+        if (c === '\x1B') {
+            let a = [c]
+            let y = i
+            let end = Math.min(arr.length - 1, i + 13)
+            while (y <= end && arr[y] !== 'm') {
+                a.push(arr[++y])
+            }
+            if (flagReg.test(a.join(''))) {
+                i = y + 1
+            }
+        }
+        newArr.push(arr[i])
+    }
+    return newArr.join('')
 }

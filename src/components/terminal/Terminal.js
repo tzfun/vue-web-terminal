@@ -1,4 +1,4 @@
-import {_commandFormatter, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/Util";
+import {_commandFormatter, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/tools/Util";
 import historyStore from "./HistoryStore.js";
 import TerminalApi from './TerminalApi.js'
 import TerminalFlash from "./TerminalFlash.js";

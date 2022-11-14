@@ -1,0 +1,204 @@
+.ansi-0 {
+    /*    no style  */
+}
+
+.ansi-1 {
+    font-weight: bold;
+}
+
+.ansi-2 {
+    font-weight: 200;
+}
+
+.ansi-4 {
+    text-decoration: underline;
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.ansi-5, .ansi-6 {
+    animation: blink 1s linear infinite;
+    -webkit-animation: blink 1s linear infinite;
+    -moz-animation: blink 1s linear infinite;
+    -ms-animation: blink 1s linear infinite;
+    -o-animation: blink 1s linear infinite;
+}
+
+.ansi-7 {
+    filter: invert(100%);
+    -ms-filter: invert(100%);
+    -webkit-filter: invert(100%);
+}
+
+.ansi-8 {
+    visibility: hidden;
+}
+
+.ansi-21,.ansi-22 {
+    font-weight: unset;
+}
+
+.ansi-24 {
+    text-decoration: none;
+}
+
+.ansi-25, .ansi-26 {
+    animation: none;
+    -webkit-animation: none;
+    -moz-animation: none;
+    -ms-animation: none;
+    -o-animation: none;
+}
+
+.ansi-27 {
+    filter: none;
+    -ms-filter: none;
+    -webkit-filter: none;
+}
+
+.ansi-28 {
+    visibility: unset;
+}
+
+/*   前景色   */
+.ansi-30 {
+    color: black;
+}
+
+.ansi-31 {
+    color: red;
+}
+
+.ansi-32 {
+    color: green;
+}
+
+.ansi-33 {
+    color: yellow;
+}
+
+.ansi-34 {
+    color: blue;
+}
+
+.ansi-35 {
+    color: magenta;
+}
+
+.ansi-36 {
+    color: cyan;
+}
+
+.ansi-37 {
+    color: white;
+}
+
+.ansi-90 {
+    color: #585859;
+}
+
+.ansi-91 {
+    color: #ef353a;
+}
+
+.ansi-92 {
+    color: #4ec215;
+}
+
+.ansi-93 {
+    color: #e3bd01;
+}
+
+.ansi-94 {
+    color: #1faffe;
+}
+
+.ansi-95 {
+    color: #eb7dec;
+}
+
+.ansi-96 {
+    color: #00e3e4;
+}
+
+.ansi-97 {
+    color: #fdfdfe;
+}
+
+/*  后景色 */
+.ansi-40 {
+    background-color: black;
+}
+
+.ansi-41 {
+    background-color: red;
+}
+
+.ansi-42 {
+    background-color: green;
+}
+
+.ansi-43 {
+    background-color: yellow;
+}
+
+.ansi-44 {
+    background-color: blue;
+}
+
+.ansi-45 {
+    background-color: magenta;
+}
+
+.ansi-46 {
+    background-color: cyan;
+}
+
+.ansi-47 {
+    background-color: white;
+}
+
+.ansi-100 {
+    background-color: #585859;
+}
+
+.ansi-101 {
+    background-color: #ef353a;
+}
+
+.ansi-102 {
+    background-color: #4ec215;
+}
+
+.ansi-103 {
+    background-color: #e3bd01;
+}
+
+.ansi-104 {
+    background-color: #1faffe;
+}
+
+.ansi-105 {
+    background-color: #eb7dec;
+}
+
+.ansi-106 {
+    background-color: #00e3e4;
+}
+
+.ansi-107 {
+    background-color: #fdfdfe;
+}
