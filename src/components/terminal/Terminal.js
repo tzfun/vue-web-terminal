@@ -592,7 +592,6 @@ export default {
             //  前一个字符的长度
             let preWidth = this.inputBoxParam.promptWidth
             let domStyle = this.$refs.frame.domStyle
-            console.log("==>", domStyle.windowLineHeight)
             //  先找到被覆盖字符的位置
             for (let i = 0; i <= idx; i++) {
                 charWidth = this._getCharWidth(command[i])

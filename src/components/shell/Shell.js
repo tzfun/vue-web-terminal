@@ -114,7 +114,6 @@ export default {
             return _commandFormatter(cmd)
         },
         _execute() {
-            this.lines.push([])
             this.$emit('execCmd', this.command)
             this.command = ''
         },
@@ -129,6 +128,7 @@ export default {
             this.ansiControl.colNum = 0
         },
         _pushANSI(str) {
+            console.log(this.ansiControl.rowNum, this.ansiControl.colNum)
             if (this.lines.length === 0) {
                 this.lines.push([])
             }
@@ -194,7 +194,7 @@ export default {
                         this._jumpToBottom()
                         i++
                     } else {    //  \r回车
-                        this.colNum = 0
+                        this.ansiControl.colNum = 0
                     }
                     continue
                 } else if (c === '\n') {
@@ -238,6 +238,7 @@ export default {
                 } else {
                     line[this.ansiControl.colNum] = charStr
                 }
+                this.ansiControl.colNum++
             }
             this._jumpToBottom()
         }
