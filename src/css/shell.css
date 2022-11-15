@@ -1,8 +1,9 @@
-.shell-row {
+.shell-row, .shell-char {
     margin: 0;
     padding: 0;
-    height: 20px;
-    line-height: 20px;
+}
+
+.shell-row {
     word-break: break-all;
     font-size: 13px;
     overflow: hidden;

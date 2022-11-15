@@ -571,7 +571,7 @@ export default {
             let charWidth = this.cursorConf.defaultWidth
             //  前一个字符的长度
             let preWidth = this.inputBoxParam.promptWidth
-
+            let domStyle = this.$refs.frame.domStyle
             //  先找到被覆盖字符的位置
             for (let i = 0; i <= idx; i++) {
                 charWidth = this.$refs.frame._getCharWidth(command[i])
@@ -579,7 +579,7 @@ export default {
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
                     //  行高是20px
-                    pos.top += 20
+                    pos.top += domStyle.windowLineHeight
                     pos.left = charWidth
                 }
             }

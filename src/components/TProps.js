@@ -3,6 +3,9 @@ export const headerProps = {
     title: {
         type: String, default: 'vue-web-terminal'
     },
+    headerHeight:{
+        type: Number
+    }
 }
 
 export const containerProps = {
@@ -26,7 +29,9 @@ export const containerProps = {
                 init: {
                     x: null,
                     y: null
-                }
+                },
+                col: 0,
+                row: 0
             }
         }
     },

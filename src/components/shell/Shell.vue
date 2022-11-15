@@ -12,7 +12,12 @@
     </template>
     <template #window>
       <div class="shell-log t-cmd-line">
-        <div class="shell-row t-cmd-line-content" v-for="(line, idx) in lines" :key="idx" v-html="line.join('')"></div>
+        <div class="shell-row t-cmd-line-content"
+             v-for="(line, idx) in lines"
+             :key="idx"
+             v-html="line.join('')"
+             :style="`height:${$refs.frame.domStyle.windowLineHeight}px;line-height:${$refs.frame.domStyle.windowLineHeight}px`"
+        ></div>
 
         <span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
           v-show="cursorConf.show"

@@ -6,13 +6,14 @@
         <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
         <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
     </span>
-    <div class="t-header-container" ref="header" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
+    <div class="t-header-container" ref="header" v-if="showHeader"
+         :style="`${(_draggable() ? 'cursor: move;' : '')}height:${domStyle.headerHeight};`">
       <slot name="header" :title="title">
-        <THeader :title="title"></THeader>
+        <THeader :title="title" :headerHeight="domStyle.headerHeight"></THeader>
       </slot>
     </div>
     <div class="t-window"
-         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
+         :style="_getWindowStyle()"
          ref="window"
          @click="$emit('clickWindow')">
       <slot name="window"></slot>
@@ -34,6 +35,17 @@ export default {
   data() {
     return {
       fullscreen: false,
+      domStyle: {
+        headerHeight: 30,
+        windowPaddingTopAndDown: 0,
+        windowPaddingLeftAndRight: 8,
+        windowLineHeight: 20,
+        windowScrollWidth: 8
+      },
+      windowPadding: {
+        top: 0,
+        left: 8
+      },
       charWidth: {
         en: 8,
         cn: 13
@@ -61,11 +73,16 @@ export default {
         let containerRect = this.$parent.$refs.container.getBoundingClientRect()
         let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
         return {
-          pos: this._getPosition(),           //  窗口所在位置
-          screenWidth: containerRect.width,   //  窗口整体宽度
-          screenHeight: containerRect.height, //  窗口整体高度
-          clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-          clientHeight: windowRect.height,    //  可显示内容范围高度
+          //  窗口所在位置
+          pos: this._getPosition(),
+          //  窗口整体宽度
+          screenWidth: containerRect.width,
+          //  窗口整体高度
+          screenHeight: containerRect.height,
+          //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+          clientWidth: hasScroll ? (windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2 - this.domStyle.windowScrollWidth) : (windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2),
+          //  可显示内容范围高度
+          clientHeight: windowRect.height,
           charWidth: this._getCharWidth()
         }
       }
@@ -159,15 +176,25 @@ export default {
       let clientHeight = document.body.clientHeight
 
       let confWidth = this.dragConf.width
-      let width = confWidth == null ? 700 : confWidth
-
-      if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
-        width = clientWidth * (parseInt(confWidth) / 100)
+      let width = 0
+      if (this.dragConf.col > 0) {
+        width = this.dragConf.col * this.charWidth.en + this.domStyle.windowPaddingLeftAndRight * 2
+      } else {
+        width = confWidth == null ? 700 : confWidth
+        if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
+          width = clientWidth * (parseInt(confWidth) / 100)
+        }
       }
+
       let confHeight = this.dragConf.height
-      let height = confHeight == null ? 500 : confHeight
-      if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
-        height = clientHeight * (parseInt(confHeight) / 100)
+      let height
+      if (this.dragConf.row > 0) {
+        height = this.dragConf.row * this.domStyle.windowLineHeight + this.domStyle.windowPaddingLeftAndRight * 2 + this.domStyle.headerHeight
+      } else {
+        height = confHeight == null ? 500 : confHeight
+        if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
+          height = clientHeight * (parseInt(confHeight) / 100)
+        }
       }
 
       let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
@@ -190,6 +217,15 @@ export default {
             top:${initY}px;
             border-radius:15px;
             `
+    },
+    _getWindowStyle() {
+      let style = `padding:${this.domStyle.windowPaddingTopAndDown}px ${this.domStyle.windowPaddingLeftAndRight}px;line-height:${this.domStyle.windowLineHeight}px`
+      if (this.showHeader) {
+        style += `height:calc(100% - ${this.domStyle.headerHeight}px);margin-top: ${this.domStyle.headerHeight}px;`
+      } else {
+        style += 'height:100%;'
+      }
+      return style
     },
     _fullscreen() {
       let fullArea = this.$refs.container

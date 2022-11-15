@@ -41,9 +41,10 @@
 
 .t-header h4 {
     font-size: 14px;
-    margin: 5px;
+    margin: 0;
     letter-spacing: 1px;
     color: white;
+    height: 100%;
 }
 
 .t-header ul.t-shell-dots {
@@ -120,10 +121,8 @@
     max-height: none;
     background-color: #191b24;
     min-height: 140px;
-    padding: 0 20px 0 20px;
     font-weight: 400;
     color: #fff;
-    line-height: 20px;
     cursor: text;
 }
 
@@ -162,14 +161,10 @@
     margin-top: 1px;
 }
 
-
 /*手机*/
 @media screen and (max-width: 768px ) {
-    .t-window {
-        padding: 0 15px 0 15px;
-    }
-}
 
+}
 /*平板*/
 @media screen and (max-width: 992px) and (min-width: 768.1px) {
 

@@ -1,6 +1,6 @@
 <template>
   <div class="t-header">
-    <h4>
+    <h4 :style="`line-height: ${headerHeight}px`">
       <span @click="_triggerClick('title')" style="cursor: pointer;user-select: none;">{{ title }}</span>
     </h4>
     <ul class="t-shell-dots">

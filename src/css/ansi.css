@@ -10,6 +10,10 @@
     font-weight: 200;
 }
 
+.ansi-3 {
+    font-style:oblique;
+}
+
 .ansi-4 {
     text-decoration: underline;
 }
@@ -47,11 +51,19 @@
     visibility: hidden;
 }
 
+.ansi-9 {
+    text-decoration:line-through;
+}
+
 .ansi-21,.ansi-22 {
     font-weight: unset;
 }
 
-.ansi-24 {
+.ansi-23 {
+    font-style:unset;
+}
+
+.ansi-24, .ansi-29 {
     text-decoration: none;
 }
 

@@ -19,12 +19,19 @@ export default {
             cursorConf: {
                 show: true
             },
-            col: 0,
-            windowWidth: 0,
+            window: {
+                cols: 0,
+                rows: 0,
+                width: 0,
+                height: 0
+            },
             ansiControl: {
                 styleFlag: [],
                 attachStyle: '',
-                lineWidth: 0
+                lineWidth: 0,
+                //  光标的位置，从0开始
+                rowNum:0,
+                colNum:0
             }
         }
     },
@@ -38,12 +45,12 @@ export default {
                 this._clearScreen()
             },
             getCol: () => {
-                return this.col
+                return this.window.cols
             }
         }, true)
     },
     mounted() {
-        this._calculateCols()
+        this._calculateWindowInfo()
         this._focus()
     },
     destroyed() {
@@ -52,16 +59,17 @@ export default {
         ShellApi.unregister(this.name)
     },
     methods: {
-        _calculateCols() {
+        _calculateWindowInfo() {
             this.$nextTick(() => {
                 let windowRect = this.$refs.frame.$refs.window.getBoundingClientRect()
-                this.windowWidth = windowRect.width - 48
-                this.col = Math.floor(this.windowWidth / this.$refs.frame._getCharWidth().en)
+                this.window.width = windowRect.width - 48
+                this.window.height = windowRect.height
+                this.window.cols = Math.floor(this.window.width / this.$refs.frame._getCharWidth().en)
             })
         },
         _onFullscreenSwitch() {
-            this._calculateCols()
-            this.$emit('onColChange', this.col)
+            this._calculateWindowInfo()
+            this.$emit('onWindowChange', this.window)
         },
         _triggerClick(key) {
             this.$emit('onClick', key, this.name)
@@ -96,6 +104,8 @@ export default {
             this.lines = []
             this.ansiControl.styleFlag = []
             this.ansiControl.attachStyle = ''
+            this.ansiControl.rowNum = 0
+            this.ansiControl.colNum = 0
         },
         _pushANSI(str) {
             if (this.lines.length === 0) {
@@ -158,21 +168,26 @@ export default {
                 } else if (c === '\r') {
                     if (i + 1 < arr.length && arr[i + 1] === '\n') {    //  \r\n换行
                         this.lines.push([])
+                        this.ansiControl.rowNum++
+                        this.ansiControl.colNum = 0
                         this.ansiControl.lineWidth = 0
                         this._jumpToBottom()
                         i++
                     } else {    //  \r回车
-                        this.lines[this.lines.length - 1] = []
+                        this.colNum = 0
                     }
                     continue
                 } else if (c === '\n') {
                     this.lines.push([])
+                    this.ansiControl.rowNum++
+                    this.ansiControl.colNum = 0
                     this.ansiControl.lineWidth = 0
                     this._jumpToBottom()
                     continue
                 } else if (c === '\b') {    //  退格
-                    let charArr = this.lines[this.lines.length - 1]
-                    charArr.splice(charArr.length - 1)
+                    if (this.ansiControl.colNum > 0) {
+                        this.ansiControl.colNum--
+                    }
                     continue
                 } else if (c === '\t') {    //  水平制表
                     c = '&nbsp;&nbsp;&nbsp;&nbsp;'
@@ -181,8 +196,10 @@ export default {
 
                 //  当前行太长换行
                 this.ansiControl.lineWidth += cWidth
-                if (this.ansiControl.lineWidth > this.windowWidth) {
+                if (this.ansiControl.lineWidth > this.window.width) {
                     this.lines.push([])
+                    this.ansiControl.rowNum++
+                    this.ansiControl.colNum = 0
                     this.ansiControl.lineWidth = cWidth
                     this._jumpToBottom()
                 }
@@ -195,8 +212,12 @@ export default {
                 } else {
                     charStr = `<span class="shell-char" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
                 }
-
-                this.lines[this.lines.length - 1].push(charStr)
+                let line = this.lines[this.ansiControl.rowNum]
+                if (this.ansiControl.colNum >= line.length) {
+                    line.push(charStr)
+                } else {
+                    line[this.ansiControl.colNum] = charStr
+                }
             }
             this._jumpToBottom()
         }
