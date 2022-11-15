@@ -1,4 +1,4 @@
-import {_commandFormatter, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/tools/Util";
+import {_commandFormatter, _getByteLen, _getSelection, _html, _isEmpty, _nonEmpty, _unHtml} from "@/tools/Util";
 import historyStore from "./HistoryStore.js";
 import TerminalApi from './TerminalApi.js'
 import TerminalFlash from "./TerminalFlash.js";
@@ -30,6 +30,10 @@ export default {
             keydownListener: null,
             searchCmd: {
                 item: null
+            },
+            charWidth: {
+                en: 8,
+                cn: 13
             },
             allCommandStore: [
                 {
@@ -145,8 +149,11 @@ export default {
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
 
-
-        this.cursorConf.defaultWidth = this.$refs.frame._getCharWidth().en
+        this.charWidth = {
+            en: this.$refs.terminalEnFlag.getBoundingClientRect().width / 2,
+            cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
+        }
+        this.cursorConf.defaultWidth = this.charWidth.en
 
         let el = this.$refs.frame.$refs.window
         el.scrollTop = el.offsetHeight;
@@ -255,17 +262,30 @@ export default {
                 if (this.ask.open && this.$refs.askInput) {
                     this.$refs.askInput.focus()
                 } else {
-                    //  没有被选中
-                    if (_getSelection().isCollapsed) {
-                        if (this.$refs.cmdInput) {
-                            this.$refs.cmdInput.focus()
+                    if (document.activeElement.localName !== 'select') {
+                        //  没有被选中
+                        if (_getSelection().isCollapsed) {
+                            if (this.$refs.cmdInput) {
+                                this.$refs.cmdInput.focus()
+                            }
+                        } else {
+                            this.cursorConf.show = true
                         }
-                    } else {
-                        this.cursorConf.show = true
                     }
                 }
             })
 
+        },
+        _getCharWidth(str) {
+            if (str) {
+                let width = 0
+                for (let char of str) {
+                    width += (_getByteLen(char) === 1 ? this.charWidth.en : this.charWidth.cn)
+                }
+                return width
+            } else {
+                return this.charWidth
+            }
         },
         /**
          * help命令执行后调用此方法
@@ -572,9 +592,10 @@ export default {
             //  前一个字符的长度
             let preWidth = this.inputBoxParam.promptWidth
             let domStyle = this.$refs.frame.domStyle
+            console.log("==>", domStyle.windowLineHeight)
             //  先找到被覆盖字符的位置
             for (let i = 0; i <= idx; i++) {
-                charWidth = this.$refs.frame._getCharWidth(command[i])
+                charWidth = this._getCharWidth(command[i])
                 pos.left += preWidth
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
@@ -680,14 +701,6 @@ export default {
                 return this.commandFormatter(cmd)
             }
             return _commandFormatter(cmd)
-        },
-        _getPosition() {
-            if (this.$refs.frame._draggable()) {
-                let box = this.$refs.frame.$refs.container
-                return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
-            } else {
-                return {x: 0, y: 0}
-            }
         },
         _onAskInput() {
             if (this.ask.autoReview) {

@@ -1,7 +1,7 @@
 import TContainer from "@/components/TContainer";
 import {shellProps} from "@/components/TProps";
 import ShellApi from "@/components/shell/ShellApi";
-import {_commandFormatter, _getSelection} from "@/tools/Util";
+import {_commandFormatter, _getByteLen, _getSelection} from "@/tools/Util";
 
 const ansi256colors = require('../../tools/ansi-256-colors.json')
 
@@ -44,8 +44,14 @@ export default {
             clear: () => {
                 this._clearScreen()
             },
-            getCol: () => {
+            onResize: () => {
+                return this._calculateWindowInfo()
+            },
+            getCols: () => {
                 return this.window.cols
+            },
+            getRows: () => {
+                return this.window.rows
             }
         }, true)
     },
@@ -59,12 +65,27 @@ export default {
         ShellApi.unregister(this.name)
     },
     methods: {
+        _getCharWidth(str) {
+            let charWidth = this.$refs.frame.domStyle.shellCharWidth
+            if (str) {
+                let width = 0
+                for (let char of str) {
+                    width += (_getByteLen(char) === 1 ? charWidth.en : charWidth.cn)
+                }
+                return width
+            } else {
+                return charWidth
+            }
+        },
         _calculateWindowInfo() {
-            this.$nextTick(() => {
-                let windowRect = this.$refs.frame.$refs.window.getBoundingClientRect()
-                this.window.width = windowRect.width - 48
-                this.window.height = windowRect.height
-                this.window.cols = Math.floor(this.window.width / this.$refs.frame._getCharWidth().en)
+            return new Promise(resolve => {
+                this.$nextTick(() => {
+                    let windowRect = this.$refs.frame.$refs.window.getBoundingClientRect()
+                    this.window.width = windowRect.width - this.$refs.frame.domStyle.windowPaddingLeftAndRight * 2 - this.$refs.frame.domStyle.windowScrollWidth
+                    this.window.height = windowRect.height
+                    this.window.cols = Math.floor(this.window.width / this._getCharWidth().en)
+                    resolve(this.window)
+                })
             })
         },
         _onFullscreenSwitch() {
@@ -117,11 +138,10 @@ export default {
             const clearReg = new RegExp(/\x1B\[\d+J/)
 
             let arr = Array.from(str)
-            let getCharWidth = this.$refs.frame._getCharWidth
 
             for (let i = 0; i < arr.length; i++) {
                 let c = arr[i]
-                let cWidth = getCharWidth(c)
+                let cWidth = this._getCharWidth(c)
                 if (c === '\x1B') {
                     let a = [c]
                     let y = i
@@ -156,7 +176,7 @@ export default {
                             break
                         }
                         c = arr[i]
-                        cWidth = getCharWidth(c)
+                        cWidth = this._getCharWidth(c)
                     } else if (clearReg.test(tmpStr)) {
                         this._clearScreen()
                         i = y + 1
@@ -191,7 +211,7 @@ export default {
                     continue
                 } else if (c === '\t') {    //  水平制表
                     c = '&nbsp;&nbsp;&nbsp;&nbsp;'
-                    cWidth = getCharWidth('    ')
+                    cWidth = this._getCharWidth('    ')
                 }
 
                 //  当前行太长换行

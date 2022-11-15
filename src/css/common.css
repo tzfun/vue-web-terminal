@@ -170,11 +170,6 @@
 
 }
 
-.t-flag {
-    opacity: 0;
-    z-index: -1;
-}
-
 .t-cmd-line {
     font-size: 0;
 }

@@ -2,10 +2,6 @@
   <div class="t-container"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="container">
-    <span class="t-flag t-cmd-line disable-select">
-        <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
-        <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
-    </span>
     <div class="t-header-container" ref="header" v-if="showHeader"
          :style="`${(_draggable() ? 'cursor: move;' : '')}height:${domStyle.headerHeight};`">
       <slot name="header" :title="title">
@@ -25,7 +21,7 @@
 import {containerProps} from "@/components/TProps";
 import THeader from "@/components/THeader";
 import TerminalApi from "@/components/terminal/TerminalApi";
-import {_getByteLen, _isSafari} from "@/tools/Util";
+import {_isSafari} from "@/tools/Util";
 import ShellApi from "@/components/shell/ShellApi";
 
 export default {
@@ -40,15 +36,15 @@ export default {
         windowPaddingTopAndDown: 0,
         windowPaddingLeftAndRight: 8,
         windowLineHeight: 20,
-        windowScrollWidth: 8
+        windowScrollWidth: 8,
+        shellCharWidth: {
+          en: 8,
+          cn: 13
+        }
       },
       windowPadding: {
         top: 0,
         left: 8
-      },
-      charWidth: {
-        en: 8,
-        cn: 13
       },
     }
   },
@@ -68,9 +64,9 @@ export default {
         }
       },
       elementInfo: () => {
-        let windowEle = this.$parent.$refs.window
+        let windowEle = this.$refs.window
         let windowRect = windowEle.getBoundingClientRect()
-        let containerRect = this.$parent.$refs.container.getBoundingClientRect()
+        let containerRect = this.$refs.container.getBoundingClientRect()
         let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
         return {
           //  窗口所在位置
@@ -83,7 +79,8 @@ export default {
           clientWidth: hasScroll ? (windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2 - this.domStyle.windowScrollWidth) : (windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2),
           //  可显示内容范围高度
           clientHeight: windowRect.height,
-          charWidth: this._getCharWidth()
+          //  兼容旧版本
+          charWidth: this.terminal ? this.$parent._getCharWidth() : null
         }
       }
     }
@@ -95,12 +92,6 @@ export default {
     }
   },
   mounted() {
-
-    this.charWidth = {
-      en: this.$refs.terminalEnFlag.getBoundingClientRect().width / 2,
-      cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
-    }
-
     let safariStyleCache = {};
     //  监听全屏事件，用户ESC退出时需要设置全屏状态
     ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
@@ -141,15 +132,12 @@ export default {
     this._initDrag()
   },
   methods: {
-    _getCharWidth(str) {
-      if (str) {
-        let width = 0
-        for (let char of str) {
-          width += (_getByteLen(char) === 1 ? this.charWidth.en : this.charWidth.cn)
-        }
-        return width
+    _getPosition() {
+      if (this._draggable()) {
+        let box = this.$refs.container
+        return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
       } else {
-        return this.charWidth
+        return {x: 0, y: 0}
       }
     },
     _triggerClick(key) {
@@ -178,7 +166,7 @@ export default {
       let confWidth = this.dragConf.width
       let width = 0
       if (this.dragConf.col > 0) {
-        width = this.dragConf.col * this.charWidth.en + this.domStyle.windowPaddingLeftAndRight * 2
+        width = this.dragConf.col * this.domStyle.shellCharWidth.en + this.domStyle.windowPaddingLeftAndRight * 2
       } else {
         width = confWidth == null ? 700 : confWidth
         if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
@@ -219,7 +207,7 @@ export default {
             `
     },
     _getWindowStyle() {
-      let style = `padding:${this.domStyle.windowPaddingTopAndDown}px ${this.domStyle.windowPaddingLeftAndRight}px;line-height:${this.domStyle.windowLineHeight}px`
+      let style = `padding:${this.domStyle.windowPaddingTopAndDown}px ${this.domStyle.windowPaddingLeftAndRight}px;line-height:${this.domStyle.windowLineHeight}px;`
       if (this.showHeader) {
         style += `height:calc(100% - ${this.domStyle.headerHeight}px);margin-top: ${this.domStyle.headerHeight}px;`
       } else {
