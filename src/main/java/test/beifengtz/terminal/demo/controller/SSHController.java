@@ -12,7 +12,7 @@ import test.beifengtz.terminal.demo.entity.vo.ResultVO;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 14:42 2022/11/8
  *
  * @author beifengtz
@@ -22,11 +22,11 @@ import test.beifengtz.terminal.demo.entity.vo.ResultVO;
 public class SSHController {
     private static final JSch JSCH = new JSch();
 
-    @GetMapping("/ssh/account_login")
-    public ResultVO loginByAccount(@RequestParam String host,
-                                   @RequestParam String username,
-                                   @RequestParam String password,
-                                   @RequestParam(required = false, defaultValue = "22") int port) {
+    @GetMapping("/ssh/shell")
+    public ResultVO execCommand(@RequestParam String host,
+                                @RequestParam String username,
+                                @RequestParam String password,
+                                @RequestParam(required = false, defaultValue = "22") int port) {
         try {
             Session session = newSSHSession(host, port, username, password);
             return ResultVO.builder().data(Context.create(session)).build();

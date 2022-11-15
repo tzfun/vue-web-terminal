@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 /logs/
+/node_modules/
+/lib/

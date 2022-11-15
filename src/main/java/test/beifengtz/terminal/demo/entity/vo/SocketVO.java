@@ -24,6 +24,7 @@ public class SocketVO {
      * 2 - SSH异常消息
      * 3 - SSH执行结束消息
      * 4 - SSH断开连接
+     * 5 - 设置窗口大小
      */
     private int type = 0;
     private Object content;

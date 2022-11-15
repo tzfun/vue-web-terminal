@@ -14,6 +14,6 @@ import lombok.Data;
 @Builder
 public class ResultVO {
     private int code;
-    private String msg = "ok";
+    private String msg;
     private Object data;
 }

@@ -81,11 +81,18 @@ public class WebsocketHandler {
         }
     }
 
-    public void send(SocketVO vo) {
+    public void send(SocketVO vo) throws IOException {
         try {
             session.getBasicRemote().sendObject(vo);
-        } catch (IOException | EncodeException e) {
-            throw new RuntimeException(e);
+        } catch (EncodeException e) {
+            throw new IOException(e);
+        }
+    }
+
+    public void sendSafely(SocketVO vo) {
+        try {
+            send(vo);
+        } catch (IOException ignored) {
         }
     }
 

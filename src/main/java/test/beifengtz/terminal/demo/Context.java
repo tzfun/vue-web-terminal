@@ -1,10 +1,11 @@
 package test.beifengtz.terminal.demo;
 
-import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import lombok.extern.slf4j.Slf4j;
 import test.beifengtz.terminal.demo.entity.vo.SocketVO;
+import test.beifengtz.terminal.demo.io.BridgeOutputStream;
 import test.beifengtz.terminal.demo.websocket.WebsocketHandler;
 
 import java.io.IOException;
@@ -12,18 +13,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 14:35 2022/11/8
  *
  * @author beifengtz
@@ -34,12 +35,10 @@ public class Context {
 
     private final AtomicReference<WebsocketHandler> websocket = new AtomicReference<>(null);
     private final AtomicReference<Session> sshSession = new AtomicReference<>(null);
-    private final AtomicBoolean executing = new AtomicBoolean(false);
-    private final AtomicReference<ChannelExec> channel = new AtomicReference<>(null);
+    private final AtomicReference<ChannelShell> channel = new AtomicReference<>(null);
     private final long createTime;
     private InputStream in;
     private OutputStream out;
-    private InputStream err;
 
     static {
         Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(() -> {
@@ -50,7 +49,7 @@ public class Context {
                 Context ctx = entry.getValue();
                 if (ctx.sshSession.get() != null && ctx.websocket.get() != null
                         && ctx.websocket.get().isConnected() && !ctx.sshSession.get().isConnected()) {
-                    ctx.websocket.get().send(SocketVO.sshExist());
+                    ctx.websocket.get().sendSafely(SocketVO.sshExist());
                     ctx.websocket.get().close();
                     log.info("SSH session closed by demon check: '{}'", entry.getKey());
                     it.remove();
@@ -75,13 +74,75 @@ public class Context {
         return key;
     }
 
-    public static boolean tryConnectWebsocket(String key, WebsocketHandler websocket) {
+    public static boolean tryConnectWebsocket(String key, WebsocketHandler websocket) throws IOException {
         Context context = CONTEXT_POOL.get(key);
         boolean pass = context != null && context.websocket.get() == null;
         if (pass) {
             context.websocket.set(websocket);
+            context.connectShell(websocket);
         }
         return pass;
+    }
+
+    private void connectShell(WebsocketHandler ws) throws IOException {
+        try {
+            ChannelShell ch = (ChannelShell) sshSession.get().openChannel("shell");
+            channel.set(ch);
+            ch.setPty(true);
+            ch.connect();
+
+            in = ch.getInputStream();
+            BridgeOutputStream bridgeOs = new BridgeOutputStream(2048).registerListener(ws);
+            ch.setOutputStream(bridgeOs);
+
+            out = ch.getOutputStream();
+
+            new Thread(() -> {
+                byte[] tmp = new byte[1024];
+                try {
+                    while (channel.get() != null && websocket.get() != null) {
+                        while (in.available() > 0 && websocket.get() != null) {
+                            int i = in.read(tmp, 0, 1024);
+                            if (i < 0) break;
+                            websocket.get().send(SocketVO.sshResponse(new String(tmp, 0, i, StandardCharsets.UTF_8)));
+                        }
+                        if (channel.get() == null || websocket.get() == null) {
+                            break;
+                        }
+                        if (channel.get().isClosed()) {
+                            if (in.available() > 0) continue;
+                            websocket.get().send(SocketVO.sshFinish(channel.get().getExitStatus()));
+                            break;
+                        }
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception ignored) {
+                        }
+                    }
+                } catch (IOException e) {
+                    if (websocket.get() != null) {
+                        websocket.get().sendSafely(SocketVO.sshError(e.getMessage()));
+                    }
+                }
+
+                if (channel.get() != null) {
+                    channel.get().disconnect();
+                    channel.set(null);
+                }
+            }).start();
+
+        } catch (JSchException | IOException e) {
+            if (channel.get() != null) {
+                channel.get().disconnect();
+            }
+            websocket.get().send(SocketVO.sshError(e.getMessage()));
+        }
+    }
+
+    public void setPtySize(int col, int row, int wp, int hp) {
+        if (channel.get() != null) {
+            channel.get().setPtySize(col, row, wp, hp);
+        }
     }
 
     public static void release(String key) {
@@ -98,11 +159,15 @@ public class Context {
         log.info("SSH session closed by websocket close: '{}'", key);
     }
 
+    @SuppressWarnings("unchecked")
     public static void onWebsocketMessage(String socketKey, SocketVO msg) throws IOException {
         Context context = CONTEXT_POOL.get(socketKey);
         if (context != null) {
-            String command = msg.getContent().toString();
-            if (context.executing.get()) {
+            if (msg.getType() == 5) {
+                List<Integer> arg = (List<Integer>) msg.getContent();
+                context.setPtySize(arg.get(0), arg.get(1), arg.get(2), arg.get(3));
+            } else {
+                String command = msg.getContent().toString();
                 if (command.startsWith("ascii:")) {
                     try {
                         String[] ascii = command.substring(6).split(",");
@@ -117,71 +182,7 @@ public class Context {
                     context.out.write(command.getBytes(StandardCharsets.UTF_8));
                     context.out.flush();
                 }
-            } else {
-                context.exec(command);
             }
         }
-    }
-
-    public void exec(String cmd) {
-        executing.set(true);
-        try {
-            ChannelExec ch = (ChannelExec) sshSession.get().openChannel("exec");
-            channel.set(ch);
-            ch.setCommand(cmd);
-            ch.setPty(true);
-            ch.connect();
-
-            in = ch.getInputStream();
-            out = ch.getOutputStream();
-            err = ch.getErrStream();
-        } catch (JSchException | IOException e) {
-            if (channel.get() != null) {
-                channel.get().disconnect();
-            }
-            websocket.get().send(SocketVO.sshError(e.getMessage()));
-            executing.set(false);
-            return;
-        }
-
-        new Thread(() -> {
-            byte[] tmp = new byte[1024];
-            try {
-                while (channel.get() != null && websocket.get() != null) {
-                    while (err.available() > 0 && websocket.get() != null) {
-                        int i = err.read(tmp, 0, 1024);
-                        if (i < 0) break;
-                        websocket.get().send(SocketVO.sshError(new String(tmp, 0, i, StandardCharsets.UTF_8)));
-                    }
-                    while (in.available() > 0 && websocket.get() != null) {
-                        int i = in.read(tmp, 0, 1024);
-                        if (i < 0) break;
-                        websocket.get().send(SocketVO.sshResponse(new String(tmp, 0, i, StandardCharsets.UTF_8)));
-                    }
-                    if (channel.get() == null || websocket.get() == null) {
-                        break;
-                    }
-                    if (channel.get().isClosed()) {
-                        if (in.available() > 0) continue;
-                        websocket.get().send(SocketVO.sshFinish(channel.get().getExitStatus()));
-                        break;
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception ignored) {
-                    }
-                }
-            } catch (IOException e) {
-                if (websocket.get() != null) {
-                    websocket.get().send(SocketVO.sshError(e.getMessage()));
-                }
-            }
-
-            if (channel.get() != null) {
-                channel.get().disconnect();
-                channel.set(null);
-            }
-            executing.set(false);
-        }).start();
     }
 }

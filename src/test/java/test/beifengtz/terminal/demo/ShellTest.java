@@ -10,10 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * Description: TODO
@@ -50,13 +52,15 @@ public class ShellTest {
 //            ((ChannelShell) channel).setAgentForwarding(true);
 
             channel.setInputStream(System.in);
-//            channel.setOutputStream(System.out);
+
+            channel.setOutputStream(new PrintStream("out.txt"));
             //channel.connect();
             channel.connect(3 * 1000);
 
             InputStream in = channel.getInputStream();
             byte[] tmp = new byte[1024];
             while (true) {
+
                 while (in.available() > 0) {
                     int i = in.read(tmp, 0, 1024);
                     if (i < 0) break;
