@@ -67,7 +67,7 @@ export default {
         let windowEle = this.$refs.window
         let windowRect = windowEle.getBoundingClientRect()
         let containerRect = this.$refs.container.getBoundingClientRect()
-        let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
+        // let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
         return {
           //  窗口所在位置
           pos: this._getPosition(),
@@ -75,8 +75,8 @@ export default {
           screenWidth: containerRect.width,
           //  窗口整体高度
           screenHeight: containerRect.height,
-          //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-          clientWidth: hasScroll ? (windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2 - this.domStyle.windowScrollWidth) : (windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2),
+          //  可显示内容范围高度，减去padding值
+          clientWidth: windowRect.width - this.domStyle.windowPaddingLeftAndRight * 2,
           //  可显示内容范围高度
           clientHeight: windowRect.height,
           //  兼容旧版本
@@ -177,7 +177,7 @@ export default {
       let confHeight = this.dragConf.height
       let height
       if (this.dragConf.row > 0) {
-        height = this.dragConf.row * this.domStyle.windowLineHeight + this.domStyle.windowPaddingLeftAndRight * 2 + this.domStyle.headerHeight
+        height = this.dragConf.row * this.domStyle.windowLineHeight + this.domStyle.windowPaddingTopAndDown * 2 + this.domStyle.headerHeight
       } else {
         height = confHeight == null ? 500 : confHeight
         if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {

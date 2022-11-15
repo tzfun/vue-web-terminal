@@ -81,7 +81,7 @@ export default {
             return new Promise(resolve => {
                 this.$nextTick(() => {
                     let windowRect = this.$refs.frame.$refs.window.getBoundingClientRect()
-                    this.window.width = windowRect.width - this.$refs.frame.domStyle.windowPaddingLeftAndRight * 2 - this.$refs.frame.domStyle.windowScrollWidth
+                    this.window.width = windowRect.width - this.$refs.frame.domStyle.windowPaddingLeftAndRight * 2
                     this.window.height = windowRect.height
                     this.window.cols = Math.floor(this.window.width / this._getCharWidth().en)
                     resolve(this.window)

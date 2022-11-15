@@ -5,12 +5,12 @@
 
 .shell-row {
     word-break: break-all;
-    font-size: 13px;
+    font-size: 14px;
     overflow: hidden;
 }
 
 .shell-char {
-    font-size: 13px;
+    font-size: 14px;
     display: inline-block;
     height: 100%;
     vertical-align: top;

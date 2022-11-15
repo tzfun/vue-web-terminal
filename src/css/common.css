@@ -36,7 +36,6 @@
 .t-header {
     background-color: #959598;
     text-align: center;
-    padding: 2px;
 }
 
 .t-header h4 {
@@ -49,7 +48,7 @@
 
 .t-header ul.t-shell-dots {
     position: absolute;
-    top: 5px;
+    top: 3px;
     left: 8px;
     padding-left: 0;
     margin: 0;
@@ -116,7 +115,7 @@
     top: 0;
     left: 0;
     right: 0;
-    overflow: auto;
+    overflow: overlay;
     z-index: 1;
     max-height: none;
     background-color: #191b24;
@@ -165,6 +164,7 @@
 @media screen and (max-width: 768px ) {
 
 }
+
 /*平板*/
 @media screen and (max-width: 992px) and (min-width: 768.1px) {
 
