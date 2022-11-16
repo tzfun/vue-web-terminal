@@ -16,12 +16,12 @@
              v-for="(line, idx) in lines"
              :key="idx"
              v-html="line.join('')"
-             :style="`height:${$refs.frame.domStyle.windowLineHeight}px;line-height:${$refs.frame.domStyle.windowLineHeight}px`"
+             :style="`height:${$refs.frame.domStyle.windowLineHeight}px;line-height:${$refs.frame.domStyle.windowLineHeight}px; display:${(lines.length === 0 || idx === lines.length - 1 ? 'inline-block' : 'block')};`"
         ></div>
 
-        <span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-          v-show="cursorConf.show"
-          class="t-cursor disable-select">&nbsp;</span>
+        <span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span>
+        <span v-show="cursorConf.show"
+              class="t-cursor disable-select">&nbsp;</span>
 
         <input type="text" autofocus="autofocus" v-model="command"
                class="t-cmd-input disable-select"

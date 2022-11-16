@@ -28,7 +28,6 @@ export default {
             ansiControl: {
                 styleFlag: [],
                 attachStyle: '',
-                lineWidth: 0,
                 //  光标的位置，从0开始
                 rowNum:0,
                 colNum:0
@@ -47,11 +46,8 @@ export default {
             onResize: () => {
                 return this._calculateWindowInfo()
             },
-            getCols: () => {
-                return this.window.cols
-            },
-            getRows: () => {
-                return this.window.rows
+            getShellInfo: () => {
+                return this.window
             }
         }, true)
     },
@@ -84,6 +80,7 @@ export default {
                     this.window.width = windowRect.width - this.$refs.frame.domStyle.windowPaddingLeftAndRight * 2
                     this.window.height = windowRect.height
                     this.window.cols = Math.floor(this.window.width / this._getCharWidth().en)
+                    this.window.rows = Math.floor(this.window.height / this.$refs.frame.domStyle.windowLineHeight)
                     resolve(this.window)
                 })
             })
@@ -128,69 +125,118 @@ export default {
             this.ansiControl.colNum = 0
         },
         _pushANSI(str) {
-            console.log(this.ansiControl.rowNum, this.ansiControl.colNum)
             if (this.lines.length === 0) {
                 this.lines.push([])
             }
             // eslint-disable-next-line no-control-regex
-            const styleReg = new RegExp(/\x1B\[(\d+;)*\d+m/)
+            const styleReg = new RegExp(/\x1B\[(\d+;)*\d*m/)
             // eslint-disable-next-line no-control-regex
-            const clearReg = new RegExp(/\x1B\[\d+J/)
+            const clearReg = new RegExp(/\x1B\[\d*J/)
+            // eslint-disable-next-line no-control-regex
+            const posReg = new RegExp(/\x1B\[(\d+;)?\d*H/)
+            // eslint-disable-next-line no-control-regex
+            const cursorFlagReg = new RegExp(/\x1B\[\d*[ABCDEFG]/)
+            const endFlagReg = new RegExp(/[msuhlABCDEFGHJKST]/)
+
 
             let arr = Array.from(str)
 
             for (let i = 0; i < arr.length; i++) {
                 let c = arr[i]
-                let cWidth = this._getCharWidth(c)
+
                 if (c === '\x1B') {
                     let a = [c]
                     let y = i
                     let end = Math.min(arr.length - 1, i + 13)
-                    while (y <= end && arr[y] !== 'm' && arr[y] !== 'J') {
+                    while (y <= end && !endFlagReg.test(arr[y].toString())) {
                         a.push(arr[++y])
                     }
                     let tmpStr = a.join('')
+                    //  着色
                     if (styleReg.test(tmpStr)) {
-                        this.ansiControl.styleFlag = a.slice(2, a.length - 1).join('').split(';')
-                        if (this.ansiControl.styleFlag.length === 1 && this.ansiControl.styleFlag[0] === '0') {
-                            this.ansiControl.styleFlag = []
-                        }
-                        if (this.ansiControl.styleFlag.length === 3) {
-                            //  256前景色
-                            if (this.ansiControl.styleFlag[0] === '38' && this.ansiControl.styleFlag[1] === '5') {
-                                this.ansiControl.attachStyle = `color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
+                        let split = a.slice(2, a.length - 1)
+                        if (split.length > 0) {
+                            this.ansiControl.styleFlag = split.join('').split(';')
+                            if (this.ansiControl.styleFlag.length === 1 && this.ansiControl.styleFlag[0] === '0') {
                                 this.ansiControl.styleFlag = []
                             }
-                            //  256背景色
-                            else if (this.ansiControl.styleFlag[0] === '48' && this.ansiControl.styleFlag[1] === '5') {
-                                this.ansiControl.attachStyle = `background-color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
-                                this.ansiControl.styleFlag = []
+                            if (this.ansiControl.styleFlag.length === 3) {
+                                //  256前景色
+                                if (this.ansiControl.styleFlag[0] === '38' && this.ansiControl.styleFlag[1] === '5') {
+                                    this.ansiControl.attachStyle = `color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
+                                    this.ansiControl.styleFlag = []
+                                }
+                                //  256背景色
+                                else if (this.ansiControl.styleFlag[0] === '48' && this.ansiControl.styleFlag[1] === '5') {
+                                    this.ansiControl.attachStyle = `background-color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
+                                    this.ansiControl.styleFlag = []
+                                } else {
+                                    this.ansiControl.attachStyle = ''
+                                }
                             } else {
                                 this.ansiControl.attachStyle = ''
                             }
-                        } else {
-                            this.ansiControl.attachStyle = ''
                         }
-                        i = y + 1
-                        if (i >= arr.length) {
-                            break
-                        }
-                        c = arr[i]
-                        cWidth = this._getCharWidth(c)
-                    } else if (clearReg.test(tmpStr)) {
-                        this._clearScreen()
-                        i = y + 1
-                        if (i >= arr.length) {
-                            break
-                        }
+
+                        i = y
                         continue
+                    }
+                    //  清屏
+                    else if (clearReg.test(tmpStr)) {
+                        this._clearScreen()
+                        i = y
+                        continue
+                    }
+                    // 光标重定位
+                    else if (posReg.test(tmpStr)) {
+                        let split = a.slice(2, a.length - 1)
+                        if (split.length > 0) {
+                            let pos = split.join('').split(';')
+                            this.ansiControl.rowNum = parseInt(pos[0])
+                            this.ansiControl.colNum = parseInt(pos[1])
+                            this._checkRowCol()
+                        }
+                        i = y
+                        continue
+                    }
+                    //  光标位移
+                    else if (cursorFlagReg.test(tmpStr)) {
+                        let split = a.slice(2, a.length - 1)
+                        if (split.length > 0) {
+                            let value = parseInt(split.join(''))
+                            let type = a[a.length - 1]
+                            if (type === 'A') { //  光标上移n个单位
+                                this.ansiControl.rowNum = Math.max(0, this.ansiControl.rowNum - value)
+                            } else if (type === 'B') {  //  光标下移n个单位
+                                this.ansiControl.rowNum += value
+                                this._checkRowCol()
+                            } else if (type === 'C') {  //  光标前移n个单位
+                                this.ansiControl.colNum += value
+                                this._checkRowCol()
+                            } else if (type === 'D') {  //  光标后移n个单位
+                                this.ansiControl.colNum = Math.max(0, this.ansiControl.colNum - value)
+                            } else if (type === 'E') {  //  光标下移到第n行的第一列
+                                this.ansiControl.rowNum = value
+                                this.ansiControl.colNum = 0
+                                this._checkRowCol()
+                            } else if (type === 'F') {  //  光标上移到第n行的第一列
+                                this.ansiControl.rowNum = value
+                                this.ansiControl.colNum = 0
+                            } else if (type === 'G') {  //  光标移动到当前行的指定列
+                                this.ansiControl.colNum = value
+                            }
+                        }
+                        i = y
+                        continue
+                    }
+                    else {
+                        c = arr[i]
                     }
                 } else if (c === '\r') {
                     if (i + 1 < arr.length && arr[i + 1] === '\n') {    //  \r\n换行
                         this.lines.push([])
                         this.ansiControl.rowNum++
                         this.ansiControl.colNum = 0
-                        this.ansiControl.lineWidth = 0
                         this._jumpToBottom()
                         i++
                     } else {    //  \r回车
@@ -201,7 +247,6 @@ export default {
                     this.lines.push([])
                     this.ansiControl.rowNum++
                     this.ansiControl.colNum = 0
-                    this.ansiControl.lineWidth = 0
                     this._jumpToBottom()
                     continue
                 } else if (c === '\b') {    //  退格
@@ -210,19 +255,33 @@ export default {
                     }
                     continue
                 } else if (c === '\t') {    //  水平制表
-                    c = '&nbsp;&nbsp;&nbsp;&nbsp;'
-                    cWidth = this._getCharWidth('    ')
+                    this._fillChar(' '.repeat(4))
+                    continue
+                } else if (c >= '\x00' && c <= '\x1F') {
+                    //  特殊ascii，暂不做处理
+                    continue
                 }
 
-                //  当前行太长换行
-                this.ansiControl.lineWidth += cWidth
-                if (this.ansiControl.lineWidth > this.window.width) {
-                    this.lines.push([])
-                    this.ansiControl.rowNum++
-                    this.ansiControl.colNum = 0
-                    this.ansiControl.lineWidth = cWidth
-                    this._jumpToBottom()
-                }
+                this._fillChar(c)
+            }
+            this._jumpToBottom()
+        },
+        _checkRowCol() {
+            let fillRow = this.ansiControl.rowNum - this.lines.length
+            while (fillRow-- >= 0) {
+                this.lines.push([])
+            }
+
+            let fillCol = this.ansiControl.colNum - this.lines[this.ansiControl.rowNum].length
+            if (fillCol > 0) {
+                this.ansiControl.colNum = this.lines[this.ansiControl.rowNum].length
+                this._fillChar(' '.repeat(fillCol))
+            }
+        },
+        _fillChar(char) {
+            let arr = char.split('')
+            for (let c of arr) {
+                let cWidth = this._getCharWidth(c)
 
                 let charStr
                 if (this.ansiControl.styleFlag.length > 0) {
@@ -240,7 +299,6 @@ export default {
                 }
                 this.ansiControl.colNum++
             }
-            this._jumpToBottom()
         }
     }
 }
