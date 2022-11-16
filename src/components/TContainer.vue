@@ -24,6 +24,8 @@ import TerminalApi from "@/components/terminal/TerminalApi";
 import {_isSafari} from "@/tools/Util";
 import ShellApi from "@/components/shell/ShellApi";
 
+const config = require("@/config.json")
+
 export default {
   name: "TContainer",
   components: {THeader},
@@ -31,17 +33,7 @@ export default {
   data() {
     return {
       fullscreen: false,
-      domStyle: {
-        headerHeight: 30,
-        windowPaddingTopAndDown: 0,
-        windowPaddingLeftAndRight: 8,
-        windowLineHeight: 20,
-        windowScrollWidth: 8,
-        shellCharWidth: {
-          en: 8,
-          cn: 13
-        }
-      },
+      domStyle: config.domStyle,
       windowPadding: {
         top: 0,
         left: 8

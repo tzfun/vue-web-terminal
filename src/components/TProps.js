@@ -105,8 +105,4 @@ export const terminalProps = {
 
 export const shellProps = {
     ...containerProps,
-    //  命令格式化显示函数
-    commandFormatter: {
-        type: Function
-    },
 }

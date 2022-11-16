@@ -11,26 +11,26 @@
       <slot name="header" :title="data.title"></slot>
     </template>
     <template #window>
-      <div class="shell-log t-cmd-line">
+      <div class="t-cmd-line shell-log-container">
         <div class="shell-row t-cmd-line-content"
              v-for="(line, idx) in lines"
              :key="idx"
              v-html="line.join('')"
-             :style="`height:${$refs.frame.domStyle.windowLineHeight}px;line-height:${$refs.frame.domStyle.windowLineHeight}px; display:${(lines.length === 0 || idx === lines.length - 1 ? 'inline-block' : 'block')};`"
+             :style="`height:${require('@/config.json').domStyle.windowLineHeight}px;`"
         ></div>
 
-        <span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span>
-        <span v-show="cursorConf.show"
-              class="t-cursor disable-select">&nbsp;</span>
+        <span v-if="showCursor"
+              class="t-cursor disable-select"
+              :style="_getCursorStyle()">&nbsp;</span>
 
         <input type="text" autofocus="autofocus" v-model="command"
-               class="t-cmd-input disable-select"
+               class="t-cmd-input disable-select shell-input"
                ref="cmdInput"
                autocomplete="off"
                auto-complete="new-password"
-               @focusin="cursorConf.show = true"
-               @focusout="cursorConf.show = false"
-               @keyup.enter="_execute">
+               @focusin="showCursor = true"
+               @focusout="showCursor = false"
+               @input="_onInput">
       </div>
     </template>
   </TContainer>

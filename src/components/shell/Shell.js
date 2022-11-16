@@ -1,9 +1,10 @@
 import TContainer from "@/components/TContainer";
 import {shellProps} from "@/components/TProps";
 import ShellApi from "@/components/shell/ShellApi";
-import {_commandFormatter, _getByteLen, _getSelection} from "@/tools/Util";
+import {_getByteLen, _getSelection} from "@/tools/Util";
 
 const ansi256colors = require('../../tools/ansi-256-colors.json')
+const config = require("@/config.json")
 
 export default {
     name: "Shell",
@@ -16,9 +17,7 @@ export default {
         return {
             command: '',
             lines: [],
-            cursorConf: {
-                show: true
-            },
+            showCursor: false,
             window: {
                 cols: 0,
                 rows: 0,
@@ -29,9 +28,15 @@ export default {
                 styleFlag: [],
                 attachStyle: '',
                 //  光标的位置，从0开始
-                rowNum:0,
-                colNum:0
-            }
+                rowNum: 0,
+                colNum: 0,
+                backup: {
+                    lines: [],
+                    rowNum: 0,
+                    colNum: 0
+                }
+            },
+            keydownListener: null
         }
     },
     created() {
@@ -50,6 +55,88 @@ export default {
                 return this.window
             }
         }, true)
+
+        this.keydownListener = event => {
+            if (this.showCursor) {
+                if (this.showCursor && document.activeElement !== this.$refs.cmdInput) {
+                    this.$refs.cmdInput.focus()
+                }
+                if (event.key !== 'Process') {
+                    const funcKeyReg = /(Shift|Meta|Alt|Control)/
+                    if (funcKeyReg.test(event.key)) {
+                        return
+                    }
+                    let key = null
+                    if (/F[1-9][0-2]?/.test(event.key)) {
+                        switch (event.key) {
+                            case 'F1':
+                                key = '\x8fP'
+                                break
+                            case 'F2':
+                                key = '\x8fQ'
+                                break
+                            case 'F3':
+                                key = '\x8fR'
+                                break
+                            case 'F4':
+                                key = '\x8fS'
+                                break
+                            case 'F5':
+                                key = '\x1B[15~'
+                                break
+                            case 'F6':
+                                key = '\x1B[17~'
+                                break
+                            case 'F7':
+                                key = '\x1B[18~'
+                                break
+                            case 'F8':
+                                key = '\x1B[19~'
+                                break
+                            case 'F9':
+                                key = '\x1B[20~'
+                                break
+                            case 'F10':
+                                key = '\x1B[21~'
+                                break
+                            case 'F11':
+                                key = '\x1B[23~'
+                                break
+                            case 'F12':
+                                key = '\x1B[24~'
+                                break
+                        }
+                    } else if (/ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(event.key)) {
+                        switch (event.key) {
+                            case 'ArrowUp':
+                                key = '\x1B[A'
+                                break
+                            case 'ArrowDown':
+                                key = '\x1B[B'
+                                break
+                            case 'ArrowRight':
+                                key = '\x1B[C'
+                                break
+                            case 'ArrowLeft':
+                                key = '\x1B[D'
+                                break
+                        }
+                    } else if (event.which < 32) {
+                        key = 'ascii:' + event.which
+                    } else if (!event.altKey && !event.metaKey && !event.shiftKey && event.ctrlKey) {
+                        //  处理ctrl + a-z的ascii码
+                        if (event.which >= 65 && event.which <= 90) {
+                            key = 'ascii:' + (event.which - 64)
+                        }
+                    }
+                    if (key != null) {
+                        event.preventDefault()
+                        this.$emit('onInput', key, event, this.name)
+                    }
+                }
+            }
+        }
+        window.addEventListener('keydown', this.keydownListener);
     },
     mounted() {
         this._calculateWindowInfo()
@@ -61,8 +148,11 @@ export default {
         ShellApi.unregister(this.name)
     },
     methods: {
+        _onInput(event) {
+            this.$emit('onInput', event.data, event, this.name)
+        },
         _getCharWidth(str) {
-            let charWidth = this.$refs.frame.domStyle.shellCharWidth
+            let charWidth = config.domStyle.shellCharWidth
             if (str) {
                 let width = 0
                 for (let char of str) {
@@ -77,10 +167,10 @@ export default {
             return new Promise(resolve => {
                 this.$nextTick(() => {
                     let windowRect = this.$refs.frame.$refs.window.getBoundingClientRect()
-                    this.window.width = windowRect.width - this.$refs.frame.domStyle.windowPaddingLeftAndRight * 2
+                    this.window.width = windowRect.width - config.domStyle.windowPaddingLeftAndRight * 2
                     this.window.height = windowRect.height
                     this.window.cols = Math.floor(this.window.width / this._getCharWidth().en)
-                    this.window.rows = Math.floor(this.window.height / this.$refs.frame.domStyle.windowLineHeight)
+                    this.window.rows = Math.floor(this.window.height / config.domStyle.windowLineHeight)
                     resolve(this.window)
                 })
             })
@@ -94,25 +184,15 @@ export default {
         },
         _focus() {
             this.$nextTick(() => {
-                //  没有被选中
+                //  没有文本被选中
                 if (_getSelection().isCollapsed) {
                     if (this.$refs.cmdInput) {
                         this.$refs.cmdInput.focus()
                     }
                 } else {
-                    this.cursorConf.show = true
+                    this.showCursor = true
                 }
             })
-        },
-        _commandFormatter(cmd) {
-            if (this.commandFormatter != null) {
-                return this.commandFormatter(cmd)
-            }
-            return _commandFormatter(cmd)
-        },
-        _execute() {
-            this.$emit('execCmd', this.command)
-            this.command = ''
         },
         _jumpToBottom() {
             this.$refs.frame._jumpToBottom()
@@ -124,26 +204,36 @@ export default {
             this.ansiControl.rowNum = 0
             this.ansiControl.colNum = 0
         },
+        _getCursorStyle() {
+            let charWidth = config.domStyle.shellCharWidth.en
+            let charHeight = config.domStyle.windowLineHeight
+
+            return `display: inline-block;
+                    position: absolute;
+                    width: ${charWidth}px;
+                    height: ${charHeight};
+                    left: ${this.ansiControl.colNum * charWidth}px;
+                    top: ${this.ansiControl.rowNum * charHeight}px;`
+        },
+        /**
+         *  ANSI码中的数值都是从1开始
+         *
+         * @param str   ANSI字符串
+         * @private
+         */
         _pushANSI(str) {
-            if (this.lines.length === 0) {
-                this.lines.push([])
-            }
-            // eslint-disable-next-line no-control-regex
-            const styleReg = new RegExp(/\x1B\[(\d+;)*\d*m/)
-            // eslint-disable-next-line no-control-regex
-            const clearReg = new RegExp(/\x1B\[\d*J/)
-            // eslint-disable-next-line no-control-regex
-            const posReg = new RegExp(/\x1B\[(\d+;)?\d*H/)
-            // eslint-disable-next-line no-control-regex
-            const cursorFlagReg = new RegExp(/\x1B\[\d*[ABCDEFG]/)
-            const endFlagReg = new RegExp(/[msuhlABCDEFGHJKST]/)
+            this._checkRowCol()
+            const endFlagReg = /[cmsuhlrABCDEFGHJKLST]/
 
 
             let arr = Array.from(str)
 
             for (let i = 0; i < arr.length; i++) {
                 let c = arr[i]
-
+                if (c === '\x00') {
+                    continue
+                }
+                //  Control Sequence
                 if (c === '\x1B') {
                     let a = [c]
                     let y = i
@@ -151,9 +241,9 @@ export default {
                     while (y <= end && !endFlagReg.test(arr[y].toString())) {
                         a.push(arr[++y])
                     }
-                    let tmpStr = a.join('')
+                    let controlType = a[a.length - 1]
                     //  着色
-                    if (styleReg.test(tmpStr)) {
+                    if (controlType === 'm') {
                         let split = a.slice(2, a.length - 1)
                         if (split.length > 0) {
                             this.ansiControl.styleFlag = split.join('').split(';')
@@ -176,31 +266,80 @@ export default {
                             } else {
                                 this.ansiControl.attachStyle = ''
                             }
+                        } else {
+                            this.ansiControl.styleFlag = []
+                            this.ansiControl.attachStyle = ''
+                        }
+                    }
+                    //  清全屏
+                    else if (controlType === 'c') {
+                        this._clearScreen()
+                    }
+                    //  清当前行
+                    else if (controlType === 'K') {
+                        let split = a.slice(a.includes('?') ? 3 : 2, a.length - 1)
+                        let value = 0
+                        if (split.length > 0) {
+                            value = parseInt(split.join(''))
                         }
 
-                        i = y
-                        continue
+                        if (value === 0) {  //  清除右侧所有内容
+                            this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum)
+                        } else if (value === 1) {   //  清除左侧所有内容
+                            this.lines[this.ansiControl.rowNum].splice(0, this.ansiControl.colNum)
+                        } else if (value === 2) {   //  清除整行
+                            this.lines[this.ansiControl.rowNum] = []
+                        }
                     }
-                    //  清屏
-                    else if (clearReg.test(tmpStr)) {
-                        this._clearScreen()
-                        i = y
-                        continue
+                    //  插入n行
+                    else if (controlType === 'L') {
+                        let split = a.slice(2, a.length - 1)
+                        let value = 1
+                        if (split.length > 0) {
+                            value = parseInt(split.join(''))
+                        }
+                        for (let j = 0; j < value; j++) {
+                            this.lines.push([])
+                        }
+                    }
+                    //  跨行清屏
+                    else if (controlType === 'J') {
+                        let split = a.slice(2, a.length - 1)
+                        let value = 0
+                        if (split.length > 0) {
+                            value = parseInt(split.join(''))
+                        }
+
+                        if (value === 0) {  //  清除光标之后的所有内容
+                            this.lines[this.ansiControl.rowNum].splice(0, this.ansiControl.colNum)
+                            this.lines.splice(0, this.ansiControl.rowNum)
+                            this.ansiControl.rowNum = 0
+                        } else if (value === 1) {   //  清除光标之前的所有内容
+                            this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum)
+                            this.lines.splice(this.ansiControl.rowNum)
+                            this.ansiControl.colNum = 0
+                        } else if (value === 2) {   //  清除全屏
+                            this._clearScreen()
+                        } else if (value === 3) {   //  清除全屏并保存
+                            this.ansiControl.backup.lines = JSON.parse(JSON.stringify(this.lines))
+                            this.ansiControl.backup.rowNum = this.ansiControl.rowNum
+                            this.ansiControl.backup.colNum = this.ansiControl.colNum
+                            this._clearScreen()
+                        }
+                        this._checkRowCol()
                     }
                     // 光标重定位
-                    else if (posReg.test(tmpStr)) {
+                    else if (controlType === 'H') {
                         let split = a.slice(2, a.length - 1)
                         if (split.length > 0) {
                             let pos = split.join('').split(';')
-                            this.ansiControl.rowNum = parseInt(pos[0])
-                            this.ansiControl.colNum = parseInt(pos[1])
+                            this.ansiControl.rowNum = parseInt(pos[0]) - 1
+                            this.ansiControl.colNum = parseInt(pos[1]) - 1
                             this._checkRowCol()
                         }
-                        i = y
-                        continue
                     }
                     //  光标位移
-                    else if (cursorFlagReg.test(tmpStr)) {
+                    else if (/[ABCDEFG]/.test(controlType)) {
                         let split = a.slice(2, a.length - 1)
                         if (split.length > 0) {
                             let value = parseInt(split.join(''))
@@ -210,28 +349,31 @@ export default {
                             } else if (type === 'B') {  //  光标下移n个单位
                                 this.ansiControl.rowNum += value
                                 this._checkRowCol()
-                            } else if (type === 'C') {  //  光标前移n个单位
+                            } else if (type === 'C') {  //  光标右移n个单位
                                 this.ansiControl.colNum += value
                                 this._checkRowCol()
-                            } else if (type === 'D') {  //  光标后移n个单位
+                            } else if (type === 'D') {  //  光标左移n个单位
                                 this.ansiControl.colNum = Math.max(0, this.ansiControl.colNum - value)
                             } else if (type === 'E') {  //  光标下移到第n行的第一列
-                                this.ansiControl.rowNum = value
+                                this.ansiControl.rowNum = value - 1
                                 this.ansiControl.colNum = 0
                                 this._checkRowCol()
                             } else if (type === 'F') {  //  光标上移到第n行的第一列
-                                this.ansiControl.rowNum = value
+                                this.ansiControl.rowNum = value - 1
                                 this.ansiControl.colNum = 0
                             } else if (type === 'G') {  //  光标移动到当前行的指定列
-                                this.ansiControl.colNum = value
+                                this.ansiControl.colNum = value - 1
                             }
                         }
-                        i = y
-                        continue
                     }
-                    else {
-                        c = arr[i]
+                    //  设置滚动区域
+                    else if (controlType === 'r') {
+                        //  暂不做处理
+                    } else {
+                        console.warn('Can not handle ANSI code: ' + arr[i].toString())
                     }
+                    i = y
+                    continue
                 } else if (c === '\r') {
                     if (i + 1 < arr.length && arr[i + 1] === '\n') {    //  \r\n换行
                         this.lines.push([])
@@ -267,6 +409,10 @@ export default {
             this._jumpToBottom()
         },
         _checkRowCol() {
+            if (this.lines.length === 0) {
+                this.lines.push([])
+            }
+
             let fillRow = this.ansiControl.rowNum - this.lines.length
             while (fillRow-- >= 0) {
                 this.lines.push([])
@@ -279,25 +425,30 @@ export default {
             }
         },
         _fillChar(char) {
-            let arr = char.split('')
-            for (let c of arr) {
-                let cWidth = this._getCharWidth(c)
+            try {
+                let arr = char.split('')
+                for (let c of arr) {
+                    let cWidth = this._getCharWidth(c)
 
-                let charStr
-                if (this.ansiControl.styleFlag.length > 0) {
-                    let clazz = "shell-char"
-                    this.ansiControl.styleFlag.forEach(o => clazz += (' ansi-' + o))
-                    charStr = `<span class="${clazz}" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
-                } else {
-                    charStr = `<span class="shell-char" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
+                    let charStr
+                    if (this.ansiControl.styleFlag.length > 0) {
+                        let clazz = "shell-char"
+                        this.ansiControl.styleFlag.forEach(o => clazz += (' ansi-' + o))
+                        charStr = `<span class="${clazz}" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
+                    } else {
+                        charStr = `<span class="shell-char" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
+                    }
+                    let line = this.lines[this.ansiControl.rowNum]
+                    if (this.ansiControl.colNum >= line.length) {
+                        line.push(charStr)
+                    } else {
+                        line[this.ansiControl.colNum] = charStr
+                    }
+                    this.ansiControl.colNum++
                 }
-                let line = this.lines[this.ansiControl.rowNum]
-                if (this.ansiControl.colNum >= line.length) {
-                    line.push(charStr)
-                } else {
-                    line[this.ansiControl.colNum] = charStr
-                }
-                this.ansiControl.colNum++
+            } catch (e) {
+                console.error('Can not fill char: ' + char.toString())
+                console.error(e)
             }
         }
     }

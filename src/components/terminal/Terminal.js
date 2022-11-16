@@ -6,6 +6,8 @@ import TerminalAsk from "@/components/terminal/TerminalAsk";
 import {terminalProps} from "@/components/TProps";
 import TContainer from "@/components/TContainer";
 
+const config = require("@/config.json")
+
 export default {
     name: 'Terminal',
     components: {TContainer},
@@ -591,7 +593,6 @@ export default {
             let charWidth = this.cursorConf.defaultWidth
             //  前一个字符的长度
             let preWidth = this.inputBoxParam.promptWidth
-            let domStyle = this.$refs.frame.domStyle
             //  先找到被覆盖字符的位置
             for (let i = 0; i <= idx; i++) {
                 charWidth = this._getCharWidth(command[i])
@@ -599,7 +600,7 @@ export default {
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
                     //  行高是20px
-                    pos.top += domStyle.windowLineHeight
+                    pos.top += config.domStyle.windowLineHeight
                     pos.left = charWidth
                 }
             }

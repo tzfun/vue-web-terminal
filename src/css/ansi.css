@@ -42,9 +42,8 @@
 }
 
 .ansi-7 {
-    filter: invert(100%);
-    -ms-filter: invert(100%);
-    -webkit-filter: invert(100%);
+    background-color: white;
+    color: #1C1D21;
 }
 
 .ansi-8 {
@@ -76,9 +75,8 @@
 }
 
 .ansi-27 {
-    filter: none;
-    -ms-filter: none;
-    -webkit-filter: none;
+    background-color: inherit;
+    color: inherit;
 }
 
 .ansi-28 {

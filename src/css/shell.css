@@ -1,3 +1,9 @@
+.shell-log-container {
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
 .shell-row, .shell-char {
     margin: 0;
     padding: 0;
@@ -15,4 +21,14 @@
     height: 100%;
     vertical-align: top;
     font-weight: bold;
+}
+
+.shell-input {
+    position: absolute;
+    left: 50px;
+    right: 50px;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
 }
