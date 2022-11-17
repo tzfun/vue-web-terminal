@@ -5,7 +5,7 @@
     <div class="t-header-container" ref="header" v-if="showHeader"
          :style="`${(_draggable() ? 'cursor: move;' : '')}height:${domStyle.headerHeight};`">
       <slot name="header" :title="title">
-        <THeader :title="title" :headerHeight="domStyle.headerHeight"></THeader>
+        <THeader :title.sync="title" :headerHeight="domStyle.headerHeight"></THeader>
       </slot>
     </div>
     <div class="t-window"

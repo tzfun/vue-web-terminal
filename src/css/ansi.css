@@ -89,11 +89,11 @@
 }
 
 .ansi-31 {
-    color: red;
+    color: #f10606;
 }
 
 .ansi-32 {
-    color: green;
+    color: #14cb14;
 }
 
 .ansi-33 {
@@ -154,11 +154,11 @@
 }
 
 .ansi-41 {
-    background-color: red;
+    background-color: #f10606;
 }
 
 .ansi-42 {
-    background-color: green;
+    background-color: #14cb14;
 }
 
 .ansi-43 {

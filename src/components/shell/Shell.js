@@ -6,6 +6,28 @@ import {_getByteLen, _getSelection} from "@/tools/Util";
 const ansi256colors = require('../../tools/ansi-256-colors.json')
 const config = require("@/config.json")
 
+const ANSI_ESC = '\x1B'
+const ANSI_BEL = '\x07'
+const ANSI_CONTROL = {
+    EMPTY: '\x00',
+    IND: ANSI_ESC + 'D',
+    NEL: ANSI_ESC + 'E',
+    HTS: ANSI_ESC + 'H',
+    RI: ANSI_ESC + 'M',
+    SS2: ANSI_ESC + 'N',
+    SS3: ANSI_ESC + 'O',
+    DCS: ANSI_ESC + 'P',
+    SPA: ANSI_ESC + 'V',
+    EPA: ANSI_ESC + 'W',
+    SOS: ANSI_ESC + 'X',
+    DECID: ANSI_ESC + 'Z',
+    CSI: ANSI_ESC + '[',
+    ST: ANSI_ESC + '\\',
+    OSC: ANSI_ESC + ']',
+    PM: ANSI_ESC + '^',
+    APC: ANSI_ESC + '_',
+}
+
 export default {
     name: "Shell",
     components: {TContainer},
@@ -34,7 +56,9 @@ export default {
                     lines: [],
                     rowNum: 0,
                     colNum: 0
-                }
+                },
+                //  0-normal, 1-application
+                keypad: 0
             },
             keydownListener: null
         }
@@ -70,55 +94,56 @@ export default {
                     if (/F[1-9][0-2]?/.test(event.key)) {
                         switch (event.key) {
                             case 'F1':
-                                key = '\x8fP'
+                                key = ANSI_CONTROL.SS3 + 'P'
                                 break
                             case 'F2':
-                                key = '\x8fQ'
+                                key = ANSI_CONTROL.SS3 + 'Q'
                                 break
                             case 'F3':
-                                key = '\x8fR'
+                                key = ANSI_CONTROL.SS3 + 'R'
                                 break
                             case 'F4':
-                                key = '\x8fS'
+                                key = ANSI_CONTROL.SS3 + 'S'
                                 break
                             case 'F5':
-                                key = '\x1B[15~'
+                                key = ANSI_CONTROL.CSI + '15~'
                                 break
                             case 'F6':
-                                key = '\x1B[17~'
+                                key = ANSI_CONTROL.CSI + '17~'
                                 break
                             case 'F7':
-                                key = '\x1B[18~'
+                                key = ANSI_CONTROL.CSI + '18~'
                                 break
                             case 'F8':
-                                key = '\x1B[19~'
+                                key = ANSI_CONTROL.CSI + '19~'
                                 break
                             case 'F9':
-                                key = '\x1B[20~'
+                                key = ANSI_CONTROL.CSI + '20~'
                                 break
                             case 'F10':
-                                key = '\x1B[21~'
+                                key = ANSI_CONTROL.CSI + '21~'
                                 break
                             case 'F11':
-                                key = '\x1B[23~'
+                                key = ANSI_CONTROL.CSI + '23~'
                                 break
                             case 'F12':
-                                key = '\x1B[24~'
+                                key = ANSI_CONTROL.CSI + '24~'
                                 break
                         }
                     } else if (/ArrowUp|ArrowDown|ArrowLeft|ArrowRight/.test(event.key)) {
+                        let prefix = this.ansiControl.keypad === 0 ? ANSI_CONTROL.CSI : ANSI_CONTROL.SS3
                         switch (event.key) {
                             case 'ArrowUp':
-                                key = '\x1B[A'
+                                key = prefix + 'A'
                                 break
                             case 'ArrowDown':
-                                key = '\x1B[B'
+                                key = prefix + 'B'
                                 break
                             case 'ArrowRight':
-                                key = '\x1B[C'
+                                key = prefix + 'C'
                                 break
                             case 'ArrowLeft':
-                                key = '\x1B[D'
+                                key = prefix + 'D'
                                 break
                         }
                     } else if (event.which < 32) {
@@ -149,7 +174,9 @@ export default {
     },
     methods: {
         _onInput(event) {
-            this.$emit('onInput', event.data, event, this.name)
+            if (event.data) {
+                this.$emit('onInput', event.data, event, this.name)
+            }
         },
         _getCharWidth(str) {
             let charWidth = config.domStyle.shellCharWidth
@@ -221,154 +248,231 @@ export default {
          * @param str   ANSI字符串
          * @private
          */
-        _pushANSI(str) {
+        _pushANSI: function (str) {
             this._checkRowCol()
-            const endFlagReg = /[cmsuhlrABCDEFGHJKLST]/
-
+            const endFlagReg = /[cmsuhlrABCDEFGHJKLSTXZP@>=]/
 
             let arr = Array.from(str)
 
             for (let i = 0; i < arr.length; i++) {
                 let c = arr[i]
-                if (c === '\x00') {
+                if (c === ANSI_CONTROL.EMPTY) {
                     continue
                 }
                 //  Control Sequence
-                if (c === '\x1B') {
+                if (c === ANSI_ESC) {
                     let a = [c]
                     let y = i
                     let end = Math.min(arr.length - 1, i + 13)
                     while (y <= end && !endFlagReg.test(arr[y].toString())) {
                         a.push(arr[++y])
                     }
+                    let cs = a.join('')
                     let controlType = a[a.length - 1]
-                    //  着色
-                    if (controlType === 'm') {
-                        let split = a.slice(2, a.length - 1)
-                        if (split.length > 0) {
-                            this.ansiControl.styleFlag = split.join('').split(';')
-                            if (this.ansiControl.styleFlag.length === 1 && this.ansiControl.styleFlag[0] === '0') {
-                                this.ansiControl.styleFlag = []
-                            }
-                            if (this.ansiControl.styleFlag.length === 3) {
-                                //  256前景色
-                                if (this.ansiControl.styleFlag[0] === '38' && this.ansiControl.styleFlag[1] === '5') {
-                                    this.ansiControl.attachStyle = `color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
+                    //  CSI Control Mode
+                    if (cs.startsWith(ANSI_CONTROL.CSI)) {
+                        //  着色
+                        if (controlType === 'm') {
+                            let split = a.slice(2, a.length - 1)
+                            if (split.length > 0) {
+                                this.ansiControl.styleFlag = split.join('').split(';')
+                                if (this.ansiControl.styleFlag.length === 1 && this.ansiControl.styleFlag[0] === '0') {
                                     this.ansiControl.styleFlag = []
                                 }
-                                //  256背景色
-                                else if (this.ansiControl.styleFlag[0] === '48' && this.ansiControl.styleFlag[1] === '5') {
-                                    this.ansiControl.attachStyle = `background-color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
-                                    this.ansiControl.styleFlag = []
+                                if (this.ansiControl.styleFlag.length === 3) {
+                                    //  256前景色
+                                    if (this.ansiControl.styleFlag[0] === '38' && this.ansiControl.styleFlag[1] === '5') {
+                                        this.ansiControl.attachStyle = `color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
+                                        this.ansiControl.styleFlag = []
+                                    }
+                                    //  256背景色
+                                    else if (this.ansiControl.styleFlag[0] === '48' && this.ansiControl.styleFlag[1] === '5') {
+                                        this.ansiControl.attachStyle = `background-color:${ansi256colors['c' + this.ansiControl.styleFlag[2]]};`
+                                        this.ansiControl.styleFlag = []
+                                    } else {
+                                        this.ansiControl.attachStyle = ''
+                                    }
                                 } else {
                                     this.ansiControl.attachStyle = ''
                                 }
                             } else {
+                                this.ansiControl.styleFlag = []
                                 this.ansiControl.attachStyle = ''
                             }
-                        } else {
-                            this.ansiControl.styleFlag = []
-                            this.ansiControl.attachStyle = ''
                         }
-                    }
-                    //  清全屏
-                    else if (controlType === 'c') {
-                        this._clearScreen()
-                    }
-                    //  清当前行
-                    else if (controlType === 'K') {
-                        let split = a.slice(a.includes('?') ? 3 : 2, a.length - 1)
-                        let value = 0
-                        if (split.length > 0) {
-                            value = parseInt(split.join(''))
+                        //  设置终端识别码
+                        else if (controlType === 'c') {
+                            //  格式：其中Val为0、1或不填
+                            //  CSI > Val c
+                            //  CSI Val c
                         }
+                        //  清当前行
+                        else if (controlType === 'K') {
+                            let split = a.slice(a.includes('?') ? 3 : 2, a.length - 1)
+                            let value = 0
+                            if (split.length > 0) {
+                                value = parseInt(split.join(''))
+                            }
 
-                        if (value === 0) {  //  清除右侧所有内容
-                            this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum)
-                        } else if (value === 1) {   //  清除左侧所有内容
-                            this.lines[this.ansiControl.rowNum].splice(0, this.ansiControl.colNum)
-                        } else if (value === 2) {   //  清除整行
-                            this.lines[this.ansiControl.rowNum] = []
-                        }
-                    }
-                    //  插入n行
-                    else if (controlType === 'L') {
-                        let split = a.slice(2, a.length - 1)
-                        let value = 1
-                        if (split.length > 0) {
-                            value = parseInt(split.join(''))
-                        }
-                        for (let j = 0; j < value; j++) {
-                            this.lines.push([])
-                        }
-                    }
-                    //  跨行清屏
-                    else if (controlType === 'J') {
-                        let split = a.slice(2, a.length - 1)
-                        let value = 0
-                        if (split.length > 0) {
-                            value = parseInt(split.join(''))
-                        }
-
-                        if (value === 0) {  //  清除光标之后的所有内容
-                            this.lines[this.ansiControl.rowNum].splice(0, this.ansiControl.colNum)
-                            this.lines.splice(0, this.ansiControl.rowNum)
-                            this.ansiControl.rowNum = 0
-                        } else if (value === 1) {   //  清除光标之前的所有内容
-                            this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum)
-                            this.lines.splice(this.ansiControl.rowNum)
-                            this.ansiControl.colNum = 0
-                        } else if (value === 2) {   //  清除全屏
-                            this._clearScreen()
-                        } else if (value === 3) {   //  清除全屏并保存
-                            this.ansiControl.backup.lines = JSON.parse(JSON.stringify(this.lines))
-                            this.ansiControl.backup.rowNum = this.ansiControl.rowNum
-                            this.ansiControl.backup.colNum = this.ansiControl.colNum
-                            this._clearScreen()
-                        }
-                        this._checkRowCol()
-                    }
-                    // 光标重定位
-                    else if (controlType === 'H') {
-                        let split = a.slice(2, a.length - 1)
-                        if (split.length > 0) {
-                            let pos = split.join('').split(';')
-                            this.ansiControl.rowNum = parseInt(pos[0]) - 1
-                            this.ansiControl.colNum = parseInt(pos[1]) - 1
-                            this._checkRowCol()
-                        }
-                    }
-                    //  光标位移
-                    else if (/[ABCDEFG]/.test(controlType)) {
-                        let split = a.slice(2, a.length - 1)
-                        if (split.length > 0) {
-                            let value = parseInt(split.join(''))
-                            let type = a[a.length - 1]
-                            if (type === 'A') { //  光标上移n个单位
-                                this.ansiControl.rowNum = Math.max(0, this.ansiControl.rowNum - value)
-                            } else if (type === 'B') {  //  光标下移n个单位
-                                this.ansiControl.rowNum += value
-                                this._checkRowCol()
-                            } else if (type === 'C') {  //  光标右移n个单位
-                                this.ansiControl.colNum += value
-                                this._checkRowCol()
-                            } else if (type === 'D') {  //  光标左移n个单位
-                                this.ansiControl.colNum = Math.max(0, this.ansiControl.colNum - value)
-                            } else if (type === 'E') {  //  光标下移到第n行的第一列
-                                this.ansiControl.rowNum = value - 1
-                                this.ansiControl.colNum = 0
-                                this._checkRowCol()
-                            } else if (type === 'F') {  //  光标上移到第n行的第一列
-                                this.ansiControl.rowNum = value - 1
-                                this.ansiControl.colNum = 0
-                            } else if (type === 'G') {  //  光标移动到当前行的指定列
-                                this.ansiControl.colNum = value - 1
+                            if (value === 0) {  //  清除右侧所有内容
+                                this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum)
+                            } else if (value === 1) {   //  清除左侧所有内容
+                                this.lines[this.ansiControl.rowNum].splice(0, this.ansiControl.colNum)
+                            } else if (value === 2) {   //  清除整行
+                                this.lines[this.ansiControl.rowNum] = []
                             }
                         }
+                        //  插入n行
+                        else if (controlType === 'L') {
+                            let split = a.slice(2, a.length - 1)
+                            let value = 1
+                            if (split.length > 0) {
+                                value = parseInt(split.join(''))
+                            }
+                            for (let j = 0; j < value; j++) {
+                                this.lines.push([])
+                            }
+                        }
+                        //  跨行清屏
+                        else if (controlType === 'J') {
+                            let split = a.slice(2, a.length - 1)
+                            let value = 0
+                            if (split.length > 0) {
+                                value = parseInt(split.join(''))
+                            }
+
+                            if (value === 0) {  //  清除光标之后的所有内容
+                                this.lines[this.ansiControl.rowNum].splice(0, this.ansiControl.colNum)
+                                this.lines.splice(0, this.ansiControl.rowNum)
+                                this.ansiControl.rowNum = 0
+                            } else if (value === 1) {   //  清除光标之前的所有内容
+                                this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum)
+                                this.lines.splice(this.ansiControl.rowNum)
+                                this.ansiControl.colNum = 0
+                            } else if (value === 2) {   //  清除全屏
+                                this._clearScreen()
+                            } else if (value === 3) {   //  清除全屏并保存
+                                this.ansiControl.backup.lines = JSON.parse(JSON.stringify(this.lines))
+                                this.ansiControl.backup.rowNum = this.ansiControl.rowNum
+                                this.ansiControl.backup.colNum = this.ansiControl.colNum
+                                this._clearScreen()
+                            }
+                            this._checkRowCol()
+                        }
+                        // 光标重定位
+                        else if (controlType === 'H') {
+                            let split = a.slice(2, a.length - 1)
+                            if (split.length > 0) {
+                                let pos = split.join('').split(';')
+                                this.ansiControl.rowNum = parseInt(pos[0]) - 1
+                                this.ansiControl.colNum = parseInt(pos[1]) - 1
+                                this._checkRowCol()
+                            }
+                        }
+                        //  删除字符
+                        else if (controlType === 'P') {
+                            let split = a.slice(2, a.length - 1)
+                            let value = 1
+                            if (split.length > 0) {
+                                value = parseInt(split.join(''))
+                            }
+                            this.lines[this.ansiControl.rowNum].splice(this.ansiControl.colNum, value)
+                        }
+                        //  插入字符
+                        else if (controlType === '@') {
+                            let split = a.slice(2, a.length - 1)
+                            let value = 1
+                            if (split.length > 0) {
+                                value = parseInt(split.join(''))
+                            }
+                            for (let j = 0; j < value; j++) {
+                                this._fillChar(arr[++y], true)
+                            }
+                        }
+                        //  光标位移
+                        else if (/[ABCDEFG]/.test(controlType)) {
+                            let split = a.slice(2, a.length - 1)
+                            if (split.length > 0) {
+                                let value = parseInt(split.join(''))
+                                let type = a[a.length - 1]
+                                if (type === 'A') { //  光标上移n个单位
+                                    this.ansiControl.rowNum = Math.max(0, this.ansiControl.rowNum - value)
+                                } else if (type === 'B') {  //  光标下移n个单位
+                                    this.ansiControl.rowNum += value
+                                    this._checkRowCol()
+                                } else if (type === 'C') {  //  光标右移n个单位
+                                    this.ansiControl.colNum += value
+                                    this._checkRowCol()
+                                } else if (type === 'D') {  //  光标左移n个单位
+                                    this.ansiControl.colNum = Math.max(0, this.ansiControl.colNum - value)
+                                } else if (type === 'E') {  //  光标下移到第n行的第一列
+                                    this.ansiControl.rowNum = value - 1
+                                    this.ansiControl.colNum = 0
+                                    this._checkRowCol()
+                                } else if (type === 'F') {  //  光标上移到第n行的第一列
+                                    this.ansiControl.rowNum = value - 1
+                                    this.ansiControl.colNum = 0
+                                } else if (type === 'G') {  //  光标移动到当前行的指定列
+                                    this.ansiControl.colNum = value - 1
+                                }
+                            }
+                        }
+                        //  设置滚动区域
+                        else if (controlType === 'r') {
+                            //  暂不做处理
+                        }
+                        //  DEC Private模式设置
+                        else if (controlType === 'l') {
+                            //  暂不做处理
+                        }
+                        //  设备模式切换
+                        else if (controlType === 'h') {
+                            let value = cs.slice(2, a.length - 1)
+                            switch (value) {
+                                case '?1000':
+                                    //  开启鼠标点击坐标发送模式
+                                    break
+                            }
+                        }
+                        // 窗口操作
+                        else if (controlType === 't') {
+                            // let param = cs.slice(2, a.length - 1).split(';')
+                        }
                     }
-                    //  设置滚动区域
-                    else if (controlType === 'r') {
-                        //  暂不做处理
+                    //  OSC Control Mode
+                    else if (cs.startsWith(ANSI_CONTROL.OSC)) {
+                        let p = i + 1
+                        while (p <= arr.length) {
+                            p++
+                            if (arr[p] === ANSI_BEL) {
+                                y = p
+                                break
+                            } else if (arr[p] === ANSI_ESC && arr[p] === '\\') {
+                                y = p + 1
+                                break
+                            }
+                        }
+                        let value = str.substring(i + 2, p)
+                        let flagIdx = value.indexOf(";")
+                        let type = parseInt(value.substring(0, flagIdx))
+                        let content = value.substring(flagIdx + 1, value.length)
+                        switch (type) {
+                            case 0: //  修改icon和title
+                            case 2: //  修改title
+                                this.$emit("update:title", content)
+                                break
+                        }
+                    }
+                    //  VT100 Mode
+                    else if (cs.startsWith(ANSI_ESC)) {
+                        //  切换至Application Keypad
+                        if (controlType === '=') {
+                            this.ansiControl.keypad = 1
+                        }
+                        //  切换至常规键入模式
+                        else if (controlType === '>') {
+                            this.ansiControl.keypad = 0
+                        }
                     } else {
                         console.warn('Can not handle ANSI code: ' + arr[i].toString())
                     }
@@ -424,7 +528,7 @@ export default {
                 this._fillChar(' '.repeat(fillCol))
             }
         },
-        _fillChar(char) {
+        _fillChar(char, insert = false) {
             try {
                 let arr = char.split('')
                 for (let c of arr) {
@@ -433,7 +537,7 @@ export default {
                     let charStr
                     if (this.ansiControl.styleFlag.length > 0) {
                         let clazz = "shell-char"
-                        this.ansiControl.styleFlag.forEach(o => clazz += (' ansi-' + o))
+                        this.ansiControl.styleFlag.forEach(o => clazz += (' ansi-' + parseInt(o)))
                         charStr = `<span class="${clazz}" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
                     } else {
                         charStr = `<span class="shell-char" style="width:${cWidth}px;${this.ansiControl.attachStyle}">${c}</span>`
@@ -442,7 +546,11 @@ export default {
                     if (this.ansiControl.colNum >= line.length) {
                         line.push(charStr)
                     } else {
-                        line[this.ansiControl.colNum] = charStr
+                        if (insert) {
+                            line.splice(this.ansiControl.colNum, 0, charStr)
+                        } else {
+                            line[this.ansiControl.colNum] = charStr
+                        }
                     }
                     this.ansiControl.colNum++
                 }
