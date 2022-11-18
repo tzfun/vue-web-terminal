@@ -89,6 +89,7 @@ public class Context {
             ChannelShell ch = (ChannelShell) sshSession.get().openChannel("shell");
             channel.set(ch);
             ch.setPty(true);
+            ch.setPtyType("xterm-256color");
             ch.connect();
 
             in = ch.getInputStream();

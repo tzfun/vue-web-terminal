@@ -19,7 +19,7 @@ import java.io.PrintStream;
 
 /**
  * Description: TODO
- *
+ * <p>
  * Created in 9:36 2022/11/8
  *
  * @author beifengtz
@@ -34,8 +34,7 @@ public class ShellTest {
 
             Session session = jsch.getSession("beifengtz", "192.168.0.148", 22);
 
-            String passwd = JOptionPane.showInputDialog("Enter password");
-            session.setPassword(passwd);
+            session.setPassword("1246886075");
 
             session.setUserInfo(new MyUserInfo() {
             });
@@ -47,13 +46,15 @@ public class ShellTest {
             session.connect(30000);   // making a connection with timeout.
 
             Channel channel = session.openChannel("shell");
+            ((ChannelShell) channel).setPtyType("xterm-256color");
+            ((ChannelShell)channel).setEnv("LANG", "zh_CN.GB18030");
 
             // Enable agent-forwarding.
 //            ((ChannelShell) channel).setAgentForwarding(true);
 
             channel.setInputStream(System.in);
 
-            channel.setOutputStream(new PrintStream("out.txt"));
+            channel.setOutputStream(System.out);
             //channel.connect();
             channel.connect(3 * 1000);
 
@@ -64,7 +65,7 @@ public class ShellTest {
                 while (in.available() > 0) {
                     int i = in.read(tmp, 0, 1024);
                     if (i < 0) break;
-                    System.out.print("==>[" + new String(tmp, 0, i) + "]");
+                    System.out.print(new String(tmp, 0, i));
                 }
                 if (channel.isClosed()) {
                     if (in.available() > 0) continue;
