@@ -105,11 +105,11 @@
 }
 
 .ansi-35 {
-    color: magenta;
+    color: #bd12bd;
 }
 
 .ansi-36 {
-    color: cyan;
+    color: #0eb4b4;
 }
 
 .ansi-37 {
@@ -170,11 +170,11 @@
 }
 
 .ansi-45 {
-    background-color: magenta;
+    background-color: #bd12bd;
 }
 
 .ansi-46 {
-    background-color: cyan;
+    background-color: #0eb4b4;
 }
 
 .ansi-47 {

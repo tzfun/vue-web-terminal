@@ -211,7 +211,7 @@ export default class Term {
                         this.data.colNum = col - 1
                         this.checkRowCol()
                     }
-                    //  跨行清屏
+                    //  跨行擦除
                     else if (controlType === 'J') {
                         let value = cs.substring(cs.indexOf("?") < 0 ? 2 : 3, cs.length - 1)
                         value = value.length === 0 ? 0 : parseInt(value)
@@ -227,24 +227,24 @@ export default class Term {
                         } else if (value === 2) {   //  清除全屏
                             this.clearScreen()
                         } else if (value === 3) {   //  清除全屏并保存
-                            this.data.backup.lines = JSON.parse(JSON.stringify(this.data.lines))
-                            this.data.backup.rowNum = this.data.rowNum
-                            this.data.backup.colNum = this.data.colNum
-                            this.clearScreen()
+                            this.backup()
                         }
                         this.checkRowCol()
                     }
-                    //  清当前行
+                    //  擦除当前行，用空覆盖
                     else if (controlType === 'K') {
                         let value = cs.substring(cs.indexOf("?") < 0 ? 2 : 3, cs.length - 1)
                         value = value.length === 0 ? 0 : parseInt(value)
 
-                        if (value === 0) {  //  清除右侧所有内容
-                            this.data.lines[this.data.rowNum].splice(this.data.colNum)
-                        } else if (value === 1) {   //  清除左侧所有内容
-                            this.data.lines[this.data.rowNum].splice(0, this.data.colNum)
-                        } else if (value === 2) {   //  清除整行
-                            this.data.lines[this.data.rowNum] = []
+                        if (value === 0) {  //  右侧所有内容
+                            this.fillChar(' '.repeat(this.vue.window.cols - this.data.colNum))
+                        } else if (value === 1) {   //  擦除左侧所有内容
+                            let num = this.data.colNum
+                            this.data.colNum = 0
+                            this.fillChar(' '.repeat(num))
+                        } else if (value === 2) {   //  擦除整行
+                            this.data.colNum = 0
+                            this.fillChar(' '.repeat(this.vue.window.cols))
                         }
                     }
                     //  插入n行
@@ -303,7 +303,7 @@ export default class Term {
                             value = value.length === 0 ? 1 : parseInt(value)
                         } else {
                             let colRange = value.split(";")
-                            console.log('Col Range', colRange)
+                            console.debug('Col Range', colRange)
                         }
 
                         this.data.colNum = value - 1
@@ -336,7 +336,7 @@ export default class Term {
                             value = value.length === 0 ? 1 : parseInt(value)
                         } else {
                             let rowRange = value.split(";")
-                            console.log('Row Range', rowRange)
+                            console.debug('Row Range', rowRange)
                         }
 
                         this.data.rowNum = value - 1
@@ -351,12 +351,26 @@ export default class Term {
                         let value = cs.substring(2, cs.length - 1)
                         if (value.indexOf('?') < 0) {
                             value = value.split(";")
-                            console.log("Set mode", value)
+                            console.debug("Set mode", value)
                         } else {
                             value = parseInt(cs.substring(3, cs.length - 1))
                             value = cs.substring(3, cs.length - 1)
                             value = value.split(";")
-                            console.log("Set device mode", value)
+                            console.debug("Set device mode", value)
+                            for (let v of value) {
+                                switch (v) {
+                                    case '25':
+                                        //  显示光标
+                                        break
+                                    case '1049':
+                                        //  备份
+                                        this.backup()
+                                        break
+                                    case '2004':
+                                        //  打开复制粘贴模式，允许用户复制粘贴
+                                        break
+                                }
+                            }
                         }
                     }
                     //  媒体操作
@@ -364,12 +378,12 @@ export default class Term {
                         let value = cs.substring(2, cs.length - 1)
                         if (value.indexOf('?') < 0) {
                             value = value.split(";")
-                            console.log("Media mode", value)
+                            console.debug("Media mode", value)
                         } else {
                             value = parseInt(cs.substring(3, cs.length - 1))
                             value = cs.substring(3, cs.length - 1)
                             value = value.split(";")
-                            console.log("Media-specific mode", value)
+                            console.debug("Media-specific mode", value)
                         }
                     }
                     //  模式重置
@@ -377,12 +391,26 @@ export default class Term {
                         let value = cs.substring(2, cs.length - 1)
                         if (value.indexOf('?') < 0) {
                             value = value.split(";")
-                            console.log("Reset mode", value)
+                            console.debug("Reset mode", value)
                         } else {
                             value = parseInt(cs.substring(3, cs.length - 1))
                             value = cs.substring(3, cs.length - 1)
                             value = value.split(";")
-                            console.log("Reset private mode", value)
+                            for (let v of value) {
+                                switch (v) {
+                                    case '25':
+                                        //  隐藏光标
+                                        break
+                                    case '1049':
+                                        //  恢复光标
+                                        this.restoreBackup()
+                                        break
+                                    case '2004':
+                                        //  关闭复制粘贴模式
+                                        break
+                                }
+                            }
+                            console.debug("Reset private mode", value)
                         }
                     }
                     //  着色
@@ -417,34 +445,36 @@ export default class Term {
                     //  报告设备状态
                     else if (controlType === 'n') {
                         let value = cs.substring(2, cs.length - 1)
-                        if (value.indexOf("?") < 0) {
-                            value = parseInt(value)
-                            if (value === 5) {  //  报告OK状态
-                                this.vue.$emit('onInput', ANSI_CSI + '0n', null, this.name)
-                            } else if (value === 6) {   //  报告光标位置
-                                let row = this.data.rowNum + 1
-                                let col = this.data.colNum + 1
-                                this.vue.$emit('onInput', `${ANSI_CSI}${row};${col}R`, null, this.name)
-                            }
-                        } else {
-                            value = parseInt(cs.substring(3, cs.length - 1))
-                            if (value === 6) {  //  报告光标位置
-                                let row = this.data.rowNum + 1
-                                let col = this.data.colNum + 1
-                                this.vue.$emit('onInput', `${ANSI_CSI}?${row};${col}R`, null, this.name)
-                            } else if (value === 15) {  //  报告打印是否已就绪
-                                //  ready CSI ?10 n
-                                //  not ready CSI ?11 n
-                                this.vue.$emit('onInput', `${ANSI_CSI}?10n`, null, this.name)
-                            } else if (value === 25) {  //  报告UDK状态
-                                //  unlocked: CSI?20n
-                                //  locked: CSI?21n
-                            } else if (value === 26) {  //  报告 keyboard status
-                                //  North American: CSI?27;1;0;0;n
-                                //  Locator available: CSI?53n
-                                //  No Locator: CSI?50n
-                            }
-                        }
+                        console.debug("Report", value)
+
+                        // if (value.indexOf("?") < 0) {
+                        //     value = parseInt(value)
+                        //     if (value === 5) {  //  报告OK状态
+                        //         this.vue.$emit('onInput', ANSI_CSI + '0n', null, this.name)
+                        //     } else if (value === 6) {   //  报告光标位置
+                        //         let row = this.data.rowNum + 1
+                        //         let col = this.data.colNum + 1
+                        //         this.vue.$emit('onInput', `${ANSI_CSI}${row};${col}R`, null, this.name)
+                        //     }
+                        // } else {
+                        //     value = parseInt(cs.substring(3, cs.length - 1))
+                        //     if (value === 6) {  //  报告光标位置
+                        //         let row = this.data.rowNum + 1
+                        //         let col = this.data.colNum + 1
+                        //         this.vue.$emit('onInput', `${ANSI_CSI}?${row};${col}R`, null, this.name)
+                        //     } else if (value === 15) {  //  报告打印是否已就绪
+                        //         //  ready CSI ?10 n
+                        //         //  not ready CSI ?11 n
+                        //         this.vue.$emit('onInput', `${ANSI_CSI}?10n`, null, this.name)
+                        //     } else if (value === 25) {  //  报告UDK状态
+                        //         //  unlocked: CSI?20n
+                        //         //  locked: CSI?21n
+                        //     } else if (value === 26) {  //  报告 keyboard status
+                        //         //  North American: CSI?27;1;0;0;n
+                        //         //  Locator available: CSI?53n
+                        //         //  No Locator: CSI?50n
+                        //     }
+                        // }
                     }
                     //  terminal重置
                     else if (controlType === 'p') {
@@ -517,8 +547,7 @@ export default class Term {
                         //  CSI Pt;Pl;Pb;Pr `w
                         //  参数：[top;left;bottom;right]
                     }
-                }
-                else if (flag === ANSI_OSC) {
+                } else if (flag === ANSI_OSC) {
                     let p = i + 1
                     while (p <= arr.length) {
                         p++
@@ -540,8 +569,7 @@ export default class Term {
                             this.vue.$emit("update:title", content)
                             break
                     }
-                }
-                else if (flag === ANSI_PM) {
+                } else if (flag === ANSI_PM) {
                     //  for xterm
                     let p = i + 1
                     while (p < arr.length) {
@@ -668,5 +696,22 @@ export default class Term {
         } catch (e) {
             console.error('Can not fill char: ' + char.toString(), e)
         }
+    }
+
+    backup() {
+        this.data.backup.lines = JSON.parse(JSON.stringify(this.data.lines))
+        this.data.backup.rowNum = this.data.rowNum
+        this.data.backup.colNum = this.data.colNum
+        this.clearScreen()
+    }
+
+    restoreBackup() {
+        this.data.lines = this.data.backup.lines
+        this.data.rowNum = this.data.backup.rowNum
+        this.data.colNum = this.data.backup.colNum
+
+        this.data.backup.lines = []
+        this.data.backup.rowNum = 0
+        this.data.backup.colNum = 0
     }
 }
