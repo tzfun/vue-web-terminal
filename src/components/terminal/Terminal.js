@@ -192,7 +192,7 @@ export default {
     },
     watch: {
         terminalLog() {
-            this._jumpToBottom()
+            this._scrollToBottom()
         }
     },
     methods: {
@@ -251,7 +251,7 @@ export default {
                     }
                 }
                 this.searchCmd.item = target
-                this._jumpToBottom()
+                this._scrollToBottom()
             }
         },
         _fillCmd() {
@@ -509,7 +509,7 @@ export default {
             }
             if (message.type === 'json') {
                 setTimeout(() => {
-                    this._jumpToBottom()
+                    this._scrollToBottom()
                 }, 80)
             }
         },
@@ -522,8 +522,8 @@ export default {
                 this._checkTerminalLog()
             }
         },
-        _jumpToBottom() {
-            this.$refs.frame._jumpToBottom()
+        _scrollToBottom() {
+            this.$refs.frame._scrollToBottom()
         },
         _checkTerminalLog() {
             let count = this.terminalLog.length

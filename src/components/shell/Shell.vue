@@ -13,7 +13,7 @@
     <template #window>
       <div class="t-cmd-line shell-log-container">
         <div class="shell-row t-cmd-line-content"
-             v-for="(line, idx) in lines"
+             v-for="(line, idx) in ansiControl.lines"
              :key="idx"
              v-html="line.join('')"
              :style="`height:${require('@/config.json').domStyle.windowLineHeight}px;`"
