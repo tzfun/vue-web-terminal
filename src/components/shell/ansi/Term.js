@@ -425,7 +425,7 @@ export default class Term {
                             this.data.styleFlag.push(parseInt(ps))
                         }
 
-                        if (this.data.styleFlag.length === 1 && this.data.styleFlag[0] === 0) {
+                        if (this.data.styleFlag.includes(0)) {
                             this.data.attachStyle = ''
                             this.data.styleFlag = []
                         } else if (this.data.styleFlag.length === 3) {

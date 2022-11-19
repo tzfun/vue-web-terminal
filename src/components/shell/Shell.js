@@ -118,9 +118,10 @@ export default {
             this.$emit('onClick', key, this.name)
         },
         _focus() {
+
             this.$nextTick(() => {
-                //  没有文本被选中
-                if (_getSelection().isCollapsed) {
+                //  没有文本被选中 且 没有限制滚动
+                if (_getSelection().isCollapsed && this.scrollRange == null) {
                     if (this.$refs.cmdInput) {
                         this.$refs.cmdInput.focus()
                     }
