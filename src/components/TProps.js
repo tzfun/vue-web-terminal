@@ -105,4 +105,11 @@ export const terminalProps = {
 
 export const shellProps = {
     ...containerProps,
+    /**
+     * unix,mac,windows
+     */
+    os:{
+        type: String,
+        default: "unix"
+    }
 }

@@ -18,10 +18,11 @@ import ansi256colors from "@/tools/ansi-256-colors.json";
 const config = require('@/config.json')
 
 export default class Term {
-    constructor(data, vue, name) {
+    constructor(data, vue, name, osMode) {
         this.data = data
         this.vue = vue
         this.name = name
+        this.os = osMode.toLowerCase()
     }
 
     onInput(event) {
@@ -103,7 +104,6 @@ export default class Term {
 
     onOutput(str) {
         this.checkRowCol()
-
 
         let arr = Array.from(str)
 
@@ -217,13 +217,12 @@ export default class Term {
                         value = value.length === 0 ? 0 : parseInt(value)
 
                         if (value === 0) {  //  清除光标之后（右侧）的所有内容
+                            this.data.lines[this.data.rowNum].splice(this.data.colNum)
+                            this.data.lines.splice(this.data.rowNum)
+                        } else if (value === 1) {   //  清除光标之前（左侧）的所有内容
                             this.data.lines[this.data.rowNum].splice(0, this.data.colNum)
                             this.data.lines.splice(0, this.data.rowNum)
                             this.data.rowNum = 0
-                        } else if (value === 1) {   //  清除光标之前（左侧）的所有内容
-                            this.data.lines[this.data.rowNum].splice(this.data.colNum)
-                            this.data.lines.splice(this.data.rowNum)
-                            this.data.colNum = 0
                         } else if (value === 2) {   //  清除全屏
                             this.clearScreen()
                         } else if (value === 3) {   //  清除全屏并保存
@@ -237,7 +236,8 @@ export default class Term {
                         value = value.length === 0 ? 0 : parseInt(value)
 
                         if (value === 0) {  //  右侧所有内容
-                            this.fillChar(' '.repeat(this.vue.window.cols - this.data.colNum))
+                            // this.fillChar(' '.repeat(Math.max(this.vue.window.cols - this.data.colNum, 0)))
+                            this.data.lines[this.data.rowNum].splice(this.data.colNum)
                         } else if (value === 1) {   //  擦除左侧所有内容
                             let num = this.data.colNum
                             this.data.colNum = 0
@@ -260,7 +260,6 @@ export default class Term {
                     else if (controlType === 'M') {
                         let value = cs.substring(2, cs.length - 1)
                         value = value.length === 0 ? 1 : parseInt(value)
-
                         this.data.lines.splice(this.data.rowNum - value + 1, value)
                     }
                     //  删除 n 个字符
@@ -429,13 +428,13 @@ export default class Term {
                             this.data.styleFlag = []
                         } else if (this.data.styleFlag.length === 3) {
                             //  256前景色
-                            if (this.data.styleFlag[0] === '38' && this.data.styleFlag[1] === '5') {
-                                this.data.attachStyle = `color:${ansi256colors['c' + this.data.styleFlag[2]]};`
+                            if (this.data.styleFlag[0] === 38 && this.data.styleFlag[1] === 5) {
+                                this.data.attachStyle += `color:${ansi256colors['c' + this.data.styleFlag[2]]};`
                                 this.data.styleFlag = []
                             }
                             //  256背景色
-                            else if (this.data.styleFlag[0] === '48' && this.data.styleFlag[1] === '5') {
-                                this.data.attachStyle = `background-color:${ansi256colors['c' + this.data.styleFlag[2]]};`
+                            else if (this.data.styleFlag[0] === 48 && this.data.styleFlag[1] === 5) {
+                                this.data.attachStyle += `background-color:${ansi256colors['c' + this.data.styleFlag[2]]};`
                                 this.data.styleFlag = []
                             } else {
                                 this.data.attachStyle = ''
@@ -505,7 +504,20 @@ export default class Term {
                     }
                     //  设置滚动区域
                     else if (controlType === 'r') {
-                        //  暂不处理
+                        let value = cs.substring(2, cs.length - 1).split(";")
+                        console.log('Set scroll', value)
+                        let min = -1, max = -1
+                        if (value[0].length !== 0) {
+                            min = (parseInt(value[0]) - 1) * config.domStyle.windowLineHeight
+                        }
+                        if (value[1].length !== 0) {
+                            max = (parseInt(value[1]) - 1) * config.domStyle.windowLineHeight
+                        }
+                        if (min === -1 && max === -1) {
+                            this.vue._setScrollRange(null)
+                        } else {
+                            this.vue._setScrollRange([min, max])
+                        }
                     }
                     //  保存Private Mode值
                     else if (controlType === 's') {
@@ -608,21 +620,19 @@ export default class Term {
                 i = y
                 continue
             } else if (c === '\r') {
-                if (i + 1 < arr.length && arr[i + 1] === '\n') {    //  \r\n换行
-                    this.data.lines.push([])
-                    this.data.rowNum++
-                    this.data.colNum = 0
-                    this.vue._scrollToBottom()
-                    i++
-                } else {    //  \r回车
+                if (this.os === 'windows') {
+                    if (i + 1 < arr.length && arr[i + 1] === '\n') {    //  \r\n换行
+                        this.newLine()
+                        i++
+                    } else {    //  \r回车
+                        this.data.colNum = 0
+                    }
+                } else if (this.os === 'mac') {
                     this.data.colNum = 0
                 }
                 continue
             } else if (c === '\n') {
-                this.data.lines.push([])
-                this.data.rowNum++
-                this.data.colNum = 0
-                this.vue._scrollToBottom()
+                this.newLine()
                 continue
             } else if (c === '\b') {    //  退格
                 if (this.data.colNum > 0) {
@@ -630,7 +640,8 @@ export default class Term {
                 }
                 continue
             } else if (c === '\t') {    //  水平制表
-                this.fillChar(' '.repeat(4))
+                let len = config.tabLength - this.data.colNum % config.tabLength
+                this.fillChar(' '.repeat(len))
                 continue
             } else if (c >= '\x00' && c <= '\x1F') {
                 //  特殊ascii，暂不做处理
@@ -713,5 +724,12 @@ export default class Term {
         this.data.backup.lines = []
         this.data.backup.rowNum = 0
         this.data.backup.colNum = 0
+    }
+
+    newLine() {
+        this.data.lines.push([])
+        this.data.rowNum++
+        this.data.colNum = 0
+        this.vue._scrollToBottom()
     }
 }

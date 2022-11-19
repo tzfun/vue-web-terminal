@@ -39,15 +39,16 @@ export default {
                 keypad: 0
             },
             keydownListener: null,
-            term: null
+            term: null,
+            scrollRange: null
         }
     },
     created() {
-        this.term = new Term(this.ansiControl, this, this.name)
+        this.term = new Term(this.ansiControl, this, this.name, this.os)
         // ShellApi.unregister(this.name)
         ShellApi.register(this.name, {
             output: str => {
-                this._pushANSI(str)
+                this.term.onOutput(str)
             },
             clear: () => {
                 this.term.clearScreen()
@@ -128,10 +129,30 @@ export default {
                 }
             })
         },
+        _setScrollRange(range) {
+            let box = this.$refs.frame.$refs.window
+            if (range) {
+                this.scrollRange = range
+                box.style.overflow = 'hidden'
+                box.scrollTop = range[0]
+            } else {
+                this.scrollRange = null
+                box.style.overflow = 'overlay'
+            }
+        },
         _scrollToBottom() {
+            let box = this.$refs.frame.$refs.window
+            if (this.scrollRange && box.scrollHeight > this.scrollRange[1]) {
+                return
+            }
             this.$refs.frame._scrollToBottom()
         },
         _scrollOffset(val) {
+            let box = this.$refs.frame.$refs.window
+            let finalScrollTop = box.scrollTop + val
+            if (this.scrollRange && (finalScrollTop > this.scrollRange[1] || finalScrollTop < this.scrollRange[0])) {
+                return
+            }
             this.$refs.frame._scrollOffset(val)
         },
         _getCursorStyle() {
@@ -144,15 +165,6 @@ export default {
                     height: ${charHeight};
                     left: ${this.ansiControl.colNum * charWidth}px;
                     top: ${this.ansiControl.rowNum * charHeight}px;`
-        },
-        /**
-         *  ANSI码中的数值都是从1开始
-         *
-         * @param str   ANSI字符串
-         * @private
-         */
-        _pushANSI: function (str) {
-            this.term.onOutput(str)
         }
     }
 }
