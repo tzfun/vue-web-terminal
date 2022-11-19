@@ -140,11 +140,11 @@ export default {
       }
       this.$parent._triggerClick(key)
     },
-    _scrollToBottom() {
+    _scrollToBottom(animate = true) {
       this.$nextTick(() => {
         let box = this.$refs.window
         if (box != null) {
-          box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+          box.scrollTo({top: box.scrollHeight, behavior: animate ? 'smooth' : 'auto'})
         }
       })
     },

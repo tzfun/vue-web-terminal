@@ -235,9 +235,10 @@ export default class Term {
                         let value = cs.substring(cs.indexOf("?") < 0 ? 2 : 3, cs.length - 1)
                         value = value.length === 0 ? 0 : parseInt(value)
 
+                        let col = this.data.colNum
                         if (value === 0) {  //  右侧所有内容
-                            // this.fillChar(' '.repeat(Math.max(this.vue.window.cols - this.data.colNum, 0)))
-                            this.data.lines[this.data.rowNum].splice(this.data.colNum)
+                            this.fillChar(' '.repeat(Math.max(this.vue.window.cols - this.data.colNum, 0)))
+                            // this.data.lines[this.data.rowNum].splice(this.data.colNum)
                         } else if (value === 1) {   //  擦除左侧所有内容
                             let num = this.data.colNum
                             this.data.colNum = 0
@@ -246,6 +247,7 @@ export default class Term {
                             this.data.colNum = 0
                             this.fillChar(' '.repeat(this.vue.window.cols))
                         }
+                        this.data.colNum = col
                     }
                     //  插入n行
                     else if (controlType === 'L') {
@@ -724,6 +726,8 @@ export default class Term {
         this.data.backup.lines = []
         this.data.backup.rowNum = 0
         this.data.backup.colNum = 0
+        this.vue._setScrollRange(null)
+        this.vue._scrollToBottom(false)
     }
 
     newLine() {

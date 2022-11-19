@@ -140,12 +140,12 @@ export default {
                 box.style.overflow = 'overlay'
             }
         },
-        _scrollToBottom() {
+        _scrollToBottom(animate = true) {
             let box = this.$refs.frame.$refs.window
             if (this.scrollRange && box.scrollHeight > this.scrollRange[1]) {
                 return
             }
-            this.$refs.frame._scrollToBottom()
+            this.$refs.frame._scrollToBottom(animate)
         },
         _scrollOffset(val) {
             let box = this.$refs.frame.$refs.window

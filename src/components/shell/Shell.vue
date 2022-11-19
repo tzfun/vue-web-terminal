@@ -22,7 +22,6 @@
         <span v-if="showCursor"
               class="t-cursor disable-select"
               :style="_getCursorStyle()">&nbsp;</span>
-
         <input type="text" autofocus="autofocus" v-model="command"
                class="t-cmd-input disable-select shell-input"
                ref="cmdInput"
