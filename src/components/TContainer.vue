@@ -240,6 +240,7 @@ export default {
         }
       }
       this.fullscreen = !this.fullscreen
+      this._scrollToBottom(false)
     },
     _initDrag() {
       if (!this._draggable()) {

@@ -111,14 +111,14 @@ export default {
             })
         },
         _onFullscreenSwitch() {
-            this._calculateWindowInfo()
-            this.$emit('onWindowChange', this.window)
+            this._calculateWindowInfo().then(data => {
+                this.$emit('onResize', data)
+            })
         },
         _triggerClick(key) {
             this.$emit('onClick', key, this.name)
         },
         _focus() {
-
             this.$nextTick(() => {
                 //  没有文本被选中 且 没有限制滚动
                 if (_getSelection().isCollapsed && this.scrollRange == null) {

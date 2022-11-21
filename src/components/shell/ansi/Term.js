@@ -323,8 +323,13 @@ export default class Term {
                     }
                     //  设置终端识别码
                     else if (controlType === 'c') {
-                        let value = cs.substring(2, cs.length - 1)
-                        value = value.length === 0 ? 0 : parseInt(value)
+                        let report
+                        if (arr[i + 2] === '>') {
+                            report = ANSI_CSI + '0c'
+                        } else {
+                            report = ANSI_CSI + '?1:2c'
+                        }
+                        this.vue.$emit('onInput', report, null, this.name)
 
                         //  格式：其中Val为0、1或不填
                         //  CSI > Val c
@@ -422,13 +427,16 @@ export default class Term {
                         }
                         this.data.styleFlag = []
                         for (let ps of value.split(";")) {
-                            this.data.styleFlag.push(parseInt(ps))
+                            let m = parseInt(ps)
+                            if (m === 0) {
+                                this.data.attachStyle = ''
+                                this.data.styleFlag = []
+                            } else {
+                                this.data.styleFlag.push(m)
+                            }
                         }
 
-                        if (this.data.styleFlag.includes(0)) {
-                            this.data.attachStyle = ''
-                            this.data.styleFlag = []
-                        } else if (this.data.styleFlag.length === 3) {
+                        if (this.data.styleFlag.length === 3) {
                             //  256前景色
                             if (this.data.styleFlag[0] === 38 && this.data.styleFlag[1] === 5) {
                                 this.data.attachStyle += `color:${ansi256colors['c' + this.data.styleFlag[2]]};`
@@ -446,36 +454,36 @@ export default class Term {
                     //  报告设备状态
                     else if (controlType === 'n') {
                         let value = cs.substring(2, cs.length - 1)
-                        console.debug("Report", value)
+                        console.debug("Report", value, this.data.rowNum + 1, this.data.colNum + 1)
 
-                        // if (value.indexOf("?") < 0) {
-                        //     value = parseInt(value)
-                        //     if (value === 5) {  //  报告OK状态
-                        //         this.vue.$emit('onInput', ANSI_CSI + '0n', null, this.name)
-                        //     } else if (value === 6) {   //  报告光标位置
-                        //         let row = this.data.rowNum + 1
-                        //         let col = this.data.colNum + 1
-                        //         this.vue.$emit('onInput', `${ANSI_CSI}${row};${col}R`, null, this.name)
-                        //     }
-                        // } else {
-                        //     value = parseInt(cs.substring(3, cs.length - 1))
-                        //     if (value === 6) {  //  报告光标位置
-                        //         let row = this.data.rowNum + 1
-                        //         let col = this.data.colNum + 1
-                        //         this.vue.$emit('onInput', `${ANSI_CSI}?${row};${col}R`, null, this.name)
-                        //     } else if (value === 15) {  //  报告打印是否已就绪
-                        //         //  ready CSI ?10 n
-                        //         //  not ready CSI ?11 n
-                        //         this.vue.$emit('onInput', `${ANSI_CSI}?10n`, null, this.name)
-                        //     } else if (value === 25) {  //  报告UDK状态
-                        //         //  unlocked: CSI?20n
-                        //         //  locked: CSI?21n
-                        //     } else if (value === 26) {  //  报告 keyboard status
-                        //         //  North American: CSI?27;1;0;0;n
-                        //         //  Locator available: CSI?53n
-                        //         //  No Locator: CSI?50n
-                        //     }
-                        // }
+                        if (value.indexOf("?") < 0) {
+                            value = parseInt(value)
+                            if (value === 5) {  //  报告OK状态
+                                this.vue.$emit('onInput', ANSI_CSI + '0n', null, this.name)
+                            } else if (value === 6) {   //  报告光标位置
+                                let row = this.data.rowNum + 1
+                                let col = this.data.colNum + 1
+                                this.vue.$emit('onInput', `${ANSI_CSI}${row};${col}R`, null, this.name)
+                            }
+                        } else {
+                            value = parseInt(cs.substring(3, cs.length - 1))
+                            if (value === 6) {  //  报告光标位置
+                                let row = this.data.rowNum + 1
+                                let col = this.data.colNum + 1
+                                this.vue.$emit('onInput', `${ANSI_CSI}?${row};${col}R`, null, this.name)
+                            } else if (value === 15) {  //  报告打印是否已就绪
+                                //  ready CSI ?10 n
+                                //  not ready CSI ?11 n
+                                this.vue.$emit('onInput', `${ANSI_CSI}?10n`, null, this.name)
+                            } else if (value === 25) {  //  报告UDK状态
+                                //  unlocked: CSI?20n
+                                //  locked: CSI?21n
+                            } else if (value === 26) {  //  报告 keyboard status
+                                //  North American: CSI?27;1;0;0;n
+                                //  Locator available: CSI?53n
+                                //  No Locator: CSI?50n
+                            }
+                        }
                     }
                     //  terminal重置
                     else if (controlType === 'p') {
@@ -655,7 +663,7 @@ export default class Term {
         this.vue._scrollToBottom()
     }
 
-    checkRowCol() {
+    checkRow() {
         if (this.data.lines.length === 0) {
             this.data.lines.push([])
         }
@@ -664,6 +672,10 @@ export default class Term {
         while (fillRow-- >= 0) {
             this.data.lines.push([])
         }
+    }
+
+    checkRowCol() {
+        this.checkRow()
 
         let fillCol = this.data.colNum - this.data.lines[this.data.rowNum].length
         if (fillCol > 0) {
@@ -695,6 +707,10 @@ export default class Term {
                     charStr = `<span class="shell-char" style="width:${cWidth}px;${this.data.attachStyle}">${c}</span>`
                 }
                 let line = this.data.lines[this.data.rowNum]
+                if(line == null) {
+                    this.checkRow()
+                    line = this.data.lines[this.data.rowNum]
+                }
                 if (this.data.colNum >= line.length) {
                     line.push(charStr)
                 } else {
@@ -734,6 +750,6 @@ export default class Term {
         this.data.lines.push([])
         this.data.rowNum++
         this.data.colNum = 0
-        this.vue._scrollToBottom()
+        this.vue._scrollToBottom(false)
     }
 }
