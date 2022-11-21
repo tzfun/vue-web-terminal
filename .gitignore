@@ -38,3 +38,4 @@ out/
 /logs/
 /node_modules/
 /lib/
+/.jvmm/

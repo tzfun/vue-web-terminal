@@ -32,7 +32,7 @@ public class ShellTest {
 
             //jsch.setKnownHosts("/home/foo/.ssh/known_hosts");
 
-            Session session = jsch.getSession("beifengtz", "192.168.0.148", 22);
+            Session session = jsch.getSession("beifengtz", "127.0.0.1", 22);
 
             session.setPassword("1246886075");
 
