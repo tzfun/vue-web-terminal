@@ -6,8 +6,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.1',
-                vue3: '3.1.1'
+                vue2: '2.1.2',
+                vue3: '3.1.2'
             },
             name: 'my-terminal',
             title: '👌vue-web-terminal',
@@ -102,6 +102,12 @@ export default {
                     "group": "demo",
                     "usage": 'ask',
                     "description": "用户输入，模拟执行登录"
+                },
+                {
+                    "key": "edit",
+                    "group": "demo",
+                    "usage": 'edit',
+                    "description": "打开文本编辑器"
                 }
             ],
             dragConf: {
@@ -311,6 +317,26 @@ export default {
                 } else {
                     success()
                 }
+            } else if (key === 'edit') {
+                Terminal.$api.textEditorOpen(this.name, {
+                    content: 'Please edit this text file.',
+                    onClose: value => {
+                        success([
+                            {
+                                class: 'success',
+                                content: "Edit saved successfully!"
+                            },
+                            {
+                                type: 'code',
+                                content: value
+                            }
+                        ])
+                        setTimeout(() => {
+                            this.nextGuide()
+                        }, 100)
+                    }
+                })
+                return;
             } else {
                 failed("Unknown command")
             }
@@ -349,10 +375,10 @@ export default {
             success(asker)
 
             asker.ask({
-                question: '为了帮助你对插件功能有个大概的了解，你是否需要引导？(Y/n)：',
+                question: '为了帮助你对插件功能有个大概的了解，你是否需要引导？(y/n)：',
                 autoReview: true,
                 callback: value => {
-                    if (value === 'Y') {
+                    if (value === 'y') {
                         this.guide.step = 1
                         this.nextGuide()
                     }
@@ -388,9 +414,12 @@ export default {
                 this.guide.command = 'flash'
                 message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Falsh使用，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 8) {
+                this.guide.command = 'edit'
+                message = `👉 [${this.guide.step}] 如果你想编辑文本文件，插件也提供了简单的文本编辑器，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+            } else if (this.guide.step === 9) {
                 this.guide.command = 'ask'
                 message = `👉 [${this.guide.step}] 如果你想获取到用户输入可以使用插件Ask功能，请输入<span class="t-cmd-key">${this.guide.command}</span>`
-            } else if (this.guide.step === 9) {
+            } else if (this.guide.step === 10) {
                 this.guide.command = null
                 message = `🎉 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。
                         <br>🤗 更多关于插件的内容请前往 <a class='t-a' target='_blank' href="https://github.com/tzfun/vue-web-terminal">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐️支持一下吧~`

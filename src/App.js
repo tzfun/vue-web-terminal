@@ -8,11 +8,10 @@ export default {
     data() {
         return {
             showLocal: false,
-            showSsh: true,
+            showSsh: false,
             localInitCmd:null
         }
     },
-
     created() {
         let query = getQuery()
         if (query.cmd && query.cmd.trim().length > 0) {

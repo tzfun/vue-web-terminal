@@ -10,10 +10,10 @@
     </div>
     <div v-else>
       <div>
-        <h1 class="title" >Welcome to vue-web-terminal!</h1>
-        <p class="des">
-          一个轻量、功能强大、拓展性高的网页仿真命令行终端插件。</p>
+        <img :src="require('@/assert/logo.svg')" class="logo" alt="terminal-logo">
+        <h1 class="title">vue-web-terminal</h1>
         <p class="des">A lightweight, powerful and highly extensible web page emulation command line terminal plugin.</p>
+        <p class="des">一个轻量、功能强大、拓展性高的网页仿真命令行终端插件。</p>
 
         <div align="center" style="margin: 30px 0">
           <a href='https://gitee.com/tzfun/vue-web-terminal' style="margin-left: -30px;">
@@ -33,8 +33,8 @@
         </div>
       </div>
       <div class="btn-box">
-        <button v-show="!showLocal && !showSsh" @click="showLocal=true" class="btn">Local Demo</button>
-        <button v-show="!showLocal && !showSsh" @click="showSsh=true" class="btn">SSH Demo</button>
+        <button v-show="!showLocal && !showSsh" @click="showLocal=true" class="btn btn-local">Get Started →</button>
+<!--        <button v-show="!showLocal && !showSsh" @click="showSsh=true" class="btn">SSH Demo</button>-->
       </div>
     </div>
 
@@ -67,46 +67,32 @@ h1, p {
   left: 0;
   right: 0;
   height: 100px;
+  padding-bottom: 100px;
 }
 
 .btn {
   margin: 15px;
-  height: 70px;
-  line-height: 70px;
-  padding: 0;
-  font-size: 25px;
+  padding: 0.5em 1.5em;
+  font-size: 1.2em;
   border-radius: 5px;
   border: none;
   box-shadow: 1px 1px 15px rgb(0 0 0 / 20%);
+  transition: background-color .1s ease;
+  box-sizing: border-box;
   cursor: pointer;
+  font-weight: bold;
 }
 
-.btn:nth-child(1) {
-  /*background: #4cb24c;*/
+.btn-local {
   color: #ffffff;
-  background-color: #238636;
+  background-color: #3eaf7c;
   border-color: rgba(240,246,252,0.1);
   box-shadow: 0 0 transparent,0 0 transparent;
+  border-bottom: 1px solid #389d70;
 }
 
-.btn:nth-child(2) {
-  background: #21262d;
-  color: #c9d1d9;
-  border-color: rgba(240,246,252,0.1);
-  box-shadow: 0 0 transparent,0 0 transparent;
-}
-
-.btn:nth-child(1):hover {
-  /*background: #67cc67;*/
-  /*color: #ffffff;*/
-  background: #2ea043;
-  color: #ffffff;
-  border-color: rgba(240,246,252,0.1);
-}
-
-.btn:nth-child(2):hover {
-  background: #30363d;
-  border-color: #8b949e;
+.btn-local:hover {
+  background-color: #4abf8a;
 }
 
 .terminal-container {
@@ -118,23 +104,45 @@ h1, p {
   height: 100%;
 }
 
+.logo {
+  width: 300px;
+  height: 250px;
+  position: relative;
+  left: 50%;
+  right: 0;
+  margin-left: -150px;
+  margin-top: 150px;
+}
+
+.title {
+  margin-bottom: 50px;
+  color: #2c3e50;
+  font-size: 2.5em;
+}
+
+.des {
+  color: #6a8bad;
+  font-size: 22px;
+}
+
 @media screen and (max-width: 768px) {
   .btn-box {
     width: 100%;
   }
 
-  .btn {
-    width: 90%;
-    height: 35px;
-    font-size: 15px;
-    line-height: 35px;
+  .title {
+    font-size: 2em;
   }
 
   .des {
     width: 95%;
+    font-size: 1em;
   }
-  .title {
-    margin: 50px 0
+
+  .logo {
+    width: 200px;
+    height: 170px;
+    margin: 50px 0 20px -100px;
   }
 }
 
@@ -143,36 +151,28 @@ h1, p {
     width: 70%;
   }
 
-  .btn-box {
-    width: 90%;
-  }
-
-  .btn {
-    width: 300px;
-    height: 45px;
-    font-size: 20px;
-    line-height: 45px;
-  }
-
   .title {
     margin: 80px 0
   }
+
+  .logo {
+    margin-top: 50px;
+  }
 }
 
-@media screen and (min-width: 960.1px) {
+@media screen and (max-width: 1200px) and (min-width: 960.1px) {
   .des {
-    width: 1000px;
+    width: 100%;
   }
 
-  .btn-box {
-    width: 700px;
+  .logo {
+    margin-top: 80px;
   }
+}
 
-  .btn {
-    width: 300px;
-  }
-  .title {
-    margin: 100px 0
+@media screen and (min-width: 1200.1px) {
+  .logo {
+    margin-top: 150px;
   }
 }
 </style>
@@ -183,7 +183,7 @@ body, html, #app {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #b3ffff;
+  background-color: #ffffff;
   font-family: Menlo, Consolas, monospace;
   overflow: auto;
 }
