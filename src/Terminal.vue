@@ -213,10 +213,11 @@
         </div>
       </slot>
     </div>
-    <div class="fullscreen-editor" v-if="fullscreenEditor.open">
-      <slot name="fullscreenEditor" :editor="fullscreenEditor">
-        <textarea name="editor" v-model="fullscreenEditor.value" cols="30" rows="10"></textarea>
-      </slot>
+    <div class="text-editor-container" v-if="textEditor.open" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
+      <textarea name="editor" ref="textEditor" class="text-editor" v-model="textEditor.value"></textarea>
+      <div class="text-editor-floor" align="center">
+        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+      </div>
     </div>
   </div>
 </template>

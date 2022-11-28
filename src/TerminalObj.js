@@ -68,21 +68,31 @@ function TerminalObj() {
         return post(name, 'elementInfo')
     }
 
+    let textEditorOpen = function (name, options) {
+        return post(name, 'textEditorOpen', options)
+    }
+
+    let textEditorClose = function (name) {
+        return post(name, 'textEditorClose')
+    }
+
     return {
-        setOptions: setOptions,
-        getOptions: getOptions,
-        post: post,
-        register: register,
-        unregister: unregister,
-        pushMessage: pushMessage,
-        updateContext: updateContext,
-        getHistory: getHistory,
-        fullscreen: fullscreen,
-        isFullscreen: isFullscreen,
-        dragging: dragging,
-        execute: execute,
-        focus: focus,
-        elementInfo:elementInfo
+        setOptions,
+        getOptions,
+        post,
+        register,
+        unregister,
+        pushMessage,
+        updateContext,
+        getHistory,
+        fullscreen,
+        isFullscreen,
+        dragging,
+        execute,
+        focus,
+        elementInfo,
+        textEditorOpen,
+        textEditorClose
     }
 }
 
