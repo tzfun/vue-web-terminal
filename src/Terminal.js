@@ -99,9 +99,11 @@ export default {
                 autoReview: false,
                 input: ''
             },
-            fullscreenEditor: {
+            textEditor: {
                 open: false,
-                value: ''
+                value: '',
+                storedName: '',
+                onClose: null
             }
         }
     },
@@ -185,7 +187,7 @@ export default {
         },
         //  按下Tab键处理函数
         tabKeyHandler: {
-            type:Function
+            type: Function
         }
     },
     created() {
@@ -230,6 +232,14 @@ export default {
                         cn: this.byteLen.cn             //  单个中文字符宽度
                     }
                 }
+            } else if (type === 'textEditorOpen') {
+                let opt = options || {}
+                this.textEditor.value = opt.content
+                this.textEditor.open = true
+                this.textEditor.onClose = opt.onClose
+                this._focus()
+            } else if (type === 'textEditorClose') {
+                return this._textEditorClose()
             } else {
                 console.error("Unsupported event type: " + type)
             }
@@ -266,7 +276,7 @@ export default {
         this.keydownListener = event => {
             if (this.cursorConf.show) {
                 if (event.key.toLowerCase() === 'tab') {
-                    if(this.tabKeyHandler == null) {
+                    if (this.tabKeyHandler == null) {
                         this._fillCmd()
                     } else {
                         this.tabKeyHandler(event)
@@ -401,6 +411,8 @@ export default {
             this.$nextTick(function () {
                 if (this.ask.open) {
                     this.$refs.askInput.focus()
+                } else if (this.textEditor.open) {
+                    this.$refs.textEditor.focus()
                 } else {
                     //  没有被选中
                     if (this._getSelection().isCollapsed) {
@@ -1000,6 +1012,17 @@ export default {
             if (this.ask.callback) {
                 this.ask.callback(this.ask.input)
             }
+        },
+        _textEditorClose() {
+            this.textEditor.open = false
+            let content = this.textEditor.value
+            this.textEditor.value = ''
+            if (this.textEditor.onClose) {
+                this.textEditor.onClose(content)
+            }
+            this.textEditor.onClose = null
+            this._focus()
+            return content
         }
     }
 }

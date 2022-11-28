@@ -85,18 +85,18 @@
     background-color: #2ec971;
 }
 
-.t-window::-webkit-scrollbar {
+.t-window::-webkit-scrollbar,.text-editor::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
-.t-window::-webkit-scrollbar-button {
+.t-window::-webkit-scrollbar-button,.text-editor::-webkit-scrollbar-button {
     width: 0;
     height: 0;
     display: none;
 }
 
-.t-window::-webkit-scrollbar-thumb {
+.t-window::-webkit-scrollbar-thumb,.text-editor::-webkit-scrollbar-thumb {
     border-radius: 6px;
     border-style: dashed;
     border-color: transparent;
@@ -105,11 +105,11 @@
     background-clip: padding-box;
 }
 
-.t-window::-webkit-scrollbar-thumb:hover {
+.t-window::-webkit-scrollbar-thumb:hover,.text-editor::-webkit-scrollbar-thumb:hover {
     background: rgba(157, 165, 183, 0.7);
 }
 
-.t-window::-webkit-scrollbar-track {
+.t-window::-webkit-scrollbar-track,.text-editor::-webkit-scrollbar-track {
     border-radius: 6px;
 }
 
@@ -409,12 +409,49 @@ pre {
     height: unset !important;
 }
 
-.fullscreen-editor {
+.text-editor-container {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
+    z-index: 1;
+}
+
+.text-editor {
+    color: #fff;
+    width: calc(100% - 10px);
+    height: calc(100% - 35px);
+    background-color: #3c3c3c;
+    overflow: auto;
+    resize: none;
+    margin: 0;
+    padding: 0 5px;
+    border: none;
+    font-size: 15px;
+}
+
+.text-editor:focus-visible, .text-editor:focus {
+    outline: none;
+    outline-offset: unset;
+}
+
+.text-editor-floor {
+    background-color: rgba(0,0,0,.2);
+    position: absolute;
+    height: 35px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+
+.text-editor-floor-btn {
+    color: white;
+    background-color: rgba(0,0,0,0);
+    border: none;
+    outline: none;
+    margin-top: 10px;
+    cursor: pointer;
 }
 
 .disable-select {
