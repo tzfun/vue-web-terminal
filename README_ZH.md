@@ -2,7 +2,7 @@
 
 # vue-web-terminal
 
-<a href="https://github.com/tzfun/vue-web-terminal"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/master"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
@@ -20,6 +20,7 @@
 * 支持 ↑ ↓ 键历史命令切换
 * 支持Fullscreen全屏显示
 * 支持窗口拖拽
+* 支持多行文本编辑
 * 支持自定义命令库和命令搜索提示，Tab键快捷填充
 * 支持用户输入过滤
 * 提供方便的API方法：执行命令、推送消息、模拟拖拽、获取DOM信息、全屏、修改上下文等
@@ -140,14 +141,15 @@ terminal标签支持的属性参数表
 
 terminal标签支持的事件表
 
-| 事件名称           | 说明                                                                                                    | 回调参数                                       |
-|----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd  | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown      | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
-| onClick        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
-| initBefore     | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
-| initComplete   | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| 事件名称            | 说明                                                                                                    | 回调参数                                       |
+|-----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd         | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd   | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
+| onKeydown       | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
+| onClick         | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
+| initBefore      | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
+| initComplete    | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| tabKeyHandler   | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                                                 | `(event)`                                  |
 
 **特别说明**：execCmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
 
@@ -171,22 +173,23 @@ Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之
 | code    | { message }          | 自定义`code`类型消息          |
 | html    | { message }          | 自定义`html`类型消息          |
 | flash   | { content }          | 自定义实时回显样式              |
+| helpCmd | { item }             | 自定义命令搜索提示样式            |
 
 example:
 
 ```vue
 <terminal :name="name" @execCmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
+<template #header>
+  This is my custom header
+</template>
 
-  <template #json="data">
-    {{ data.message }}
-  </template>
+<template #json="data">
+  {{ data.message }}
+</template>
 
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
 </terminal>
 ```
 
@@ -216,16 +219,16 @@ Terminal.$api
 ```js
 //  推送一条消息
 let message = {
-    class: 'warning',
-    content: 'This is a wanning message.'
+  class: 'warning',
+  content: 'This is a wanning message.'
 }
 Terminal.$api.pushMessage('my-terminal', message)
 
 //  推送多条消息
 let messages = [
-    {content: "message 1"},
-    {content: "message 2"},
-    {content: "message 3"}
+  {content: "message 1"},
+  {content: "message 2"},
+  {content: "message 3"}
 ]
 Terminal.$api.pushMessage('my-terminal', messages)
 ```
@@ -285,8 +288,8 @@ let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 
 ```js
 Terminal.$api.dragging('my-terminal', {
-    x: 100,
-    y: 200
+  x: 100,
+  y: 200
 })
 ```
 
@@ -338,6 +341,29 @@ info数据结构如下：
 下面这张图清晰地描述了这些值的含义：
 
 ![ele-info.png](public/ele-info.png)
+
+### textEditorOpen()
+
+此API调用后将会打开文本编辑器，使用示例：
+
+```js
+Terminal.$api.textEditorOpen('my-terminal', {
+  content: 'This is the preset content',
+  onClose: value => {
+    console.log('Final content: ', value)
+  }
+})
+```
+
+content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容。
+
+### textEditorClose()
+
+此方法用于关闭当前打开的文本编辑器，调用后会触发打开时的`onClose`回调。
+
+```js
+Terminal.$api.textEditorClose('my-terminal')
+```
 
 ## 消息对象
 
@@ -437,14 +463,14 @@ import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
 Vue.use(Terminal, {
-    codemirror: {
-        tabSize: 4,
-        mode: 'text/x-java',
-        theme: "darcula",
-        lineNumbers: true,
-        line: true,
-        smartIndent: true
-    }
+  codemirror: {
+    tabSize: 4,
+    mode: 'text/x-java',
+    theme: "darcula",
+    lineNumbers: true,
+    line: true,
+    smartIndent: true
+  }
 })
 ```
 
@@ -652,7 +678,7 @@ dragConf完整配置结构如下：
 
 [在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=flash)
 
-Terminal默认的消息都是以追加的模式显示，当你只需要显示执行的过程，执行结束后这些内容不想存在于记录中的时候，实时回显是不错的选择。 
+Terminal默认的消息都是以追加的模式显示，当你只需要显示执行的过程，执行结束后这些内容不想存在于记录中的时候，实时回显是不错的选择。
 例如`gradle`或`npm`下载依赖包时，下载进度条动画展示的过程。
 
 在[Events](#Events)的`execCmd`事件回调中，`success`回调函数支持传入实时回显的处理对象。
@@ -668,12 +694,12 @@ success(flash)
 
 let count = 0
 let flashInterval = setInterval(() => {
-    flash.flush(`This is flash content: ${count}`)
+  flash.flush(`This is flash content: ${count}`)
 
-    if (++count >= 20) {
-        clearInterval(flashInterval)
-        flash.finish()
-    }
+  if (++count >= 20) {
+    clearInterval(flashInterval)
+    flash.finish()
+  }
 }, 200)
 ```
 
@@ -699,20 +725,20 @@ let asker = new Terminal.$Ask()
 success(asker)
 
 asker.ask({
-    question: 'Please input github username: ',
-    autoReview: true,
-    callback: value => {
-        console.log(value)
-        asker.ask({
-            question: 'Please input github password: ',
-            autoReview: true,
-            isPassword: true,
-            callback: () => {
-                //    do something
-                asker.finish()
-            }
-        })
-    }
+  question: 'Please input github username: ',
+  autoReview: true,
+  callback: value => {
+    console.log(value)
+    asker.ask({
+      question: 'Please input github password: ',
+      autoReview: true,
+      isPassword: true,
+      callback: () => {
+        //    do something
+        asker.finish()
+      }
+    })
+  }
 })
 ```
 

@@ -2,7 +2,7 @@
 
 # vue-web-terminal
 
-<a href="https://github.com/tzfun/vue-web-terminal"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/master"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
@@ -20,6 +20,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 * Support ↑ ↓ key history command toggle
 * Support full-screen display
 * Support window drag
+* Support for multi-line text editing
 * Support custom command library and search for help tips, use the `Tab` key to quickly fill
 * Support User inputting filter
 * Support API interface: execute command, push message, simulate drag and drop, get position, full screen, modify context, etc.
@@ -141,14 +142,15 @@ Terminal tag supports attribute parameter table.
 
 Terminal tag support event table
 
-| Event name    | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd       | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown     | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
-| onClick       | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
-| initBefore    | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
-| initComplete  | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
+| Event name      | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd         | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd   | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
+| onKeydown       | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
+| onClick         | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
+| initBefore      | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
+| initComplete    | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
+| tabKeyHandler   | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                                                                      | `(event)`                                  |
 
 **Special note**: The `success` callback parameter of `execCmd` supports multiple data types, and the execution logic of different data types will be different:
 
@@ -172,6 +174,7 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 | code      | { message }          | Custom `code` type message.                                         |
 | html      | { message }          | Custom `html` type message.                                         |
 | flash     | { content }          | Custom flash style                                                  |
+| helpCmd   | { item }             | Custom command search prompt style                                  |
 
 example:
 
@@ -342,6 +345,29 @@ The following image clearly describes what these values mean:
 
 ![ele-info.png](public/ele-info.png)
 
+### textEditorOpen()
+
+A text editor will open after this API call
+
+```js
+Terminal.$api.textEditorOpen('my-terminal', {
+    content: 'This is the preset content',
+    onClose: value => {
+        console.log('Final content: ', value)
+    }
+})
+```
+
+`content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback will be triggered, and the parameter `value` is the text content in the current editor.
+
+### textEditorClose()
+
+This method is used to close the currently opened text editor. After calling, it will trigger the `onClose` callback when it is opened.
+
+```js
+Terminal.$api.textEditorClose('my-terminal')
+```
+
 ## Message
 
 This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `execCmd` event and the `pushMessage` api.
@@ -437,14 +463,14 @@ import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
 Vue.use(Terminal, {
-    codemirror: {
-        tabSize: 4,
-        mode: 'text/x-java',
-        theme: "darcula",
-        lineNumbers: true,
-        line: true,
-        smartIndent: true
-    }
+  codemirror: {
+    tabSize: 4,
+    mode: 'text/x-java',
+    theme: "darcula",
+    lineNumbers: true,
+    line: true,
+    smartIndent: true
+  }
 })
 ```
 
@@ -490,10 +516,10 @@ When type is `html`, the content format can be customized, and content is compos
 
 ```js
 function execCmd(key, command, success) {
-    // ...
-    success({
-        type: 'html',
-        content: `
+  // ...
+  success({
+    type: 'html',
+    content: `
           <ul class="custom-content">
             <li class="t-dir">dir 1</li>
             <li class="t-dir">dir 2</li>
@@ -503,8 +529,8 @@ function execCmd(key, command, success) {
             <li class="t-file">file 3</li>
           </ul>
           `
-    })
-    // ...
+  })
+  // ...
 }
 ```
 
@@ -651,8 +677,8 @@ In addition to mouse control, you can also [call API to simulate dragging](#drag
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=flash)
 
-The default messages of Terminal are displayed in the append mode. When you only need to display the execution process, 
-and when the content does not want to exist in the record after the execution, real-time echo is a good choice. 
+The default messages of Terminal are displayed in the append mode. When you only need to display the execution process,
+and when the content does not want to exist in the record after the execution, real-time echo is a good choice.
 For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
@@ -668,12 +694,12 @@ success(flash)
 
 let count = 0
 let flashInterval = setInterval(() => {
-    flash.flush(`This is flash content: ${count}`)
+  flash.flush(`This is flash content: ${count}`)
 
-    if (++count >= 20) {
-        clearInterval(flashInterval)
-        flash.finish()
-    }
+  if (++count >= 20) {
+    clearInterval(flashInterval)
+    flash.finish()
+  }
 }, 200)
 ```
 
@@ -681,7 +707,7 @@ let flashInterval = setInterval(() => {
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=ask)
 
-When you need to ask the user, you can use this function to get the content entered by the user, 
+When you need to ask the user, you can use this function to get the content entered by the user,
 such as the scenario where the user needs to enter the username and password when logging in.
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
@@ -689,10 +715,10 @@ In the `execCmd` event callback of [Events](#Events), the `success` callback fun
 Create a new ask object through `new Terminal.$Ask()` and pass it into the success callback. The ask object provides two methods:
 
 * `ask(options)`: Initiate a user to ask for input, options is an object, and its properties are explained as follows (* indicates required):
-    * *`question`: string, The question to ask, or a prefix string that can be understood as user input
-    * *`callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
-    * `autoReview`: bool, Whether to automatically append the current display content when the user types an enter key
-    * `isPassword`: bool, Whether it is a password input
+  * *`question`: string, The question to ask, or a prefix string that can be understood as user input
+  * *`callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
+  * `autoReview`: bool, Whether to automatically append the current display content when the user types an enter key
+  * `isPassword`: bool, Whether it is a password input
 * `finish()`: End execution
 
 ```js
@@ -709,7 +735,7 @@ asker.ask({
       autoReview: true,
       isPassword: true,
       callback:() => {
-          //    do something
+        //    do something
         asker.finish()
       }
     })
