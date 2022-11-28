@@ -342,6 +342,29 @@ The following image clearly describes what these values mean:
 
 ![ele-info.png](public/ele-info.png)
 
+### textEditorOpen()
+
+A text editor will open after this API call
+
+```js
+Terminal.$api.textEditorOpen('my-terminal', {
+    content: 'This is the preset content',
+    onClose: value => {
+        console.log('Final content: ', value)
+    }
+})
+```
+
+`content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback will be triggered, and the parameter `value` is the text content in the current editor.
+
+### textEditorClose()
+
+This method is used to close the currently opened text editor. After calling, it will trigger the `onClose` callback when it is opened.
+
+```js
+Terminal.$api.textEditorClose('my-terminal')
+```
+
 ## Message
 
 This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `execCmd` event and the `pushMessage` api.
