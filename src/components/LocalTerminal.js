@@ -331,9 +331,7 @@ export default {
                                 content: value
                             }
                         ])
-                        setTimeout(() => {
-                            this.nextGuide()
-                        }, 100)
+                        this.nextGuide()
                     }
                 })
                 return;
