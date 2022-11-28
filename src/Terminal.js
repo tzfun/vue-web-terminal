@@ -1014,15 +1014,17 @@ export default {
             }
         },
         _textEditorClose() {
-            this.textEditor.open = false
-            let content = this.textEditor.value
-            this.textEditor.value = ''
-            if (this.textEditor.onClose) {
-                this.textEditor.onClose(content)
+            if (this.textEditor.open) {
+                this.textEditor.open = false
+                let content = this.textEditor.value
+                this.textEditor.value = ''
+                if (this.textEditor.onClose) {
+                    this.textEditor.onClose(content)
+                }
+                this.textEditor.onClose = null
+                this._focus()
+                return content
             }
-            this.textEditor.onClose = null
-            this._focus()
-            return content
         }
     }
 }

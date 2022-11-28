@@ -2,7 +2,7 @@
 
 # vue-web-terminal
 
-<a href="https://github.com/tzfun/vue-web-terminal"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/master"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
@@ -20,6 +20,7 @@
 * 支持 ↑ ↓ 键历史命令切换
 * 支持Fullscreen全屏显示
 * 支持窗口拖拽
+* 支持多行文本编辑
 * 支持自定义命令库和命令搜索提示，Tab键快捷填充
 * 支持用户输入过滤
 * 提供方便的API方法：执行命令、推送消息、模拟拖拽、获取DOM信息、全屏、修改上下文等
@@ -338,6 +339,29 @@ info数据结构如下：
 下面这张图清晰地描述了这些值的含义：
 
 ![ele-info.png](public/ele-info.png)
+
+### textEditorOpen()
+
+此API调用后将会打开文本编辑器，使用示例：
+
+```js
+Terminal.$api.textEditorOpen('my-terminal', {
+    content: 'This is the preset content',
+    onClose: value => {
+        console.log('Final content: ', value)
+    }
+})
+```
+
+content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容。
+
+### textEditorClose()
+
+此方法用于关闭当前打开的文本编辑器，调用后会触发打开时的`onClose`回调。
+
+```js
+Terminal.$api.textEditorClose('my-terminal')
+```
 
 ## 消息对象
 
