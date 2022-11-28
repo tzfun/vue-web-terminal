@@ -141,14 +141,15 @@ terminal标签支持的属性参数表
 
 terminal标签支持的事件表
 
-| 事件名称           | 说明                                                                                                    | 回调参数                                       |
-|----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd  | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown      | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
-| onClick        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
-| initBefore     | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
-| initComplete   | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| 事件名称            | 说明                                                                                                    | 回调参数                                       |
+|-----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd         | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd   | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
+| onKeydown       | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
+| onClick         | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
+| initBefore      | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
+| initComplete    | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| tabKeyHandler   | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                                                 | `(event)`                                  |
 
 **特别说明**：execCmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
 
@@ -172,6 +173,7 @@ Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之
 | code    | { message }          | 自定义`code`类型消息          |
 | html    | { message }          | 自定义`html`类型消息          |
 | flash   | { content }          | 自定义实时回显样式              |
+| helpCmd | { item }             | 自定义命令搜索提示样式            |
 
 example:
 

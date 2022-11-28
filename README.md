@@ -20,6 +20,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 * Support ↑ ↓ key history command toggle
 * Support full-screen display
 * Support window drag
+* Support for multi-line text editing
 * Support custom command library and search for help tips, use the `Tab` key to quickly fill
 * Support User inputting filter
 * Support API interface: execute command, push message, simulate drag and drop, get position, full screen, modify context, etc.
@@ -141,14 +142,15 @@ Terminal tag supports attribute parameter table.
 
 Terminal tag support event table
 
-| Event name    | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd       | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown     | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
-| onClick       | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
-| initBefore    | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
-| initComplete  | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
+| Event name      | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd         | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd   | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
+| onKeydown       | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
+| onClick         | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
+| initBefore      | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
+| initComplete    | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
+| tabKeyHandler   | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                                                                      | `(event)`                                  |
 
 **Special note**: The `success` callback parameter of `execCmd` supports multiple data types, and the execution logic of different data types will be different:
 
@@ -172,6 +174,7 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 | code      | { message }          | Custom `code` type message.                                         |
 | html      | { message }          | Custom `html` type message.                                         |
 | flash     | { content }          | Custom flash style                                                  |
+| helpCmd   | { item }             | Custom command search prompt style                                  |
 
 example:
 
