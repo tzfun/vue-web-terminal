@@ -694,8 +694,8 @@ let flashInterval = setInterval(() => {
 通过`new Terminal.$Ask()`创建一个新的ask对象，传入success回调中，ask对象提供两个方法：
 
 * `ask(options)`: 发起一个用户询问输入，options是一个对象，其属性解释如下（*号表示必填）：
-  * *`question`: string，询问的问题，或者可以理解为用户输入的前缀字串
-  * *`callback`: function，用户键入回车时的回调，参数值为用户输入的内容
+  * `question`: string，询问的问题，或者可以理解为用户输入的前缀字串
+  * `callback`: function，用户键入回车时的回调，参数值为用户输入的内容
   * `autoReview`: bool，用户键入回车时是否自动追加当前的显示内容
   * `isPassword`: bool，是否是密码输入
 * `finish()`: 结束执行

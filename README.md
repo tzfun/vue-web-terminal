@@ -696,8 +696,8 @@ In the `execCmd` event callback of [Events](#Events), the `success` callback fun
 Create a new ask object through `new Terminal.$Ask()` and pass it into the success callback. The ask object provides two methods:
 
 * `ask(options)`: Initiate a user to ask for input, options is an object, and its properties are explained as follows (* indicates required):
-  * *`question`: string, The question to ask, or a prefix string that can be understood as user input
-  * *`callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
+  * `question`: string, The question to ask, or a prefix string that can be understood as user input
+  * `callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
   * `autoReview`: bool, Whether to automatically append the current display content when the user types an enter key
   * `isPassword`: bool, Whether it is a password input
 * `finish()`: End execution
