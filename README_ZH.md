@@ -163,17 +163,18 @@ terminal标签支持的事件表
 
 Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之后支持。
 
-| 插槽名称    | 参数                   | 说明                     |
-|---------|----------------------|------------------------|
-| header  | /                    | 自定义header样式，仍然会保留拖拽区域  |
-| helpBox | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
-| normal  | { message }          | 自定义`normal`类型消息        |
-| json    | { message }          | 自定义`json`类型消息          |
-| table   | { message }          | 自定义`table`类型消息         |
-| code    | { message }          | 自定义`code`类型消息          |
-| html    | { message }          | 自定义`html`类型消息          |
-| flash   | { content }          | 自定义实时回显样式              |
-| helpCmd | { item }             | 自定义命令搜索提示样式            |
+| 插槽名称        | 参数                   | 说明                     |
+|-------------|----------------------|------------------------|
+| header      | /                    | 自定义header样式，仍然会保留拖拽区域  |
+| helpBox     | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
+| normal      | { message }          | 自定义`normal`类型消息        |
+| json        | { message }          | 自定义`json`类型消息          |
+| table       | { message }          | 自定义`table`类型消息         |
+| code        | { message }          | 自定义`code`类型消息          |
+| html        | { message }          | 自定义`html`类型消息          |
+| flash       | { content }          | 自定义实时回显样式              |
+| helpCmd     | { item }             | 自定义命令搜索提示样式            |
+| textEditor  | { data }             | 自定义文本编辑器样式             |
 
 example:
 
@@ -182,13 +183,21 @@ example:
   <template #header>
     This is my custom header
   </template>
-
+  
   <template #json="data">
     {{ data.message }}
   </template>
-
+  
   <template #helpBox="{showHeader, item}">
     {{ item }}
+  </template>
+
+  <template #textEditor="{data}">
+      <textarea name="editor" class="text-editor" v-model="data.value"
+                @focus="data.onFocus" @blur="data.onBlur"></textarea>
+    <div class="text-editor-floor" align="center">
+      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+    </div>
   </template>
 </terminal>
 ```
@@ -219,16 +228,16 @@ Terminal.$api
 ```js
 //  推送一条消息
 let message = {
-    class: 'warning',
-    content: 'This is a wanning message.'
+  class: 'warning',
+  content: 'This is a wanning message.'
 }
 Terminal.$api.pushMessage('my-terminal', message)
 
 //  推送多条消息
 let messages = [
-    {content: "message 1"},
-    {content: "message 2"},
-    {content: "message 3"}
+  {content: "message 1"},
+  {content: "message 2"},
+  {content: "message 3"}
 ]
 Terminal.$api.pushMessage('my-terminal', messages)
 ```
@@ -288,8 +297,8 @@ let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 
 ```js
 Terminal.$api.dragging('my-terminal', {
-    x: 100,
-    y: 200
+  x: 100,
+  y: 200
 })
 ```
 
@@ -348,10 +357,10 @@ info数据结构如下：
 
 ```js
 Terminal.$api.textEditorOpen('my-terminal', {
-    content: 'This is the preset content',
-    onClose: value => {
-        console.log('Final content: ', value)
-    }
+  content: 'This is the preset content',
+  onClose: value => {
+    console.log('Final content: ', value)
+  }
 })
 ```
 
@@ -463,14 +472,14 @@ import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
 Vue.use(Terminal, {
-    codemirror: {
-        tabSize: 4,
-        mode: 'text/x-java',
-        theme: "darcula",
-        lineNumbers: true,
-        line: true,
-        smartIndent: true
-    }
+  codemirror: {
+    tabSize: 4,
+    mode: 'text/x-java',
+    theme: "darcula",
+    lineNumbers: true,
+    line: true,
+    smartIndent: true
+  }
 })
 ```
 
@@ -678,7 +687,7 @@ dragConf完整配置结构如下：
 
 [在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=flash)
 
-Terminal默认的消息都是以追加的模式显示，当你只需要显示执行的过程，执行结束后这些内容不想存在于记录中的时候，实时回显是不错的选择。 
+Terminal默认的消息都是以追加的模式显示，当你只需要显示执行的过程，执行结束后这些内容不想存在于记录中的时候，实时回显是不错的选择。
 例如`gradle`或`npm`下载依赖包时，下载进度条动画展示的过程。
 
 在[Events](#Events)的`execCmd`事件回调中，`success`回调函数支持传入实时回显的处理对象。
@@ -694,12 +703,12 @@ success(flash)
 
 let count = 0
 let flashInterval = setInterval(() => {
-    flash.flush(`This is flash content: ${count}`)
+  flash.flush(`This is flash content: ${count}`)
 
-    if (++count >= 20) {
-        clearInterval(flashInterval)
-        flash.finish()
-    }
+  if (++count >= 20) {
+    clearInterval(flashInterval)
+    flash.finish()
+  }
 }, 200)
 ```
 
@@ -725,20 +734,20 @@ let asker = new Terminal.$Ask()
 success(asker)
 
 asker.ask({
-    question: 'Please input github username: ',
-    autoReview: true,
-    callback: value => {
-        console.log(value)
-        asker.ask({
-            question: 'Please input github password: ',
-            autoReview: true,
-            isPassword: true,
-            callback: () => {
-                //    do something
-                asker.finish()
-            }
-        })
-    }
+  question: 'Please input github username: ',
+  autoReview: true,
+  callback: value => {
+    console.log(value)
+    asker.ask({
+      question: 'Please input github password: ',
+      autoReview: true,
+      isPassword: true,
+      callback: () => {
+        //    do something
+        asker.finish()
+      }
+    })
+  }
 })
 ```
 

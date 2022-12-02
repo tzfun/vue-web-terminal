@@ -164,18 +164,18 @@ Terminal tag support event table
 
 Terminal supports the following custom slots, this feature is supported in `2.0.11` and `3.0.8` versions and later.
 
-| Slot name | Arguments            | Description                                                         |
-|-----------|----------------------|---------------------------------------------------------------------|
-| header    | /                    | Customize the header style, still retain the drag area.             |
-| helpBox   | { showHeader, item } | Custom command search result prompt box, item is the search result. |
-| normal    | { message }          | Custom `normal` type message.                                       |
-| json      | { message }          | Custom `json` type message.                                         |
-| table     | { message }          | Custom `table` type message.                                        |
-| code      | { message }          | Custom `code` type message.                                         |
-| html      | { message }          | Custom `html` type message.                                         |
-| flash     | { content }          | Custom flash style                                                  |
-| helpCmd   | { item }             | Custom command search prompt style                                  |
-
+| Slot name    | Arguments            | Description                                                         |
+|--------------|----------------------|---------------------------------------------------------------------|
+| header       | /                    | Customize the header style, still retain the drag area.             |
+| helpBox      | { showHeader, item } | Custom command search result prompt box, item is the search result. |
+| normal       | { message }          | Custom `normal` type message.                                       |
+| json         | { message }          | Custom `json` type message.                                         |
+| table        | { message }          | Custom `table` type message.                                        |
+| code         | { message }          | Custom `code` type message.                                         |
+| html         | { message }          | Custom `html` type message.                                         |
+| flash        | { content }          | Custom flash style.                                                 |
+| helpCmd      | { item }             | Custom command search prompt style.                                 |
+| textEditor   | { data }             | Custom text editor style.                                           |
 example:
 
 ```vue
@@ -183,13 +183,21 @@ example:
   <template #header>
     This is my custom header
   </template>
-
+  
   <template #json="data">
     {{ data.message }}
   </template>
-
+  
   <template #helpBox="{showHeader, item}">
     {{ item }}
+  </template>
+  
+  <template #textEditor="{data}">
+      <textarea name="editor" class="text-editor" v-model="data.value"
+                @focus="data.onFocus" @blur="data.onBlur"></textarea>
+    <div class="text-editor-floor" align="center">
+      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+    </div>
   </template>
 </terminal>
 ```
@@ -223,8 +231,8 @@ let name = 'my-terminal'
 
 // push a message
 let message = {
-    class: 'warning',
-    content: 'This is a wanning message.'
+  class: 'warning',
+  content: 'This is a wanning message.'
 }
 
 Terminal.$api.pushMessage(name, message)
@@ -291,8 +299,8 @@ When [Feature Drag](#Drag) is enabled, you can use the following method to simul
 
 ```js
 Terminal.$api.dragging('my-terminal', {
-    x: 100,
-    y: 200
+  x: 100,
+  y: 200
 })
 ```
 
@@ -351,10 +359,10 @@ A text editor will open after this API call
 
 ```js
 Terminal.$api.textEditorOpen('my-terminal', {
-    content: 'This is the preset content',
-    onClose: value => {
-        console.log('Final content: ', value)
-    }
+  content: 'This is the preset content',
+  onClose: value => {
+    console.log('Final content: ', value)
+  }
 })
 ```
 
@@ -463,14 +471,14 @@ import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
 Vue.use(Terminal, {
-    codemirror: {
-        tabSize: 4,
-        mode: 'text/x-java',
-        theme: "darcula",
-        lineNumbers: true,
-        line: true,
-        smartIndent: true
-    }
+  codemirror: {
+    tabSize: 4,
+    mode: 'text/x-java',
+    theme: "darcula",
+    lineNumbers: true,
+    line: true,
+    smartIndent: true
+  }
 })
 ```
 
@@ -516,10 +524,10 @@ When type is `html`, the content format can be customized, and content is compos
 
 ```js
 function execCmd(key, command, success) {
-    // ...
-    success({
-        type: 'html',
-        content: `
+  // ...
+  success({
+    type: 'html',
+    content: `
           <ul class="custom-content">
             <li class="t-dir">dir 1</li>
             <li class="t-dir">dir 2</li>
@@ -529,8 +537,8 @@ function execCmd(key, command, success) {
             <li class="t-file">file 3</li>
           </ul>
           `
-    })
-    // ...
+  })
+  // ...
 }
 ```
 
@@ -677,8 +685,8 @@ In addition to mouse control, you can also [call API to simulate dragging](#drag
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=flash)
 
-The default messages of Terminal are displayed in the append mode. When you only need to display the execution process, 
-and when the content does not want to exist in the record after the execution, real-time echo is a good choice. 
+The default messages of Terminal are displayed in the append mode. When you only need to display the execution process,
+and when the content does not want to exist in the record after the execution, real-time echo is a good choice.
 For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
@@ -694,12 +702,12 @@ success(flash)
 
 let count = 0
 let flashInterval = setInterval(() => {
-    flash.flush(`This is flash content: ${count}`)
+  flash.flush(`This is flash content: ${count}`)
 
-    if (++count >= 20) {
-        clearInterval(flashInterval)
-        flash.finish()
-    }
+  if (++count >= 20) {
+    clearInterval(flashInterval)
+    flash.finish()
+  }
 }, 200)
 ```
 
@@ -707,7 +715,7 @@ let flashInterval = setInterval(() => {
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=ask)
 
-When you need to ask the user, you can use this function to get the content entered by the user, 
+When you need to ask the user, you can use this function to get the content entered by the user,
 such as the scenario where the user needs to enter the username and password when logging in.
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
@@ -715,10 +723,10 @@ In the `execCmd` event callback of [Events](#Events), the `success` callback fun
 Create a new ask object through `new Terminal.$Ask()` and pass it into the success callback. The ask object provides two methods:
 
 * `ask(options)`: Initiate a user to ask for input, options is an object, and its properties are explained as follows (* indicates required):
-    * *`question`: string, The question to ask, or a prefix string that can be understood as user input
-    * *`callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
-    * `autoReview`: bool, Whether to automatically append the current display content when the user types an enter key
-    * `isPassword`: bool, Whether it is a password input
+  * *`question`: string, The question to ask, or a prefix string that can be understood as user input
+  * *`callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
+  * `autoReview`: bool, Whether to automatically append the current display content when the user types an enter key
+  * `isPassword`: bool, Whether it is a password input
 * `finish()`: End execution
 
 ```js
@@ -735,7 +743,7 @@ asker.ask({
       autoReview: true,
       isPassword: true,
       callback:() => {
-          //    do something
+        //    do something
         asker.finish()
       }
     })
