@@ -425,7 +425,7 @@ The code type message can display code and multi-line text more friendly, the ty
 
 `code` type messages support `highlight.js` highlighting.
 
-First you need to configure **Highlight.js**, install it at the main.js entry, see [https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/ package/highlight.js)
+First you need to configure **Highlight.js**, install it at the main.js entry, see [https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
 
 ```js
 import Terminal from 'vue-web-terminal'

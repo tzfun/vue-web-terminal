@@ -1,4 +1,6 @@
 const instance = new HistoryStore()
+//  每个terminal实例最多保存100条记录
+const MAX_STORE_SIZE = 100
 
 function HistoryStore() {
     const storageKey = 'terminal'
@@ -14,13 +16,14 @@ function HistoryStore() {
         if (data.cmdLog == null) {
             data.cmdLog = []
         }
-        if (data.cmdLog.length > 0 && data.cmdLog[data.cmdLog.length - 1] === cmd) {
-            return
+        if (data.cmdLog.length === 0 || data.cmdLog[data.cmdLog.length - 1] !== cmd) {
+            data.cmdLog.push(cmd)
+
+            if (data.cmdLog.length > MAX_STORE_SIZE) {
+                data.cmdLog.splice(0, data.cmdLog.length - MAX_STORE_SIZE)
+            }
         }
-        data.cmdLog.push(cmd)
-        if (data.cmdLog.length > 1000) {
-            data.cmdLog.splice(0, data.cmdLog.length - 1000)
-        }
+
         data.cmdIdx = data.cmdLog.length
         store()
     }
