@@ -200,11 +200,6 @@ export default {
         TerminalObj.register(this.name, (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
-            } else if (type === 'updateContext') {
-                this.$emit("update:context", options)
-                this.$nextTick(() => {
-                    this.inputBoxParam.promptWidth = this.$refs.terminalInputPrompt.getBoundingClientRect().width
-                })
             } else if (type === 'fullscreen') {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
@@ -346,6 +341,13 @@ export default {
     watch: {
         terminalLog() {
             this._jumpToBottom()
+        },
+        context: {
+            handler() {
+                this.$nextTick(() => {
+                    this.inputBoxParam.promptWidth = this.$refs.terminalInputPrompt.getBoundingClientRect().width
+                })
+            }
         }
     },
     methods: {
