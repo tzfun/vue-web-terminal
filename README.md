@@ -164,33 +164,41 @@ Terminal tag support event table
 
 Terminal supports the following custom slots, this feature is supported in `2.0.11` and `3.0.8` versions and later.
 
-| Slot name | Arguments            | Description                                                         |
-|-----------|----------------------|---------------------------------------------------------------------|
-| header    | /                    | Customize the header style, still retain the drag area.             |
-| helpBox   | { showHeader, item } | Custom command search result prompt box, item is the search result. |
-| normal    | { message }          | Custom `normal` type message.                                       |
-| json      | { message }          | Custom `json` type message.                                         |
-| table     | { message }          | Custom `table` type message.                                        |
-| code      | { message }          | Custom `code` type message.                                         |
-| html      | { message }          | Custom `html` type message.                                         |
-| flash     | { content }          | Custom flash style                                                  |
-| helpCmd   | { item }             | Custom command search prompt style                                  |
-
+| Slot name    | Arguments            | Description                                                         |
+|--------------|----------------------|---------------------------------------------------------------------|
+| header       | /                    | Customize the header style, still retain the drag area.             |
+| helpBox      | { showHeader, item } | Custom command search result prompt box, item is the search result. |
+| normal       | { message }          | Custom `normal` type message.                                       |
+| json         | { message }          | Custom `json` type message.                                         |
+| table        | { message }          | Custom `table` type message.                                        |
+| code         | { message }          | Custom `code` type message.                                         |
+| html         | { message }          | Custom `html` type message.                                         |
+| flash        | { content }          | Custom flash style.                                                 |
+| helpCmd      | { item }             | Custom command search prompt style.                                 |
+| textEditor   | { data }             | Custom text editor style.                                           |
 example:
 
 ```vue
 <terminal :name="name" @execCmd="onExecCmd">
-<template #header>
-  This is my custom header
-</template>
-
-<template #json="data">
-  {{ data.message }}
-</template>
-
-<template #helpBox="{showHeader, item}">
-  {{ item }}
-</template>
+  <template #header>
+    This is my custom header
+  </template>
+  
+  <template #json="data">
+    {{ data.message }}
+  </template>
+  
+  <template #helpBox="{showHeader, item}">
+    {{ item }}
+  </template>
+  
+  <template #textEditor="{data}">
+      <textarea name="editor" class="text-editor" v-model="data.value"
+                @focus="data.onFocus" @blur="data.onBlur"></textarea>
+    <div class="text-editor-floor" align="center">
+      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+    </div>
+  </template>
 </terminal>
 ```
 

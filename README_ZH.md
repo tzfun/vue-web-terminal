@@ -163,33 +163,42 @@ terminal标签支持的事件表
 
 Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之后支持。
 
-| 插槽名称    | 参数                   | 说明                     |
-|---------|----------------------|------------------------|
-| header  | /                    | 自定义header样式，仍然会保留拖拽区域  |
-| helpBox | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
-| normal  | { message }          | 自定义`normal`类型消息        |
-| json    | { message }          | 自定义`json`类型消息          |
-| table   | { message }          | 自定义`table`类型消息         |
-| code    | { message }          | 自定义`code`类型消息          |
-| html    | { message }          | 自定义`html`类型消息          |
-| flash   | { content }          | 自定义实时回显样式              |
-| helpCmd | { item }             | 自定义命令搜索提示样式            |
+| 插槽名称        | 参数                   | 说明                     |
+|-------------|----------------------|------------------------|
+| header      | /                    | 自定义header样式，仍然会保留拖拽区域  |
+| helpBox     | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
+| normal      | { message }          | 自定义`normal`类型消息        |
+| json        | { message }          | 自定义`json`类型消息          |
+| table       | { message }          | 自定义`table`类型消息         |
+| code        | { message }          | 自定义`code`类型消息          |
+| html        | { message }          | 自定义`html`类型消息          |
+| flash       | { content }          | 自定义实时回显样式              |
+| helpCmd     | { item }             | 自定义命令搜索提示样式            |
+| textEditor  | { data }             | 自定义文本编辑器样式             |
 
 example:
 
 ```vue
 <terminal :name="name" @execCmd="onExecCmd">
-<template #header>
-  This is my custom header
-</template>
+  <template #header>
+    This is my custom header
+  </template>
+  
+  <template #json="data">
+    {{ data.message }}
+  </template>
+  
+  <template #helpBox="{showHeader, item}">
+    {{ item }}
+  </template>
 
-<template #json="data">
-  {{ data.message }}
-</template>
-
-<template #helpBox="{showHeader, item}">
-  {{ item }}
-</template>
+  <template #textEditor="{data}">
+      <textarea name="editor" class="text-editor" v-model="data.value"
+                @focus="data.onFocus" @blur="data.onBlur"></textarea>
+    <div class="text-editor-floor" align="center">
+      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+    </div>
+  </template>
 </terminal>
 ```
 
