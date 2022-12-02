@@ -23,7 +23,7 @@
 * 支持多行文本编辑
 * 支持自定义命令库和命令搜索提示，Tab键快捷填充
 * 支持用户输入过滤
-* 提供方便的API方法：执行命令、推送消息、模拟拖拽、获取DOM信息、全屏、修改上下文等
+* 提供方便的API方法：执行命令、推送消息、模拟拖拽、获取DOM信息、全屏等
 * 提供多个Slots插槽支持自定义样式
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
@@ -117,7 +117,7 @@ terminal标签支持的属性参数表
 | 参数                        | 说明                                                           | 类型       | 默认值                                              |
 |---------------------------|--------------------------------------------------------------|----------|--------------------------------------------------|
 | name                      | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                      | string   | terminal                                         |
-| context                   | 初始化上下文文本                                                     | string   | /vue-web-terminal                                |
+| context                   | 上下文内容                                                        | string   | /vue-web-terminal                                |
 | title                     | header中显示的标题                                                 | string   | vue-web-terminal                                 |
 | show-header               | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                               | boolean  | true                                             |
 | init-log                  | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示          | array    | 略                                                |
@@ -163,18 +163,18 @@ terminal标签支持的事件表
 
 Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之后支持。
 
-| 插槽名称        | 参数                   | 说明                     |
-|-------------|----------------------|------------------------|
-| header      | /                    | 自定义header样式，仍然会保留拖拽区域  |
-| helpBox     | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果 |
-| normal      | { message }          | 自定义`normal`类型消息        |
-| json        | { message }          | 自定义`json`类型消息          |
-| table       | { message }          | 自定义`table`类型消息         |
-| code        | { message }          | 自定义`code`类型消息          |
-| html        | { message }          | 自定义`html`类型消息          |
-| flash       | { content }          | 自定义实时回显样式              |
-| helpCmd     | { item }             | 自定义命令搜索提示样式            |
-| textEditor  | { data }             | 自定义文本编辑器样式             |
+| 插槽名称        | 参数                   | 说明                                         |
+|-------------|----------------------|--------------------------------------------|
+| header      | /                    | 自定义header样式，仍然会保留拖拽区域                      |
+| helpBox     | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果                     |
+| normal      | { message }          | 自定义`normal`类型消息                            |
+| json        | { message }          | 自定义`json`类型消息                              |
+| table       | { message }          | 自定义`table`类型消息                             |
+| code        | { message }          | 自定义`code`类型消息                              |
+| html        | { message }          | 自定义`html`类型消息                              |
+| flash       | { content }          | 自定义实时回显样式                                  |
+| helpCmd     | { item }             | 自定义命令搜索提示样式                                |
+| textEditor  | { data }             | 自定义文本编辑器样式，更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器)  |
 
 example:
 
@@ -218,6 +218,7 @@ Terminal.$api
 > 已移除api
 >
 > * getPosition: `2.0.14`和`3.0.13`版本之后移除，请使用`elementInfo()`
+> * updateContext: `2.1.3`和`3.1.3`版本之后移除，直接修改绑定的 context 变量即可修改上下文
 
 ### pushMessage()
 
@@ -240,38 +241,6 @@ let messages = [
   {content: "message 3"}
 ]
 Terminal.$api.pushMessage('my-terminal', messages)
-```
-
-### updateContext()
-
-[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=context%20%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E)
-
-比如当前输入行`$ /vue-web-terminal/beifengtz > `的 */vue-web-terminal/beifengtz* 就是上下文，上下文文本可以由开发者自由设置
-，但是需使用`.sync`绑定一个变量
-
-```vue
-
-<template>
-  <div id="app">
-    <terminal name="my-terminal" :context.sync="context"></terminal>
-  </div>
-</template>
-
-<script>
-import Terminal from "vue-web-terminal"
-
-export default {
-  name: 'App',
-  data() {
-    return {
-      context: '/hello'
-    }
-  },
-  mounted() {
-    Terminal.$api.updateContext("my-terminal", '/home/beifengtz')
-  }
-}
-</script>
 ```
 
 ### fullscreen()
@@ -365,6 +334,8 @@ Terminal.$api.textEditorOpen('my-terminal', {
 ```
 
 content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容。
+
+更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器)
 
 ### textEditorClose()
 
@@ -749,6 +720,94 @@ asker.ask({
     })
   }
 })
+```
+
+### 文本编辑器
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=edit)
+
+#### 使用API
+当要对多行文本编辑时可以使用API：`textEditorOpen()`、`textEditorClose()`，具体介绍详情请见[API](#Api)部分，下面是一个简单的示例：
+
+```js
+Terminal.$api.textEditorOpen(this.name, {
+  content: 'Please edit this file',
+  onClose: (value) => {
+    console.log("用户编辑完成，文本结果：", value)
+  }
+})
+```
+
+#### Slot自定义样式
+
+如果你对默认样式不太喜欢，可以使用Slot自定义编辑器的样式（比如改成 Codemirror或者VS Code ?），参数为data，其中data有三个属性是你需要关心的：
+
+* `value`：编辑的文本内容，你需要在你实现的编辑器中用`v-model`绑定它
+* `onFoucs`：获取焦点事件，你需要在你实现的编辑器中绑定`@focus`事件
+* `onBlur`：失去焦点事件，你需要在你实现的编辑器中绑定`@blur`事件
+
+**自定义快捷键**
+
+插件提供了一个`onKeydown`事件，此事件是你控制**活跃状态**下Terminal快捷键最好的方法，这里以文本编辑器为例，设定用户按快捷键`Ctrl + S`就表示完成编辑并保存
+
+```vue
+<template>
+  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
+    <template #textEditor="{ data }">
+      <textarea name="editor" 
+                class="text-editor" 
+                v-model="data.value"
+                @focus="data.onFocus" 
+                @blur="data.onBlur"></textarea>
+      
+      <div class="text-editor-floor" align="center">
+        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+      </div>
+      
+    </template>
+  </terminal>
+</template>
+
+<script>
+import Terminal from "vue-web-terminal";
+
+export default {
+  name: "TerminalOldDemo",
+  components: {Terminal},
+  data() {
+    return {
+      name: "my-terminal",
+      enableTextEditor: false
+    }
+  },
+  method: {
+    onExecCmd(key, command, success, failed) {
+      if (key === 'edit') {
+        Terminal.$api.textEditorOpen(this.name, {
+          content: 'Please edit this file',
+          onClose: (value) => {
+            this.enableTextEditor = false
+            success({
+              type: "code",
+              content: value
+            })
+          }
+        })
+        this.enableTextEditor = true
+      }
+    },
+    onKeydown(event) {
+      if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
+        this._textEditorClose()
+        event.preventDefault()
+      }
+    },
+    _textEditorClose() {
+      Terminal.$api.textEditorClose(this.name)
+    }
+  }
+}
+</script>
 ```
 
 # 关于作者
