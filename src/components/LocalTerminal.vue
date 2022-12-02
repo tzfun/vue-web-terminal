@@ -7,7 +7,7 @@
       @onClick="onClick"
       @onKeydown="onKeydown"
       :inputFilter="inputFilter"
-      :context.sync="context"
+      :context="context"
       :commandStore="cmdStore"
       :warnLogCountLimit="200"
       :dragConf="dragConf"
@@ -15,10 +15,26 @@
       @initBefore="initBefore"
       @initComplete="initComplete"
       style="position: fixed">
+    <template #textEditor="{data}">
+      <codemirror ref="customTextEditor" class="my-text-editor" v-model="data.value"
+                  :options="codemirrorOptions"
+                  @focus="data.onFocus"
+                  @blur="data.onBlur"/>
+      <div class="text-editor-floor" align="center">
+        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+      </div>
+    </template>
   </terminal>
 </template>
 
 <script>
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/darcula.css'
+import 'codemirror/theme/vibrant-ink.css'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/vue/vue.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/addon/edit/closebrackets.js'
 import LocalTerminalJs from "@/components/LocalTerminal.js";
 export default LocalTerminalJs
 </script>
@@ -85,5 +101,12 @@ export default LocalTerminalJs
   border: 2px solid rgba(240, 236, 236, 0.3);
   border-left-color: #a4eac8;
   border-radius: 50%;
+}
+.my-text-editor {
+  height: calc(100% - 35px);
+}
+
+.my-text-editor .CodeMirror {
+  height: 100% !important;
 }
 </style>

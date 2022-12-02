@@ -3,16 +3,12 @@ import App from './App.vue'
 import Terminal from 'vue-web-terminal'
 
 import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
 Vue.use(Terminal, {
     codemirror: {
         tabSize: 4,
-        mode: 'text/x-java',
+        mode: 'javascript',
         theme: "darcula",
         lineNumbers: true,
         line: true,

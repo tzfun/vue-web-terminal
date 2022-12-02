@@ -1,4 +1,5 @@
 import Terminal from "vue-web-terminal"
+import {exampleCode} from "@/demo/Demo";
 
 export default {
     name: 'LocalTerminal',
@@ -6,8 +7,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.2',
-                vue3: '3.1.2'
+                vue2: '2.1.3',
+                vue3: '3.1.3'
             },
             name: 'my-terminal',
             title: '👌vue-web-terminal',
@@ -118,6 +119,17 @@ export default {
             guide: {
                 step: 0,
                 command: null
+            },
+            enableTextEditor: false,
+            codemirrorOptions: {
+                tabSize: 4,
+                mode: 'javascript',
+                theme: "vibrant-ink",
+                lineNumbers: true,
+                line: true,
+                smartIndent: true,
+                collapseIdentical: false,
+                scrollbarStyle: "null"
             }
         }
     },
@@ -215,7 +227,7 @@ export default {
                     }
                 })
             } else if (key === 'context') {
-                Terminal.$api.updateContext(this.name, command.split(" ")[1])
+                this.context = command.split(" ")[1]
                 success({
                     type: 'normal',
                     class: 'success',
@@ -299,7 +311,9 @@ export default {
                                 isPassword: true,
                                 callback: () => {
                                     asker.finish()
-                                    this.nextGuide()
+                                    setTimeout(() => {
+                                        this.nextGuide()
+                                    }, 200)
                                 }
                             })
                         }
@@ -319,8 +333,9 @@ export default {
                 }
             } else if (key === 'edit') {
                 Terminal.$api.textEditorOpen(this.name, {
-                    content: 'Please edit this text file.',
+                    content: exampleCode,
                     onClose: value => {
+                        this.enableTextEditor = false
                         success([
                             {
                                 class: 'success',
@@ -333,6 +348,11 @@ export default {
                         ])
                         this.nextGuide()
                     }
+                })
+                this.enableTextEditor = true
+                this.$nextTick(() => {
+                    console.log(this.$refs.customTextEditor.codemirror)
+                    this.$refs.customTextEditor.codemirror.focus()
                 })
                 return;
             } else {
@@ -351,8 +371,11 @@ export default {
                 })
             }
         },
-        onKeydown() {
-            // console.log(event)
+        onKeydown(event) {
+            if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
+                this._textEditorClose()
+                event.preventDefault()
+            }
         },
         inputFilter(data, value) {
             // return value.replace(/[\u4e00-\u9fa5]/g, "")
@@ -498,6 +521,9 @@ export default {
                     }
                 }, Math.random() * 20)
             })
+        },
+        _textEditorClose() {
+            Terminal.$api.textEditorClose(this.name)
         }
     }
 }
