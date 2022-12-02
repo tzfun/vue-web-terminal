@@ -28,7 +28,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
 
-> One sentence description:
+> Short description:
 >
 > It does not have the ability to execute a specific command. This ability needs to be implemented by the developer. What it is responsible for is to get the command to be executed from the user in the form of an interface, and then hand it over to the developer to implement and execute. After that, hand it over to show it to the user
 
@@ -133,10 +133,10 @@ Terminal tag supports attribute parameter table.
 
 > Below are the removed properties
 >
-> * show-log-time: **Removed after `2.0.14` and `3.0.13` versions**
-> * warn-log-byte-limit: **Removed after `2.1.0` and `3.1.0`**
-> * warn-log-limit-enable: **Removed after `2.1.1` and `3.1.1`**
-> * init-log-delay: **Removed after `2.1.1` and `3.1.1` versions**
+> * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
+> * ~~**warn-log-byte-limit**~~: Removed after `2.1.0` and `3.1.0`.
+> * ~~**warn-log-limit-enable**~~: Removed after `2.1.1` and `3.1.1`.
+> * ~~**init-log-delay**~~: Removed after `2.1.1` and `3.1.1` versions.
 
 ## Events
 
@@ -176,6 +176,7 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 | flash        | { content }          | Custom flash style.                                                                                       |
 | helpCmd      | { item }             | Custom command search prompt style.                                                                       |
 | textEditor   | { data }             | Custom text editor style. For more information on how to use text editors, see [Text Editor](#TextEditor) |
+
 example:
 
 ```vue
@@ -217,8 +218,8 @@ Terminal.$api
 
 > Removed api
 >
-> * getPosition: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`.
-> * updateContext: removed after `2.1.3` and `3.1.3`, just modify the bound context variable directly.
+> * ~~**getPosition()**~~: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`.
+> * ~~**updateContext()**~~: removed after `2.1.3` and `3.1.3`, just modify the bound context variable directly.
 
 ### pushMessage()
 

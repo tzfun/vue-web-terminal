@@ -132,10 +132,10 @@ terminal标签支持的属性参数表
 
 > 下面是已移除属性
 >
-> * show-log-time: **`2.0.14`和`3.0.13`版本之后移除**
-> * warn-log-byte-limit: **`2.1.0`和`3.1.0`版本之后移除**
-> * warn-log-limit-enable: **`2.1.1`和`3.1.1`版本之后移除**
-> * init-log-delay: **`2.1.1`和`3.1.1`版本之后移除**
+> * ~~**show-log-time**~~: `2.0.14`和`3.0.13`版本之后移除
+> * ~~**warn-log-byte-limit**~~: `2.1.0`和`3.1.0`版本之后移除
+> * ~~**warn-log-limit-enable**~~: `2.1.1`和`3.1.1`版本之后移除
+> * ~~**init-log-delay**~~: `2.1.1`和`3.1.1`版本之后移除
 
 ## Events
 
@@ -217,8 +217,8 @@ Terminal.$api
 
 > 已移除api
 >
-> * getPosition: `2.0.14`和`3.0.13`版本之后移除，请使用`elementInfo()`
-> * updateContext: `2.1.3`和`3.1.3`版本之后移除，直接修改绑定的 context 变量即可修改上下文
+> * ~~**getPosition**~~: `2.0.14`和`3.0.13`版本之后移除，请使用`elementInfo()`
+> * ~~**updateContext**~~: `2.1.3`和`3.1.3`版本之后移除，直接修改绑定的 context 变量即可修改上下文
 
 ### pushMessage()
 
