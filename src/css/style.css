@@ -333,6 +333,7 @@
 
 pre {
     position: relative;
+    margin: 0;
 }
 
 .t-example-ul {

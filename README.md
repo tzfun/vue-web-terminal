@@ -23,7 +23,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 * Support for multi-line text editing
 * Support custom command library and search for help tips, use the `Tab` key to quickly fill
 * Support User inputting filter
-* Support API interface: execute command, push message, simulate drag and drop, get position, full screen, modify context, etc.
+* Support API interface: execute command, push message, simulate drag and drop, execute, full screen, etc.
 * Provides multiple slots to support custom styles
 
 ![vue-web-terminal](./public/vue-web-terminal.gif)
@@ -118,7 +118,7 @@ Terminal tag supports attribute parameter table.
 | Argument                | Description                                                                                                                                                                                                     | Type     | Default                                          |
 |-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
 | name                    | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                                                                                                       | string   | terminal                                         |
-| context                 | Initialize context text.                                                                                                                                                                                        | string   | /vue-web-terminal                                |
+| context                 | Context text.                                                                                                                                                                                                   | string   | /vue-web-terminal                                |
 | title                   | The title displayed in the header.                                                                                                                                                                              | string   | vue-web-terminal                                 |
 | show-header             | Whether to display the header, this switch will affect the drag and drop function.                                                                                                                              | boolean  | true                                             |
 | init-log                | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array    | /                                                |
@@ -164,18 +164,18 @@ Terminal tag support event table
 
 Terminal supports the following custom slots, this feature is supported in `2.0.11` and `3.0.8` versions and later.
 
-| Slot name    | Arguments            | Description                                                         |
-|--------------|----------------------|---------------------------------------------------------------------|
-| header       | /                    | Customize the header style, still retain the drag area.             |
-| helpBox      | { showHeader, item } | Custom command search result prompt box, item is the search result. |
-| normal       | { message }          | Custom `normal` type message.                                       |
-| json         | { message }          | Custom `json` type message.                                         |
-| table        | { message }          | Custom `table` type message.                                        |
-| code         | { message }          | Custom `code` type message.                                         |
-| html         | { message }          | Custom `html` type message.                                         |
-| flash        | { content }          | Custom flash style.                                                 |
-| helpCmd      | { item }             | Custom command search prompt style.                                 |
-| textEditor   | { data }             | Custom text editor style.                                           |
+| Slot name    | Arguments            | Description                                                                                               |
+|--------------|----------------------|-----------------------------------------------------------------------------------------------------------|
+| header       | /                    | Customize the header style, still retain the drag area.                                                   |
+| helpBox      | { showHeader, item } | Custom command search result prompt box, item is the search result.                                       |
+| normal       | { message }          | Custom `normal` type message.                                                                             |
+| json         | { message }          | Custom `json` type message.                                                                               |
+| table        | { message }          | Custom `table` type message.                                                                              |
+| code         | { message }          | Custom `code` type message.                                                                               |
+| html         | { message }          | Custom `html` type message.                                                                               |
+| flash        | { content }          | Custom flash style.                                                                                       |
+| helpCmd      | { item }             | Custom command search prompt style.                                                                       |
+| textEditor   | { data }             | Custom text editor style. For more information on how to use text editors, see [Text Editor](#TextEditor) |
 example:
 
 ```vue
@@ -217,7 +217,8 @@ Terminal.$api
 
 > Removed api
 >
-> * getPosition: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`
+> * getPosition: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`.
+> * updateContext: removed after `2.1.3` and `3.1.3`, just modify the bound context variable directly.
 
 ### pushMessage()
 
@@ -244,36 +245,6 @@ let messages = [
   {content: "message 3"}
 ]
 Terminal.$api.pushMessage(name, messages)
-```
-
-### updateContext()
-
-[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=context%20%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E)
-
-For example, */vue-web-terminal/beifengtz* in the current input line `$ /vue-web-terminal/beifengtz > ` is the context, and the context text can be freely set by the developer, but you need to use `.sync` to bind a variable.
-
-```vue
-<template>
-  <div id="app">
-    <terminal name="my-terminal" :context.sync="context"></terminal>
-  </div>
-</template>
-
-<script>
-import Terminal from "vue-web-terminal"
-
-export default {
-  name: 'App',
-  data() {
-    return {
-      context: '/hello'
-    }
-  },
-  mounted() {
-    Terminal.$api.updateContext("my-terminal", '/home/beifengtz')
-  }
-}
-</script>
 ```
 
 ### fullscreen()
@@ -355,7 +326,7 @@ The following image clearly describes what these values mean:
 
 ### textEditorOpen()
 
-A text editor will open after this API call
+A text editor will open after this API call.
 
 ```js
 Terminal.$api.textEditorOpen('my-terminal', {
@@ -367,6 +338,8 @@ Terminal.$api.textEditorOpen('my-terminal', {
 ```
 
 `content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback will be triggered, and the parameter `value` is the text content in the current editor.
+
+For more information on how to use text editors, see [Text Editor](#TextEditor).
 
 ### textEditorClose()
 
@@ -723,8 +696,8 @@ In the `execCmd` event callback of [Events](#Events), the `success` callback fun
 Create a new ask object through `new Terminal.$Ask()` and pass it into the success callback. The ask object provides two methods:
 
 * `ask(options)`: Initiate a user to ask for input, options is an object, and its properties are explained as follows (* indicates required):
-  * *`question`: string, The question to ask, or a prefix string that can be understood as user input
-  * *`callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
+  * `question`: string, The question to ask, or a prefix string that can be understood as user input
+  * `callback`: function, The callback when the user types an enter key, the parameter value is the content entered by the user
   * `autoReview`: bool, Whether to automatically append the current display content when the user types an enter key
   * `isPassword`: bool, Whether it is a password input
 * `finish()`: End execution
@@ -749,6 +722,95 @@ asker.ask({
     })
   }
 })
+```
+
+### TextEditor
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=edit)
+
+#### Use API
+
+When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. For details, please refer to the [API](#Api) section. The following is a simple example:
+
+```js
+Terminal.$api.textEditorOpen(this.name, {
+  content: 'Please edit this file',
+  onClose: (value) => {
+    console.log("User edit completed, text result:", value)
+  }
+})
+```
+
+#### Slot custom style
+
+If you don't like the default style, you can use Slot to customize the style of the editor (such as changing to Codemirror or VS Code ?), the parameter is `data`, and data has three attributes that you need to care about:
+
+* `value`: The edited text content, you need to bind it with `v-model` in the editor you implement.
+* `onFoucs`: Get the focus event, you need to bind the `@focus` event in the editor you implement.
+* `onBlur`: Lost focus event, you need to bind the `@blur` event in the editor you implement.
+
+**Custom Shortcuts**
+
+The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` to indicate Finish editing and save.
+
+```vue
+<template>
+  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
+    <template #textEditor="{ data }">
+      <textarea name="editor" 
+                class="text-editor" 
+                v-model="data.value"
+                @focus="data.onFocus" 
+                @blur="data.onBlur"></textarea>
+      
+      <div class="text-editor-floor" align="center">
+        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+      </div>
+      
+    </template>
+  </terminal>
+</template>
+
+<script>
+import Terminal from "vue-web-terminal";
+
+export default {
+  name: "TerminalOldDemo",
+  components: {Terminal},
+  data() {
+    return {
+      name: "my-terminal",
+      enableTextEditor: false
+    }
+  },
+  method: {
+    onExecCmd(key, command, success, failed) {
+      if (key === 'edit') {
+        Terminal.$api.textEditorOpen(this.name, {
+          content: 'Please edit this file',
+          onClose: (value) => {
+            this.enableTextEditor = false
+            success({
+              type: "code",
+              content: value
+            })
+          }
+        })
+        this.enableTextEditor = true
+      }
+    },
+    onKeydown(event) {
+      if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
+        this._textEditorClose()
+        event.preventDefault()
+      }
+    },
+    _textEditorClose() {
+      Terminal.$api.textEditorClose(this.name)
+    }
+  }
+}
+</script>
 ```
 
 # About the author
