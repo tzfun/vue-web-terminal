@@ -101,9 +101,15 @@ export default {
             },
             textEditor: {
                 open: false,
+                focus: false,
                 value: '',
-                storedName: '',
-                onClose: null
+                onClose: null,
+                onFocus: () => {
+                    this.textEditor.focus = true
+                },
+                onBlur: () => {
+                    this.textEditor.focus = false
+                }
             }
         }
     },
@@ -274,19 +280,20 @@ export default {
 
 
         this.keydownListener = event => {
-            if (this.cursorConf.show) {
-                if (event.key.toLowerCase() === 'tab') {
-                    if (this.tabKeyHandler == null) {
-                        this._fillCmd()
-                    } else {
-                        this.tabKeyHandler(event)
-                    }
-                    event.preventDefault()
-                } else {
-                    if (this.cursorConf.show && document.activeElement !== this.$refs.cmdInput) {
+            if (this._isActive()) {
+                if (this.cursorConf.show) {
+                    if (event.key.toLowerCase() === 'tab') {
+                        if (this.tabKeyHandler == null) {
+                            this._fillCmd()
+                        } else {
+                            this.tabKeyHandler(event)
+                        }
+                        event.preventDefault()
+                    } else if (document.activeElement !== this.$refs.cmdInput) {
                         this.$refs.cmdInput.focus()
                     }
                 }
+
                 this.$emit('onKeydown', event, this.name)
             }
         }
@@ -412,7 +419,9 @@ export default {
                 if (this.ask.open) {
                     this.$refs.askInput.focus()
                 } else if (this.textEditor.open) {
-                    this.$refs.textEditor.focus()
+                    if (this.$refs.textEditor) {
+                        this.$refs.textEditor.focus()
+                    }
                 } else {
                     //  没有被选中
                     if (this._getSelection().isCollapsed) {
@@ -1024,6 +1033,16 @@ export default {
                 this._focus()
                 return content
             }
+        },
+        /**
+         * 判断当前terminal是否活跃
+         * @returns {boolean}
+         * @private
+         */
+        _isActive() {
+            return this.cursorConf.show
+                || (this.ask.open && this.$refs.askInput === document.activeElement)
+                || (this.textEditor.open && this.textEditor.focus)
         }
     }
 }
