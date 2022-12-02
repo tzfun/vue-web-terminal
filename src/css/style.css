@@ -437,7 +437,7 @@ pre {
 }
 
 .text-editor-floor {
-    background-color: rgba(0,0,0,.2);
+    background-color: rgb(29, 28, 28);
     position: absolute;
     height: 35px;
     width: 100%;

@@ -99,11 +99,17 @@ export default {
                 autoReview: false,
                 input: ''
             },
-            textEditor: {
+            textEditorData: {
                 open: false,
+                focus: false,
                 value: '',
-                storedName: '',
-                onClose: null
+                onClose: null,
+                onFocus: () => {
+                    this.textEditorData.focus = true
+                },
+                onBlur: () => {
+                    this.textEditorData.focus = false
+                }
             }
         }
     },
@@ -265,9 +271,9 @@ export default {
                 this._focus()
             } else if (type === 'textEditorOpen') {
                 let opt = options || {}
-                this.textEditor.value = opt.content
-                this.textEditor.open = true
-                this.textEditor.onClose = opt.onClose
+                this.textEditorData.value = opt.content
+                this.textEditorData.open = true
+                this.textEditorData.onClose = opt.onClose
                 this._focus()
             } else if (type === 'textEditorClose') {
                 return this._textEditorClose()
@@ -305,16 +311,16 @@ export default {
         this.inputBoxParam.promptWidth = promptRect.width
 
         this.keydownListener = event => {
-            if (this.cursorConf.show) {
-                if (event.key.toLowerCase() === 'tab') {
-                    if (this.tabKeyHandler == null) {
-                        this._fillCmd()
-                    } else {
-                        this.tabKeyHandler(event)
-                    }
-                    event.preventDefault()
-                } else {
-                    if (this.cursorConf.show && document.activeElement !== this.$refs.cmdInput) {
+            if (this._isActive()) {
+                if (this.cursorConf.show) {
+                    if (event.key.toLowerCase() === 'tab') {
+                        if (this.tabKeyHandler == null) {
+                            this._fillCmd()
+                        } else {
+                            this.tabKeyHandler(event)
+                        }
+                        event.preventDefault()
+                    } else if (document.activeElement !== this.$refs.cmdInput) {
                         this.$refs.cmdInput.focus()
                     }
                 }
@@ -445,8 +451,10 @@ export default {
             nextTick(() => {
                 if (this.ask.open) {
                     this.askInput.focus()
-                } else if (this.textEditor.open) {
-                    this.textEditor.focus()
+                } else if (this.textEditorData.open) {
+                    if (this.textEditor) {
+                        this.textEditor.focus()
+                    }
                 } else {
                     //  没有被选中
                     if (this._getSelection().isCollapsed) {
@@ -1055,17 +1063,27 @@ export default {
             }
         },
         _textEditorClose() {
-            if (this.textEditor.open) {
-                this.textEditor.open = false
-                let content = this.textEditor.value
-                this.textEditor.value = ''
-                if (this.textEditor.onClose) {
-                    this.textEditor.onClose(content)
+            if (this.textEditorData.open) {
+                this.textEditorData.open = false
+                let content = this.textEditorData.value
+                this.textEditorData.value = ''
+                if (this.textEditorData.onClose) {
+                    this.textEditorData.onClose(content)
                 }
-                this.textEditor.onClose = null
+                this.textEditorData.onClose = null
                 this._focus()
                 return content
             }
+        },
+        /**
+         * 判断当前terminal是否活跃
+         * @returns {boolean}
+         * @private
+         */
+        _isActive() {
+            return this.cursorConf.show
+                || (this.ask.open && this.askInput === document.activeElement)
+                || (this.textEditorData.open && this.textEditorData.focus)
         }
     }
 }

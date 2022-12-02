@@ -3,7 +3,8 @@
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="terminalContainer" @click="_focus">
     <div class="terminal">
-      <div class="t-header-container" ref="terminalHeader" v-if="showHeader" :style="_draggable() ? 'cursor: move;' : ''">
+      <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
+           :style="_draggable() ? 'cursor: move;' : ''">
         <slot name="header">
           <div class="t-header">
             <h4>
@@ -57,12 +58,12 @@
       </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
            ref="terminalWindow"
-           >
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" >
+      >
+        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
-          <div v-else >
+          <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
                 <span class="t-content-normal">
@@ -103,14 +104,15 @@
                     <codemirror ref="codemirror" v-model="item.content" :options="terminalObj.getOptions().codemirror"/>
                   </div>
                   <div v-else style="background: rgb(39 50 58);">
-                    <pre style="padding: 1em;margin: 0"><code style="font-size: 15px" v-html="item.content"></code></pre>
+                    <pre style="padding: 1em;margin: 0"><code style="font-size: 15px"
+                                                              v-html="item.content"></code></pre>
                   </div>
                 </div>
               </slot>
             </div>
             <div v-if="item.type === 'table'">
               <slot name="table" :message="item">
-                <div class="t-table-container" >
+                <div class="t-table-container">
                   <table class="t-table t-border-dashed">
                     <thead>
                     <tr class="t-border-dashed">
@@ -130,7 +132,7 @@
             </div>
             <div v-if="item.type === 'html'">
               <slot name="html" :message="item">
-                <div v-html="item.content" ></div>
+                <div v-html="item.content"></div>
               </slot>
             </div>
           </div>
@@ -140,7 +142,7 @@
             <div v-html="flash.content"></div>
           </slot>
         </div>
-        <div v-if="ask.open && ask.question"  style="display: flex">
+        <div v-if="ask.open && ask.question" style="display: flex">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
                  ref="askInput"
@@ -150,12 +152,13 @@
                  auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" >
+        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
           <span class="prompt t-cmd-line-content disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
-          </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span v-show="cursorConf.show" class="cursor disable-select"
-                                                                                                 :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
+          </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
+            v-show="cursorConf.show" class="cursor disable-select"
+            :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
                  class="t-cmd-input disable-select"
                  ref="cmdInput"
@@ -170,16 +173,12 @@
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
           <span class="t-flag t-cmd-line disable-select">
-            <span class="t-cmd-line-content" ref="terminalEnFlag" >aa</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlag" >你好</span>
+            <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
+            <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
           </span>
-
-        </p>
-        <p class="t-help-msg" >
-          {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
         </p>
         <slot name="helpCmd" :item="searchCmd.item">
-          <p class="t-help-msg" >
+          <p class="t-help-msg">
             {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
           </p>
         </slot>
@@ -213,12 +212,18 @@
         </div>
       </slot>
     </div>
-    <div class="text-editor-container" v-if="textEditor.open" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
-      <textarea name="editor" ref="textEditor" class="text-editor" v-model="textEditor.value"></textarea>
-      <div class="text-editor-floor" align="center">
-        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
-      </div>
+
+    <div class="text-editor-container" v-if="textEditorData.open"
+         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
+      <slot name="textEditor" :data="textEditorData">
+        <textarea name="editor" ref="textEditor" class="text-editor" v-model="textEditorData.value"
+                  @focus="textEditorData.onFocus" @blur="textEditorData.onBlur"></textarea>
+        <div class="text-editor-floor" align="center">
+          <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+        </div>
+      </slot>
     </div>
+
   </div>
 </template>
 
