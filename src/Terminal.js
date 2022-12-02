@@ -198,7 +198,7 @@ export default {
             type: Function
         }
     },
-    emits: ["update:context", "onKeydown", "onClick", "beforeExecCmd", "execCmd", "destroyed", "initBefore", "initComplete"],
+    emits: ["onKeydown", "onClick", "beforeExecCmd", "execCmd", "destroyed", "initBefore", "initComplete"],
     setup() {
         const terminalContainer = ref(null)
         const terminalHeader = ref(null)
@@ -230,12 +230,6 @@ export default {
         TerminalObj.register(this.name, (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
-            } else if (type === 'updateContext') {
-                this.$emit("update:context", options)
-                nextTick(() => {
-                    this.inputBoxParam.promptWidth = this.terminalInputPrompt.getBoundingClientRect().width
-                }).then(() => {
-                })
             } else if (type === 'fullscreen') {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
@@ -380,6 +374,14 @@ export default {
             },
             deep: true
         },
+        context: {
+            handler() {
+                nextTick(() => {
+                    this.inputBoxParam.promptWidth = this.terminalInputPrompt.getBoundingClientRect().width
+                }).then(() => {
+                })
+            }
+        }
     },
     methods: {
         _triggerClick(key) {

@@ -36,10 +36,6 @@ function TerminalObj() {
         return post(name, 'pushMessage', options)
     }
 
-    let updateContext = function (name, context) {
-        return post(name, 'updateContext', context)
-    }
-
     let getHistory = function () {
         return historyStore
     }
@@ -83,7 +79,6 @@ function TerminalObj() {
         register,
         unregister,
         pushMessage,
-        updateContext,
         getHistory,
         fullscreen,
         isFullscreen,
