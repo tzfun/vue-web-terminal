@@ -85,34 +85,6 @@
     background-color: #2ec971;
 }
 
-.t-window::-webkit-scrollbar,.text-editor::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.t-window::-webkit-scrollbar-button,.text-editor::-webkit-scrollbar-button {
-    width: 0;
-    height: 0;
-    display: none;
-}
-
-.t-window::-webkit-scrollbar-thumb,.text-editor::-webkit-scrollbar-thumb {
-    border-radius: 6px;
-    border-style: dashed;
-    border-color: transparent;
-    border-width: 2px;
-    background-color: rgba(157, 165, 183, 0.4);
-    background-clip: padding-box;
-}
-
-.t-window::-webkit-scrollbar-thumb:hover,.text-editor::-webkit-scrollbar-thumb:hover {
-    background: rgba(157, 165, 183, 0.7);
-}
-
-.t-window::-webkit-scrollbar-track,.text-editor::-webkit-scrollbar-track {
-    border-radius: 6px;
-}
-
 .t-window, .t-ask-input, .t-window p, .t-window div {
     font-size: 13px;
     font-family: Monaco, Menlo, Consolas, monospace;
@@ -407,6 +379,7 @@ pre {
 
 .CodeMirror {
     height: unset !important;
+    border: none;
 }
 
 .text-editor-container {
@@ -422,7 +395,7 @@ pre {
     color: #fff;
     width: calc(100% - 10px);
     height: calc(100% - 35px);
-    background-color: #3c3c3c;
+    background-color: #191b24;
     overflow: auto;
     resize: none;
     margin: 0;
@@ -437,7 +410,7 @@ pre {
 }
 
 .text-editor-floor {
-    background-color: rgb(29, 28, 28);
+    background-color: rgb(72 69 69);
     position: absolute;
     height: 35px;
     width: 100%;

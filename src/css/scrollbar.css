@@ -1,0 +1,37 @@
+.t-window::-webkit-scrollbar,
+.t-code::-webkit-scrollbar,
+.text-editor::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.t-window::-webkit-scrollbar-button,
+.t-code::-webkit-scrollbar-button,
+.text-editor::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.t-window::-webkit-scrollbar-thumb,
+.t-code::-webkit-scrollbar-thumb,
+.text-editor::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    border-style: dashed;
+    border-color: transparent;
+    border-width: 2px;
+    background-color: rgba(157, 165, 183, 0.4);
+    background-clip: padding-box;
+}
+
+.t-window::-webkit-scrollbar-thumb:hover,
+.t-code::-webkit-scrollbar-thumb:hover,
+.text-editor::-webkit-scrollbar-thumb:hover {
+    background: rgba(157, 165, 183, 0.7);
+}
+
+.t-window::-webkit-scrollbar-track,
+.t-code::-webkit-scrollbar-track,
+.text-editor::-webkit-scrollbar-track {
+    border-radius: 6px;
+}
