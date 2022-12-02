@@ -60,10 +60,6 @@ function TerminalObj() {
         return post(name, 'execute', options)
     }
 
-    let getPosition = function (name) {
-        return post(name, 'getPosition')
-    }
-
     let focus = function (name) {
         return post(name, 'focus')
     }
@@ -93,7 +89,6 @@ function TerminalObj() {
         isFullscreen,
         dragging,
         execute,
-        getPosition,
         focus,
         elementInfo,
         textEditorOpen,

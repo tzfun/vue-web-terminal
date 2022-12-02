@@ -768,7 +768,6 @@ export default {
             }
             this._calculateCursorPos()
         },
-
         _switchPreCmd() {
             let cmdLog = historyStore.getLog(this.name)
             let cmdIdx = historyStore.getIdx(this.name)
