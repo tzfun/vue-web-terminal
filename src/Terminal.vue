@@ -150,7 +150,7 @@
       <slot name="helpBox" :showHeader="showHeader" :item="searchCmd.item">
         <div class="t-cmd-help"
           :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
-          v-if="searchCmd.item != null && !_screenType().xs">
+          v-if="searchCmd.item != null && !screenTypeFn().xs">
           <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
             v-html="searchCmd.item.description"></p>
           <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
@@ -194,10 +194,8 @@ import './css/scrollbar.css'
 import './css/style.css'
 import 'vue-json-viewer/style.css'
 import TerminalJs from './Terminal.js'
-import { _screenType } from './Util'
 
 export default TerminalJs
-export { _screenType }
 </script>
 
 <style scoped>
