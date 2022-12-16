@@ -1,4 +1,4 @@
-import historyStore from "./HistoryStore.js";
+import historyStore from "./HistoryStore";
 
 const instance = new TerminalObj()
 

@@ -8,10 +8,10 @@ import {
   _unHtml,
   _screenType,
 } from "./Util.js";
-import historyStore from "./HistoryStore.js";
-import TerminalObj from "./TerminalObj.js";
-import TerminalFlash from "./TerminalFlash.js";
-import TerminalAsk from "@/TerminalAsk";
+import historyStore from "./HistoryStore";
+import TerminalObj from "./TerminalObj";
+import TerminalFlash from "./TerminalFlash";
+import TerminalAsk from "./TerminalAsk";
 
 export default {
   name: "Terminal",
