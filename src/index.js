@@ -18,13 +18,11 @@ Terminal.install = (app, options) => {
         }
     }
     if (!confHljs) {
-        // eslint-disable-next-line vue/multi-word-component-names
         app.component("highlightjs", {
             template: `<div></div>`
         })
     }
     if(!confCodemirror) {
-        // eslint-disable-next-line vue/multi-word-component-names
         app.component("codemirror", {
             template: `<div></div>`
         })
