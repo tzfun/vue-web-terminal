@@ -158,7 +158,7 @@ export const initDrag = (
       let e = e2 || window.event;
       let moveX = e.clientX - mouseOffsetX;
       let moveY = e.clientY - mouseOffsetY;
-      this._dragging(moveX, moveY);
+      dragging(moveX, moveY, terminalContainer);
     }
   };
 

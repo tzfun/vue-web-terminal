@@ -256,7 +256,7 @@ function draggable(): boolean {
   return !!(props.showHeader && props.dragConf);
 }
 
-const getContainerStyle = () => {
+function getContainerStyle() {
   if (draggable()) {
     return getDragStyle(props.dragConf as DragableConfType)
   }
@@ -264,7 +264,7 @@ const getContainerStyle = () => {
 }
 
 const toggleFullscreen = useToggleFullscreen(fullscreen, terminalContainer)
-const triggerClick = (key: string) => {
+function triggerClick(key: string) {
   if (key === "fullScreen" && !fullscreen.value) {
     toggleFullscreen()
   } else if (key === "minScreen" && fullscreen.value) {
@@ -273,7 +273,7 @@ const triggerClick = (key: string) => {
   emit('click', key)
 }
 
-const focus = () => {
+function focus() {
   nextTick(() => {
     if (ask.open) {
       askInput.value?.focus();
@@ -292,7 +292,7 @@ const focus = () => {
   }).then(() => { });
 }
 
-const textEditorClose = () => {
+function textEditorClose() {
   if (textEditorData.open) {
     textEditorData.open = false;
     let content = textEditorData.value;
@@ -305,11 +305,11 @@ const textEditorClose = () => {
   }
 }
 
-const resetSearchKey = () => {
+function resetSearchKey() {
   searchCmd.item = undefined;
 }
 
-const doSearchCmd = (cmd?: string) => {
+function doSearchCmd(cmd?: string) {
   if (!props.autoHelp) {
     return;
   }
@@ -361,7 +361,7 @@ const doSearchCmd = (cmd?: string) => {
   }
 }
 
-const jumpToBottom = () => {
+function jumpToBottom() {
   nextTick(() => {
     let box = terminalWindow.value;
     if (box) {
@@ -370,7 +370,7 @@ const jumpToBottom = () => {
   }).then(() => { });
 }
 
-const fillCmd = () => {
+function fillCmd() {
   if (searchCmd.item) {
     command.value = searchCmd.item.key;
   }
@@ -382,7 +382,7 @@ const fillCmd = () => {
  * 命令搜索：comm*、command
  * 分组搜索：:groupA
  */
-const printHelp = (regExp: RegExp, srcStr: string) => {
+function printHelp(regExp: RegExp, srcStr: string) {
   let content: TableContentType = {
     head: ["KEY", "GROUP", "DETAIL"],
     rows: [],
@@ -453,7 +453,7 @@ const printHelp = (regExp: RegExp, srcStr: string) => {
   });
 }
 
-const execute = () => {
+function execute() {
   resetSearchKey();
   saveCurCommand();
   if (_nonEmpty(command.value)) {
@@ -554,14 +554,14 @@ const execute = () => {
   endExecCallBack();
 }
 
-const endExecCallBack = () => {
+function endExecCallBack() {
   command.value = "";
   resetCursorPos();
   cursorConf.show = true;
   focus();
 }
 
-const pushMessage = (message: MessageType | MessageType[], ignoreCheck = false) => {
+function pushMessage(message: MessageType | MessageType[], ignoreCheck = false) {
   if (!message) return;
   if (Array.isArray(message))
     return pushMessageBatch(message, ignoreCheck);
@@ -579,7 +579,7 @@ const pushMessage = (message: MessageType | MessageType[], ignoreCheck = false) 
     }, 80);
   }
 }
-const pushMessageBatch = async (messages: MessageType[], ignoreCheck = false) => {
+function pushMessageBatch(messages: MessageType[], ignoreCheck = false) {
   for (let m of messages) {
     filterMessageType(m);
     terminalLog.push(m);
@@ -588,13 +588,13 @@ const pushMessageBatch = async (messages: MessageType[], ignoreCheck = false) =>
     checkTerminalLog();
   }
 }
-const resetCursorPos = (cmd?: string) => {
+function resetCursorPos(cmd?: string) {
   cursorConf.idx = (!cmd ? command.value : cmd).length;
   cursorConf.left = "unset";
   cursorConf.top = "unset";
   cursorConf.width = cursorConf.defaultWidth;
 }
-const calculateCursorPos = (cmd?: string) => {
+function calculateCursorPos(cmd?: string) {
   //  idx可以认为是需要光标覆盖字符的索引
   let idx = cursorConf.idx;
   let _cmd = !cmd ? command.value : cmd;
@@ -628,19 +628,19 @@ const calculateCursorPos = (cmd?: string) => {
   cursorConf.top = pos.top;
   cursorConf.width = charWidth;
 }
-const cursorGoLeft = () => {
+function cursorGoLeft() {
   if (cursorConf.idx > 0) {
     cursorConf.idx--;
   }
   calculateCursorPos();
 }
-const cursorGoRight = () => {
+function cursorGoRight() {
   if (cursorConf.idx < command.value.length) {
     cursorConf.idx++;
   }
   calculateCursorPos();
 }
-const saveCurCommand = () => {
+function saveCurCommand() {
   if (_nonEmpty(command.value)) {
     historyStore.pushCmd(props.name, command.value);
   }
@@ -650,7 +650,7 @@ const saveCurCommand = () => {
     content: `${props.context} > ${commandFormatter(command.value)}`,
   });
 }
-const doClear = (args: string[]) => {
+function doClear(args: string[]) {
   if (args.length === 1) {
     terminalLog.length = 0;
   } else if (args.length === 2 && args[1] === "history") {
@@ -658,7 +658,7 @@ const doClear = (args: string[]) => {
   }
   perfWarningRate.count = 0;
 }
-const openUrl = (url: string) => {
+function openUrl(url: string) {
   let match =
     /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
   if (match.test(url)) {
@@ -676,7 +676,7 @@ const openUrl = (url: string) => {
   }
 }
 
-const filterMessageType = (message: MessageType) => {
+function filterMessageType(message: MessageType) {
   let valid =
     message.type && /^(normal|html|code|table|json)$/.test(message.type);
   if (!valid) {
@@ -687,7 +687,7 @@ const filterMessageType = (message: MessageType) => {
   }
   return valid;
 }
-const checkTerminalLog = () => {
+function checkTerminalLog() {
   let count = terminalLog.length;
   if (
     props.warnLogCountLimit > 0 &&
@@ -706,7 +706,7 @@ const checkTerminalLog = () => {
     );
   }
 }
-const switchPreCmd = () => {
+function switchPreCmd() {
   let cmdLog = historyStore.getLog(props.name);
   let cmdIdx = historyStore.getIdx(props.name);
   if (cmdLog.length !== 0 && cmdIdx > 0) {
@@ -717,7 +717,7 @@ const switchPreCmd = () => {
   historyStore.setIdx(props.name, cmdIdx);
   doSearchCmd(command.value.trim().split(" ")[0]);
 }
-const switchNextCmd = () => {
+function switchNextCmd() {
   let cmdLog = historyStore.getLog(props.name);
   let cmdIdx = historyStore.getIdx(props.name);
   if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
@@ -731,14 +731,14 @@ const switchNextCmd = () => {
   historyStore.setIdx(props.name, cmdIdx);
   doSearchCmd(command.value.trim().split(" ")[0]);
 }
-const calculateStringWidth = (str: string) => {
+function calculateStringWidth(str: string) {
   let width = 0;
   for (let char of str) {
     width += _getByteLen(char) === 1 ? byteLen.en : byteLen.cn;
   }
   return width;
 }
-const onInput = (e: Event) => {
+function onInput(e: Event) {
   if (props.inputFilter) {
     let value = (e.target as HTMLInputElement).value;
     let newStr = props.inputFilter(value);
@@ -759,13 +759,13 @@ const onInput = (e: Event) => {
     calculateCursorPos();
   }).then(() => { });
 }
-const checkInputCursor = () => {
+function checkInputCursor() {
   let eIn = cmdInput.value;
   if (eIn?.selectionStart !== cursorConf.idx) {
     cursorConf.idx = eIn?.selectionStart ?? 0;
   }
 }
-const onInputKeydown = (e: KeyboardEvent) => {
+function onInputKeydown(e: KeyboardEvent) {
   let key = e.key.toLowerCase();
   if (key === "arrowleft") {
     checkInputCursor();
@@ -775,7 +775,7 @@ const onInputKeydown = (e: KeyboardEvent) => {
     cursorGoRight();
   }
 }
-const onInputKeyup = (e: KeyboardEvent) => {
+function onInputKeyup(e: KeyboardEvent) {
   let key = e.key.toLowerCase();
   let code = e.code.toLowerCase();
   if (
@@ -791,7 +791,7 @@ const onInputKeyup = (e: KeyboardEvent) => {
     calculateCursorPos();
   }
 }
-const commandFormatter = (cmd?: string) => {
+function commandFormatter(cmd?: string) {
   if (props.commandFormatter) {
     return props.commandFormatter(cmd);
   }
@@ -812,7 +812,7 @@ const commandFormatter = (cmd?: string) => {
   }
   return formatted;
 }
-const getPosition = () => {
+function getPosition() {
   let box = terminalContainer.value;
   if (draggable() && box) {
     return { x: parseInt(box.style.left), y: parseInt(box.style.top) };
@@ -820,7 +820,7 @@ const getPosition = () => {
     return { x: 0, y: 0 };
   }
 }
-const onAskInput = () => {
+function onAskInput() {
   if (ask.autoReview) {
     pushMessage({
       time: "",
@@ -841,7 +841,7 @@ const onAskInput = () => {
 /**
  * 判断当前terminal是否活跃
  */
-const isActive = (): boolean => {
+function isActive(): boolean {
   return (
     cursorConf.show ||
     (ask.open && askInput.value === document.activeElement) ||
@@ -936,7 +936,7 @@ useKeydownListener((event: KeyboardEvent) => {
         </p>
         <slot name="helpCmd" :item="searchCmd.item">
           <p class="t-help-msg">
-            {{ searchCmd.item ? searchCmd.item.usage: '' }}
+            {{ searchCmd.item ? searchCmd.item.usage : '' }}
           </p>
         </slot>
       </div>
