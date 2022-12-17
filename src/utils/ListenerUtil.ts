@@ -1,15 +1,13 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
 
-export const useKeydownListener = (onKeydown: (e) => void) => {
+export const useKeydownListener = (onKeydown: (e: KeyboardEvent) => void) => {
   // TODO vueuse中是否可替换
-  const keydownListener = ref<(e) => void>(() => {})
+  const keydownListener = ref<(e: KeyboardEvent) => void>(() => {});
   onMounted(() => {
-    keydownListener.value = (event) => {
-      
-    };
+    keydownListener.value = onKeydown;
     window.addEventListener("keydown", keydownListener.value);
-  })
+  });
   onUnmounted(() => {
     window.removeEventListener("keydown", keydownListener.value);
-  })
-}
+  });
+};

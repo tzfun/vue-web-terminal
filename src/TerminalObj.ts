@@ -1,94 +1,94 @@
 import historyStore from "./HistoryStore";
+import { MessageType } from "./models/MessageInterface";
 
-const instance = new TerminalObj()
+export type TerminalObjListener = (type: string, options: any) => void;
+export type DraggingOption = {
+  x: number;
+  y: number;
+};
+export type TextEditorOpenOption = {
+  content: string;
+  onClose?: (value: string) => void;
+};
 
-function TerminalObj() {
-    let pool = {}
-    let options = {}
+class TerminalObj {
+  private pool: Map<string, TerminalObjListener>;
+  private options: {
+    highlight?: boolean;
+    codemirror?: any;
+  };
 
-    let setOptions = function (ops) {
-        options = ops
+  constructor() {
+    this.pool = new Map();
+    this.options = {};
+  }
+
+  setOptions(ops: any) {
+    this.options = ops;
+  }
+
+  getOptions() {
+    return this.options;
+  }
+
+  register(name: string, listener: TerminalObjListener) {
+    if (this.pool.get(name)) {
+      throw Error(`Unable to register an existing terminal: ${name}`);
     }
+    this.pool.set(name, listener);
+  }
 
-    let getOptions = function () {
-        return options
-    }
+  unregister(name: string) {
+    this.pool.delete(name);
+  }
 
-    let register = function (name, listener) {
-        if (pool[name] != null) {
-            throw Error(`Unable to register an existing terminal: ${name}`)
-        }
-        pool[name] = listener
+  post(name = "terminal", event: string, options?: any) {
+    let listener = this.pool.get(name);
+    if (listener != null) {
+      return listener(event, options);
     }
+  }
 
-    let unregister = function (name) {
-        delete pool[name]
-    }
+  pushMessage(name: string, options: MessageType[]) {
+    return this.post(name, "pushMessage", options);
+  }
 
-    let post = function (name = 'terminal', event, options) {
-        let listener = pool[name]
-        if (listener != null) {
-            return listener(event, options)
-        }
-    }
+  getHistory() {
+    return historyStore;
+  }
 
-    let pushMessage = function (name, options) {
-        return post(name, 'pushMessage', options)
-    }
+  fullscreen(name: string) {
+    return this.post(name, "fullscreen");
+  }
 
-    let getHistory = function () {
-        return historyStore
-    }
+  isFullscreen(name: string) {
+    return this.post(name, "isFullscreen");
+  }
 
-    let fullscreen = function (name) {
-        return post(name, "fullscreen")
-    }
+  dragging(name: string, options: DraggingOption) {
+    return this.post(name, "dragging", options);
+  }
 
-    let isFullscreen = function (name) {
-        return post(name, 'isFullscreen')
-    }
+  execute(name: string, options: string) {
+    return this.post(name, "execute", options);
+  }
 
-    let dragging = function (name, options) {
-        return post(name, 'dragging', options)
-    }
+  focus(name: string) {
+    return this.post(name, "focus");
+  }
 
-    let execute = function (name, options) {
-        return post(name, 'execute', options)
-    }
+  elementInfo(name: string) {
+    return this.post(name, "elementInfo");
+  }
 
-    let focus = function (name) {
-        return post(name, 'focus')
-    }
+  textEditorOpen(name: string, options: TextEditorOpenOption) {
+    return this.post(name, "textEditorOpen", options);
+  }
 
-    let elementInfo = function (name) {
-        return post(name, 'elementInfo')
-    }
-
-    let textEditorOpen = function (name, options) {
-        return post(name, 'textEditorOpen', options)
-    }
-
-    let textEditorClose = function (name) {
-        return post(name, 'textEditorClose')
-    }
-
-    return {
-        setOptions,
-        getOptions,
-        post,
-        register,
-        unregister,
-        pushMessage,
-        getHistory,
-        fullscreen,
-        isFullscreen,
-        dragging,
-        execute,
-        focus,
-        elementInfo,
-        textEditorOpen,
-        textEditorClose
-    }
+  textEditorClose(name: string) {
+    return this.post(name, "textEditorClose");
+  }
 }
 
-export default instance
+const instance = new TerminalObj();
+export default instance;

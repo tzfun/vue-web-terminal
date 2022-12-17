@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Ref, ref } from 'vue';
 const props = defineProps<{
   title: string,
   showHeader: boolean,
@@ -12,10 +13,16 @@ const emit = defineEmits<{
   (e: 'minScreen'): void
   (e: 'fullScreen'): void
 }>()
+const containerRef = ref<HTMLDivElement>()
+defineExpose<{
+  containerRef: Ref<HTMLDivElement | undefined>
+}>({
+  containerRef
+})
 </script>
 
 <template>
-  <div class="t-header-container" v-if="showHeader" :style="draggable ? 'cursor: move;' : ''">
+  <div class="t-header-container" v-if="showHeader" :style="draggable ? 'cursor: move;' : ''" ref="containerRef">
     <slot name="header">
       <div class="t-header">
         <h4>

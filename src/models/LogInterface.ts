@@ -1,4 +1,2 @@
-export type InitLogType = Array<{
-  type: string;
-  content: string;
-}>;
+import { MessageType } from "./MessageInterface";
+export type InitLogType = MessageType[];

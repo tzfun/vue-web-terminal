@@ -14,13 +14,12 @@ import {
   _unHtml,
   _screenType,
 } from "./Util.js";
-import { getDragStyle, useToggleFullscreen } from './utils/ContainerUtil';
-import { nextTick, reactive, ref } from 'vue';
+import { getDragStyle, useToggleFullscreen, dragging, initDrag } from './utils/ContainerUtil';
+import { nextTick, reactive, ref, onMounted, onUnmounted, watch } from 'vue';
 import { DataConstant } from './constants/TerminalConstants';
 import { InitLogType } from './models/LogInterface';
 import { CommandType } from './models/CommandInterface';
 import TerminalFlash from "./TerminalFlash";
-import TerminalObj from './TerminalObj';
 import TerminalAsk from "./TerminalAsk";
 import historyStore from "./HistoryStore";
 import { MessageType, TableContentType } from './models/MessageInterface';
@@ -29,36 +28,41 @@ import TableMessage from './components/TableMessage.vue'
 import CodeMessage from './components/CodeMessage.vue'
 import JsonMessage from './components/JsonMessage.vue'
 import NormalMessage from './components/NormalMessage.vue'
+import TerminalObj from './TerminalObj'
 
 export interface TerminalProps {
-  //  终端标题
-  title: string,
-  // 初始化日志内容
-  initLog: InitLogType,
-  // 上下文
-  context: string,
-  // 命令行搜索以及help指令用
-  commandStore: any[],
-  // 命令行排序方式
-  commandStoreSort: Function,
-  // 记录条数超出此限制会发出警告
-  warnLogCountLimit: number,
-  // 自动搜索帮助
-  autoHelp: boolean,
-  // 是否开启命令提示
-  enableExampleHint: boolean,
-  // 输入过滤器
-  inputFilter: Function,
-  commandFormatter: Function,
-  // 按下Tab键处理函数
-  tabKeyHandler: Function
-  //  显示终端头部
-  showHeader: boolean
-  //  拖拽配置
+  /** 终端唯一名称 */
+  name?: string
+  /** 终端标题 */
+  title?: string
+  /** 初始化日志内容 */
+  initLog?: InitLogType
+  /** 上下文 */
+  context?: string
+  /** 命令行搜索以及help指令用 */
+  commandStore?: CommandType[]
+  /** 命令行排序方式 */
+  commandStoreSort?: (a: CommandType, b: CommandType) => number
+  /** 是否开启命令提示 */
+  enableExampleHint?: boolean
+  /** 输入过滤器 */
+  inputFilter?: (value: string) => string
+  /** 命令格式化器 */
+  commandFormatter?: Function
+  /** 按下Tab键处理函数 */
+  tabKeyHandler?: Function
+  /** 记录条数超出此限制会发出警告 */
+  warnLogCountLimit?: number
+  /** 自动搜索帮助 */
+  autoHelp?: boolean
+  /**  显示终端头部 */
+  showHeader?: boolean
+  /**  拖拽配置 */
   dragConf?: DragableConfType
 }
 
 const props = withDefaults(defineProps<TerminalProps>(), {
+  name: 'terminal',
   title: 'vue-web-terminal',
   showHeader: true,
   initLog: () => {
@@ -72,12 +76,12 @@ const props = withDefaults(defineProps<TerminalProps>(), {
 
 const emit = defineEmits<{
   (e: 'click', key: string): void
-  (e: 'keydown'): void
+  (e: 'keydown', event: KeyboardEvent): void
   (e: 'beforeExecCmd', cmdKey: string, cmdValue: string): void
   (e: 'execCmd'): void
-  (e: 'destroyed'): void
-  (e: 'initBefore'): void
-  (e: 'initComplete'): void
+  (e: 'destroyed', name: string): void
+  (e: 'initBefore', name: string): void
+  (e: 'initComplete', name: string): void
 }>()
 
 const command = ref("");
@@ -87,7 +91,7 @@ const textEditorData = reactive({
   open: false,
   focus: false,
   value: "",
-  onClose: null,
+  onClose: (content: string) => { },
   onFocus: () => {
     textEditorData.focus = true;
   },
@@ -106,7 +110,6 @@ const ask = reactive({
 const cursorConf = reactive(DataConstant.CursorConf)
 const searchCmd = reactive<{ item?: CommandType }>({ item: undefined })
 const allCommandStore = reactive(DataConstant.AllCommandStore)
-const commandLog = reactive([])
 const byteLen = reactive(DataConstant.ByteLen)
 const terminalLog = reactive<MessageType[]>([])
 const perfWarningRate = reactive({
@@ -125,16 +128,130 @@ const flash = reactive({
 
 const terminalContainer = ref<HTMLDivElement>();
 const terminalWindow = ref<HTMLDivElement>();
+const terminalHeader = ref<InstanceType<typeof HeaderContainer>>();
 const cmdInput = ref<HTMLInputElement>();
 const askInput = ref<HTMLInputElement>();
 const terminalInputBox = ref<HTMLParagraphElement>();
-const terminalInputPrompt = ref(null);
-const terminalEnFlag = ref(null);
-const terminalCnFlag = ref(null);
-const terminalObj = TerminalObj;
+const terminalInputPrompt = ref<HTMLSpanElement>();
+const terminalEnFlag = ref<HTMLSpanElement>();
+const terminalCnFlag = ref<HTMLSpanElement>();
 const textEditor = ref<HTMLTextAreaElement>();
 
-const draggable = (): boolean => {
+watch(terminalLog, () => {
+  jumpToBottom();
+})
+
+watch(() => props.context, () => {
+  nextTick(() => {
+    if (terminalInputPrompt.value) {
+      inputBoxParam.promptWidth =
+        terminalInputPrompt.value.getBoundingClientRect().width;
+    }
+  })
+})
+
+onMounted(() => {
+  TerminalObj.register(props.name, (type, options) => {
+    if (type === "pushMessage") {
+      pushMessage(options);
+    } else if (type === "fullscreen") {
+      toggleFullscreen();
+    } else if (type === "isFullscreen") {
+      return fullscreen.value;
+    } else if (type === "dragging") {
+      if (draggable() && terminalContainer.value) {
+        dragging(options.x, options.y, terminalContainer.value)
+      } else {
+        console.warn("Terminal is not draggable");
+      }
+    } else if (type === "execute") {
+      if (_nonEmpty(options)) {
+        command.value = options;
+        execute();
+      }
+    } else if (type === "elementInfo") {
+      if (!terminalWindow.value || !terminalContainer.value) {
+        return undefined
+      }
+      let windowRect = terminalWindow.value.getBoundingClientRect();
+      let containerRect = terminalContainer.value.getBoundingClientRect();
+      let hasScroll =
+        terminalWindow.value && (
+          terminalWindow.value.scrollHeight > terminalWindow.value.clientHeight ||
+          terminalWindow.value.offsetHeight > terminalWindow.value.clientHeight);
+      return {
+        pos: getPosition(), //  窗口所在位置
+        screenWidth: containerRect.width, //  窗口整体宽度
+        screenHeight: containerRect.height, //  窗口整体高度
+        clientWidth: hasScroll
+          ? windowRect.width - 48
+          : windowRect.width - 40, //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+        clientHeight: windowRect.height, //  可显示内容范围高度
+        charWidth: {
+          en: byteLen.en, //  单个英文字符宽度
+          cn: byteLen.cn, //  单个中文字符宽度
+        },
+      };
+    } else if (type === "focus") {
+      focus();
+    } else if (type === "textEditorOpen") {
+      let opt = options || {};
+      textEditorData.value = opt.content;
+      textEditorData.open = true;
+      textEditorData.onClose = opt.onClose;
+      focus();
+    } else if (type === "textEditorClose") {
+      return textEditorClose();
+    } else {
+      console.error("Unsupported event type: " + type);
+    }
+  });
+})
+onUnmounted(() => {
+  TerminalObj.unregister(props.name);
+})
+
+onMounted(async () => {
+  emit("initBefore", props.name);
+
+  if (props.initLog) {
+    await pushMessageBatch(props.initLog, true);
+  }
+
+  if (props.commandStore) {
+    if (props.commandStoreSort) {
+      props.commandStore.sort(props.commandStoreSort);
+    }
+    props.commandStore.forEach(cmd => {
+      allCommandStore.push(cmd)
+    })
+  }
+  if (terminalEnFlag.value) {
+    byteLen.en = terminalEnFlag.value.getBoundingClientRect().width / 2
+  }
+  if (terminalCnFlag.value) {
+    byteLen.cn = terminalCnFlag.value.getBoundingClientRect().width / 2
+  }
+
+  cursorConf.defaultWidth = byteLen.en;
+  if (terminalWindow.value && terminalContainer.value && terminalHeader.value?.containerRef && terminalInputPrompt.value) {
+    if (terminalWindow != null) {
+      terminalWindow.value.scrollTop = terminalWindow.value.offsetHeight;
+    }
+    //  计算context的宽度和行高，用于跨行时定位光标位置
+    let promptRect = terminalInputPrompt.value.getBoundingClientRect();
+    inputBoxParam.promptHeight = promptRect.height;
+    inputBoxParam.promptWidth = promptRect.width;
+    initDrag(draggable(), fullscreen, terminalHeader.value?.containerRef, terminalContainer.value, terminalWindow.value)
+  }
+
+  emit("initComplete", props.name);
+})
+onUnmounted(() => {
+  emit("destroyed", props.name);
+})
+
+function draggable(): boolean {
   return !!(props.showHeader && props.dragConf);
 }
 
@@ -182,7 +299,6 @@ const textEditorClose = () => {
     if (textEditorData.onClose) {
       textEditorData.onClose(content);
     }
-    textEditorData.onClose = null;
     focus();
     return content;
   }
@@ -192,28 +308,27 @@ const resetSearchKey = () => {
   searchCmd.item = undefined;
 }
 
-const doSearchCmd = (key: string) => {
+const doSearchCmd = (cmd?: string) => {
   if (!props.autoHelp) {
     return;
   }
-  let cmd = key;
-  if (cmd) {
+  if (!cmd) {
     cmd = command.value;
   }
   if (_isEmpty(cmd)) {
     resetSearchKey();
   } else if (cmd.trim().indexOf(" ") < 0) {
-    let reg = new RegExp(cmd, "i");
-    let matchSet = [];
+    const reg = new RegExp(cmd, "i");
+    const matchSet = [];
 
     let target = null;
-    for (let i in allCommandStore) {
-      let o = allCommandStore[i];
+    for (const o of allCommandStore) {
       if (_nonEmpty(o.key)) {
-        let res = o.key.match(reg);
+        const res = o.key.match(reg);
         if (res) {
+          // index不存在则给-1，保证分数较小
           let score =
-            res.index * 1000 +
+            (res.index ?? -1) * 1000 +
             (cmd.length - res[0].length) +
             (o.key.length - res[0].length);
           if (score === 0) {
@@ -526,24 +641,23 @@ const cursorGoRight = () => {
 }
 const saveCurCommand = () => {
   if (_nonEmpty(command.value)) {
-    historyStore.pushCmd(name, command);
+    historyStore.pushCmd(props.name, command.value);
   }
 
   terminalLog.push({
     type: "cmdLine",
-    content: `${context} > ${commandFormatter(command.value)}`,
+    content: `${props.context} > ${commandFormatter(command.value)}`,
   });
 }
-const doClear = (args) => {
+const doClear = (args: string[]) => {
   if (args.length === 1) {
     terminalLog.length = 0;
   } else if (args.length === 2 && args[1] === "history") {
-    historyStore.clearLog(name);
+    historyStore.clearLog(props.name);
   }
-  perfWarningRate.size = 0;
   perfWarningRate.count = 0;
 }
-const openUrl = (url) => {
+const openUrl = (url: string) => {
   let match =
     /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
   if (match.test(url)) {
@@ -575,15 +689,15 @@ const filterMessageType = (message: MessageType) => {
 const checkTerminalLog = () => {
   let count = terminalLog.length;
   if (
-    warnLogCountLimit > 0 &&
-    count > warnLogCountLimit &&
-    Math.floor(count / warnLogCountLimit) !==
+    props.warnLogCountLimit > 0 &&
+    count > props.warnLogCountLimit &&
+    Math.floor(count / props.warnLogCountLimit) !==
     perfWarningRate.count
   ) {
-    perfWarningRate.count = Math.floor(count / warnLogCountLimit);
+    perfWarningRate.count = Math.floor(count / props.warnLogCountLimit);
     pushMessage(
       {
-        content: `Terminal log count exceeded <strong style="color: red">${count}/${warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
+        content: `Terminal log count exceeded <strong style="color: red">${count}/${props.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
         class: "system",
         type: "normal",
       },
@@ -592,28 +706,28 @@ const checkTerminalLog = () => {
   }
 }
 const switchPreCmd = () => {
-  let cmdLog = historyStore.getLog(name);
-  let cmdIdx = historyStore.getIdx(name);
+  let cmdLog = historyStore.getLog(props.name);
+  let cmdIdx = historyStore.getIdx(props.name);
   if (cmdLog.length !== 0 && cmdIdx > 0) {
     cmdIdx -= 1;
-    command.value = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
+    command.value = !cmdLog[cmdIdx] ? "" : cmdLog[cmdIdx];
   }
   resetCursorPos();
-  historyStore.setIdx(name, cmdIdx);
+  historyStore.setIdx(props.name, cmdIdx);
   doSearchCmd(command.value.trim().split(" ")[0]);
 }
 const switchNextCmd = () => {
-  let cmdLog = historyStore.getLog(name);
-  let cmdIdx = historyStore.getIdx(name);
+  let cmdLog = historyStore.getLog(props.name);
+  let cmdIdx = historyStore.getIdx(props.name);
   if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
     cmdIdx += 1;
-    command.value = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
+    command.value = !cmdLog[cmdIdx] ? "" : cmdLog[cmdIdx];
   } else {
     cmdIdx = cmdLog.length;
     command.value = "";
   }
   resetCursorPos();
-  historyStore.setIdx(name, cmdIdx);
+  historyStore.setIdx(props.name, cmdIdx);
   doSearchCmd(command.value.trim().split(" ")[0]);
 }
 const calculateStringWidth = (str: string) => {
@@ -623,11 +737,11 @@ const calculateStringWidth = (str: string) => {
   }
   return width;
 }
-const onInput = (e) => {
-  if (inputFilter != null) {
-    let value = e.target.value;
-    let newStr = inputFilter(e.data, value, e);
-    if (newStr == null) {
+const onInput = (e: Event) => {
+  if (props.inputFilter) {
+    let value = (e.target as HTMLInputElement).value;
+    let newStr = props.inputFilter(value);
+    if (!newStr) {
       newStr = value;
     }
     command.value = newStr;
@@ -645,12 +759,12 @@ const onInput = (e) => {
   }).then(() => { });
 }
 const checkInputCursor = () => {
-  let eIn = cmdInput;
-  if (eIn.selectionStart !== cursorConf.idx) {
-    cursorConf.idx = eIn.selectionStart;
+  let eIn = cmdInput.value;
+  if (eIn?.selectionStart !== cursorConf.idx) {
+    cursorConf.idx = eIn?.selectionStart ?? 0;
   }
 }
-const onInputKeydown = (e) => {
+const onInputKeydown = (e: KeyboardEvent) => {
   let key = e.key.toLowerCase();
   if (key === "arrowleft") {
     checkInputCursor();
@@ -660,7 +774,7 @@ const onInputKeydown = (e) => {
     cursorGoRight();
   }
 }
-const onInputKeyup = (e) => {
+const onInputKeyup = (e: KeyboardEvent) => {
   let key = e.key.toLowerCase();
   let code = e.code.toLowerCase();
   if (
@@ -725,10 +839,8 @@ const onAskInput = () => {
 }
 /**
  * 判断当前terminal是否活跃
- * @returns {boolean}
- * @private
  */
-const isActive = () => {
+const isActive = (): boolean => {
   return (
     cursorConf.show ||
     (ask.open && askInput.value === document.activeElement) ||
@@ -736,7 +848,7 @@ const isActive = () => {
   );
 }
 
-useKeydownListener((event) => {
+useKeydownListener((event: KeyboardEvent) => {
   if (isActive()) {
     if (cursorConf.show) {
       if (event.key.toLowerCase() === "tab") {
@@ -759,8 +871,8 @@ useKeydownListener((event) => {
   <div class="t-container" :style="getContainerStyle()" ref="terminalContainer" @click="focus">
     <div class="terminal">
       <HeaderContainer :title="title" :show-header="showHeader" :draggable="draggable()" :fullscreen="fullscreen"
-        @click-title="triggerClick('title')" @close="triggerClick('close')" @min-screen="triggerClick('minScreen')"
-        @full-screen="triggerClick('fullScreen')"></HeaderContainer>
+        ref="terminalHeader" @click-title="triggerClick('title')" @close="triggerClick('close')"
+        @min-screen="triggerClick('minScreen')" @full-screen="triggerClick('fullScreen')"></HeaderContainer>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
         ref="terminalWindow">
         <div class="t-log-box" v-for="(item, idx) in terminalLog" v-bind:key="idx">
@@ -769,16 +881,24 @@ useKeydownListener((event) => {
           </span>
           <div v-else>
             <span v-if="item.type === 'normal'">
-              <NormalMessage :message="item"></NormalMessage>
+              <slot name="normal" :message="item">
+                <NormalMessage :message="item"></NormalMessage>
+              </slot>
             </span>
             <div v-if="item.type === 'json'">
-              <JsonMessage :message="item" :key="idx + '_' + item.depth"></JsonMessage>
+              <slot name="json" :message="item">
+                <JsonMessage :message="item" :key="idx + '_' + item.depth"></JsonMessage>
+              </slot>
             </div>
             <div v-if="item.type === 'code'">
-              <CodeMessage :message="item"></CodeMessage>
+              <slot name="code" :message="item">
+                <CodeMessage :message="item"></CodeMessage>
+              </slot>
             </div>
             <div v-if="item.type === 'table'">
-              <TableMessage :message="item"></TableMessage>
+              <slot name="table" :message="item">
+                <TableMessage :message="item"></TableMessage>
+              </slot>
             </div>
             <div v-if="item.type === 'html'">
               <slot name="html" :message="item">
@@ -804,7 +924,7 @@ useKeydownListener((event) => {
           </span><span class="t-cmd-line-content" v-html="commandFormatter(command)"></span><span
             v-show="cursorConf.show" class="cursor disable-select"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" v-model="command" class="t-cmd-input disable-select" ref="cmdInput"
+          <input type="text" autofocus v-model="command" class="t-cmd-input disable-select" ref="cmdInput"
             autocomplete="off" auto-complete="new-password" @keydown="onInputKeydown" @keyup="onInputKeyup"
             @input="onInput" @focusin="cursorConf.show = true" @focusout="cursorConf.show = false"
             @keyup.up.exact="switchPreCmd" @keyup.down.exact="switchNextCmd" @keyup.enter="execute">

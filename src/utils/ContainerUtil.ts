@@ -120,10 +120,13 @@ const useFullscreenLifecycle = (
   });
 };
 
-export const initDrag = (draggable: boolean,
-  terminalHeader: Ref<HTMLDivElement>
-  
-  ) => {
+export const initDrag = (
+  draggable: boolean,
+  fullscreenRef: Ref<boolean>,
+  terminalHeader: HTMLDivElement,
+  terminalContainer: HTMLDivElement,
+  terminalWindow: HTMLDivElement,
+) => {
   // TODO 后续用成熟的拖动库实现
   if (!draggable) {
     return;
@@ -132,14 +135,14 @@ export const initDrag = (draggable: boolean,
   let mouseOffsetX = 0;
   let mouseOffsetY = 0;
 
-  let dragArea = this.terminalHeader;
-  let box = this.terminalContainer;
-  let window = this.terminalWindow;
+  let dragArea = terminalHeader;
+  let box = terminalContainer;
+  let window = terminalWindow;
 
   let isDragging = false;
 
   dragArea.onmousedown = (e1) => {
-    if (this.fullscreen) {
+    if (fullscreenRef.value) {
       return;
     }
     let e = e1 || window.event;
@@ -165,10 +168,14 @@ export const initDrag = (draggable: boolean,
   };
 };
 
-export const dragging = (x: number, y: number) => {
+export const dragging = (
+  x: number,
+  y: number,
+  terminalContainer: HTMLDivElement
+) => {
   let clientWidth = document.body.clientWidth;
   let clientHeight = document.body.clientHeight;
-  let box = this.terminalContainer;
+  let box = terminalContainer;
 
   if (x > clientWidth - box.clientWidth) {
     box.style.left = clientWidth - box.clientWidth + "px";
