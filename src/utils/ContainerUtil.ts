@@ -1,8 +1,9 @@
 import { DragableConfType } from "@/models/DraggableInterface";
 import { _isSafari } from "@/Util";
-import { onMounted, Ref } from "vue";
+import { Ref } from "vue";
+import { useFullscreenListener } from "./ListenerUtil";
 
-export const getDragStyle = (dragConf: DragableConfType) => {
+export function getDragStyle(dragConf: DragableConfType) {
   const clientWidth = document.body.clientWidth;
   const clientHeight = document.body.clientHeight;
 
@@ -42,7 +43,7 @@ export const getDragStyle = (dragConf: DragableConfType) => {
         top:${initY}px;
         border-radius:15px;
         `;
-};
+}
 
 /**
  * 处理全屏事件 - 不再支持IE11
@@ -50,10 +51,10 @@ export const getDragStyle = (dragConf: DragableConfType) => {
  * @param fullscreen
  * @param fullArea
  */
-export const useToggleFullscreen = (
+export function useToggleFullscreen(
   fullscreen: Ref<boolean>,
   fullArea: Ref<HTMLDivElement | undefined>
-) => {
+) {
   useFullscreenLifecycle(fullscreen, fullArea);
   return () => {
     if (fullscreen.value) {
@@ -63,71 +64,78 @@ export const useToggleFullscreen = (
     }
     fullscreen.value = !fullscreen.value;
   };
+}
+
+type SafariStyleCache = {
+  position: string;
+  width: string;
+  height: string;
+  left: string;
+  top: string;
 };
 
-const useFullscreenLifecycle = (
+const defaultFullScreenStyle = {
+  position: "fixed",
+  width: "100%",
+  height: "100%",
+  left: "0",
+  top: "0",
+};
+
+export function useFullscreenLifecycle(
   fullscreen: Ref<boolean>,
   fullArea: Ref<HTMLDivElement | undefined>
-) => {
+) {
   // TODO 考虑用成熟的全屏库实现, 例如 vueuse
-  onMounted(() => {
-    let safariStyleCache = {};
-    //  监听全屏事件，用户ESC退出时需要设置全屏状态
-    [
-      "fullscreenchange",
-      "webkitfullscreenchange",
-      "mozfullscreenchange",
-    ].forEach((item) => {
-      window.addEventListener(item, () => {
-        let isFullScreen = document.fullscreenElement;
-        if (isFullScreen) {
-          let container = fullArea.value;
-          if (!container) {
-            return;
-          }
-          //  进入全屏
-          if (_isSafari()) {
-            safariStyleCache = {
-              position: container.style.position,
-              width: container.style.width,
-              height: container.style.height,
-              left: container.style.left,
-              top: container.style.top,
-            };
-            container.style.position = "fixed";
-            container.style.width = "100%";
-            container.style.height = "100%";
-            container.style.left = "0";
-            container.style.top = "0";
-          }
-        } else {
-          //  退出全屏
-          fullscreen.value = false;
-          let container = fullArea.value;
-          if (!container) {
-            return;
-          }
-          if (_isSafari()) {
-            container.style.position = safariStyleCache.position;
-            container.style.width = safariStyleCache.width;
-            container.style.height = safariStyleCache.height;
-            container.style.left = safariStyleCache.left;
-            container.style.top = safariStyleCache.top;
-          }
-        }
-      });
-    });
+  let safariStyleCache: SafariStyleCache = { ...defaultFullScreenStyle };
+  useFullscreenListener(() => {
+    let isFullScreen = document.fullscreenElement;
+    if (isFullScreen) {
+      let container = fullArea.value;
+      if (!container) {
+        return;
+      }
+      //  进入全屏
+      if (_isSafari()) {
+        safariStyleCache = {
+          position: container.style.position,
+          width: container.style.width,
+          height: container.style.height,
+          left: container.style.left,
+          top: container.style.top,
+        };
+        container.style.position = defaultFullScreenStyle.position;
+        container.style.width = defaultFullScreenStyle.width;
+        container.style.height = defaultFullScreenStyle.height;
+        container.style.left = defaultFullScreenStyle.left;
+        container.style.top = defaultFullScreenStyle.top;
+      }
+    } else {
+      //  退出全屏
+      fullscreen.value = false;
+      let container = fullArea.value;
+      if (!container) {
+        return;
+      }
+      if (_isSafari()) {
+        container.style.position = safariStyleCache.position;
+        container.style.width = safariStyleCache.width;
+        container.style.height = safariStyleCache.height;
+        container.style.left = safariStyleCache.left;
+        container.style.top = safariStyleCache.top;
+      }
+    }
   });
-};
+}
 
-export const initDrag = (
+export function initDrag(
   draggable: boolean,
   fullscreenRef: Ref<boolean>,
   terminalHeader: HTMLDivElement,
   terminalContainer: HTMLDivElement,
   terminalWindow: HTMLDivElement
-) => {
-  // TODO 后续用成熟的拖动库实现
+) {
+  // TODO 考虑用成熟的拖动库实现
   if (!draggable) {
     return;
   }
@@ -135,9 +143,8 @@ export const initDrag = (
   let mouseOffsetX = 0;
   let mouseOffsetY = 0;
 
-  let dragArea = terminalHeader;
-  let box = terminalContainer;
-  let window = terminalWindow;
+  const dragArea = terminalHeader;
+  const box = terminalContainer;
 
   let isDragging = false;
 
@@ -145,34 +152,34 @@ export const initDrag = (
     if (fullscreenRef.value) {
       return;
     }
-    let e = e1 || window.event;
+    const e = e1 || window.event;
     mouseOffsetX = e.clientX - box.offsetLeft;
     mouseOffsetY = e.clientY - box.offsetTop;
 
     isDragging = true;
-    window.style["user-select"] = "none";
+    terminalWindow.style.userSelect = "none";
   };
 
   document.onmousemove = (e2) => {
     if (isDragging) {
-      let e = e2 || window.event;
-      let moveX = e.clientX - mouseOffsetX;
-      let moveY = e.clientY - mouseOffsetY;
+      const e = e2 || window.event;
+      const moveX = e.clientX - mouseOffsetX;
+      const moveY = e.clientY - mouseOffsetY;
       dragging(moveX, moveY, terminalContainer);
     }
   };
 
   document.onmouseup = () => {
     isDragging = false;
-    window.style["user-select"] = "unset";
+    terminalWindow.style.userSelect = "unset";
   };
-};
+}
 
-export const dragging = (
+export function dragging(
   x: number,
   y: number,
   terminalContainer: HTMLDivElement
-) => {
+) {
   let clientWidth = document.body.clientWidth;
   let clientHeight = document.body.clientHeight;
   let box = terminalContainer;
@@ -188,12 +195,12 @@ export const dragging = (
   } else {
     box.style.top = Math.max(0, y) + "px";
   }
-};
+}
 
-export const getSelection = () => {
+export function getSelection() {
   if (window.getSelection) {
     return window.getSelection();
   } else {
     return document.getSelection();
   }
-};
+}

@@ -1,13 +1,32 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 
-export const useKeydownListener = (onKeydown: (e: KeyboardEvent) => void) => {
+export function useKeydownListener(onKeydown: (e: KeyboardEvent) => void) {
   // TODO vueuse中是否可替换
-  const keydownListener = ref<(e: KeyboardEvent) => void>(() => {});
   onMounted(() => {
-    keydownListener.value = onKeydown;
-    window.addEventListener("keydown", keydownListener.value);
+    window.addEventListener("keydown", onKeydown);
   });
   onUnmounted(() => {
-    window.removeEventListener("keydown", keydownListener.value);
+    window.removeEventListener("keydown", onKeydown);
   });
-};
+}
+
+export function useFullscreenListener(handler: () => void) {
+  onMounted(() => {
+    [
+      "fullscreenchange",
+      "webkitfullscreenchange",
+      "mozfullscreenchange",
+    ].forEach((item) => {
+      window.addEventListener(item, handler);
+    });
+  });
+  onUnmounted(() => {
+    [
+      "fullscreenchange",
+      "webkitfullscreenchange",
+      "mozfullscreenchange",
+    ].forEach((item) => {
+      window.removeEventListener(item, handler);
+    });
+  });
+}
