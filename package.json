@@ -12,11 +12,7 @@
     "build-wc": "vue-cli-service build --target wc --dest lib src/Terminal.vue"
   },
   "dependencies": {
-    "@highlightjs/vue-plugin": "^2.1.0",
-    "codemirror": "^6.0.1",
-    "highlight.js": "^11.7.0",
     "json-viewer": "^2.2.0",
-    "vue-codemirror": "^6.1.1",
     "vue-json-viewer": "^3.0.4"
   },
   "devDependencies": {
