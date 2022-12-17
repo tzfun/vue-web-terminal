@@ -10,40 +10,41 @@ export type TextEditorOpenOption = {
   content: string;
   onClose?: (value: string) => void;
 };
+export type TerminalPluginOption = {
+  highlight?: boolean;
+  codemirror?: any;
+};
 
 class TerminalObj {
-  private pool: Map<string, TerminalObjListener>;
-  private options: {
-    highlight?: boolean;
-    codemirror?: any;
-  };
+  _pool: Map<string, TerminalObjListener>;
+  _options: TerminalPluginOption;
 
   constructor() {
-    this.pool = new Map();
-    this.options = {};
+    this._pool = new Map();
+    this._options = {};
   }
 
-  setOptions(ops: any) {
-    this.options = ops;
+  setOptions(ops: TerminalPluginOption) {
+    this._options = ops;
   }
 
   getOptions() {
-    return this.options;
+    return this._options;
   }
 
   register(name: string, listener: TerminalObjListener) {
-    if (this.pool.get(name)) {
+    if (this._pool.get(name)) {
       throw Error(`Unable to register an existing terminal: ${name}`);
     }
-    this.pool.set(name, listener);
+    this._pool.set(name, listener);
   }
 
   unregister(name: string) {
-    this.pool.delete(name);
+    this._pool.delete(name);
   }
 
   post(name = "terminal", event: string, options?: any) {
-    let listener = this.pool.get(name);
+    let listener = this._pool.get(name);
     if (listener != null) {
       return listener(event, options);
     }

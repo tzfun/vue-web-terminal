@@ -7,21 +7,21 @@ type HistoryState = {
 };
 
 class HistoryStore {
-  private dataMap: Map<string, HistoryState>;
+  _dataMap: Map<string, HistoryState>;
 
   constructor() {
     let dataMapStr = window.localStorage.getItem(storageKey);
     if (!dataMapStr) {
-      this.dataMap = new Map<string, HistoryState>();
+      this._dataMap = new Map<string, HistoryState>();
     } else {
-      this.dataMap = new Map<string, HistoryState>(
+      this._dataMap = new Map<string, HistoryState>(
         Object.entries(JSON.parse(dataMapStr))
       );
     }
   }
 
-  public pushCmd(name: string, cmd: string) {
-    let data = this.getData(name);
+  pushCmd(name: string, cmd: string) {
+    let data = this._get(name);
     if (!data.cmdLog) {
       data.cmdLog = [];
     }
@@ -37,47 +37,47 @@ class HistoryStore {
     }
 
     data.cmdIdx = data.cmdLog.length;
-    this.store();
+    this._store();
   }
 
-  private store() {
+  _store() {
     window.localStorage.setItem(
       storageKey,
-      JSON.stringify(Object.fromEntries(this.dataMap))
+      JSON.stringify(Object.fromEntries(this._dataMap))
     );
   }
 
-  private getData(name: string): HistoryState {
-    let data = this.dataMap.get(name);
+  _get(name: string): HistoryState {
+    let data = this._dataMap.get(name);
     if (!data) {
       data = {};
-      this.dataMap.set(name, data);
+      this._dataMap.set(name, data);
     }
     return data;
   }
 
-  public getLog(name: string): string[] {
-    let data = this.getData(name);
+  getLog(name: string): string[] {
+    let data = this._get(name);
     if (!data.cmdLog) {
       data.cmdLog = [];
     }
     return data.cmdLog;
   }
 
-  public clearLog(name: string) {
-    let data = this.getData(name);
+  clearLog(name: string) {
+    let data = this._get(name);
     data.cmdLog = [];
     data.cmdIdx = 0;
-    this.store();
+    this._store();
   }
 
-  public getIdx(name: string): number {
-    let data = this.getData(name);
+  getIdx(name: string): number {
+    let data = this._get(name);
     return data.cmdIdx ?? 0;
   }
 
-  public setIdx(name: string, idx: number) {
-    let data = this.getData(name);
+  setIdx(name: string, idx: number) {
+    let data = this._get(name);
     data.cmdIdx = idx;
   }
 }
