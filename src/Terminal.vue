@@ -2,7 +2,7 @@
 import './css/scrollbar.css'
 import './css/style.css'
 import 'vue-json-viewer/style.css'
-import Code from './components/Code.vue'
+import Code from './components/CodeMessage.vue'
 import HeaderContainer from './components/HeaderContainer.vue'
 import { DragableConfType } from './models/DraggableInterface';
 import {
@@ -25,6 +25,10 @@ import TerminalAsk from "./TerminalAsk";
 import historyStore from "./HistoryStore";
 import { MessageType } from './models/MessageInterface';
 import { useKeydownListener } from './utils/ListenerUtil';
+import TableMessage from './components/TableMessage.vue'
+import CodeMessage from './components/CodeMessage.vue'
+import JsonMessage from './components/JsonMessage.vue'
+import NormalMessage from './components/NormalMessage.vue'
 
 export interface TerminalProps {
   //  终端标题
@@ -103,7 +107,6 @@ const searchCmd = reactive<{ item?: CommandType }>({ item: undefined })
 const allCommandStore = reactive(DataConstant.AllCommandStore)
 const commandLog = reactive([])
 const byteLen = reactive(DataConstant.ByteLen)
-const jsonViewDepth = reactive(DataConstant.JsonViewDepth)
 const terminalLog = reactive<MessageType[]>([])
 const perfWarningRate = reactive({
   count: 0,
@@ -431,34 +434,14 @@ const execute = () => {
   focus();
   endExecCallBack();
 }
+
 const endExecCallBack = () => {
   command.value = "";
   resetCursorPos();
   cursorConf.show = true;
   focus();
 }
-/**
- * message内容：
- *
- * time: 当前时间
- * class: 类别，只可选：success、error、system、info、warning
- * type: 类型，只可选：normal、json、code、table、cmdLine、splitLine
- * content: 具体内容，不同消息内容格式不一样
- * tag: 标签，仅类型为normal有效
- *
- * 当 type 为 table 时 content 的格式：
- * {
- *     head: [headName1, headName2, headName3...],
- *     rows: [
- *         [ value1, value2, value3... ],
- *         [ value1, value2, value3... ]
- *     ]
- * }
- *
- * @param message
- * @param ignoreCheck
- * @private
- */
+
 const pushMessage = (message: MessageType | MessageType[], ignoreCheck = false) => {
   if (message == null) return;
   if (Array.isArray(message))
@@ -575,17 +558,6 @@ const openUrl = (url) => {
   }
 }
 
-const parseToJson = (obj) => {
-  if (typeof obj === "object" && obj) {
-    return obj;
-  } else if (typeof obj === "string") {
-    try {
-      return JSON.parse(obj);
-    } catch (e) {
-      return obj;
-    }
-  }
-}
 const filterMessageType = (message: MessageType) => {
   let valid =
     message.type && /^(normal|html|code|table|json)$/.test(message.type);
@@ -734,6 +706,8 @@ const onAskInput = () => {
   if (ask.autoReview) {
     pushMessage({
       time: "",
+      class: 'system',
+      type: "normal",
       content:
         ask.question +
         (ask.isPassword
@@ -792,50 +766,16 @@ useKeydownListener((event) => {
           </span>
           <div v-else>
             <span v-if="item.type === 'normal'">
-              <slot name="normal" :message="item">
-                <span class="t-content-normal">
-                  <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)" :class="item.class"
-                    style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
-                  <span v-html="item.content"></span>
-                </span>
-              </slot>
+              <NormalMessage :message="item"></NormalMessage>
             </span>
             <div v-if="item.type === 'json'">
-              <slot name="json" :message="item">
-                <span style="position: relative">
-                  <json-viewer :expand-depth="item.depth" sort boxed copyable expanded :key="idx + '_' + item.depth"
-                    :value="parseToJson(item.content)">
-                  </json-viewer>
-                  <select class="t-json-deep-selector" v-model="item.depth">
-                    <option value="" disabled selected hidden label="Choose a display deep"></option>
-                    <option v-for="i in jsonViewDepth" :key="i" :label="`Deep ${i}`" :value="i">
-                    </option>
-                  </select>
-                </span>
-              </slot>
+              <JsonMessage :message="item" :key="idx + '_' + item.depth"></JsonMessage>
             </div>
             <div v-if="item.type === 'code'">
-              <Code :message="item"></Code>
+              <CodeMessage :message="item"></CodeMessage>
             </div>
             <div v-if="item.type === 'table'">
-              <slot name="table" :message="item">
-                <div class="t-table-container">
-                  <table class="t-table t-border-dashed">
-                    <thead>
-                      <tr class="t-border-dashed">
-                        <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
-                        <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
-                          <div v-html="it"></div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </slot>
+              <TableMessage :message="item"></TableMessage>
             </div>
             <div v-if="item.type === 'html'">
               <slot name="html" :message="item">
