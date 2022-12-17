@@ -14,4 +14,10 @@ createApp(App)
   .use(hljsVuePlugin)
   .use(JsonViewer)
   .use(codemirrorVuePlugin)
+  .component("highlightjs", {
+    template: `<div></div>`,
+  })
+  .component("codemirror", {
+    template: `<div></div>`,
+  })
   .mount("#app");
