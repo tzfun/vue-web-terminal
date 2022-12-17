@@ -3,7 +3,7 @@ export interface DragableConfType {
   height: number | string;
   zIndex: number;
   init: {
-    x: number;
-    y: number;
+    x?: number;
+    y?: number;
   };
 }

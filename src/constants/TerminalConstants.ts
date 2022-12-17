@@ -1,5 +1,6 @@
 import { InitLogType } from "../models/LogInterface";
 import { CommandType, CursorConfType } from "../models/CommandInterface";
+import { DragableConfType } from "../models/DraggableInterface";
 const InitLog: InitLogType = [
   {
     type: "normal",
@@ -82,6 +83,13 @@ const CursorConf: CursorConfType = {
   show: false,
 };
 
+const DragableConf: DragableConfType = {
+  width: 700,
+  height: 500,
+  zIndex: 100,
+  init: {},
+};
+
 export const DataConstant = {
   CursorConf,
   ByteLen: {
@@ -91,13 +99,5 @@ export const DataConstant = {
   JsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   AllCommandStore,
   InitLog,
-  DragableConf: {
-    width: 700,
-    height: 500,
-    zIndex: 100,
-    init: {
-      x: null,
-      y: null,
-    },
-  },
+  DragableConf,
 };

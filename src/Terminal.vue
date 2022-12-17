@@ -56,9 +56,9 @@ export interface TerminalProps {
   warnLogCountLimit?: number
   /** 自动搜索帮助 */
   autoHelp?: boolean
-  /**  显示终端头部 */
+  /** 显示终端头部 */
   showHeader?: boolean
-  /**  拖拽配置 */
+  /** 拖拽配置 */
   dragConf?: DragableConfType
 }
 
@@ -66,13 +66,12 @@ const props = withDefaults(defineProps<TerminalProps>(), {
   name: 'terminal',
   title: 'vue-web-terminal',
   showHeader: true,
-  initLog: () => {
-    return DataConstant.InitLog
-  },
+  initLog: () => DataConstant.InitLog,
   context: "/vue-web-terminal",
   warnLogCountLimit: 200,
   autoHelp: true,
   enableExampleHint: true,
+  // dragConf: () => DataConstant.DragableConf
 })
 
 const emit = defineEmits<{
