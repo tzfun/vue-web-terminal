@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { MessageType } from '../models/MessageInterface';
-const props = defineProps<{
-  highlight: boolean,
-  codemirrorOptions: any,
+import TerminalObj from '../TerminalObj'
+const terminalObj = TerminalObj
+defineProps<{
   message: MessageType
 }>()
 </script>
 
 <template>
   <div class="t-code">
-    <div v-if="highlight">
+    <div v-if="terminalObj.getOptions().highlight">
       <highlightjs ref="highlightjs" autodetect :code="message.content" />
     </div>
-    <div v-else-if="codemirrorOptions">
-      <codemirror :value="message.content" :options="codemirrorOptions" />
+    <div v-else-if="terminalObj.getOptions().codemirror">
+      <codemirror :value="message.content" :options="terminalObj.getOptions().codemirror" />
     </div>
     <div v-else style="background: rgb(39 50 58);">
       <pre style="padding: 1em;margin: 0">

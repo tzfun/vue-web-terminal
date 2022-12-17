@@ -2,6 +2,7 @@
 import './css/scrollbar.css'
 import './css/style.css'
 import 'vue-json-viewer/style.css'
+import Code from './components/Code.vue'
 import HeaderContainer from './components/HeaderContainer.vue'
 import { DragableConfType } from './models/DraggableInterface';
 import {
@@ -15,7 +16,6 @@ import {
 } from "./Util.js";
 import { getDragStyle, useToggleFullscreen } from './utils/ContainerUtil';
 import { nextTick, reactive, ref } from 'vue';
-import { title } from 'process';
 import { DataConstant } from './constants/TerminalConstants';
 import { InitLogType } from './models/LogInterface';
 import { CommandType } from './models/CommandInterface';
@@ -815,21 +815,7 @@ useKeydownListener((event) => {
               </slot>
             </div>
             <div v-if="item.type === 'code'">
-              <slot name="code" :message="item">
-                <div class="t-code">
-                  <div v-if="terminalObj.getOptions().highlight">
-                    <highlightjs ref="highlightjs" autodetect :code="item.content" />
-                  </div>
-                  <div v-else-if="terminalObj.getOptions().codemirror">
-                    <codemirror ref="codemirror" v-model="item.content"
-                      :options="terminalObj.getOptions().codemirror" />
-                  </div>
-                  <div v-else style="background: rgb(39 50 58);">
-                    <pre style="padding: 1em;margin: 0"><code style="font-size: 15px"
-                                                              v-html="item.content"></code></pre>
-                  </div>
-                </div>
-              </slot>
+              <Code :message="item"></Code>
             </div>
             <div v-if="item.type === 'table'">
               <slot name="table" :message="item">
