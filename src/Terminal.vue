@@ -29,6 +29,7 @@ import CodeMessage from './components/CodeMessage.vue'
 import JsonMessage from './components/JsonMessage.vue'
 import NormalMessage from './components/NormalMessage.vue'
 import TerminalObj from './TerminalObj'
+import { TerminalAskHandlerOption } from './TerminalAsk';
 
 export interface TerminalProps {
   /** 终端唯一名称 */
@@ -78,7 +79,7 @@ const emit = defineEmits<{
   (e: 'click', key: string): void
   (e: 'keydown', event: KeyboardEvent): void
   (e: 'beforeExecCmd', cmdKey: string, cmdValue: string): void
-  (e: 'execCmd'): void
+  (e: 'execCmd', cmdKey: string, cmdValue: string, success: (message: MessageType | TerminalFlash | TerminalAsk) => void, failed: (msg: string) => void): void
   (e: 'destroyed', name: string): void
   (e: 'initBefore', name: string): void
   (e: 'initComplete', name: string): void
@@ -99,13 +100,13 @@ const textEditorData = reactive({
     textEditorData.focus = false;
   },
 })
-const ask = reactive({
+const ask = reactive<{ open: boolean, input: string } & TerminalAskHandlerOption>({
   open: false,
-  question: null,
+  question: "",
   isPassword: false,
-  callback: null,
   autoReview: false,
   input: "",
+  callback: () => { }
 })
 const cursorConf = reactive(DataConstant.CursorConf)
 const searchCmd = reactive<{ item?: CommandType }>({ item: undefined })
@@ -123,7 +124,7 @@ const inputBoxParam = reactive({
 })
 const flash = reactive({
   open: false,
-  content: null,
+  content: "",
 })
 
 const terminalContainer = ref<HTMLDivElement>();
@@ -476,8 +477,8 @@ const execute = () => {
           break;
         default: {
           showInputLine.value = false;
-          let success = (message) => {
-            let finish = () => {
+          const success = (message: MessageType | TerminalFlash | TerminalAsk) => {
+            const finish = () => {
               showInputLine.value = true;
               endExecCallBack();
             };
@@ -517,7 +518,7 @@ const execute = () => {
             finish();
           };
 
-          let failed = (message = "Failed to execute.") => {
+          const failed = (message = "Failed to execute.") => {
             if (message != null) {
               pushMessage({
                 type: "normal",
@@ -544,7 +545,7 @@ const execute = () => {
       pushMessage({
         type: "normal",
         class: "error",
-        content: _html(_unHtml(e.stack)),
+        content: _html(_unHtml((e as Error).stack)),
         tag: "error",
       });
     }
@@ -832,7 +833,7 @@ const onAskInput = () => {
           : ask.input),
     });
   }
-  ask.question = null;
+  ask.question = "";
   if (ask.callback) {
     ask.callback(ask.input);
   }

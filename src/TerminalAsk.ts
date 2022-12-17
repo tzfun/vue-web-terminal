@@ -1,15 +1,31 @@
 import TerminalCallback from "./TerminalCallback";
 
-class TerminalAsk extends TerminalCallback {
-    ask(options) {
-        if (this.handler != null) {
-            this.handler(options)
-        }
-    }
+export type TerminalAskHandlerOption = {
+  isPassword: boolean;
+  question: string;
+  callback: (input: string) => void;
+  autoReview: boolean;
+};
 
-    onAsk(callback) {
-        this.handler = callback
+export type TerminalAskHandler = (options: TerminalAskHandlerOption) => void;
+
+class TerminalAsk extends TerminalCallback {
+  handler: TerminalAskHandler;
+
+  constructor() {
+    super();
+    this.handler = () => {};
+  }
+
+  ask(options: TerminalAskHandlerOption) {
+    if (this.handler != null) {
+      this.handler(options);
     }
+  }
+
+  onAsk(callback: TerminalAskHandler) {
+    this.handler = callback;
+  }
 }
 
-export default TerminalAsk
+export default TerminalAsk;

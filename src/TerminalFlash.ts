@@ -1,15 +1,23 @@
 import TerminalCallback from "./TerminalCallback";
 
-class TerminalFlash extends TerminalCallback  {
-    flush (msg) {
-        if (this.handler != null) {
-            this.handler(msg)
-        }
-    }
+export type FlashHandler = (msg: string) => void;
+class TerminalFlash extends TerminalCallback {
+  handler: FlashHandler;
 
-    onFlush (callback) {
-        this.handler = callback
+  constructor() {
+    super();
+    this.handler = () => {};
+  }
+
+  flush(msg: string) {
+    if (this.handler != null) {
+      this.handler(msg);
     }
+  }
+
+  onFlush(callback: FlashHandler) {
+    this.handler = callback;
+  }
 }
 
-export default TerminalFlash
+export default TerminalFlash;
