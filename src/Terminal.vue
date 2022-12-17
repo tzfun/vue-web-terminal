@@ -193,7 +193,7 @@
 import './css/scrollbar.css'
 import './css/style.css'
 import 'vue-json-viewer/style.css'
-import TerminalJs from './Terminal.js'
+import TerminalJs from './Terminal'
 
 export default TerminalJs
 </script>

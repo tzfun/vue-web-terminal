@@ -1,4 +1,4 @@
-import TerminalCallback from "@/TerminalCallback";
+import TerminalCallback from "./TerminalCallback";
 
 class TerminalAsk extends TerminalCallback {
     ask(options) {
