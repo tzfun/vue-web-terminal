@@ -14,7 +14,7 @@ export interface MessageType {
   /** 当前时间 */
   time?: any;
   /** 类别 */
-  class: "success" | "error" | "system" | "info" | "warning";
+  class?: "success" | "error" | "system" | "info" | "warning";
   /** 类型 */
   type: "normal" | "json" | "code" | "table" | "cmdLine" | "splitLine" | "html";
   /** 具体内容，不同消息内容格式不一样 */
@@ -23,4 +23,9 @@ export interface MessageType {
   tag?: any;
   /** json viewer depth */
   depth?: number;
+}
+
+export interface TableContentType {
+  head: string[];
+  rows: any[][];
 }

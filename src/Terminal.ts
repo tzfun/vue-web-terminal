@@ -1,7 +1,6 @@
 export default {
   data() {
     return {
-      showInputLine: true,
       keydownListener: null,
     };
   },

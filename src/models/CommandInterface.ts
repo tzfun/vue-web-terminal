@@ -9,3 +9,12 @@ export interface CommandType {
     des?: string;
   }>;
 }
+
+export interface CursorConfType {
+  defaultWidth: number;
+  width: number;
+  left: "unset" | number;
+  top: "unset" | number;
+  idx: number; //  从0开始
+  show: boolean;
+}

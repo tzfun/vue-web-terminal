@@ -23,7 +23,7 @@ import TerminalFlash from "./TerminalFlash";
 import TerminalObj from './TerminalObj';
 import TerminalAsk from "./TerminalAsk";
 import historyStore from "./HistoryStore";
-import { MessageType } from './models/MessageInterface';
+import { MessageType, TableContentType } from './models/MessageInterface';
 import { useKeydownListener } from './utils/ListenerUtil';
 import TableMessage from './components/TableMessage.vue'
 import CodeMessage from './components/CodeMessage.vue'
@@ -82,6 +82,7 @@ const emit = defineEmits<{
 
 const command = ref("");
 const fullscreen = ref(false);
+const showInputLine = ref(true);
 const textEditorData = reactive({
   open: false,
   focus: false,
@@ -126,7 +127,7 @@ const terminalContainer = ref<HTMLDivElement>();
 const terminalWindow = ref<HTMLDivElement>();
 const cmdInput = ref<HTMLInputElement>();
 const askInput = ref<HTMLInputElement>();
-const terminalInputBox = ref(null);
+const terminalInputBox = ref<HTMLParagraphElement>();
 const terminalInputPrompt = ref(null);
 const terminalEnFlag = ref(null);
 const terminalCnFlag = ref(null);
@@ -189,7 +190,8 @@ const textEditorClose = () => {
 
 const resetSearchKey = () => {
   searchCmd.item = undefined;
-},
+}
+
 const doSearchCmd = (key: string) => {
   if (!props.autoHelp) {
     return;
@@ -264,8 +266,8 @@ const fillCmd = () => {
  * 命令搜索：comm*、command
  * 分组搜索：:groupA
  */
-const printHelp = (regExp, srcStr: string) => {
-  let content = {
+const printHelp = (regExp: RegExp, srcStr: string) => {
+  let content: TableContentType = {
     head: ["KEY", "GROUP", "DETAIL"],
     rows: [],
   };
@@ -333,7 +335,8 @@ const printHelp = (regExp, srcStr: string) => {
     type: "table",
     content: content,
   });
-},
+}
+
 const execute = () => {
   resetSearchKey();
   saveCurCommand();
@@ -357,11 +360,11 @@ const execute = () => {
           openUrl(split[1]);
           break;
         default: {
-          showInputLine = false;
+          showInputLine.value = false;
           let success = (message) => {
             let finish = () => {
-              showInputLine = true;
-              _endExecCallBack();
+              showInputLine.value = true;
+              endExecCallBack();
             };
 
             if (message) {
@@ -407,8 +410,8 @@ const execute = () => {
                 content: message,
               });
             }
-            showInputLine = true;
-            _endExecCallBack();
+            showInputLine.value = true;
+            endExecCallBack();
           };
 
           emit(
@@ -469,23 +472,23 @@ const pushMessageBatch = async (messages: MessageType[], ignoreCheck = false) =>
     checkTerminalLog();
   }
 }
-const resetCursorPos = (cmd) => {
-  cursorConf.idx = (cmd == null ? command.value : cmd).length;
+const resetCursorPos = (cmd?: string) => {
+  cursorConf.idx = (!cmd ? command.value : cmd).length;
   cursorConf.left = "unset";
   cursorConf.top = "unset";
   cursorConf.width = cursorConf.defaultWidth;
 }
-const calculateCursorPos = (cmd) => {
+const calculateCursorPos = (cmd?: string) => {
   //  idx可以认为是需要光标覆盖字符的索引
   let idx = cursorConf.idx;
-  let command = cmd == null ? command : cmd;
+  let _cmd = !cmd ? command.value : cmd;
 
-  if (idx < 0 || idx >= command.length) {
-    _resetCursorPos();
+  if (idx < 0 || idx >= _cmd.length) {
+    resetCursorPos();
     return;
   }
 
-  let lineWidth = terminalInputBox.getBoundingClientRect().width;
+  let lineWidth = terminalInputBox.value?.getBoundingClientRect().width ?? 0;
 
   let pos = { left: 0, top: 0 };
   //  当前字符长度
@@ -495,7 +498,7 @@ const calculateCursorPos = (cmd) => {
 
   //  先找到被覆盖字符的位置
   for (let i = 0; i <= idx; i++) {
-    charWidth = _calculateStringWidth(command[i]);
+    charWidth = calculateStringWidth(command.value[i]);
     pos.left += preWidth;
     preWidth = charWidth;
     if (pos.left > lineWidth) {
@@ -528,12 +531,12 @@ const saveCurCommand = () => {
 
   terminalLog.push({
     type: "cmdLine",
-    content: `${context} > ${_commandFormatter(command)}`,
+    content: `${context} > ${commandFormatter(command.value)}`,
   });
 }
 const doClear = (args) => {
   if (args.length === 1) {
-    terminalLog = [];
+    terminalLog.length = 0;
   } else if (args.length === 2 && args[1] === "history") {
     historyStore.clearLog(name);
   }
@@ -673,11 +676,11 @@ const onInputKeyup = (e) => {
     calculateCursorPos();
   }
 }
-const commandFormatter = (cmd) => {
-  if (commandFormatter != null) {
-    return commandFormatter(cmd);
+const commandFormatter = (cmd?: string) => {
+  if (props.commandFormatter) {
+    return props.commandFormatter(cmd);
   }
-  let split = cmd.split(" ");
+  let split = cmd?.split(" ") ?? [];
   let formatted = "";
   for (let i = 0; i < split.length; i++) {
     let char = _html(split[i]);

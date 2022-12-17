@@ -1,5 +1,5 @@
 import { InitLogType } from "../models/LogInterface";
-import { CommandType } from '../models/CommandInterface';
+import { CommandType, CursorConfType } from "../models/CommandInterface";
 const InitLog: InitLogType = [
   {
     type: "normal",
@@ -71,17 +71,19 @@ const AllCommandStore: CommandType[] = [
       },
     ],
   },
-]
+];
+
+const CursorConf: CursorConfType = {
+  defaultWidth: 6,
+  width: 6,
+  left: "unset",
+  top: 0,
+  idx: 0, //  从0开始
+  show: false,
+};
 
 export const DataConstant = {
-  CursorConf: {
-    defaultWidth: 6,
-    width: 6,
-    left: "unset",
-    top: 0,
-    idx: 0, //  从0开始
-    show: false,
-  },
+  CursorConf,
   ByteLen: {
     en: 8,
     cn: 13,
