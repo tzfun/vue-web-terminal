@@ -264,7 +264,8 @@ function getContainerStyle() {
 
 const toggleFullscreen = useToggleFullscreen(fullscreen, terminalContainer)
 function triggerClick(key: string) {
-  if (key === "fullScreen" && !fullscreen.value) {
+  if (key === "fullScreen") {
+    // 全屏时点击全屏，回复原大小
     toggleFullscreen()
   } else if (key === "minScreen" && fullscreen.value) {
     toggleFullscreen()
