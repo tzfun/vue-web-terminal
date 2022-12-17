@@ -9,9 +9,9 @@ defineProps<{
 
 <template>
   <span class="t-content-normal">
-    <span v-if="_nonEmpty(message.tag == null ? message.class : message.tag)" :class="message.class"
+    <span v-if="_nonEmpty(message.tag ? message.tag : message.class)" :class="message.class"
       style="margin-right: 10px">{{
-          message.tag == null ? message.class : message.tag
+          message.tag ? message.tag : message.class
       }}</span>
     <span v-html="message.content"></span>
   </span>

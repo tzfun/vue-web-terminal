@@ -562,7 +562,7 @@ const endExecCallBack = () => {
 }
 
 const pushMessage = (message: MessageType | MessageType[], ignoreCheck = false) => {
-  if (message == null) return;
+  if (!message) return;
   if (Array.isArray(message))
     return pushMessageBatch(message, ignoreCheck);
 
@@ -936,7 +936,7 @@ useKeydownListener((event: KeyboardEvent) => {
         </p>
         <slot name="helpCmd" :item="searchCmd.item">
           <p class="t-help-msg">
-            {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
+            {{ searchCmd.item ? searchCmd.item.usage: '' }}
           </p>
         </slot>
       </div>

@@ -3,17 +3,17 @@ import { _isSafari } from "@/Util";
 import { onMounted, Ref } from "vue";
 
 export const getDragStyle = (dragConf: DragableConfType) => {
-  let clientWidth = document.body.clientWidth;
-  let clientHeight = document.body.clientHeight;
+  const clientWidth = document.body.clientWidth;
+  const clientHeight = document.body.clientHeight;
 
-  let confWidth = dragConf.width;
-  let width = confWidth == null ? 700 : confWidth;
+  const confWidth = dragConf.width;
+  let width = confWidth ?? 700;
 
   if (confWidth && typeof confWidth === "string" && confWidth.endsWith("%")) {
     width = clientWidth * (parseInt(confWidth) / 100);
   }
-  let confHeight = dragConf.height;
-  let height = confHeight == null ? 500 : confHeight;
+  const confHeight = dragConf.height;
+  let height = confHeight ?? 500;
   if (
     confHeight &&
     typeof confHeight === "string" &&
@@ -22,11 +22,11 @@ export const getDragStyle = (dragConf: DragableConfType) => {
     height = clientHeight * (parseInt(confHeight) / 100);
   }
 
-  let zIndex = dragConf.zIndex ? dragConf.zIndex : 100;
+  const zIndex = dragConf.zIndex ? dragConf.zIndex : 100;
 
   let initX, initY;
 
-  let initPos = dragConf.init;
+  const initPos = dragConf.init;
   if (initPos && initPos.x && initPos.y) {
     initX = initPos.x;
     initY = initPos.y;
@@ -125,7 +125,7 @@ export const initDrag = (
   fullscreenRef: Ref<boolean>,
   terminalHeader: HTMLDivElement,
   terminalContainer: HTMLDivElement,
-  terminalWindow: HTMLDivElement,
+  terminalWindow: HTMLDivElement
 ) => {
   // TODO 后续用成熟的拖动库实现
   if (!draggable) {
