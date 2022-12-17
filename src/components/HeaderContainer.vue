@@ -13,16 +13,16 @@ const emit = defineEmits<{
   (e: 'minScreen'): void
   (e: 'fullScreen'): void
 }>()
-const containerRef = ref<HTMLDivElement>()
+const container = ref<HTMLDivElement>()
 defineExpose<{
-  containerRef: Ref<HTMLDivElement | undefined>
+  container: Ref<HTMLDivElement | undefined>
 }>({
-  containerRef
+  container
 })
 </script>
 
 <template>
-  <div class="t-header-container" v-if="showHeader" :style="draggable ? 'cursor: move;' : ''" ref="containerRef">
+  <div class="t-header-container" v-if="showHeader" :style="draggable ? 'cursor: move;' : ''" ref="container">
     <slot name="header">
       <div class="t-header">
         <h4>

@@ -234,7 +234,7 @@ onMounted(async () => {
   }
 
   cursorConf.defaultWidth = byteLen.en;
-  if (terminalWindow.value && terminalContainer.value && terminalHeader.value?.containerRef && terminalInputPrompt.value) {
+  if (terminalWindow.value && terminalContainer.value && terminalHeader.value?.container && terminalInputPrompt.value) {
     if (terminalWindow != null) {
       terminalWindow.value.scrollTop = terminalWindow.value.offsetHeight;
     }
@@ -242,7 +242,7 @@ onMounted(async () => {
     let promptRect = terminalInputPrompt.value.getBoundingClientRect();
     inputBoxParam.promptHeight = promptRect.height;
     inputBoxParam.promptWidth = promptRect.width;
-    initDrag(draggable(), fullscreen, terminalHeader.value?.containerRef, terminalContainer.value, terminalWindow.value)
+    initDrag(draggable(), fullscreen, terminalHeader.value?.container, terminalContainer.value, terminalWindow.value)
   }
 
   emit("initComplete", props.name);
