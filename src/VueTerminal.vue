@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { nextTick, reactive, ref, onMounted, onUnmounted, watch } from 'vue';
+import { cloneDeep } from 'lodash';
 import './css/scrollbar.css';
 import './css/style.css';
 import 'vue-json-viewer/style.css';
@@ -12,7 +14,6 @@ import {
   _screenType,
 } from "./Util.js";
 import { getDragStyle, useToggleFullscreen, dragging, initDrag } from './utils/ContainerUtil';
-import { nextTick, reactive, ref, onMounted, onUnmounted, watch } from 'vue';
 import { DataConstant } from './constants/TerminalConstants';
 import { InitLogType } from './models/LogInterface';
 import { CommandType } from './models/CommandInterface';
@@ -46,10 +47,13 @@ export interface TerminalProps {
   enableExampleHint?: boolean
   /** 输入过滤器 */
   inputFilter?: (value: string) => string
-  /** 命令格式化器 */
-  commandFormatter?: Function
+  /**
+   * 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。
+   * 如果不设置将使用内部定义的高亮样式
+   */
+  commandFormatter?: (cmd: string) => string
   /** 按下Tab键处理函数 */
-  tabKeyHandler?: Function
+  tabKeyHandler?: (e: KeyboardEvent) => void
   /** 记录条数超出此限制会发出警告 */
   warnLogCountLimit?: number
   /** 自动搜索帮助 */
@@ -73,10 +77,12 @@ const props = withDefaults(defineProps<TerminalProps>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'click', key: string): void
-  (e: 'keydown', event: KeyboardEvent): void
-  (e: 'beforeExecCmd', cmdKey: string, cmdValue: string): void
-  (e: 'execCmd', cmdKey: string, cmdValue: string, success: (message: MessageType | TerminalFlash | TerminalAsk) => void, failed: (msg: string) => void): void
+  (e: 'click', key: string, name: string): void
+  (e: 'onClick', key: string, name: string): void
+  (e: 'keydown', event: KeyboardEvent, name: string): void
+  (e: 'onKeydown', event: KeyboardEvent, name: string): void
+  (e: 'beforeExecCmd', cmdKey: string, cmdValue: string, name: string): void
+  (e: 'execCmd', cmdKey: string, cmdValue: string, success: (message: MessageType | TerminalFlash | TerminalAsk) => void, failed: (msg: string) => void, name: string): void
   (e: 'destroyed', name: string): void
   (e: 'initBefore', name: string): void
   (e: 'initComplete', name: string): void
@@ -222,14 +228,16 @@ onMounted(async () => {
   emit("initBefore", props.name);
 
   if (props.initLog) {
-    await pushMessageBatch(props.initLog, true);
+    pushMessageBatch(props.initLog, true);
   }
 
   if (props.commandStore) {
+    // 避免sort时对props的修改
+    const commandStore = cloneDeep(props.commandStore);
     if (props.commandStoreSort) {
-      props.commandStore.sort(props.commandStoreSort);
+      commandStore.sort(props.commandStoreSort);
     }
-    props.commandStore.forEach(cmd => {
+    commandStore.forEach(cmd => {
       allCommandStore.push(cmd);
     });
   }
@@ -277,7 +285,8 @@ function triggerClick(key: string) {
   } else if (key === "minScreen" && fullscreen.value) {
     toggleFullscreen();
   }
-  emit('click', key);
+  emit('click', key, props.name);
+  emit('onClick', key, props.name);
 }
 
 function focus() {
@@ -375,6 +384,9 @@ function jumpToBottom() {
   });
 }
 
+/**
+ * 按tab时补全命令
+ */
 function fillCmd() {
   if (searchCmd.item) {
     command.value = searchCmd.item.key;
@@ -465,7 +477,7 @@ function execute() {
     try {
       let split = command.value.split(" ");
       let cmdKey = split[0];
-      emit("beforeExecCmd", cmdKey, command.value);
+      emit("beforeExecCmd", cmdKey, command.value, props.name);
       switch (cmdKey) {
         case "help": {
           let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"
@@ -540,7 +552,8 @@ function execute() {
             cmdKey,
             command.value,
             success,
-            failed
+            failed,
+            props.name
           );
           return;
         }
@@ -797,7 +810,7 @@ function onInputKeyup(e: KeyboardEvent) {
   }
 }
 function commandFormatter(cmd?: string) {
-  if (props.commandFormatter) {
+  if (props.commandFormatter && cmd) {
     return props.commandFormatter(cmd);
   }
   let split = cmd?.split(" ") ?? [];
@@ -868,7 +881,8 @@ useKeydownListener((event: KeyboardEvent) => {
         cmdInput.value?.focus();
       }
     }
-    emit("keydown", event);
+    emit("keydown", event, props.name);
+    emit("onKeydown", event, props.name);
   }
 });
 </script>

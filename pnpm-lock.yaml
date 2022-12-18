@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@types/lodash': ^4.14.191
   '@types/node': ^18.11.15
   '@typescript-eslint/eslint-plugin': ^5.46.1
   '@typescript-eslint/parser': ^5.46.1
@@ -8,6 +9,7 @@ specifiers:
   eslint: ^8.30.0
   eslint-plugin-vue: ^9.8.0
   json-viewer: ^2.2.0
+  lodash: ^4.17.21
   typescript: ^4.9.4
   vite: ^4.0.1
   vite-plugin-dts: ^1.7.1
@@ -18,9 +20,11 @@ specifiers:
 
 dependencies:
   json-viewer: 2.2.0
+  lodash: 4.17.21
   vue-json-viewer: 3.0.4_vue@3.2.45
 
 devDependencies:
+  '@types/lodash': 4.14.191
   '@types/node': 18.11.15
   '@typescript-eslint/eslint-plugin': 5.46.1_mqzxmroayievgzgel6yrqgih5i
   '@typescript-eslint/parser': 5.46.1_lzzuuodtsqwxnvqeq4g4likcqa
@@ -431,6 +435,10 @@ packages:
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
+    dev: true
+
+  /@types/lodash/4.14.191:
+    resolution: {integrity: sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==}
     dev: true
 
   /@types/node/12.20.24:
@@ -1536,7 +1544,6 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /lru-cache/4.1.5:
     resolution: {integrity: sha512-sWZlbEP2OsHNkXrMl5GYk/jKk70MBng6UU4YI/qGDYbgf6YbP4EvmqISbXCoJiRKs+1bSpFHVgQxvJ17F2li5g==}
