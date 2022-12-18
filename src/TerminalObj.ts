@@ -10,26 +10,12 @@ export type TextEditorOpenOption = {
   content: string;
   onClose?: (value: string) => void;
 };
-export type TerminalPluginOption = {
-  highlight?: boolean;
-  codemirror?: any;
-};
 
 class TerminalObj {
   _pool: Map<string, TerminalObjListener>;
-  _options: TerminalPluginOption;
 
   constructor() {
     this._pool = new Map();
-    this._options = {};
-  }
-
-  setOptions(ops: TerminalPluginOption) {
-    this._options = ops;
-  }
-
-  getOptions() {
-    return this._options;
   }
 
   register(name: string, listener: TerminalObjListener) {

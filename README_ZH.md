@@ -114,21 +114,21 @@ body, html, #app {
 
 terminal标签支持的属性参数表
 
-| 参数                        | 说明                                                           | 类型       | 默认值                                              |
-|---------------------------|--------------------------------------------------------------|----------|--------------------------------------------------|
-| name                      | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                      | string   | terminal                                         |
-| context                   | 上下文内容                                                        | string   | /vue-web-terminal                                |
-| title                     | header中显示的标题                                                 | string   | vue-web-terminal                                 |
-| show-header               | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                               | boolean  | true                                             |
-| init-log                  | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示          | array    | 略                                                |
-| warn-log-count-limit      | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                | number   | 200                                              |
-| auto-help                 | 是否打开命令行自动搜索提示功能                                              | boolean  | true                                             |
-| enable-example-hint       | 是否显示右上角命令样例提示，前提是开启了`auto-help`                              | boolean  | true                                             |
-| command-store             | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                         | array    | [内置命令](#内置命令)                                    |
-| command-store-sort        | 命令行库排序，自定义命令库的显示排序规则                                         | function | function(a,b)                                    |
-| input-filter              | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                         | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf                 | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                | object   | 见[拖拽功能](#拖拽功能)                                   |
-| command-formatter         | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式 | function | function(cmd)                                    |
+| 参数                 | 说明                                                                                                                 | 类型     | 默认值                                                          |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------- |
+| name                 | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                                                      | string   | terminal                                                        |
+| context              | 上下文内容                                                                                                           | string   | /vue-web-terminal                                               |
+| title                | header中显示的标题                                                                                                   | string   | vue-web-terminal                                                |
+| show-header          | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                                                                    | boolean  | true                                                            |
+| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                                  | array    | 略                                                              |
+| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                                         | number   | 200                                                             |
+| auto-help            | 是否打开命令行自动搜索提示功能                                                                                       | boolean  | true                                                            |
+| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                                                  | boolean  | true                                                            |
+| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                                  | array    | [内置命令](#内置命令)                                           |
+| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                                                             | function | function(a,b)                                                   |
+| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                                                 | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                                   | object   | 见[拖拽功能](#拖拽功能)                                         |
+| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式 | function | function(cmd)                                                   |
 
 > 下面是已移除属性
 >
@@ -141,15 +141,15 @@ terminal标签支持的属性参数表
 
 terminal标签支持的事件表
 
-| 事件名称            | 说明                                                                                                    | 回调参数                                       |
-|-----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd         | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd   | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown       | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
-| onClick         | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
-| initBefore      | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
-| initComplete    | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
-| tabKeyHandler   | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                                                 | `(event)`                                  |
+| 事件名称      | 说明                                                                                                                                                           | 回调参数                                   |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd | 用户敲下回车之后执行命令之前触发                                                                                                                               | `(cmdKey, command, name)`                  |
+| onKeydown     | 当获取命令输入光标焦点时，按下任意键触发                                                                                                                       | `(event, name)`                            |
+| onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                                                     | `(key, name)`                              |
+| initBefore    | 生命周期函数，插件初始化之前触发                                                                                                                               | `(name)`                                   |
+| initComplete  | 生命周期函数，插件初始化完成之后触发                                                                                                                           | `(name)`                                   |
+| tabKeyHandler | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                                                                                     | `(event)`                                  |
 
 **特别说明**：execCmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
 
@@ -163,18 +163,18 @@ terminal标签支持的事件表
 
 Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之后支持。
 
-| 插槽名称        | 参数                   | 说明                                         |
-|-------------|----------------------|--------------------------------------------|
-| header      | /                    | 自定义header样式，仍然会保留拖拽区域                      |
-| helpBox     | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果                     |
-| normal      | { message }          | 自定义`normal`类型消息                            |
-| json        | { message }          | 自定义`json`类型消息                              |
-| table       | { message }          | 自定义`table`类型消息                             |
-| code        | { message }          | 自定义`code`类型消息                              |
-| html        | { message }          | 自定义`html`类型消息                              |
-| flash       | { content }          | 自定义实时回显样式                                  |
-| helpCmd     | { item }             | 自定义命令搜索提示样式                                |
-| textEditor  | { data }             | 自定义文本编辑器样式，更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器)  |
+| 插槽名称   | 参数                 | 说明                                                                          |
+| ---------- | -------------------- | ----------------------------------------------------------------------------- |
+| header     | /                    | 自定义header样式，仍然会保留拖拽区域                                          |
+| helpBox    | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果                                      |
+| normal     | { message }          | 自定义`normal`类型消息                                                        |
+| json       | { message }          | 自定义`json`类型消息                                                          |
+| table      | { message }          | 自定义`table`类型消息                                                         |
+| code       | { message }          | 自定义`code`类型消息                                                          |
+| html       | { message }          | 自定义`html`类型消息                                                          |
+| flash      | { content }          | 自定义实时回显样式                                                            |
+| helpCmd    | { item }             | 自定义命令搜索提示样式                                                        |
+| textEditor | { data }             | 自定义文本编辑器样式，更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器) |
 
 example:
 
@@ -349,12 +349,12 @@ Terminal.$api.textEditorClose('my-terminal')
 
 本插件定义了消息对象，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，`execCmd`事件的`success()`回调和`pushMessage`api都会用到它。
 
-| 属性      | 说明                             | 类型                       | 可选值                               |
-|---------|--------------------------------|--------------------------|-----------------------------------|
-| content | 必填，消息内容，不同消息格式的内容格式不一样，具体规则见下文 | string、json、object、array | /                                 |
-| type    | 消息格式类型，默认值为`normal`            | string                   | normal、json、code、table、html       |
-| class   | 消息级别，仅类型为`normal`有效            | string                   | success、error、system、info、warning |
-| tag     | 标签，仅类型为`normal`有效              | string                   | /                                 |
+| 属性    | 说明                                                         | 类型                        | 可选值                                |
+| ------- | ------------------------------------------------------------ | --------------------------- | ------------------------------------- |
+| content | 必填，消息内容，不同消息格式的内容格式不一样，具体规则见下文 | string、json、object、array | /                                     |
+| type    | 消息格式类型，默认值为`normal`                               | string                      | normal、json、code、table、html       |
+| class   | 消息级别，仅类型为`normal`有效                               | string                      | success、error、system、info、warning |
+| tag     | 标签，仅类型为`normal`有效                                   | string                      | /                                     |
 
 ### normal 普通文本
 
@@ -427,6 +427,15 @@ vue2版本依赖推荐，vue3使用最新的版本即可
 }
 ```
 
+使用插槽插入模板(vue3):
+```vue
+<Terminal>
+  <template #code="message">
+    <highlightjs ref="highlightjs" autodetect :code="message.content" />
+  </template>
+</Terminal>
+```
+
 #### codemirror 代码高亮
 
 code类型消息也支持 `codemirror`
@@ -452,6 +461,15 @@ Vue.use(Terminal, {
     smartIndent: true
   }
 })
+```
+
+使用插槽插入模板(vue3):
+```vue
+<Terminal>
+  <template #code="message">
+    <codemirror :value="message.content" :options="yourCodemirrorOptions" />
+  </template>
+</Terminal>
 ```
 
 ### table
@@ -520,14 +538,14 @@ function execCmd(key, command, success) {
 
 如果开启了命令帮助搜索功能，在实例化Terminal之前需要传入自定义命令库，传入的命令库为命令数组，以下是命令格式定义规则：
 
-| 参数          | 说明                              | 类型     |
-|-------------|---------------------------------|--------|
-| key         | 命令关键字，必填                        | string |
-| title       | 显示标题                            | string |
-| group       | 分组，可自定义，内置的`help`命令可以按照此字段进行筛选  | string |
-| usage       | 使用方法                            | string |
-| description | 详细描述                            | string |
-| example     | 使用示例，见[命令示例格式](#命令示例格式)         | array  |
+| 参数        | 说明                                                   | 类型   |
+| ----------- | ------------------------------------------------------ | ------ |
+| key         | 命令关键字，必填                                       | string |
+| title       | 显示标题                                               | string |
+| group       | 分组，可自定义，内置的`help`命令可以按照此字段进行筛选 | string |
+| usage       | 使用方法                                               | string |
+| description | 详细描述                                               | string |
+| example     | 使用示例，见[命令示例格式](#命令示例格式)              | array  |
 
 ### 命令示例格式
 
@@ -643,11 +661,11 @@ Terminal默认内置有以下命令，且不可替代
 
 dragConf完整配置结构如下：
 
-| 参数     | 说明                                                                | 类型            |
-|--------|-------------------------------------------------------------------|---------------|
-| width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）                               | number/string |
-| height | 拖拽窗口高度，同宽度                                                        | number/string |
-| zIndex | 窗口层级，默认100                                                        | number        |
+| 参数   | 说明                                                                                                | 类型          |
+| ------ | --------------------------------------------------------------------------------------------------- | ------------- |
+| width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）                                | number/string |
+| height | 拖拽窗口高度，同宽度                                                                                | number/string |
+| zIndex | 窗口层级，默认100                                                                                   | number        |
 | init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px，``` {"x": 700, "y": 500}``` | object        |
 
 ![dragging.gif](public/dragging.gif)

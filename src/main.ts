@@ -5,10 +5,4 @@ import App from "./Terminal.vue";
 
 createApp(App)
   .use(JsonViewer)
-  .component("highlightjs", {
-    template: `<div></div>`,
-  })
-  .component("codemirror", {
-    template: `<div></div>`,
-  })
   .mount("#app");
