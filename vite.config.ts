@@ -11,7 +11,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name,
-      formats: ["es", "umd"],
+      formats: ["es", "cjs"],
       fileName: name,
     },
   },

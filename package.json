@@ -56,5 +56,5 @@
     "vue-console"
   ],
   "author": "beifengtz",
-  "main": "lib/vue-web-terminal.umd.js"
+  "main": "lib/vue-web-terminal.mjs"
 }
