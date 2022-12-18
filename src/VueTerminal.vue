@@ -141,7 +141,7 @@ const flash = reactive({
 
 const terminalContainer = ref<HTMLDivElement>();
 const terminalWindow = ref<HTMLDivElement>();
-const terminalHeader = ref<InstanceType<typeof HeaderContainer>>();
+const terminalHeader = ref<HTMLDivElement>();
 const cmdInput = ref<HTMLInputElement>();
 const askInput = ref<HTMLInputElement>();
 const terminalInputBox = ref<HTMLParagraphElement>();
@@ -249,7 +249,7 @@ onMounted(async () => {
   }
 
   cursorConf.defaultWidth = byteLen.en;
-  if (terminalWindow.value && terminalContainer.value && terminalHeader.value?.container && terminalInputPrompt.value) {
+  if (terminalWindow.value && terminalContainer.value && terminalHeader.value && terminalInputPrompt.value) {
     if (terminalWindow.value) {
       terminalWindow.value.scrollTop = terminalWindow.value.offsetHeight;
     }
@@ -257,7 +257,7 @@ onMounted(async () => {
     let promptRect = terminalInputPrompt.value.getBoundingClientRect();
     inputBoxParam.promptHeight = promptRect.height;
     inputBoxParam.promptWidth = promptRect.width;
-    initDrag(draggable(), fullscreen, terminalHeader.value?.container, terminalContainer.value, terminalWindow.value);
+    initDrag(draggable(), fullscreen, terminalHeader.value, terminalContainer.value, terminalWindow.value);
   }
 
   emit("initComplete", props.name);
@@ -890,9 +890,13 @@ useKeydownListener((event: KeyboardEvent) => {
 <template>
   <div class="t-container" :style="getContainerStyle()" ref="terminalContainer" @click="focus">
     <div class="terminal">
-      <HeaderContainer :title="title" :show-header="showHeader" :draggable="draggable()" :fullscreen="fullscreen"
-        ref="terminalHeader" @click-title="triggerClick('title')" @close="triggerClick('close')"
-        @min-screen="triggerClick('minScreen')" @full-screen="triggerClick('fullScreen')"></HeaderContainer>
+      <div class="t-header-container" v-if="showHeader" :style="draggable() ? 'cursor: move;' : ''" ref="terminalHeader">
+        <slot name="header">
+          <HeaderContainer :title="title" :show-header="showHeader" :draggable="draggable()" :fullscreen="fullscreen"
+            ref="terminalHeader" @click-title="triggerClick('title')" @close="triggerClick('close')"
+            @min-screen="triggerClick('minScreen')" @full-screen="triggerClick('fullScreen')"></HeaderContainer>
+        </slot>
+      </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
         ref="terminalWindow">
         <div class="t-log-box" v-for="(item, idx) in terminalLog" v-bind:key="idx">
