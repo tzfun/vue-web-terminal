@@ -1,4 +1,4 @@
-import Terminal from "./Terminal.vue";
+import Terminal from "./VueTerminal.vue";
 import TerminalObj from "./TerminalObj.js";
 import JsonViewer from "vue-json-viewer";
 import TerminalFlash from "./TerminalFlash";
