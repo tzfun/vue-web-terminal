@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import Terminal from "vue-web-terminal";
-import TerminalFlash from "../../../lib/src/TerminalFlash";
 const name = 'demo-flash';
 
-function execCmd(key: string, command: string, success: (msg: TerminalFlash) => void, failed: (msg: string) => void) {
+function execCmd(key: string, command: string, success: (msg: typeof Terminal.$Flash) => void, failed: (msg: string) => void) {
   if (key === 'download') {
     Terminal.$api.pushMessage(name, {
       content: '🔍︎ Comparing versions, the relevant dependency files will be downloaded soon...'

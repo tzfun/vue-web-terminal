@@ -1,15 +1,23 @@
 import Terminal from "./VueTerminal.vue";
-import TerminalObj from "./TerminalObj.js";
+import TerminalObj from "./TerminalObj";
 import JsonViewer from "vue-json-viewer";
 import TerminalFlash from "./TerminalFlash";
 import TerminalAsk from "./TerminalAsk";
-import { App } from "vue";
+import type { App, Plugin } from "vue";
 
-export const install = (app: App) => {
+Terminal.install = (app: App) => {
   app.use(JsonViewer);
 };
-export const $api = TerminalObj;
-export const $Ask = TerminalAsk;
-export const $Flash = TerminalFlash;
 
-export default Terminal;
+Terminal.$api = TerminalObj;
+Terminal.$Flash = TerminalFlash;
+Terminal.$Ask = TerminalAsk;
+
+type TerminalType = typeof Terminal &
+  Plugin & {
+    $api: typeof TerminalObj;
+    $Flash: typeof TerminalFlash;
+    $Ask: typeof TerminalAsk;
+  };
+
+export default Terminal as TerminalType;
