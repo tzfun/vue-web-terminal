@@ -1,0 +1,13 @@
+<svg width="256" height="221" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet">
+
+ <g>
+  <title>Layer 1</title>
+  <path id="svg_1" fill="#41B883" d="m205.00202,0.20202l51.2,0l-128,220.8l-128,-220.8l97.92,0l30.08,51.2l29.44,-51.2l47.36,0z"/>
+  <path id="svg_2" fill="#41B883" d="m0.20202,0.20202l128,220.8l128,-220.8l-51.2,0l-76.8,132.48l-77.44,-132.48l-50.56,0z"/>
+  <path id="svg_3" fill="#35495E" d="m50.76202,0.40404l77.44,133.12l76.8,-133.12l-47.36,0l-29.44,51.2l-30.08,-51.2l-47.36,0z"/>
+  <path id="svg_4" fill="#ffffff" d="m59.9828,6.19683l68.29714,115.55809l68.5922,-117.10787l-36.07168,0.15238l-32.52052,57.96883l-32.40381,-56.8381l-35.89333,0.26667z"/>
+  <path stroke="null" id="svg_5" fill="#ffffff" d="m10.12187,6.06869l118.61348,202.13333l117.02857,-203.58095l-43.20346,0.07619l-73.58514,128.44208l-75.27997,-127.07065l-43.57348,0z"/>
+  <rect stroke="null" id="svg_6" height="36.90298" width="168.37232" y="144.48085" x="50.3947" fill="#ffffff"/>
+  <text transform="matrix(1.26965 0 0 1.33674 -15.3591 -58.7811)" stroke="null" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="24" stroke-width="0" id="svg_8" y="173.89762" x="47.7132" fill="#6b6262">&lt;terminal&gt;</text>
+ </g>
+</svg>
