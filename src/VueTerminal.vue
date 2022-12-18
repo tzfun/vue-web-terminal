@@ -323,12 +323,9 @@ function resetSearchKey() {
   searchCmd.item = undefined;
 }
 
-function doSearchCmd(cmd?: string) {
+function doSearchCmd(cmd: string) {
   if (!props.autoHelp) {
     return;
-  }
-  if (!cmd) {
-    cmd = command.value;
   }
   if (_isEmpty(cmd)) {
     resetSearchKey();
@@ -366,7 +363,7 @@ function doSearchCmd(cmd?: string) {
         });
         target = matchSet[0].item;
       } else {
-        searchCmd.item = undefined;
+        resetSearchKey();
         return;
       }
     }
@@ -607,24 +604,24 @@ function pushMessageBatch(messages: MessageType[], ignoreCheck = false) {
   }
 }
 function resetCursorPos(cmd?: string) {
-  cursorConf.idx = (!cmd ? command.value : cmd).length;
+  cursorConf.idx = (cmd ?? command.value).length;
   cursorConf.left = "unset";
   cursorConf.top = "unset";
   cursorConf.width = cursorConf.defaultWidth;
 }
 function calculateCursorPos(cmd?: string) {
   //  idx可以认为是需要光标覆盖字符的索引
-  let idx = cursorConf.idx;
-  let _cmd = !cmd ? command.value : cmd;
+  const idx = cursorConf.idx;
+  const _cmd = cmd ?? command.value;
 
   if (idx < 0 || idx >= _cmd.length) {
     resetCursorPos();
     return;
   }
 
-  let lineWidth = terminalInputBox.value?.getBoundingClientRect().width ?? 0;
+  const lineWidth = terminalInputBox.value?.getBoundingClientRect().width ?? 0;
 
-  let pos = { left: 0, top: 0 };
+  const pos = { left: 0, top: 0 };
   //  当前字符长度
   let charWidth = cursorConf.defaultWidth;
   //  前一个字符的长度
@@ -766,10 +763,10 @@ function onInput(e: Event) {
     command.value = newStr;
   }
 
-  if (_isEmpty(command)) {
+  if (_isEmpty(command.value)) {
     resetSearchKey();
   } else {
-    doSearchCmd();
+    doSearchCmd(command.value);
   }
 
   nextTick(() => {
