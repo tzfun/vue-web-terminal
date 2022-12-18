@@ -1,7 +1,31 @@
+<script setup lang="ts">
+import LocalTerminal from "@/components/LocalTerminal.vue";
+import SshTerminal from "@/components/SshTerminal.vue";
+import { getQuery } from "@/common/util";
+import { onMounted, ref } from "vue";
+
+const showLocal = ref(false);
+const showSsh = ref(false);
+const localInitCmd = ref("");
+
+onMounted(() => {
+  const query = getQuery();
+  if (query.cmd && query.cmd.trim().length > 0) {
+    localInitCmd.value = query.cmd;
+    showLocal.value = true;
+  }
+});
+
+function resetLocal() {
+  showLocal.value = false; 
+  localInitCmd.value = '';
+}
+</script>
+
 <template>
   <div id="app">
     <div class="terminal-container" v-if="showLocal || showSsh">
-      <LocalTerminal v-if="showLocal" @onClose="showLocal = false; localInitCmd = null" :init-cmd="localInitCmd">
+      <LocalTerminal v-if="showLocal" @onClose="resetLocal" :init-cmd="localInitCmd">
       </LocalTerminal>
 
       <SshTerminal v-if="showSsh" @onClose="showSsh = false"></SshTerminal>
@@ -39,12 +63,6 @@
 
   </div>
 </template>
-
-<script>
-import AppJs from './App.js';
-
-export default AppJs;
-</script>
 
 <style scoped>
 h1,

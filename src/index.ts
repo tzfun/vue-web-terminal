@@ -5,12 +5,11 @@ import TerminalFlash from "./TerminalFlash";
 import TerminalAsk from "./TerminalAsk";
 import { App } from "vue";
 
-Terminal.install = (app: App) => {
+export const install = (app: App) => {
   app.use(JsonViewer);
 };
-
-Terminal.$api = TerminalObj;
-Terminal.$Flash = TerminalFlash;
-Terminal.$Ask = TerminalAsk;
+export const $api = TerminalObj;
+export const $Ask = TerminalAsk;
+export const $Flash = TerminalFlash;
 
 export default Terminal;
