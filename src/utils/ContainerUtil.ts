@@ -89,9 +89,9 @@ export function useFullscreenLifecycle(
   // TODO 考虑用成熟的全屏库实现, 例如 vueuse
   let safariStyleCache: SafariStyleCache = { ...defaultFullScreenStyle };
   useFullscreenListener(() => {
-    let isFullScreen = document.fullscreenElement;
+    const isFullScreen = document.fullscreenElement;
     if (isFullScreen) {
-      let container = fullArea.value;
+      const container = fullArea.value;
       if (!container) {
         return;
       }
@@ -113,7 +113,7 @@ export function useFullscreenLifecycle(
     } else {
       //  退出全屏
       fullscreen.value = false;
-      let container = fullArea.value;
+      const container = fullArea.value;
       if (!container) {
         return;
       }
@@ -180,9 +180,9 @@ export function dragging(
   y: number,
   terminalContainer: HTMLDivElement
 ) {
-  let clientWidth = document.body.clientWidth;
-  let clientHeight = document.body.clientHeight;
-  let box = terminalContainer;
+  const clientWidth = document.body.clientWidth;
+  const clientHeight = document.body.clientHeight;
+  const box = terminalContainer;
 
   if (x > clientWidth - box.clientWidth) {
     box.style.left = clientWidth - box.clientWidth + "px";

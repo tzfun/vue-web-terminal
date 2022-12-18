@@ -1,10 +1,10 @@
 class TerminalCallback {
-  onFinishListener: () => void;
+  onFinishListener?: () => void;
   constructor() {
-    this.onFinishListener = () => {};
+    this.onFinishListener = undefined;
   }
   finish() {
-    if (this.onFinishListener != null) {
+    if (this.onFinishListener) {
       this.onFinishListener();
     }
   }

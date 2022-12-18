@@ -3,22 +3,22 @@ import TerminalCallback from "./TerminalCallback";
 export type TerminalAskHandlerOption = {
   isPassword: boolean;
   question: string;
-  callback: (input: string) => void;
+  callback?: (input: string) => void;
   autoReview: boolean;
 };
 
 export type TerminalAskHandler = (options: TerminalAskHandlerOption) => void;
 
 class TerminalAsk extends TerminalCallback {
-  handler: TerminalAskHandler;
+  handler?: TerminalAskHandler;
 
   constructor() {
     super();
-    this.handler = () => {};
+    this.handler = undefined;
   }
 
   ask(options: TerminalAskHandlerOption) {
-    if (this.handler != null) {
+    if (this.handler) {
       this.handler(options);
     }
   }

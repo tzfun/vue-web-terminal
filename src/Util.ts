@@ -83,7 +83,7 @@ export function _getByteLen(char: string) {
   let len = 0;
   for (let i = 0; i < char.length; i++) {
     // eslint-disable-next-line no-control-regex
-    if (char[i].match(/[^\x00-\xff]/gi) != null)
+    if (char[i].match(/[^\x00-\xff]/gi))
       //  全角
       len += 2; //    如果是全角，占用两个字节
     else len += 1; //   半角占用一个字节
@@ -100,8 +100,8 @@ export function _getStrDifferent(one: string, two: string): string {
   }
   let i = 0,
     j = 0;
-  let longOne = one.length > two.length ? one : two;
-  let shortOne = one.length > two.length ? two : one;
+  const longOne = one.length > two.length ? one : two;
+  const shortOne = one.length > two.length ? two : one;
 
   let diff = "",
     nextChar = "";

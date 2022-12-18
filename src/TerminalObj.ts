@@ -30,8 +30,8 @@ class TerminalObj {
   }
 
   post(name = "terminal", event: string, options?: any) {
-    let listener = this._pool.get(name);
-    if (listener != null) {
+    const listener = this._pool.get(name);
+    if (listener) {
       return listener(event, options);
     }
   }

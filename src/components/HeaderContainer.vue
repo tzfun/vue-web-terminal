@@ -6,19 +6,19 @@ const props = defineProps<{
   draggable: boolean,
   /** 是否全屏状态 */
   fullscreen: boolean,
-}>()
+}>();
 const emit = defineEmits<{
   (e: 'clickTitle'): void
   (e: 'close'): void
   (e: 'minScreen'): void
   (e: 'fullScreen'): void
-}>()
-const container = ref<HTMLDivElement>()
+}>();
+const container = ref<HTMLDivElement>();
 defineExpose<{
   container: Ref<HTMLDivElement | undefined>
 }>({
   container
-})
+});
 </script>
 
 <template>
