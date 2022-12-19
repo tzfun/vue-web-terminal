@@ -1,5 +1,5 @@
 import Terminal from "vue-web-terminal";
-import {exampleCode} from "@/demo/DemoCode";
+import {exampleCode} from "@@/demo/DemoCode";
 
 export default {
     name: 'LocalTerminal',

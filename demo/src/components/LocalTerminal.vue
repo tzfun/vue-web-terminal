@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import LocalTerminalJs from "@/components/LocalTerminal.js";
-export default LocalTerminalJs
+import LocalTerminalJs from "@@/components/LocalTerminal.js";
+export default LocalTerminalJs;
 </script>
 
 <style>

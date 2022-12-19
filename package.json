@@ -6,8 +6,9 @@
   "private": false,
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vite build && npm run build:types",
     "preview": "vite preview",
+    "build:types": "vue-tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir lib/types",
     "build-cli": "vue-cli-service build --target lib --dest lib src/index.js && python modify_lib.py",
     "build-wc": "vue-cli-service build --target wc --dest lib src/Terminal.vue"
   },
@@ -26,7 +27,6 @@
     "eslint-plugin-vue": "^9.8.0",
     "typescript": "^4.9.4",
     "vite": "^4.0.1",
-    "vite-plugin-dts": "^1.7.1",
     "vite-plugin-eslint": "^1.8.1",
     "vue": "^3.2.31",
     "vue-tsc": "^1.0.13"
@@ -56,6 +56,7 @@
     "vue-console"
   ],
   "author": "beifengtz",
-  "main": "lib/vue-web-terminal.mjs",
-  "types": "lib/src/index.d.ts"
+  "main": "lib/vue-web-terminal.umd.js",
+  "module": "lib/vue-web-terminal.mjs",
+  "types": "lib/types/index.d.ts"
 }

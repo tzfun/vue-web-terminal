@@ -1,5 +1,5 @@
-import {sshLogin} from "@/common/service";
-import {isEmpty} from "@/common/util";
+import {sshLogin} from "@@/common/service";
+import {isEmpty} from "@@/common/util";
 import Terminal from "vue-web-terminal";
 
 export default {
@@ -40,61 +40,61 @@ export default {
             },
             asker: null,
             keydownListener: null
-        }
+        };
     },
     mounted() {
         this.keydownListener = e => {
             if (e.ctrlKey && e.key.toLowerCase() === 'c') {
                 if (this.asker != null) {
-                    Terminal.$api.pushMessage(this.name, {content: '^C'})
-                    this.asker.finish()
-                    this.asker = null
-                    e.preventDefault()
+                    Terminal.$api.pushMessage(this.name, {content: '^C'});
+                    this.asker.finish();
+                    this.asker = null;
+                    e.preventDefault();
                 }
             }
-        }
-        window.addEventListener('keydown', this.keydownListener)
-        let width = document.body.clientWidth
+        };
+        window.addEventListener('keydown', this.keydownListener);
+        let width = document.body.clientWidth;
         if (width < 960) {
-            this.dragConf = null
+            this.dragConf = null;
         } else if (width >= 960 && width < 1264) {
-            this.dragConf.width = "80%"
-            this.dragConf.height = "80%"
+            this.dragConf.width = "80%";
+            this.dragConf.height = "80%";
         } else if (width >= 1264) {
-            this.dragConf.width = "60%"
-            this.dragConf.height = "65%"
+            this.dragConf.width = "60%";
+            this.dragConf.height = "65%";
         }
     },
     destroyed() {
-        window.removeEventListener('keydown', this.keydownListener)
+        window.removeEventListener('keydown', this.keydownListener);
     },
     methods: {
         onExecCmd: function (key, command, success, failed) {
             if (key === 'ssh') {
-                Object.assign(this.$data.ssh, this.$options.data().ssh)
-                let args = command.split(' ')
-                let asker = new Terminal.$Ask()
-                success(asker)
-                this.asker = asker
+                Object.assign(this.$data.ssh, this.$options.data().ssh);
+                let args = command.split(' ');
+                let asker = new Terminal.$Ask();
+                success(asker);
+                this.asker = asker;
                 let askPassword = {
                     question: 'Input ssh login password: ',
                     autoReview: true,
                     isPassword: true,
                     callback: value => {
-                        this.ssh.password = value
+                        this.ssh.password = value;
                         sshLogin(this.ssh).then(r => {
-                            Terminal.$api.pushMessage(this.name, {content: r})
+                            Terminal.$api.pushMessage(this.name, {content: r});
                         }).catch(e => {
                             Terminal.$api.pushMessage(this.name, {
                                 class: 'error',
                                 content: 'ssh connect failed: ' + e.message
-                            })
+                            });
                         }).finally(() => {
-                            this.asker = null
-                            asker.finish()
-                        })
+                            this.asker = null;
+                            asker.finish();
+                        });
                     }
-                }
+                };
                 if (isEmpty(args[1])) {
                     let askUsername = {
                         question: 'Input ssh login username: ',
@@ -103,25 +103,25 @@ export default {
                             if (isEmpty(value)) {
                                 Terminal.$api.pushMessage(this.name, {
                                     content: '<span style="color:red;">Username can not be empty.</span>'
-                                })
-                                asker.ask(askUsername)
+                                });
+                                asker.ask(askUsername);
                             } else {
-                                this.ssh.username = value
-                                asker.ask(askPassword)
+                                this.ssh.username = value;
+                                asker.ask(askPassword);
                             }
                         }
-                    }
+                    };
 
                     let askPort = {
                         question: 'Input ssh port(default is 22): ',
                         autoReview: true,
                         callback: value => {
                             if (!isEmpty(value)) {
-                                this.ssh.port = value
+                                this.ssh.port = value;
                             }
-                            asker.ask(askUsername)
+                            asker.ask(askUsername);
                         }
-                    }
+                    };
 
                     let askHost = {
                         question: 'Input ssh login host(example 127.0.0.1): ',
@@ -130,38 +130,38 @@ export default {
                             if (isEmpty(value)) {
                                 Terminal.$api.pushMessage(this.name, {
                                     content: '<span style="color:red;">Host can not be empty.</span>'
-                                })
-                                asker.ask(askHost)
+                                });
+                                asker.ask(askHost);
                             } else {
-                                this.ssh.host = value
-                                asker.ask(askPort)
+                                this.ssh.host = value;
+                                asker.ask(askPort);
                             }
                         }
-                    }
-                    asker.ask(askHost)
+                    };
+                    asker.ask(askHost);
                 } else {
-                    let split = args[1].split("@")
-                    this.ssh.username = split[0]
-                    split = split[1].split(":")
-                    this.ssh.host = split[0]
+                    let split = args[1].split("@");
+                    this.ssh.username = split[0];
+                    split = split[1].split(":");
+                    this.ssh.host = split[0];
                     if (!isEmpty(split[1])) {
-                        this.ssh.port = split[1]
+                        this.ssh.port = split[1];
                     }
-                    asker.ask(askPassword)
+                    asker.ask(askPassword);
                 }
             } else {
-                failed('Unknown command')
+                failed('Unknown command');
             }
         },
         onClick(key) {
             if (key === "close") {
-                this.$emit('onClose')
+                this.$emit('onClose');
             }
         },
         onKeydown() {
         },
         initComplete() {
-            Terminal.$api.execute(this.name, 'ssh')
+            Terminal.$api.execute(this.name, 'ssh');
         }
     }
-}
+};

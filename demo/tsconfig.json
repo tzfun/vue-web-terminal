@@ -15,7 +15,7 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@@/*": ["./src/*"]
     }
   },
   "include": [
@@ -24,6 +24,5 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "types.d.ts"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  ]
 }

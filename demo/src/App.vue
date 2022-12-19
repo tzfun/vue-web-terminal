@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import LocalTerminal from "@/components/LocalTerminal.vue";
-import SshTerminal from "@/components/SshTerminal.vue";
-import { getQuery } from "@/common/util";
+import LocalTerminal from "@@/components/LocalTerminal.vue";
+import SshTerminal from "@@/components/SshTerminal.vue";
+import { getQuery } from "@@/common/util";
 import { onMounted, ref } from "vue";
 
 const showLocal = ref(false);

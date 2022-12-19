@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Terminal from "vue-web-terminal";
+import Terminal, { ElementInfo, TerminalFlash } from "vue-web-terminal";
 const name = 'demo-flash';
 
-function execCmd(key: string, command: string, success: (msg: typeof Terminal.$Flash) => void, failed: (msg: string) => void) {
+function execCmd(key: string, command: string, success: (msg: TerminalFlash) => void, failed: (msg: string) => void) {
   if (key === 'download') {
     Terminal.$api.pushMessage(name, {
       content: '🔍︎ Comparing versions, the relevant dependency files will be downloaded soon...'
@@ -33,7 +33,7 @@ async function mockDownload(flash: TerminalFlash) {
   });
   flash.finish();
 }
-function mockLoading(flash: TerminalFlash, fileName: string, terminalInfo) {
+function mockLoading(flash: TerminalFlash, fileName: string, terminalInfo: ElementInfo) {
   // 固定宽度 = 加载动画 + fileName + '[' + ']' + '100%'
   let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en;
   //  计算出进度条的 '-' 个数
@@ -47,14 +47,19 @@ function mockLoading(flash: TerminalFlash, fileName: string, terminalInfo) {
     let flashInterval = setInterval(() => {
       ++count;
 
-      let percent = Math.floor(count * 100 / processDots);
-      if (percent < 10) {
-        percent = '  ' + percent;
-      } else if (percent < 100) {
-        percent = ' ' + percent;
-      }
+      const percent = Math.floor(count * 100 / processDots);
+      const percentStr =
+        (() => {
+          if (percent < 10) {
+            return `  ${percent}`;
+          } else if (percent < 100) {
+            return ` ${percent}`;
+          } else {
+            return `${percent}`;
+          }
+        })();
 
-      let str = prefix1 + (90 * (count % 8)) + prefix2 + "#".repeat(count) + "-".repeat(processDots - count) + ']' + percent + '%';
+      let str = prefix1 + (90 * (count % 8)) + prefix2 + "#".repeat(count) + "-".repeat(processDots - count) + ']' + percentStr + '%';
       //  更新显示当前进度
       flash.flush(str);
 

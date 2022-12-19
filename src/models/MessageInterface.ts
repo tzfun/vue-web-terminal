@@ -16,7 +16,7 @@ export interface MessageType {
   /** 类别 */
   class?: "success" | "error" | "system" | "info" | "warning";
   /** 类型 */
-  type: "normal" | "json" | "code" | "table" | "cmdLine" | "splitLine" | "html";
+  type?: "normal" | "json" | "code" | "table" | "cmdLine" | "splitLine" | "html";
   /** 具体内容，不同消息内容格式不一样 */
   content: any;
   /** 标签，仅类型为normal有效 */

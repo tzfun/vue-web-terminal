@@ -1,7 +1,7 @@
 import historyStore from "./HistoryStore";
 import { MessageType } from "./models/MessageInterface";
 
-export type TerminalObjListener = (type: string, options: any) => void;
+export type TerminalObjListener<O, R> = (type: string, options: O) => R;
 export type DraggingOption = {
   x: number;
   y: number;
@@ -10,15 +10,36 @@ export type TextEditorOpenOption = {
   content: string;
   onClose?: (value: string) => void;
 };
+export type ElementInfo = {
+  /** 窗口所在位置 */
+  pos: {
+    x: number;
+    y: number;
+  };
+  /** 窗口整体宽度 */
+  screenWidth: number;
+  /** 窗口整体高度 */
+  screenHeight: number;
+  /** 可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度 */
+  clientWidth: number;
+  /** 可显示内容范围高度 */
+  clientHeight: number;
+  charWidth: {
+    /** 单个英文字符宽度 */
+    en: number;
+    /** 单个中文字符宽度 */
+    cn: number;
+  };
+};
 
 class TerminalObj {
-  _pool: Map<string, TerminalObjListener>;
+  _pool: Map<string, TerminalObjListener<any, any>>;
 
   constructor() {
     this._pool = new Map();
   }
 
-  register(name: string, listener: TerminalObjListener) {
+  register(name: string, listener: TerminalObjListener<any, any>) {
     if (this._pool.get(name)) {
       throw Error(`Unable to register an existing terminal: ${name}`);
     }
@@ -29,14 +50,16 @@ class TerminalObj {
     this._pool.delete(name);
   }
 
-  post(name = "terminal", event: string, options?: any) {
+  post<O, R>(name = "terminal", event: string, options?: O): R {
     const listener = this._pool.get(name);
     if (listener) {
-      return listener(event, options);
+      return listener(event, options) as R;
+    } else {
+      throw new Error(`terminal: ${name} not register ${event}`);
     }
   }
 
-  pushMessage(name: string, options: MessageType[]) {
+  pushMessage(name: string, options: MessageType | MessageType[]) {
     return this.post(name, "pushMessage", options);
   }
 
@@ -64,7 +87,7 @@ class TerminalObj {
     return this.post(name, "focus");
   }
 
-  elementInfo(name: string) {
+  elementInfo(name: string): ElementInfo {
     return this.post(name, "elementInfo");
   }
 
