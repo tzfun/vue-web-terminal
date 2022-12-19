@@ -1,5 +1,5 @@
-import historyStore from "./HistoryStore";
-import { MessageType } from "./models/MessageInterface";
+import historyStore from "./HistoryStore"
+import { MessageType } from "./models/MessageInterface"
 
 export type TerminalObjListener<O, R> = (type: string, options: O) => R;
 export type DraggingOption = {
@@ -33,72 +33,72 @@ export type ElementInfo = {
 };
 
 class TerminalObj {
-  _pool: Map<string, TerminalObjListener<any, any>>;
+  _pool: Map<string, TerminalObjListener<any, any>>
 
   constructor() {
-    this._pool = new Map();
+    this._pool = new Map()
   }
 
   register(name: string, listener: TerminalObjListener<any, any>) {
     if (this._pool.get(name)) {
-      throw Error(`Unable to register an existing terminal: ${name}`);
+      throw Error(`Unable to register an existing terminal: ${name}`)
     }
-    this._pool.set(name, listener);
+    this._pool.set(name, listener)
   }
 
   unregister(name: string) {
-    this._pool.delete(name);
+    this._pool.delete(name)
   }
 
   post<O, R>(name = "terminal", event: string, options?: O): R {
-    const listener = this._pool.get(name);
+    const listener = this._pool.get(name)
     if (listener) {
-      return listener(event, options) as R;
+      return listener(event, options) as R
     } else {
-      throw new Error(`terminal: ${name} not register ${event}`);
+      throw new Error(`terminal: ${name} not register ${event}`)
     }
   }
 
   pushMessage(name: string, options: MessageType | MessageType[]) {
-    return this.post(name, "pushMessage", options);
+    return this.post(name, "pushMessage", options)
   }
 
   getHistory() {
-    return historyStore;
+    return historyStore
   }
 
   fullscreen(name: string) {
-    return this.post(name, "fullscreen");
+    return this.post(name, "fullscreen")
   }
 
   isFullscreen(name: string) {
-    return this.post(name, "isFullscreen");
+    return this.post(name, "isFullscreen")
   }
 
   dragging(name: string, options: DraggingOption) {
-    return this.post(name, "dragging", options);
+    return this.post(name, "dragging", options)
   }
 
   execute(name: string, options: string) {
-    return this.post(name, "execute", options);
+    return this.post(name, "execute", options)
   }
 
   focus(name: string) {
-    return this.post(name, "focus");
+    return this.post(name, "focus")
   }
 
   elementInfo(name: string): ElementInfo {
-    return this.post(name, "elementInfo");
+    return this.post(name, "elementInfo")
   }
 
   textEditorOpen(name: string, options: TextEditorOpenOption) {
-    return this.post(name, "textEditorOpen", options);
+    return this.post(name, "textEditorOpen", options)
   }
 
   textEditorClose(name: string) {
-    return this.post(name, "textEditorClose");
+    return this.post(name, "textEditorClose")
   }
 }
 
-const instance = new TerminalObj();
-export default instance;
+const instance = new TerminalObj()
+export default instance

@@ -19,6 +19,6 @@ module.exports = {
   },
   plugins: ["vue", "@typescript-eslint"],
   rules: {
-    semi: [2],
+    semi: [2, "never"],
   },
-};
+}

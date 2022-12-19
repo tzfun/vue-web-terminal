@@ -1,4 +1,4 @@
-export interface DragableConfType {
+export interface DragableConf {
   width: number | string;
   height: number | string;
   zIndex?: number;

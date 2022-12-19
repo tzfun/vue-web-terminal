@@ -1,9 +1,9 @@
-import { DragableConfType } from "@/models/DraggableInterface";
+import { DragableConf } from "@/models/DraggableInterface";
 import { _isSafari } from "@/Util";
 import { Ref } from "vue";
 import { useFullscreenListener } from "./ListenerUtil";
 
-export function getDragStyle(dragConf: DragableConfType) {
+export function getDragStyle(dragConf: DragableConf) {
   const clientWidth = document.body.clientWidth;
   const clientHeight = document.body.clientHeight;
 

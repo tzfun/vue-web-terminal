@@ -12,6 +12,9 @@
     "build-cli": "vue-cli-service build --target lib --dest lib src/index.js && python modify_lib.py",
     "build-wc": "vue-cli-service build --target wc --dest lib src/Terminal.vue"
   },
+  "peerDependencies": {
+    "vue": "^3.x"
+  },
   "dependencies": {
     "json-viewer": "^2.2.0",
     "lodash": "^4.17.21",

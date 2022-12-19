@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import LocalTerminal from "@@/components/LocalTerminal.vue";
-import SshTerminal from "@@/components/SshTerminal.vue";
-import { getQuery } from "@@/common/util";
-import { onMounted, ref } from "vue";
+import LocalTerminal from "@@/components/LocalTerminal.vue"
+import SshTerminal from "@@/components/SshTerminal.vue"
+import { getQuery } from "@@/common/util"
+import { onMounted, ref } from "vue"
 
-const showLocal = ref(false);
-const showSsh = ref(false);
-const localInitCmd = ref("");
+const showLocal = ref(false)
+const showSsh = ref(false)
+const localInitCmd = ref("")
 
 onMounted(() => {
-  const query = getQuery();
+  const query = getQuery()
   if (query.cmd && query.cmd.trim().length > 0) {
-    localInitCmd.value = query.cmd;
-    showLocal.value = true;
+    localInitCmd.value = query.cmd
+    showLocal.value = true
   }
-});
+})
 
 function resetLocal() {
-  showLocal.value = false; 
-  localInitCmd.value = '';
+  showLocal.value = false 
+  localInitCmd.value = ''
 }
 </script>
 
