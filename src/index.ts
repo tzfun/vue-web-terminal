@@ -20,5 +20,5 @@ const Terminal = Object.assign(_Terminal, {
 
 export default Terminal
 
-export { TerminalAsk, TerminalFlash, TerminalObj }
+export type { TerminalAsk, TerminalFlash, TerminalObj }
 export type { TerminalProps, ElementInfo, DragableConf, MessageType }

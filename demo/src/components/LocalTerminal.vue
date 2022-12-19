@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { exampleCode } from "@@/demo/DemoCode"
 import { nextTick, onMounted, reactive, ref } from "vue"
-import Terminal, { DragableConf, ElementInfo, MessageType, TerminalAsk, TerminalFlash } from 'vue-web-terminal'
+import { exampleCode } from "@@/demo/DemoCode"
+import type { DragableConf, ElementInfo, MessageType, TerminalAsk, TerminalFlash } from 'vue-web-terminal'
+import Terminal from 'vue-web-terminal'
 import { LocalTerminalConstants } from "./LocalTerminalConstants"
 import { Codemirror } from "vue-codemirror"
 const props = defineProps<{
@@ -418,8 +419,7 @@ function _textEditorClose() {
 <template>
   <terminal :name="name" :title="title" :init-log="initLog" @execCmd="onExecCmd" @onClick="onClick"
     @onKeydown="onKeydown" :inputFilter="inputFilter" :context="context" :commandStore="cmdStore"
-    :warnLogCountLimit="200" :dragConf="dragConf" show-header @initComplete="initComplete"
-    style="position: fixed">
+    :warnLogCountLimit="200" :dragConf="dragConf" show-header @initComplete="initComplete" style="position: fixed">
     <template #textEditor="{ data }">
       <codemirror ref="customTextEditor" class="my-text-editor" v-model="data.value" :options="codemirrorOptions"
         @focus="data.onFocus" @blur="data.onBlur" />
