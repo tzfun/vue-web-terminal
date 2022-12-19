@@ -7,12 +7,13 @@ const name = "vue-web-terminal"
 export default defineConfig({
   build: {
     outDir: resolve(__dirname, "lib"),
-    sourcemap: "inline",
+    // sourcemap: "inline",
+    sourcemap: false,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name,
-      formats: ["es", "umd", "cjs"],
-      fileName: name,
+      formats: ["es", "umd"],
+      fileName: (format) => `${name}.${format}.js`,
     },
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
