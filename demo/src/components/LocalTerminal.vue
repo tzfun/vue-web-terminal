@@ -420,6 +420,9 @@ function _textEditorClose() {
   <terminal :name="name" :title="title" :init-log="initLog" @execCmd="onExecCmd" @onClick="onClick"
     @onKeydown="onKeydown" :inputFilter="inputFilter" :context="context" :commandStore="cmdStore"
     :warnLogCountLimit="200" :dragConf="dragConf" show-header @initComplete="initComplete" style="position: fixed">
+    <template #code="message">
+      <codemirror v-model="message.message.content" :options="codemirrorOptions" />
+    </template>
     <template #textEditor="{ data }">
       <codemirror ref="customTextEditor" class="my-text-editor" v-model="data.value" :options="codemirrorOptions"
         @focus="data.onFocus" @blur="data.onBlur" />
