@@ -1,13 +1,13 @@
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted } from "vue"
 
 export function useKeydownListener(onKeydown: (e: KeyboardEvent) => void) {
   // TODO vueuse中是否可替换
   onMounted(() => {
-    window.addEventListener("keydown", onKeydown);
-  });
+    window.addEventListener("keydown", onKeydown)
+  })
   onUnmounted(() => {
-    window.removeEventListener("keydown", onKeydown);
-  });
+    window.removeEventListener("keydown", onKeydown)
+  })
 }
 
 export function useFullscreenListener(handler: () => void) {
@@ -17,16 +17,16 @@ export function useFullscreenListener(handler: () => void) {
       "webkitfullscreenchange",
       "mozfullscreenchange",
     ].forEach((item) => {
-      window.addEventListener(item, handler);
-    });
-  });
+      window.addEventListener(item, handler)
+    })
+  })
   onUnmounted(() => {
     [
       "fullscreenchange",
       "webkitfullscreenchange",
       "mozfullscreenchange",
     ].forEach((item) => {
-      window.removeEventListener(item, handler);
-    });
-  });
+      window.removeEventListener(item, handler)
+    })
+  })
 }

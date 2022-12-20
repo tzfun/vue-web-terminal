@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run build && vite",
     "build": "vite build && npm run build:types",
     "preview": "vite preview",
     "build:types": "vue-tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir lib/types",

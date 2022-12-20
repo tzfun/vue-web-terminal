@@ -1,6 +1,6 @@
-import { InitLogType } from "../models/LogInterface";
-import { CommandType, CursorConfType } from "../models/CommandInterface";
-import { DragableConf } from "../models/DraggableInterface";
+import { InitLogType } from "../models/LogInterface"
+import { CommandType, CursorConfType } from "../models/CommandInterface"
+import { DragableConf } from "../models/DraggableInterface"
 const InitLog: InitLogType = [
   {
     type: "normal",
@@ -15,7 +15,7 @@ const InitLog: InitLogType = [
     content:
       "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>",
   },
-];
+]
 
 const AllCommandStore: CommandType[] = [
   {
@@ -72,7 +72,7 @@ const AllCommandStore: CommandType[] = [
       },
     ],
   },
-];
+]
 
 const CursorConf: CursorConfType = {
   defaultWidth: 6,
@@ -81,14 +81,14 @@ const CursorConf: CursorConfType = {
   top: 0,
   idx: 0, //  从0开始
   show: false,
-};
+}
 
 const DragableConf: DragableConf = {
   width: 700,
   height: 500,
   zIndex: 100,
   init: {},
-};
+}
 
 export const DataConstant = {
   CursorConf,
@@ -100,4 +100,4 @@ export const DataConstant = {
   AllCommandStore,
   InitLog,
   DragableConf,
-};
+}

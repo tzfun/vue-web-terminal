@@ -14,7 +14,7 @@ export function _html(str: string) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;")
     .replace(/\n/g, "<br>")
-    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
 }
 
 /**
@@ -25,11 +25,11 @@ export function _isEmpty<T>(value: T): boolean {
     !value ||
     (typeof value === "string" && value.trim().length === 0) ||
     (typeof value === "object" && Object.keys(value).length === 0)
-  );
+  )
 }
 
 export function _nonEmpty<T>(value: T): boolean {
-  return !_isEmpty(value);
+  return !_isEmpty(value)
 }
 
 const unHtmlReplaceMap = new Map<string, string>(
@@ -39,7 +39,7 @@ const unHtmlReplaceMap = new Map<string, string>(
     ">": "&gt;",
     "'": "&#39;",
   })
-);
+)
 
 /**
  * 将字符串中的html标签转译
@@ -51,13 +51,13 @@ const unHtmlReplaceMap = new Map<string, string>(
 export function _unHtml(str?: string): string {
   return str
     ? str.replace(/[<">']/g, (a: string): string => {
-        return unHtmlReplaceMap.get(a) ?? "";
+        return unHtmlReplaceMap.get(a) ?? ""
       })
-    : "";
+    : ""
 }
 
 export function _sleep(time: number) {
-  return new Promise((resolve) => setTimeout(resolve, time));
+  return new Promise((resolve) => setTimeout(resolve, time))
 }
 
 export function _screenType(width = document.body.clientWidth) {
@@ -67,28 +67,28 @@ export function _screenType(width = document.body.clientWidth) {
     md: width >= 960 && width < 1264,
     lg: width >= 1264 && width < 1904,
     xl: width >= 1904,
-  };
+  }
 }
 
 export function _isSafari() {
   return (
     /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
-  );
+  )
 }
 
 /**
  * 获取字符的字节长度
  */
 export function _getByteLen(char: string) {
-  let len = 0;
+  let len = 0
   for (let i = 0; i < char.length; i++) {
     // eslint-disable-next-line no-control-regex
     if (char[i].match(/[^\x00-\xff]/gi))
       //  全角
-      len += 2; //    如果是全角，占用两个字节
-    else len += 1; //   半角占用一个字节
+      len += 2 //    如果是全角，占用两个字节
+    else len += 1 //   半角占用一个字节
   }
-  return len;
+  return len
 }
 
 /**
@@ -96,35 +96,35 @@ export function _getByteLen(char: string) {
  */
 export function _getStrDifferent(one: string, two: string): string {
   if (one === two) {
-    return "";
+    return ""
   }
   let i = 0,
-    j = 0;
-  const longOne = one.length > two.length ? one : two;
-  const shortOne = one.length > two.length ? two : one;
+    j = 0
+  const longOne = one.length > two.length ? one : two
+  const shortOne = one.length > two.length ? two : one
 
   let diff = "",
-    nextChar = "";
-  let hasDiff = false;
+    nextChar = ""
+  let hasDiff = false
   while (i < shortOne.length || j < longOne.length) {
     if (shortOne[i] === longOne[j]) {
       if (hasDiff) {
-        break;
+        break
       }
-      i++;
-      j++;
+      i++
+      j++
     } else {
       if (i < shortOne.length - 1) {
-        nextChar = shortOne[i + 1];
+        nextChar = shortOne[i + 1]
       }
       if (longOne[j] === nextChar || j >= longOne.length) {
-        break;
+        break
       } else {
-        diff += longOne[j];
+        diff += longOne[j]
       }
-      j++;
-      hasDiff = true;
+      j++
+      hasDiff = true
     }
   }
-  return diff;
+  return diff
 }

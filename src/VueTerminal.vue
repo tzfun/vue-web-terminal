@@ -907,7 +907,7 @@ useKeydownListener((event: KeyboardEvent) => {
             </span>
             <div v-if="item.type === 'json'">
               <slot name="json" :message="item">
-                <JsonMessage :message="item" :key="idx + '_' + item.depth"></JsonMessage>
+                <JsonMessage :message="item"></JsonMessage>
               </slot>
             </div>
             <div v-if="item.type === 'code'">
