@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MessageType } from '../models/MessageInterface';
+import { MessageType } from '../models/MessageInterface'
 defineProps<{
   message: MessageType
 }>()

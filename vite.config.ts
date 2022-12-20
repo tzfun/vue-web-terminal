@@ -24,9 +24,6 @@ export default defineConfig({
       },
     },
   },
-  optimizeDeps: {
-    disabled: false
-  },
   plugins: [vue()],
   resolve: {
     alias: {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { _nonEmpty } from '@/Util';
-import { MessageType } from '../models/MessageInterface';
+import { _nonEmpty } from '@/Util'
+import { MessageType } from '../models/MessageInterface'
 defineProps<{
   message: MessageType
 }>()

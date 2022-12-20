@@ -4,13 +4,13 @@ const props = defineProps<{
   showHeader: boolean,
   /** 是否全屏状态 */
   fullscreen: boolean,
-}>();
+}>()
 const emit = defineEmits<{
   (e: 'clickTitle'): void
   (e: 'close'): void
   (e: 'minScreen'): void
   (e: 'fullScreen'): void
-}>();
+}>()
 </script>
 
 <template>

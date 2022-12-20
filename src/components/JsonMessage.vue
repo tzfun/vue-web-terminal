@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { DataConstant } from '@/constants/TerminalConstants';
-import { reactive } from 'vue';
-import { MessageType } from '../models/MessageInterface';
+import { JsonViewer } from "vue3-json-viewer"
+import "vue3-json-viewer/dist/index.css"
+import { DataConstant } from '@/constants/TerminalConstants'
+import { reactive } from 'vue'
+import { MessageType } from '../models/MessageInterface'
 defineProps<{
-  key: string
   message: MessageType
 }>()
 
@@ -11,12 +12,12 @@ const jsonViewDepth = reactive(DataConstant.JsonViewDepth)
 
 const parseToJson = (obj: object | string) => {
   if (typeof obj === "object" && obj) {
-    return obj;
+    return obj
   } else if (typeof obj === "string") {
     try {
-      return JSON.parse(obj);
+      return JSON.parse(obj)
     } catch (e) {
-      return obj;
+      return obj
     }
   }
 }
@@ -24,7 +25,7 @@ const parseToJson = (obj: object | string) => {
 
 <template>
   <span style="position: relative">
-    <json-viewer :expand-depth="message.depth" sort boxed copyable expanded :key="key"
+    <json-viewer :expand-depth="message.depth" sort boxed copyable expanded
       :value="parseToJson(message.content)">
     </json-viewer>
     <select class="t-json-deep-selector" v-model="message.depth">

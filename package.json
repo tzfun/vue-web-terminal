@@ -16,9 +16,8 @@
     "vue": "^3.x"
   },
   "dependencies": {
-    "json-viewer": "^2.2.0",
     "lodash": "^4.17.21",
-    "vue-json-viewer": "^3.0.4"
+    "vue3-json-viewer": "^2.2.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191",
@@ -62,11 +61,13 @@
   "main": "./lib/vue-web-terminal.umd.js",
   "module": "./lib/vue-web-terminal.es.js",
   "types": "./lib/types/index.d.ts",
+  "style": "./lib/style.css",
   "exports": {
     ".": {
       "import": "./lib/vue-web-terminal.es.js",
       "require": "./lib/vue-web-terminal.umd.js"
-    }
+    },
+    "./lib/style.css": "./lib/style.css"
   },
   "files": [
     "dist"

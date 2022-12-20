@@ -3,7 +3,6 @@ import { nextTick, reactive, ref, onMounted, onUnmounted, watch } from 'vue'
 import { cloneDeep } from 'lodash'
 import './css/scrollbar.css'
 import './css/style.css'
-import 'vue-json-viewer/style.css'
 import { DragableConf } from './models/DraggableInterface'
 import {
   _getByteLen,

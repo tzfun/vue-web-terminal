@@ -2,6 +2,7 @@ import { javascript } from "@codemirror/lang-javascript"
 import { oneDark } from "@codemirror/theme-one-dark"
 import App from "./App.vue"
 import Terminal from "vue-web-terminal"
+import 'vue-web-terminal/lib/style.css'
 
 import VueCodemirror from "vue-codemirror"
 import { createApp } from "vue"
