@@ -1,48 +1,35 @@
+import { useDraggable } from "@vueuse/core"
+import { Ref, StyleValue, watchEffect } from "vue"
 import { DragableConf } from "@/models/DraggableInterface"
 import { _isSafari } from "@/Util"
-import { Ref } from "vue"
 import { useFullscreenListener } from "./ListenerUtil"
 
-export function getDragStyle(dragConf: DragableConf) {
-  const clientWidth = document.body.clientWidth
-  const clientHeight = document.body.clientHeight
-
-  const confWidth = dragConf.width
-  let width = confWidth ?? 700
-
-  if (confWidth && typeof confWidth === "string" && confWidth.endsWith("%")) {
-    width = clientWidth * (parseInt(confWidth) / 100)
+function getLengthStyle(length?: number | string): string | undefined {
+  if (typeof length === "number") {
+    return `${length}px`
   }
-  const confHeight = dragConf.height
-  let height = confHeight ?? 500
-  if (
-    confHeight &&
-    typeof confHeight === "string" &&
-    confHeight.endsWith("%")
-  ) {
-    height = clientHeight * (parseInt(confHeight) / 100)
-  }
+  return length
+}
 
+export function getDragStyle(dragConf: DragableConf): StyleValue {
+  const width = getLengthStyle(dragConf.width) ?? 700
+  const height = getLengthStyle(dragConf.height) ?? 500
   const zIndex = dragConf.zIndex ? dragConf.zIndex : 100
 
-  let initX, initY
-
+  const clientWidth = document.body.clientWidth
+  const clientHeight = document.body.clientHeight
   const initPos = dragConf.init
-  if (initPos && initPos.x && initPos.y) {
-    initX = initPos.x
-    initY = initPos.y
-  } else {
-    initX = (clientWidth - (width as number)) / 2
-    initY = (clientHeight - (height as number)) / 2
+  const initX = getLengthStyle(initPos?.x ?? (clientWidth - (dragConf.width as number)) / 2)
+  const initY = getLengthStyle(initPos?.y ?? (clientHeight - (dragConf.height as number)) / 2)
+  return {
+    position: "fixed",
+    width,
+    height,
+    zIndex,
+    left: initX,
+    top: initY,
+    borderRadius: "15px",
   }
-  return `position:fixed;
-        width:${width}px;
-        height:${height}px;
-        z-index: ${zIndex};
-        left:${initX}px;
-        top:${initY}px;
-        border-radius:15px;
-        `
 }
 
 /**
@@ -51,10 +38,7 @@ export function getDragStyle(dragConf: DragableConf) {
  * @param fullscreen
  * @param fullArea
  */
-export function useToggleFullscreen(
-  fullscreen: Ref<boolean>,
-  fullArea: Ref<HTMLDivElement | undefined>
-) {
+export function useToggleFullscreen(fullscreen: Ref<boolean>, fullArea: Ref<HTMLDivElement | undefined>) {
   useFullscreenLifecycle(fullscreen, fullArea)
   return () => {
     if (fullscreen.value) {
@@ -67,12 +51,12 @@ export function useToggleFullscreen(
 }
 
 type SafariStyleCache = {
-  position: string;
-  width: string;
-  height: string;
-  left: string;
-  top: string;
-};
+  position: string
+  width: string
+  height: string
+  left: string
+  top: string
+}
 
 const defaultFullScreenStyle = {
   position: "fixed",
@@ -82,10 +66,7 @@ const defaultFullScreenStyle = {
   top: "0",
 }
 
-export function useFullscreenLifecycle(
-  fullscreen: Ref<boolean>,
-  fullArea: Ref<HTMLDivElement | undefined>
-) {
+export function useFullscreenLifecycle(fullscreen: Ref<boolean>, fullArea: Ref<HTMLDivElement | undefined>) {
   // TODO 考虑用成熟的全屏库实现, 例如 vueuse
   let safariStyleCache: SafariStyleCache = { ...defaultFullScreenStyle }
   useFullscreenListener(() => {
@@ -128,62 +109,39 @@ export function useFullscreenLifecycle(
   })
 }
 
-export function initDrag(
+export function useDrag(
   draggable: boolean,
   fullscreenRef: Ref<boolean>,
-  terminalHeader: HTMLDivElement,
-  terminalContainer: HTMLDivElement,
-  terminalWindow: HTMLDivElement
+  terminalHeader: Ref<HTMLDivElement | undefined>,
+  terminalContainer: Ref<HTMLDivElement | undefined>,
+  dragConf?: DragableConf
 ) {
-  // TODO 考虑用成熟的拖动库实现
   if (!draggable) {
     return
   }
-  // 记录当前鼠标位置
-  let mouseOffsetX = 0
-  let mouseOffsetY = 0
-
-  const dragArea = terminalHeader
-  const box = terminalContainer
-
-  let isDragging = false
-
-  dragArea.onmousedown = (e1) => {
-    if (fullscreenRef.value) {
-      return
-    }
-    const e = e1 || window.event
-    mouseOffsetX = e.clientX - box.offsetLeft
-    mouseOffsetY = e.clientY - box.offsetTop
-
-    isDragging = true
-    terminalWindow.style.userSelect = "none"
+  if (fullscreenRef.value) {
+    return
   }
-
-  document.onmousemove = (e2) => {
-    if (isDragging) {
-      const e = e2 || window.event
-      const moveX = e.clientX - mouseOffsetX
-      const moveY = e.clientY - mouseOffsetY
-      dragging(moveX, moveY, terminalContainer)
-    }
-  }
-
-  document.onmouseup = () => {
-    isDragging = false
-    terminalWindow.style.userSelect = "unset"
-  }
+  const { x, y } = useDraggable(terminalHeader, {
+    initialValue: {
+      x: dragConf?.init?.x ?? 500,
+      y: dragConf?.init?.y ?? 400,
+    },
+    preventDefault: true,
+  })
+  watchEffect(() => {
+    // 拖动标题栏时同步窗口位置
+    dragging(x.value, y.value, terminalContainer.value)
+  })
 }
 
-export function dragging(
-  x: number,
-  y: number,
-  terminalContainer: HTMLDivElement
-) {
+export function dragging(x: number, y: number, terminalContainer: HTMLDivElement | undefined) {
   const clientWidth = document.body.clientWidth
   const clientHeight = document.body.clientHeight
   const box = terminalContainer
-
+  if (!box) {
+    return
+  }
   if (x > clientWidth - box.clientWidth) {
     box.style.left = clientWidth - box.clientWidth + "px"
   } else {

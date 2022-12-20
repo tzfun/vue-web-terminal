@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "dev": "npm run build && vite",
+    "dev": "vite",
     "build": "vite build && npm run build:types",
     "preview": "vite preview",
     "build:types": "vue-tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir lib/types",
@@ -16,6 +16,7 @@
     "vue": "^3.x"
   },
   "dependencies": {
+    "@vueuse/core": "^9.8.1",
     "lodash": "^4.17.21",
     "vue3-json-viewer": "^2.2.2"
   },

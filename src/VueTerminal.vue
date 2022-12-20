@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, reactive, ref, onMounted, onUnmounted, watch } from 'vue'
+import { nextTick, reactive, ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { cloneDeep } from 'lodash'
 import './css/scrollbar.css'
 import './css/style.css'
@@ -12,7 +12,7 @@ import {
   _unHtml,
   _screenType,
 } from "./Util.js"
-import { getDragStyle, useToggleFullscreen, dragging, initDrag } from './utils/ContainerUtil'
+import { getDragStyle, useToggleFullscreen, dragging, useDrag } from './utils/ContainerUtil'
 import { DataConstant } from './constants/TerminalConstants'
 import { InitLogType } from './models/LogInterface'
 import { CommandType } from './models/CommandInterface'
@@ -72,7 +72,7 @@ const props = withDefaults(defineProps<TerminalProps>(), {
   warnLogCountLimit: 200,
   autoHelp: true,
   enableExampleHint: true,
-  // dragConf: () => DataConstant.DragableConf
+  dragConf: () => DataConstant.DragableConf
 })
 
 const emit = defineEmits<{
@@ -256,7 +256,7 @@ onMounted(async () => {
     let promptRect = terminalInputPrompt.value.getBoundingClientRect()
     inputBoxParam.promptHeight = promptRect.height
     inputBoxParam.promptWidth = promptRect.width
-    initDrag(draggable(), fullscreen, terminalHeader.value, terminalContainer.value, terminalWindow.value)
+    useDrag(draggable(), fullscreen, terminalHeader, terminalContainer, props.dragConf)
   }
 
   emit("initComplete", props.name)
@@ -269,12 +269,13 @@ function draggable(): boolean {
   return !!(props.showHeader && props.dragConf)
 }
 
-function getContainerStyle() {
+const dragStyle = computed(() => {
   if (draggable()) {
-    return getDragStyle(props.dragConf as DragableConf)
+    console.log(getDragStyle(props.dragConf))
+    return getDragStyle(props.dragConf)
   }
   return 'width:100%;height:100%;border-radius:0;'
-}
+})
 
 const toggleFullscreen = useToggleFullscreen(fullscreen, terminalContainer)
 function triggerClick(key: string) {
@@ -884,9 +885,10 @@ useKeydownListener((event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="t-container" :style="getContainerStyle()" ref="terminalContainer" @click="focus">
+  <div class="t-container" :style="dragStyle" ref="terminalContainer" @click="focus">
     <div class="terminal">
-      <div class="t-header-container" v-if="showHeader" :style="draggable() ? 'cursor: move;' : ''" ref="terminalHeader">
+      <div class="t-header-container" v-if="showHeader" :style="draggable() ? 'cursor: move;' : ''"
+        ref="terminalHeader">
         <slot name="header">
           <HeaderContainer :title="title" :show-header="showHeader" :draggable="draggable()" :fullscreen="fullscreen"
             ref="terminalHeader" @click-title="triggerClick('title')" @close="triggerClick('close')"

@@ -7,7 +7,6 @@ const name = "vue-web-terminal"
 export default defineConfig({
   build: {
     outDir: resolve(__dirname, "lib"),
-    sourcemap: "inline",
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name,
