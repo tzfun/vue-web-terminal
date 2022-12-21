@@ -12,7 +12,7 @@ import {
   _unHtml,
   _screenType,
 } from "./Util.js"
-import { getDragStyle, useToggleFullscreen, dragging, useDrag } from './utils/ContainerUtil'
+import { getDragStyle, dragging, useDrag } from './utils/DragUtil'
 import { DataConstant } from './constants/TerminalConstants'
 import { InitLogType } from './models/LogInterface'
 import { CommandType } from './models/CommandInterface'
@@ -28,6 +28,7 @@ import JsonMessage from './components/JsonMessage.vue'
 import NormalMessage from './components/NormalMessage.vue'
 import TerminalObj from './TerminalObj'
 import { TerminalAskHandlerOption } from './TerminalAsk'
+import { useTerminalFullscreen } from './utils/FullscreenUtil'
 
 export interface TerminalProps {
   /** 终端唯一名称 */
@@ -88,7 +89,6 @@ const emit = defineEmits<{
 }>()
 
 const command = ref("")
-const fullscreen = ref(false)
 const showInputLine = ref(true)
 
 type TextEditorType = {
@@ -148,6 +148,9 @@ const terminalInputPrompt = ref<HTMLSpanElement>()
 const terminalEnFlag = ref<HTMLSpanElement>()
 const terminalCnFlag = ref<HTMLSpanElement>()
 const textEditor = ref<HTMLTextAreaElement>()
+
+const { fullscreen, toggleFullscreen } = useTerminalFullscreen(terminalContainer)
+useDrag(draggable(), fullscreen, terminalHeader, terminalContainer, props.dragConf)
 
 watch(terminalLog, () => {
   jumpToBottom()
@@ -256,7 +259,6 @@ onMounted(async () => {
     let promptRect = terminalInputPrompt.value.getBoundingClientRect()
     inputBoxParam.promptHeight = promptRect.height
     inputBoxParam.promptWidth = promptRect.width
-    useDrag(draggable(), fullscreen, terminalHeader, terminalContainer, props.dragConf)
   }
 
   emit("initComplete", props.name)
@@ -277,7 +279,6 @@ const dragStyle = computed(() => {
   return 'width:100%;height:100%;border-radius:0;'
 })
 
-const toggleFullscreen = useToggleFullscreen(fullscreen, terminalContainer)
 function triggerClick(key: string) {
   if (key === "fullScreen") {
     // 全屏时点击全屏，回复原大小
@@ -885,7 +886,7 @@ useKeydownListener((event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="t-container" :style="dragStyle" ref="terminalContainer" @click="focus">
+  <div class="t-container" :style="dragStyle" ref="terminalContainer" @focus="focus">
     <div class="terminal">
       <div class="t-header-container" v-if="showHeader" :style="draggable() ? 'cursor: move;' : ''"
         ref="terminalHeader">

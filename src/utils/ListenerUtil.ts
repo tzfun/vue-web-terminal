@@ -9,24 +9,3 @@ export function useKeydownListener(onKeydown: (e: KeyboardEvent) => void) {
     window.removeEventListener("keydown", onKeydown)
   })
 }
-
-export function useFullscreenListener(handler: () => void) {
-  onMounted(() => {
-    [
-      "fullscreenchange",
-      "webkitfullscreenchange",
-      "mozfullscreenchange",
-    ].forEach((item) => {
-      window.addEventListener(item, handler)
-    })
-  })
-  onUnmounted(() => {
-    [
-      "fullscreenchange",
-      "webkitfullscreenchange",
-      "mozfullscreenchange",
-    ].forEach((item) => {
-      window.removeEventListener(item, handler)
-    })
-  })
-}
