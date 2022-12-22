@@ -72,7 +72,7 @@ const props = withDefaults(defineProps<TerminalProps>(), {
   warnLogCountLimit: 200,
   autoHelp: true,
   enableExampleHint: true,
-  dragConf: () => DataConstant.DragableConf
+  // dragConf: () => DataConstant.DragableConf
 })
 
 const emit = defineEmits<{
@@ -272,10 +272,9 @@ function draggable(): boolean {
 
 const dragStyle = computed(() => {
   if (draggable()) {
-    console.log(getDragStyle(props.dragConf))
-    return getDragStyle(props.dragConf)
+    return getDragStyle(props.dragConf ?? DataConstant.DragableConf)
   }
-  return 'width:100%;height:100%;border-radius:0;'
+  return 'width:100%;height:100%;background-color:black;z-index:100;'
 })
 
 function triggerClick(key: string) {

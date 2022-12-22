@@ -29,9 +29,11 @@ export function useTerminalFullscreen(fullArea: Ref<HTMLDivElement | undefined>)
 
 export function useFullscreenLifecycle(fullscreen: Ref<boolean>, fullArea: Ref<HTMLDivElement | undefined>) {
   let safariStyleCache: SafariStyleCache = { ...defaultFullScreenStyle }
-  const container = fullArea.value
 
   watchEffect(() => {
+    // 放在里面, 避免不监听
+    const container = fullArea.value
+
     if (fullscreen.value) {
       if (!container) {
         return
