@@ -1,6 +1,6 @@
 import { _isSafari } from "@/Util"
 import { useFullscreen } from "@vueuse/core"
-import { Ref, watchEffect } from "vue"
+import type { Ref } from "vue"
 
 type SafariStyleCache = {
   position: string

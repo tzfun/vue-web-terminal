@@ -1,6 +1,7 @@
 import { defineConfig } from "vite"
 import { resolve } from "path"
 import vue from "@vitejs/plugin-vue"
+import AutoImport from "unplugin-auto-import/vite"
 
 const name = "vue-web-terminal"
 // https://vitejs.dev/config/
@@ -23,7 +24,27 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    AutoImport({
+      // targets to transform
+      include: [
+        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+        /\.vue$/,
+        /\.vue\?vue/, // .vue
+        /\.md$/, // .md
+      ],
+      dts: "./auto-imports.d.ts",
+      imports: ["vue"],
+      // Generate corresponding .eslintrc-auto-import.json file.
+      // eslint globals Docs - https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals
+      eslintrc: {
+        enabled: true, // Default `false`
+        filepath: "./.eslintrc-auto-import.json", // Default `./.eslintrc-auto-import.json`
+        globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+      },
+    }),
+  ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),

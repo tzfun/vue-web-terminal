@@ -5,11 +5,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:vue/vue3-essential",
-    "plugin:@typescript-eslint/recommended",
-  ],
+  extends: ["eslint:recommended", "plugin:vue/vue3-essential", "plugin:@typescript-eslint/recommended"],
   overrides: [],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -21,4 +17,5 @@ module.exports = {
   rules: {
     semi: [2, "never"],
   },
+  extends: [".eslintrc-auto-import.json"],
 }

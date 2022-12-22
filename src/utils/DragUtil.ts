@@ -1,5 +1,5 @@
 import { useDraggable } from "@vueuse/core"
-import { Ref, StyleValue, watchEffect } from "vue"
+import type { Ref, StyleValue } from "vue"
 import { DragableConf } from "@/models/DraggableInterface"
 
 function getLengthStyle(length?: number | string): string | undefined {

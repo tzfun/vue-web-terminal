@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { nextTick, reactive, ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { cloneDeep } from 'lodash'
 import './css/scrollbar.css'
 import './css/style.css'
