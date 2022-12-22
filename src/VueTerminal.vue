@@ -74,7 +74,7 @@ const props = withDefaults(defineProps<TerminalProps>(), {
   warnLogCountLimit: 200,
   autoHelp: true,
   enableExampleHint: true,
-  dragConf: () => DataConstant.DragableConf
+  // dragConf: () => DataConstant.DragableConf
 })
 
 const emit = defineEmits<{
