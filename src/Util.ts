@@ -70,12 +70,6 @@ export function _screenType(width = document.body.clientWidth) {
   }
 }
 
-export function _isSafari() {
-  return (
-    /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
-  )
-}
-
 /**
  * 获取字符的字节长度
  */

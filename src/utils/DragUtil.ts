@@ -1,5 +1,5 @@
 import { useDraggable } from "@vueuse/core"
-import type { Ref, StyleValue } from "vue"
+import type { CSSProperties, Ref } from "vue"
 import { DragableConf } from "@/models/DraggableInterface"
 
 function getLengthStyle(length?: number | string): string | undefined {
@@ -9,7 +9,7 @@ function getLengthStyle(length?: number | string): string | undefined {
   return length
 }
 
-export function getDragStyle(dragConf: DragableConf): StyleValue {
+export function getDragStyle(dragConf: DragableConf): CSSProperties {
   const width = getLengthStyle(dragConf.width) ?? 700
   const height = getLengthStyle(dragConf.height) ?? 500
   const zIndex = dragConf.zIndex ? dragConf.zIndex : 100

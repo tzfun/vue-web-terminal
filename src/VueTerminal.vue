@@ -27,7 +27,9 @@ import JsonMessage from './components/JsonMessage.vue'
 import NormalMessage from './components/NormalMessage.vue'
 import TerminalObj from './TerminalObj'
 import { TerminalAskHandlerOption } from './TerminalAsk'
-import { useTerminalFullscreen } from './utils/FullscreenUtil'
+import { useUpdateFullscreenStyle, useTerminalFullscreen } from './utils/FullscreenUtil'
+import { CSSProperties } from 'vue'
+import { fullScreenStyle } from './utils/ContainerUtil'
 
 export interface TerminalProps {
   /** 终端唯一名称 */
@@ -136,6 +138,14 @@ const flash = reactive({
   open: false,
   content: "",
 })
+const containerStyle = ref<CSSProperties>({})
+onMounted(() => {
+  if (draggable()) {
+    containerStyle.value = getDragStyle(props.dragConf ?? DataConstant.DragableConf)
+  } else {
+    containerStyle.value = fullScreenStyle
+  }
+})
 
 const terminalContainer = ref<HTMLDivElement>()
 const terminalWindow = ref<HTMLDivElement>()
@@ -148,7 +158,8 @@ const terminalEnFlag = ref<HTMLSpanElement>()
 const terminalCnFlag = ref<HTMLSpanElement>()
 const textEditor = ref<HTMLTextAreaElement>()
 
-const { fullscreen, toggleFullscreen } = useTerminalFullscreen(terminalContainer)
+const { fullscreen, toggleFullscreen } = useTerminalFullscreen()
+useUpdateFullscreenStyle(fullscreen, containerStyle)
 useDrag(draggable(), fullscreen, terminalHeader, terminalContainer, props.dragConf)
 
 watch(terminalLog, () => {
@@ -269,14 +280,6 @@ onUnmounted(() => {
 function draggable(): boolean {
   return !!(props.showHeader && props.dragConf)
 }
-
-const dragStyle = computed(() => {
-  if (draggable()) {
-    console.log(getDragStyle(props.dragConf))
-    return getDragStyle(props.dragConf)
-  }
-  return 'width:100%;height:100%;border-radius:0;'
-})
 
 function triggerClick(key: string) {
   if (key === "fullScreen") {
@@ -885,7 +888,7 @@ useKeydownListener((event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div class="t-container" :style="dragStyle" ref="terminalContainer" @focus="focus">
+  <div class="t-container" :style="containerStyle" ref="terminalContainer" @focus="focus">
     <div class="terminal">
       <div class="t-header-container" v-if="showHeader" :style="draggable() ? 'cursor: move;' : ''"
         ref="terminalHeader">
