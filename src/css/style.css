@@ -1,0 +1,436 @@
+.t-log-box {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+}
+
+.t-shell-dot {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    -moz-transition: opacity 0.2s ease;
+    -ms-transition: opacity 0.2s ease;
+    -webkit-transition: opacity 0.2s ease;
+    -o-transition: opacity 0.2s ease;
+}
+
+.t-shell-dots:hover .t-shell-dot {
+    opacity: 1;
+}
+
+.t-container {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background-color: #191b24;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -moz-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -webkit-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -o-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+}
+
+.t-header-container {
+    position: absolute;
+    height: 30px;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+
+.t-header {
+    background-color: #959598;
+    text-align: center;
+    padding: 2px;
+}
+
+.t-header h4 {
+    font-size: 14px;
+    margin: 5px;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.t-header ul.t-shell-dots {
+    position: absolute;
+    top: 5px;
+    left: 8px;
+    padding-left: 0;
+    margin: 0;
+}
+
+.t-header ul.t-shell-dots li {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 10px;
+    margin-left: 6px;
+    margin-top: 4px;
+    line-height: 16px;
+    cursor: pointer;
+}
+
+.t-header ul .t-shell-dots-red {
+    background-color: #c83030;
+}
+
+.t-header ul .t-shell-dots-yellow {
+    background-color: #f7db60;
+}
+
+.t-header ul .t-shell-dots-green {
+    background-color: #2ec971;
+}
+
+.t-window, .t-ask-input, .t-window p, .t-window div {
+    font-size: 13px;
+    font-family: Monaco, Menlo, Consolas, monospace;
+}
+
+.t-window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    z-index: 1;
+    max-height: none;
+    background-color: #191b24;
+    min-height: 140px;
+    padding: 0 20px 0 20px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 20px;
+    cursor: text;
+}
+
+.t-window .prompt:before {
+    content: "$";
+    margin-right: 10px;
+    word-wrap: break-word;
+}
+
+.t-window p {
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+.t-window p .cmd {
+    line-height: 24px;
+}
+
+@keyframes cursor-flash {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.t-window .cursor {
+    background-color: #fff;
+    animation: cursor-flash 1s infinite;
+    -webkit-animation: cursor-flash 1s infinite;
+    -o-animation: cursor-flash 1s infinite;
+    -moz-animation: cursor-flash 1s infinite;
+    position: absolute;
+    height: 16px;
+    margin-top: 1px;
+}
+
+.t-ask-input {
+    border: none;
+    max-width: 300px;
+    color: white;
+    background: none;
+    outline: none;
+    padding: 0;
+    display: inline-block;
+}
+
+.t-ask-input:focus, .t-ask-input:focus-visible {
+    border: none;
+    outline: none;
+}
+
+.t-cmd-input {
+    position: relative;
+    background: #030924;
+    border: none;
+    width: 1px;
+    opacity: 0;
+    cursor: text;
+    padding: 1px 2px;
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    appearance: textfield;
+    -webkit-rtl-ordering: logical;
+    border-image: initial;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.t-content-normal .success {
+    padding: 2px 3px;
+    background: #27ae60;
+}
+
+.t-content-normal .error {
+    padding: 2px 3px;
+    background: #c0392b;
+}
+
+.t-content-normal .warning {
+    padding: 2px 3px;
+    background: #f39c12;
+}
+
+.t-content-normal .info {
+    padding: 2px 3px;
+    background: #2980b9;
+}
+
+.t-content-normal .system {
+    padding: 2px 3px;
+    background: #8697a2;
+}
+
+.t-crude-font {
+    font-weight: 600;
+}
+
+.t-flag {
+    opacity: 0;
+}
+
+.t-last-line {
+    font-size: 0;
+    word-spacing: 0;
+    letter-spacing: 0;
+    position: relative;
+}
+
+.t-help-msg {
+    color: #ffffff87;
+    min-height: 20px;
+    margin: -8px 0 10px 0;
+}
+
+/*手机*/
+@media screen and (max-width: 768px ) {
+    .t-window {
+        padding: 0 15px 0 15px;
+    }
+}
+
+/*平板*/
+@media screen and (max-width: 992px) and (min-width: 768.1px) {
+
+}
+
+.t-cmd-line {
+    font-size: 0;
+}
+
+.t-cmd-line-content {
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.t-cmd-key {
+    font-weight: 700;
+    color: yellow;
+}
+
+.t-cmd-arg {
+    color: #c0c0ff;
+}
+
+.t-help-list {
+    margin: 0;
+    list-style: none;
+    padding-left: 0;
+    display: inline-grid;
+    display: -moz-inline-grid;
+    display: -ms-inline-grid;
+}
+
+.t-help-list li {
+    margin: 3px 0;
+}
+
+.t-json-deep-selector {
+    margin-top: 5px;
+    width: 140px;
+}
+
+.t-cmd-help {
+    position: absolute;
+    right: 15px;
+    z-index: 99;
+    background-color: black !important;
+    max-width: 50%;
+    padding: 5px;
+    color: white;
+    box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
+    overflow: auto;
+    max-height: calc(100% - 60px);
+}
+
+.t-cmd-help code {
+    color: white;
+    background-color: rgba(0, 0, 0, 0) !important;
+    border: none;
+    padding: 0;
+}
+
+.t-cmd-help-eg {
+    float: left;
+    width: 30px;
+    display: flex;
+    font-size: 13px;
+    line-height: 26px;
+}
+
+.t-cmd-help-example {
+    float: left;
+    width: calc(100% - 30px);
+    display: flex
+}
+
+.t-cmd-help-des {
+    font-size: 13px;
+}
+
+.t-pre-numbering {
+    margin-top: 0;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    width: 30px;
+    border-right: 1px solid #C3CCD0;
+    background-color: #1C1D21;
+    text-align: center;
+    padding: 1em 0;
+}
+
+.t-pre-numbering li {
+    list-style: none;
+    color: #AAA;
+    font-size: 1em;
+}
+
+pre {
+    position: relative;
+    margin: 0;
+}
+
+.t-example-ul {
+    padding: 0 0 0 10px;
+    margin: 0;
+    list-style: none;
+}
+
+.t-table-container {
+    max-width: 100%;
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+}
+
+.t-border-dashed {
+    border: 1px dashed #fff;
+    border-collapse: collapse;
+}
+
+.t-table thead {
+    font-weight: 600;
+}
+
+.t-table, .t-table tr, .t-table td, .t-table tbody, .t-table thead {
+    margin: 0;
+    padding: 15px;
+}
+
+.t-a {
+    color: antiquewhite;
+}
+
+.t-a:hover {
+    color: white;
+}
+
+.t-code {
+    position: relative;
+    max-height: 500px;
+    overflow: auto;
+    font-size: 20px;
+}
+
+.CodeMirror {
+    height: unset !important;
+    border: none;
+}
+
+.text-editor-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.text-editor {
+    color: #fff;
+    width: calc(100% - 10px);
+    height: calc(100% - 35px);
+    background-color: #191b24;
+    overflow: auto;
+    resize: none;
+    margin: 0;
+    padding: 0 5px;
+    border: none;
+    font-size: 15px;
+}
+
+.text-editor:focus-visible, .text-editor:focus {
+    outline: none;
+    outline-offset: unset;
+}
+
+.text-editor-floor {
+    background-color: rgb(72 69 69);
+    position: absolute;
+    height: 35px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+
+.text-editor-floor-btn {
+    color: white;
+    background-color: rgba(0,0,0,0);
+    border: none;
+    outline: none;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.disable-select {
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}

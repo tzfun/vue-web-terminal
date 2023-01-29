@@ -1,4 +1,4 @@
-import TerminalCallback from "@/components/terminal/TerminalCallback";
+import TerminalCallback from "@/TerminalCallback";
 
 class TerminalFlash extends TerminalCallback  {
     flush (msg) {

@@ -13,7 +13,6 @@ export function _html(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;')
-        .replace(/\r\n/g, '<br>')
         .replace(/\n/g, '<br>')
         .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 }
@@ -81,17 +80,14 @@ export function _isSafari() {
 }
 
 export function _getByteLen(val) {
-    if (val.length === 1) {
-        //  全角，占用两个字节
+    let len = 0;
+    for (let i = 0; i < val.length; i++) {
         // eslint-disable-next-line no-control-regex
-        if (val.match(/[^\x00-\xff]/ig) != null) {
-            return 2
-        }
-        //  半角占一个字节
-        else {
-            return 1
-        }
+        if (val[i].match(/[^\x00-\xff]/ig) != null) //全角
+            len += 2; //如果是全角，占用两个字节
+        else len += 1; //半角占用一个字节
     }
+    return len;
 }
 
 /**
@@ -132,88 +128,4 @@ export function _getDifferent(one, two) {
         }
     }
     return diff;
-}
-
-export function _commandFormatter(cmd) {
-    if (cmd == null) {
-        return ''
-    }
-    let split = cmd.split(" ")
-    let formatted = ''
-    for (let i = 0; i < split.length; i++) {
-        let char = _html(split[i])
-        if (i === 0) {
-            formatted += `<span class='t-cmd-key'>${char}</span>`
-        } else if (char.startsWith("-")) {
-            formatted += `<span class="t-cmd-arg">${char}</span>`
-        } else if (char.length > 0) {
-            formatted += `<span>${char}</span>`
-        }
-        if (i < split.length - 1) {
-            formatted += "<span>&nbsp;</span>"
-        }
-    }
-    return formatted
-}
-
-export function _getSelection() {
-    if (window.getSelection) {
-        return window.getSelection()
-    } else {
-        return document.getSelection()
-    }
-}
-
-/**
- *
- * 过滤ANSI字符
- *
- * 单个 \r 是回到行首
- * windows下 \r\n 和 \n 都是换行
- *
- * ANSI控制序列开始符号：\u001B \033 \e \x1B
- *
- * 样式规则：https://misc.flogisoft.com/bash/tip_colors_and_formatting
- * ANSI样式控制格式：\e[1;2;3m
- *
- * 光标规则
- * ANSI换行控制格式(y是行号，x是列号）：\e[y:xH
- *
- *         \033[nA             光标上移n行
- *         \033[nB             光标下移n行
- *         \033[nC             光标右移n行
- *         \033[nD             光标左移n行
- *         \033[y;xH           设置光标位置
- *         \033[2J             清屏
- *         \033[K              清除从光标到行尾的内容
- *         \033[s              保存光标位置
- *         \033[u              恢复光标位置
- *         \033[?25l           隐藏光标
- *         \033[?25h           显示光标
- *
- * @param str
- * @private
- */
-export function _ANSI2String(str) {
-    // eslint-disable-next-line no-control-regex
-    let flagReg = new RegExp(/\x1B\[(\d+;)*\d+m/)
-
-    let arr = Array.from(str)
-    let newArr = []
-    for (let i = 0; i < arr.length; i++) {
-        let c = arr[i]
-        if (c === '\x1B') {
-            let a = [c]
-            let y = i
-            let end = Math.min(arr.length - 1, i + 13)
-            while (y <= end && arr[y] !== 'm') {
-                a.push(arr[++y])
-            }
-            if (flagReg.test(a.join(''))) {
-                i = y + 1
-            }
-        }
-        newArr.push(arr[i])
-    }
-    return newArr.join('')
 }

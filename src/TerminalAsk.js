@@ -1,4 +1,4 @@
-import TerminalCallback from "@/components/terminal/TerminalCallback";
+import TerminalCallback from "@/TerminalCallback";
 
 class TerminalAsk extends TerminalCallback {
     ask(options) {
