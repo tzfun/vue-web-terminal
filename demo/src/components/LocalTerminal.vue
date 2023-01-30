@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref } from 'vue'
 import { exampleCode } from '@@/demo/DemoCode'
-import type { DragableConf, ElementInfo, MessageType, TerminalAsk, TerminalFlash } from 'vue-web-terminal'
+import type { DragableConfType, ElementInfo, MessageType, TerminalAsk, TerminalFlash } from 'vue-web-terminal'
 import Terminal from 'vue-web-terminal'
 import { Codemirror } from 'vue-codemirror'
 import { LocalTerminalConstants } from './LocalTerminalConstants'
@@ -17,7 +17,7 @@ const title = '👌vue-web-terminal'
 const context = ref('/vue-web-terminal/demo')
 const version = LocalTerminalConstants.version
 const cmdStore = LocalTerminalConstants.cmdStore
-const dragConf = ref<DragableConf | undefined>({
+const dragConf = ref<DragableConfType | undefined>({
   width: 700,
   height: 500,
 })
@@ -449,7 +449,7 @@ function _textEditorClose() {
   <Terminal
     :name="name" :title="title" :init-log="initLog" :input-filter="inputFilter" :context="context"
     :command-store="cmdStore" :warn-log-count-limit="200" :drag-conf="dragConf" show-header
-    @execCmd="onExecCmd" style="position: fixed" @onClick="onClick" @onKeydown="onKeydown" @initComplete="initComplete"
+    style="position: fixed" @execCmd="onExecCmd" @onClick="onClick" @onKeydown="onKeydown" @initComplete="initComplete"
   >
     <template #code="message">
       <Codemirror v-model="message.message.content" :options="codemirrorOptions" />
