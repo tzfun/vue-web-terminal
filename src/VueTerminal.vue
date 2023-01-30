@@ -76,7 +76,7 @@ const props = withDefaults(defineProps<TerminalProps>(), {
   warnLogCountLimit: 200,
   autoHelp: true,
   enableExampleHint: true,
-  // dragConf: () => DataConstant.DragableConf
+  // dragConf: () => DataConstant.DragableConf,
 })
 
 const emit = defineEmits<{
@@ -816,7 +816,6 @@ function getPosition() {
   const box = terminalContainer.value
   if (draggable() && box)
     return { x: parseInt(box.style.left), y: parseInt(box.style.top) }
-
   else
     return { x: 0, y: 0 }
 }
