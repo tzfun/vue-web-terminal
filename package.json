@@ -1,6 +1,6 @@
 {
   "name": "@neiloi/vue-web-terminal",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "A lightweight and powerful web terminal plugin, suitable for vue3. 轻量、功能强大的网页端Terminal插件，适配vue3",
   "license": "Apache-2.0",
   "private": false,
