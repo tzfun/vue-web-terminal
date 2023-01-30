@@ -26,7 +26,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 * Support API interface: execute command, push message, simulate drag and drop, execute, full screen, etc.
 * Provides multiple slots to support custom styles
 
-![vue-web-terminal](./public/vue-web-terminal.gif)
+![vue-web-terminal](doc/assets/vue-web-terminal.gif)
 
 > Short description:
 >
@@ -323,7 +323,7 @@ The info data structure is as follows:
 
 The following image clearly describes what these values mean:
 
-![ele-info.png](public/ele-info.png)
+![ele-info.png](doc/assets/ele-info.png)
 
 ### textEditorOpen()
 
@@ -651,7 +651,7 @@ The complete configuration structure of `dragConf` is as follows:
 | zIndex | Window level, default 100.                                                                                                                                       | number        |
 | init   | Window initialization position, if not filled, the default position is in the center of the browser window, where x and y are in px. ``` {"x": 700, "y": 500}``` | object        |
 
-![dragging.gif](public/dragging.gif)
+![dragging.gif](doc/assets/dragging.gif)
 
 In addition to mouse control, you can also [call API to simulate dragging](#dragging())
 

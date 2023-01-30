@@ -26,7 +26,7 @@
 * 提供方便的API方法：执行命令、推送消息、模拟拖拽、获取DOM信息、全屏等
 * 提供多个Slots插槽支持自定义样式
 
-![vue-web-terminal](./public/vue-web-terminal.gif)
+![vue-web-terminal](doc/assets/vue-web-terminal.gif)
 
 > 一句话描述：
 >
@@ -318,7 +318,7 @@ info数据结构如下：
 
 下面这张图清晰地描述了这些值的含义：
 
-![ele-info.png](public/ele-info.png)
+![ele-info.png](doc/assets/ele-info.png)
 
 ### textEditorOpen()
 
@@ -668,7 +668,7 @@ dragConf完整配置结构如下：
 | zIndex | 窗口层级，默认100                                                                                   | number        |
 | init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px，``` {"x": 700, "y": 500}``` | object        |
 
-![dragging.gif](public/dragging.gif)
+![dragging.gif](doc/assets/dragging.gif)
 
 除了鼠标控制之外你还可以[调用API移动窗口位置](#dragging())
 
