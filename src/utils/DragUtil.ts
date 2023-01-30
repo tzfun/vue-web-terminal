@@ -1,11 +1,11 @@
-import { useDraggable } from "@vueuse/core"
-import type { CSSProperties, Ref } from "vue"
-import { DragableConf } from "@/models/DraggableInterface"
+import { useDraggable } from '@vueuse/core'
+import type { CSSProperties, Ref } from 'vue'
+import type { DragableConf } from '@/models/DraggableInterface'
 
 function getLengthStyle(length?: number | string): string | undefined {
-  if (typeof length === "number") {
+  if (typeof length === 'number')
     return `${length}px`
-  }
+
   return length
 }
 
@@ -20,13 +20,13 @@ export function getDragStyle(dragConf: DragableConf): CSSProperties {
   const initX = getLengthStyle(initPos?.x ?? (clientWidth - (dragConf.width as number)) / 2)
   const initY = getLengthStyle(initPos?.y ?? (clientHeight - (dragConf.height as number)) / 2)
   return {
-    position: "fixed",
+    position: 'fixed',
     width,
     height,
     zIndex,
     left: initX,
     top: initY,
-    borderRadius: "15px",
+    borderRadius: '15px',
   }
 }
 
@@ -35,14 +35,14 @@ export function useDrag(
   fullscreenRef: Ref<boolean>,
   terminalHeader: Ref<HTMLDivElement | undefined>,
   terminalContainer: Ref<HTMLDivElement | undefined>,
-  dragConf?: DragableConf
+  dragConf?: DragableConf,
 ) {
-  if (!draggable) {
+  if (!draggable)
     return
-  }
-  if (fullscreenRef.value) {
+
+  if (fullscreenRef.value)
     return
-  }
+
   const { x, y } = useDraggable(terminalHeader, {
     initialValue: {
       x: dragConf?.init?.x ?? 500,
@@ -60,26 +60,26 @@ export function dragging(x: number, y: number, terminalContainer: HTMLDivElement
   const clientWidth = document.body.clientWidth
   const clientHeight = document.body.clientHeight
   const box = terminalContainer
-  if (!box) {
+  if (!box)
     return
-  }
-  if (x > clientWidth - box.clientWidth) {
-    box.style.left = clientWidth - box.clientWidth + "px"
-  } else {
-    box.style.left = Math.max(0, x) + "px"
-  }
 
-  if (y > clientHeight - box.clientHeight) {
-    box.style.top = clientHeight - box.clientHeight + "px"
-  } else {
-    box.style.top = Math.max(0, y) + "px"
-  }
+  if (x > clientWidth - box.clientWidth)
+    box.style.left = `${clientWidth - box.clientWidth}px`
+
+  else
+    box.style.left = `${Math.max(0, x)}px`
+
+  if (y > clientHeight - box.clientHeight)
+    box.style.top = `${clientHeight - box.clientHeight}px`
+
+  else
+    box.style.top = `${Math.max(0, y)}px`
 }
 
 export function getSelection() {
-  if (window.getSelection) {
+  if (window.getSelection)
     return window.getSelection()
-  } else {
+
+  else
     return document.getSelection()
-  }
 }

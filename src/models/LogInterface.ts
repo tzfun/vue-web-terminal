@@ -1,2 +1,2 @@
-import { MessageType } from "./MessageInterface"
-export type InitLogType = MessageType[];
+import type { MessageType } from './MessageInterface'
+export type InitLogType = MessageType[]

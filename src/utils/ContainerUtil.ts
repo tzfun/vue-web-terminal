@@ -1,15 +1,15 @@
-import { CSSProperties } from "vue"
+import type { CSSProperties } from 'vue'
 
 export const defaultContainerStyle: CSSProperties = {
   zIndex: 100,
-  position: "fixed",
+  position: 'fixed',
 }
 
 export const fullScreenStyle: CSSProperties = {
-  position: "fixed",
-  width: "100%",
-  height: "100%",
-  left: "0",
-  top: "0",
-  backgroundColor: "black",
+  position: 'fixed',
+  width: '100%',
+  height: '100%',
+  left: '0',
+  top: '0',
+  backgroundColor: 'black',
 }

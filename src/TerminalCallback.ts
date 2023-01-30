@@ -3,10 +3,10 @@ class TerminalCallback {
   constructor() {
     this.onFinishListener = undefined
   }
+
   finish() {
-    if (this.onFinishListener) {
+    if (this.onFinishListener)
       this.onFinishListener()
-    }
   }
 
   onFinish(callback: () => void) {

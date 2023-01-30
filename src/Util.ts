@@ -7,14 +7,14 @@
  */
 export function _html(str: string) {
   return String(str)
-    .replace(/&(?!\w+;)/g, "&amp;")
-    .replace(/ /g, "&nbsp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;")
-    .replace(/\n/g, "<br>")
-    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+    .replace(/&(?!\w+;)/g, '&amp;')
+    .replace(/ /g, '&nbsp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/\n/g, '<br>')
+    .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
 }
 
 /**
@@ -22,9 +22,9 @@ export function _html(str: string) {
  */
 export function _isEmpty<T>(value: T): boolean {
   return (
-    !value ||
-    (typeof value === "string" && value.trim().length === 0) ||
-    (typeof value === "object" && Object.keys(value).length === 0)
+    !value
+    || (typeof value === 'string' && value.trim().length === 0)
+    || (typeof value === 'object' && Object.keys(value).length === 0)
   )
 }
 
@@ -34,11 +34,11 @@ export function _nonEmpty<T>(value: T): boolean {
 
 const unHtmlReplaceMap = new Map<string, string>(
   Object.entries({
-    "<": "&lt;",
-    '"': "&quot;",
-    ">": "&gt;",
-    "'": "&#39;",
-  })
+    '<': '&lt;',
+    '"': '&quot;',
+    '>': '&gt;',
+    '\'': '&#39;',
+  }),
 )
 
 /**
@@ -51,13 +51,13 @@ const unHtmlReplaceMap = new Map<string, string>(
 export function _unHtml(str?: string): string {
   return str
     ? str.replace(/[<">']/g, (a: string): string => {
-        return unHtmlReplaceMap.get(a) ?? ""
-      })
-    : ""
+      return unHtmlReplaceMap.get(a) ?? ''
+    })
+    : ''
 }
 
 export function _sleep(time: number) {
-  return new Promise((resolve) => setTimeout(resolve, time))
+  return new Promise(resolve => setTimeout(resolve, time))
 }
 
 export function _screenType(width = document.body.clientWidth) {
@@ -77,7 +77,7 @@ export function _getByteLen(char: string) {
   let len = 0
   for (let i = 0; i < char.length; i++) {
     // eslint-disable-next-line no-control-regex
-    if (char[i].match(/[^\x00-\xff]/gi))
+    if (char[i].match(/[^\x00-\xFF]/gi))
       //  全角
       len += 2 //    如果是全角，占用两个字节
     else len += 1 //   半角占用一个字节
@@ -89,33 +89,35 @@ export function _getByteLen(char: string) {
  * 获取两个连续字符串的不同部分
  */
 export function _getStrDifferent(one: string, two: string): string {
-  if (one === two) {
-    return ""
-  }
-  let i = 0,
-    j = 0
+  if (one === two)
+    return ''
+
+  let i = 0
+  let j = 0
   const longOne = one.length > two.length ? one : two
   const shortOne = one.length > two.length ? two : one
 
-  let diff = "",
-    nextChar = ""
+  let diff = ''
+  let nextChar = ''
   let hasDiff = false
   while (i < shortOne.length || j < longOne.length) {
     if (shortOne[i] === longOne[j]) {
-      if (hasDiff) {
+      if (hasDiff)
         break
-      }
+
       i++
       j++
-    } else {
-      if (i < shortOne.length - 1) {
+    }
+    else {
+      if (i < shortOne.length - 1)
         nextChar = shortOne[i + 1]
-      }
-      if (longOne[j] === nextChar || j >= longOne.length) {
+
+      if (longOne[j] === nextChar || j >= longOne.length)
         break
-      } else {
+
+      else
         diff += longOne[j]
-      }
+
       j++
       hasDiff = true
     }

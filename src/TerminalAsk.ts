@@ -1,13 +1,13 @@
-import TerminalCallback from "./TerminalCallback"
+import TerminalCallback from './TerminalCallback'
 
-export type TerminalAskHandlerOption = {
-  isPassword: boolean;
-  question: string;
-  callback?: (input: string) => void;
-  autoReview: boolean;
-};
+export interface TerminalAskHandlerOption {
+  isPassword: boolean
+  question: string
+  callback?: (input: string) => void
+  autoReview: boolean
+}
 
-export type TerminalAskHandler = (options: TerminalAskHandlerOption) => void;
+export type TerminalAskHandler = (options: TerminalAskHandlerOption) => void
 
 class TerminalAsk extends TerminalCallback {
   handler?: TerminalAskHandler
@@ -18,9 +18,8 @@ class TerminalAsk extends TerminalCallback {
   }
 
   ask(options: TerminalAskHandlerOption) {
-    if (this.handler) {
+    if (this.handler)
       this.handler(options)
-    }
   }
 
   onAsk(callback: TerminalAskHandler) {

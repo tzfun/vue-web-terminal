@@ -1,6 +1,6 @@
-import { useFullscreen } from "@vueuse/core"
-import type { CSSProperties, Ref } from "vue"
-import { fullScreenStyle } from "./ContainerUtil"
+import { useFullscreen } from '@vueuse/core'
+import type { CSSProperties, Ref } from 'vue'
+import { fullScreenStyle } from './ContainerUtil'
 
 export function useTerminalFullscreen() {
   const { isFullscreen: fullscreen, toggle: toggleFullscreen } = useFullscreen()
@@ -23,7 +23,8 @@ export function useUpdateFullscreenStyle(fullscreen: Ref<boolean>, containerStyl
         ...containerStyle.value,
         ...fullScreenStyle,
       }
-    } else {
+    }
+    else {
       containerStyle.value = { ...styleCache.value }
     }
   })

@@ -1,6 +1,6 @@
-import TerminalCallback from "./TerminalCallback"
+import TerminalCallback from './TerminalCallback'
 
-export type FlashHandler = (msg: string) => void;
+export type FlashHandler = (msg: string) => void
 class TerminalFlash extends TerminalCallback {
   handler?: FlashHandler
 
@@ -10,9 +10,8 @@ class TerminalFlash extends TerminalCallback {
   }
 
   flush(msg: string) {
-    if (this.handler) {
+    if (this.handler)
       this.handler(msg)
-    }
   }
 
   onFlush(callback: FlashHandler) {
