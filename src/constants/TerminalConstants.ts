@@ -1,6 +1,6 @@
 import type { InitLogType } from '../models/LogInterface'
 import type { CommandType, CursorConfType } from '../models/CommandInterface'
-import { DragableConf } from '../models/DraggableInterface'
+import type { DragableConfType } from '../models/DraggableInterface'
 const InitLog: InitLogType = [
   {
     type: 'normal',
@@ -83,7 +83,7 @@ const CursorConf: CursorConfType = {
   show: false,
 }
 
-const DragableConf: DragableConf = {
+const DragableConf: DragableConfType = {
   width: 700,
   height: 500,
   zIndex: 100,

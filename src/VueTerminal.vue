@@ -124,7 +124,6 @@ const containerStyle = ref<CSSProperties>({})
 onMounted(() => {
   if (draggable())
     containerStyle.value = getDragStyle(props.dragConf ?? DataConstant.DragableConf)
-
   else
     containerStyle.value = fullScreenStyle
 })
@@ -289,14 +288,13 @@ function focus() {
     if (ask.open) {
       askInput.value?.focus()
     }
-    else if (textEditorComp.value) {
+    else if (textEditorComp.value && textEditorComp.value.textEditorData.open) {
       textEditorComp.value.focus()
     }
     else {
       //  没有被选中
       if (getSelection()?.isCollapsed)
         cmdInput.value?.focus()
-
       else
         cursorConf.show = true
     }
@@ -873,7 +871,7 @@ useKeydownListener((event: KeyboardEvent) => {
 </script>
 
 <template>
-  <div ref="terminalContainer" class="t-container" :style="containerStyle" @focus="focus">
+  <div ref="terminalContainer" class="t-container" :style="containerStyle" @click="focus">
     <div class="terminal">
       <div
         v-if="showHeader" ref="terminalHeader" class="t-header-container"
