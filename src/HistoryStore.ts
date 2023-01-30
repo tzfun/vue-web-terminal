@@ -16,7 +16,7 @@ class HistoryStore {
     }
     else {
       this._dataMap = new Map<string, HistoryState>(
-        Object.entries(JSON.parse(dataMapStr)),
+        Object.entries(JSON.parse(dataMapStr) as Map<string, HistoryState>),
       )
     }
   }
@@ -82,5 +82,8 @@ class HistoryStore {
   }
 }
 
+export {
+  HistoryStore,
+}
 const instance = new HistoryStore()
 export default instance

@@ -31,6 +31,7 @@ import TerminalObj from './TerminalObj'
 
 import { useTerminalFullscreen, useUpdateFullscreenStyle } from './utils/FullscreenUtil'
 import { fullScreenStyle } from './utils/ContainerUtil'
+import TextEditor from './components/TextEditor.vue'
 
 export interface TerminalProps {
   /** 终端唯一名称 */
@@ -93,26 +94,6 @@ const emit = defineEmits<{
 const command = ref('')
 const showInputLine = ref(true)
 
-interface TextEditorType {
-  open: boolean
-  focus: boolean
-  value: string
-  onClose?: (content: string) => void
-  onFocus?: () => void
-  onBlur?: () => void
-}
-const textEditorData = reactive<TextEditorType>({
-  open: false,
-  focus: false,
-  value: '',
-  onClose: undefined,
-  onFocus: () => {
-    textEditorData.focus = true
-  },
-  onBlur: () => {
-    textEditorData.focus = false
-  },
-})
 const ask = reactive<{ open: boolean; input: string } & TerminalAskHandlerOption>({
   open: false,
   question: '',
@@ -157,7 +138,7 @@ const terminalInputBox = ref<HTMLParagraphElement>()
 const terminalInputPrompt = ref<HTMLSpanElement>()
 const terminalEnFlag = ref<HTMLSpanElement>()
 const terminalCnFlag = ref<HTMLSpanElement>()
-const textEditor = ref<HTMLTextAreaElement>()
+const textEditorComp = ref<InstanceType<typeof TextEditor> | null>(null)
 
 const { fullscreen, toggleFullscreen } = useTerminalFullscreen()
 useUpdateFullscreenStyle(fullscreen, containerStyle)
@@ -229,13 +210,15 @@ onMounted(() => {
     }
     else if (type === 'textEditorOpen') {
       const opt = options || {}
-      textEditorData.value = opt.content
-      textEditorData.open = true
-      textEditorData.onClose = opt.onClose
+      if (textEditorComp.value) {
+        textEditorComp.value.textEditorData.value = opt.content
+        textEditorComp.value.textEditorData.open = true
+        textEditorComp.value.textEditorData.onClose = opt.onClose
+      }
       focus()
     }
     else if (type === 'textEditorClose') {
-      return textEditorClose()
+      return textEditorComp.value?.textEditorClose()
     }
     else {
       console.error(`Unsupported event type: ${type}`)
@@ -306,9 +289,8 @@ function focus() {
     if (ask.open) {
       askInput.value?.focus()
     }
-    else if (textEditorData.open) {
-      if (textEditor.value)
-        textEditor.value?.focus()
+    else if (textEditorComp.value) {
+      textEditorComp.value.focus()
     }
     else {
       //  没有被选中
@@ -319,17 +301,6 @@ function focus() {
         cursorConf.show = true
     }
   })
-}
-
-function textEditorClose() {
-  if (textEditorData.open) {
-    textEditorData.open = false
-    const content = textEditorData.value
-    textEditorData.value = ''
-    textEditorData.onClose?.(content)
-    focus()
-    return content
-  }
 }
 
 function resetSearchKey() {
@@ -875,7 +846,7 @@ function isActive(): boolean {
   return (
     cursorConf.show
     || (ask.open && askInput.value === document.activeElement)
-    || (textEditorData.open && textEditorData.focus)
+    || !!(textEditorComp.value && textEditorComp.value.isActive)
   )
 }
 
@@ -1023,22 +994,6 @@ useKeydownListener((event: KeyboardEvent) => {
         </div>
       </slot>
     </div>
-
-    <div
-      v-if="textEditorData.open" class="text-editor-container"
-      :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
-    >
-      <slot name="textEditor" :data="textEditorData">
-        <textarea
-          ref="textEditor" v-model="textEditorData.value" name="editor" class="text-editor"
-          @focus="textEditorData.onFocus" @blur="textEditorData.onBlur"
-        />
-        <div class="text-editor-floor" align="center">
-          <button class="text-editor-floor-btn" @click="textEditorClose">
-            Save & Close
-          </button>
-        </div>
-      </slot>
-    </div>
+    <TextEditor ref="textEditorComp" :show-header="showHeader" />
   </div>
 </template>

@@ -100,5 +100,8 @@ class TerminalObj {
   }
 }
 
+export {
+  TerminalObj,
+}
 const instance = new TerminalObj()
 export default instance
