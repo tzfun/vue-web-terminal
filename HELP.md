@@ -13,7 +13,14 @@ npm i -g pnpm
 pnpm i
 ```
 
-## 2. 打包并运行demo
+## 2. 打包组件
+执行以下命令
+```
+pnpm run build
+```
+执行后即会在`lib`生成构建结果
+
+## 3. 打包并运行demo
 首先确保`index.html`中使用
 ```html
 <script type="module" src="/demo/src/main.ts"></script>
