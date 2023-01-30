@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import './css/scrollbar.css'
 import './css/style.css'
 import type { CSSProperties } from 'vue'
-import type { DragableConf } from './models/DraggableInterface'
+import type { DragableConfType } from './models/DraggableInterface'
 import {
   _getByteLen,
   _html,
@@ -64,7 +64,7 @@ export interface TerminalProps {
   /** 显示终端头部 */
   showHeader?: boolean
   /** 拖拽配置 */
-  dragConf?: DragableConf
+  dragConf?: DragableConfType
 }
 
 const props = withDefaults(defineProps<TerminalProps>(), {

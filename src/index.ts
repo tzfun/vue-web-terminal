@@ -1,7 +1,7 @@
 import type { App } from 'vue'
 import type { TerminalProps } from './VueTerminal.vue'
 import type { ElementInfo } from './TerminalObj'
-import type { DragableConf } from './models/DraggableInterface'
+import type { DragableConfType } from './models/DraggableInterface'
 import type { MessageType } from './models/MessageInterface'
 import _Terminal from './VueTerminal.vue'
 import TerminalObj from './TerminalObj'
@@ -20,4 +20,4 @@ const Terminal = Object.assign(_Terminal, {
 export default Terminal
 
 export type { TerminalAsk, TerminalFlash, TerminalObj }
-export type { TerminalProps, ElementInfo, DragableConf, MessageType }
+export type { TerminalProps, ElementInfo, DragableConfType, MessageType }

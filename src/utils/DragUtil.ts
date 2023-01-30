@@ -1,6 +1,6 @@
 import { useDraggable } from '@vueuse/core'
 import type { CSSProperties, Ref } from 'vue'
-import type { DragableConf } from '@/models/DraggableInterface'
+import type { DragableConfType } from '@/models/DraggableInterface'
 
 function getLengthStyle(length?: number | string): string | undefined {
   if (typeof length === 'number')
@@ -9,7 +9,7 @@ function getLengthStyle(length?: number | string): string | undefined {
   return length
 }
 
-export function getDragStyle(dragConf: DragableConf): CSSProperties {
+export function getDragStyle(dragConf: DragableConfType): CSSProperties {
   const width = getLengthStyle(dragConf.width) ?? 700
   const height = getLengthStyle(dragConf.height) ?? 500
   const zIndex = dragConf.zIndex ? dragConf.zIndex : 100
@@ -35,7 +35,7 @@ export function useDrag(
   fullscreenRef: Ref<boolean>,
   terminalHeader: Ref<HTMLDivElement | undefined>,
   terminalContainer: Ref<HTMLDivElement | undefined>,
-  dragConf?: DragableConf,
+  dragConf?: DragableConfType,
 ) {
   if (!draggable)
     return
