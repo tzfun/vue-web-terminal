@@ -416,7 +416,7 @@ function printHelp(regExp: RegExp, srcStr: string) {
     rows: [],
   }
   const findGroup
-    = srcStr && srcStr.length > 1 && srcStr.startsWith(':')
+    = (srcStr && srcStr.length > 1 && srcStr.startsWith(':'))
       ? srcStr.substring(1).toLowerCase()
       : null
   allCommandStore.forEach((cmd: CommandType) => {
@@ -490,7 +490,7 @@ function execute() {
       emit('beforeExecCmd', cmdKey, command.value, props.name)
       switch (cmdKey) {
         case 'help': {
-          let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : '*'
+          let reg = `^${(split.length > 1 && _nonEmpty(split[1])) ? split[1] : '*'
             }$`
           reg = reg.replace(/\*/g, '.*')
           printHelp(new RegExp(reg, 'i'), split[1])
@@ -659,15 +659,13 @@ function calculateCursorPos(cmd?: string) {
   cursorConf.width = charWidth
 }
 function cursorGoLeft() {
-  if (cursorConf.idx > 0) {
+  if (cursorConf.idx > 0)
     cursorConf.idx--
-  }
   calculateCursorPos()
 }
 function cursorGoRight() {
-  if (cursorConf.idx < command.value.length) {
+  if (cursorConf.idx < command.value.length)
     cursorConf.idx++
-  }
   calculateCursorPos()
 }
 function saveCurCommand() {
