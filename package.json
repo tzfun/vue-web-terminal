@@ -9,9 +9,7 @@
     "dev:demo": "npm run build && npm run dev",
     "build": "vite build && npm run build:types",
     "preview": "vite preview",
-    "build:types": "vue-tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir lib/types",
-    "build-cli": "vue-cli-service build --target lib --dest lib src/index.js && python modify_lib.py",
-    "build-wc": "vue-cli-service build --target wc --dest lib src/Terminal.vue"
+    "build:types": "vue-tsc --project tsconfig.json --declaration --emitDeclarationOnly --outDir lib/types"
   },
   "peerDependencies": {
     "vue": "^3.x"
@@ -22,6 +20,7 @@
     "vue3-json-viewer": "^2.2.2"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.35.1",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.15",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
