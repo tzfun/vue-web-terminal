@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   title: string
   showHeader: boolean
   /** 是否全屏状态 */

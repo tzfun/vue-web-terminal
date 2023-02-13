@@ -102,7 +102,7 @@ const ask = reactive<{ open: boolean; input: string } & TerminalAskHandlerOption
   input: '',
   callback: undefined,
 })
-const cursorConf = reactive(DataConstant.CursorConf)
+const cursor = reactive(DataConstant.CursorConf)
 const searchCmd = reactive<{ item?: CommandType }>({ item: undefined })
 const allCommandStore = reactive(DataConstant.AllCommandStore)
 const byteLen = reactive(DataConstant.ByteLen)
@@ -250,7 +250,7 @@ onMounted(async () => {
   if (terminalCnFlag.value)
     byteLen.cn = terminalCnFlag.value.getBoundingClientRect().width / 2
 
-  cursorConf.defaultWidth = byteLen.en
+  cursor.defaultWidth = byteLen.en
   if (terminalWindow.value && terminalContainer.value && terminalHeader.value && terminalInputPrompt.value) {
     if (terminalWindow.value)
       terminalWindow.value.scrollTop = terminalWindow.value.offsetHeight
@@ -284,21 +284,19 @@ function triggerClick(key: string) {
 }
 
 function focus() {
-  nextTick(() => {
-    if (ask.open) {
-      askInput.value?.focus()
-    }
-    else if (textEditorComp.value && textEditorComp.value.textEditorData.open) {
-      textEditorComp.value.focus()
-    }
-    else {
-      //  没有被选中
-      if (getSelection()?.isCollapsed)
-        cmdInput.value?.focus()
-      else
-        cursorConf.show = true
-    }
-  })
+  if (ask.open) {
+    askInput.value?.focus()
+  }
+  else if (textEditorComp.value && textEditorComp.value.textEditorData.open) {
+    textEditorComp.value.focus()
+  }
+  else {
+    //  没有被选中
+    if (getSelection()?.isCollapsed)
+      cmdInput.value?.focus()
+    else
+      cursor.show = true
+  }
 }
 
 function resetSearchKey() {
@@ -557,7 +555,7 @@ function execute() {
 function endExecCallBack() {
   command.value = ''
   resetCursorPos()
-  cursorConf.show = true
+  cursor.show = true
   focus()
 }
 
@@ -588,14 +586,14 @@ function pushMessageBatch(messages: MessageType[], ignoreCheck = false) {
     checkTerminalLog()
 }
 function resetCursorPos(cmd?: string) {
-  cursorConf.idx = (cmd ?? command.value).length
-  cursorConf.left = 'unset'
-  cursorConf.top = 'unset'
-  cursorConf.width = cursorConf.defaultWidth
+  cursor.idx = (cmd ?? command.value).length
+  cursor.left = 'unset'
+  cursor.top = 'unset'
+  cursor.width = cursor.defaultWidth
 }
 function calculateCursorPos(cmd?: string) {
   //  idx可以认为是需要光标覆盖字符的索引
-  const idx = cursorConf.idx
+  const idx = cursor.idx
   const _cmd = cmd ?? command.value
 
   if (idx < 0 || idx >= _cmd.length) {
@@ -607,7 +605,7 @@ function calculateCursorPos(cmd?: string) {
 
   const pos = { left: 0, top: 0 }
   //  当前字符长度
-  let charWidth = cursorConf.defaultWidth
+  let charWidth = cursor.defaultWidth
   //  前一个字符的长度
   let preWidth = inputBoxParam.promptWidth
 
@@ -623,18 +621,18 @@ function calculateCursorPos(cmd?: string) {
     }
   }
 
-  cursorConf.left = pos.left
-  cursorConf.top = pos.top
-  cursorConf.width = charWidth
+  cursor.left = pos.left
+  cursor.top = pos.top
+  cursor.width = charWidth
 }
 function cursorGoLeft() {
-  if (cursorConf.idx > 0)
-    cursorConf.idx--
+  if (cursor.idx > 0)
+    cursor.idx--
   calculateCursorPos()
 }
 function cursorGoRight() {
-  if (cursorConf.idx < command.value.length)
-    cursorConf.idx++
+  if (cursor.idx < command.value.length)
+    cursor.idx++
   calculateCursorPos()
 }
 function saveCurCommand() {
@@ -760,8 +758,8 @@ function onInput(e: Event) {
 }
 function checkInputCursor() {
   const eIn = cmdInput.value
-  if (eIn?.selectionStart !== cursorConf.idx)
-    cursorConf.idx = eIn?.selectionStart ?? 0
+  if (eIn?.selectionStart !== cursor.idx)
+    cursor.idx = eIn?.selectionStart ?? 0
 }
 function onInputKeydown(e: KeyboardEvent) {
   const key = e.key.toLowerCase()
@@ -841,7 +839,7 @@ function onAskInput() {
  */
 function isActive(): boolean {
   return (
-    cursorConf.show
+    cursor.show
     || (ask.open && askInput.value === document.activeElement)
     || !!(textEditorComp.value && textEditorComp.value.isActive)
   )
@@ -849,7 +847,7 @@ function isActive(): boolean {
 
 useKeydownListener((event: KeyboardEvent) => {
   if (isActive()) {
-    if (cursorConf.show) {
+    if (cursor.show) {
       if (event.key.toLowerCase() === 'tab') {
         if (!props.tabKeyHandler)
           fillCmd()
@@ -937,13 +935,13 @@ useKeydownListener((event: KeyboardEvent) => {
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="commandFormatter(command)" /><span
-            v-show="cursorConf.show" class="cursor disable-select"
-            :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`"
+            v-show="cursor.show" class="cursor disable-select"
+            :style="`width:${cursor.width}px;left:${cursor.left}px;top:${cursor.top}px;`"
           >&nbsp;</span>
           <input
             ref="cmdInput" v-model="command" type="text" autofocus class="t-cmd-input disable-select"
             autocomplete="off" auto-complete="new-password" @keydown="onInputKeydown" @keyup="onInputKeyup"
-            @input="onInput" @focusin="cursorConf.show = true" @focusout="cursorConf.show = false"
+            @input="onInput" @focusin="cursor.show = true" @focusout="cursor.show = false"
             @keyup.up.exact="switchPreCmd" @keyup.down.exact="switchNextCmd" @keyup.enter="execute"
           >
           <span class="t-flag t-cmd-line disable-select">
