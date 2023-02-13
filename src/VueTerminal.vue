@@ -105,7 +105,6 @@ const ask = reactive<{ open: boolean; input: string } & TerminalAskHandlerOption
 const cursor = reactive(DataConstant.CursorConf)
 const searchCmd = reactive<{ item?: CommandType }>({ item: undefined })
 const allCommandStore = reactive(DataConstant.AllCommandStore)
-const byteLen = reactive(DataConstant.ByteLen)
 const terminalLog = reactive<MessageType[]>([])
 const perfWarningRate = reactive({
   count: 0,
@@ -142,6 +141,17 @@ const textEditorComp = ref<InstanceType<typeof TextEditor> | null>(null)
 const { fullscreen, toggleFullscreen } = useTerminalFullscreen()
 useUpdateFullscreenStyle(fullscreen, containerStyle)
 useDrag(draggable(), fullscreen, terminalHeader, terminalContainer, props.dragConf)
+
+const byteLenEn = computed(() => {
+  if (terminalEnFlag.value)
+    return terminalEnFlag.value.getBoundingClientRect().width / 2
+  else return DataConstant.ByteLen.en
+})
+const byteLenCn = computed(() => {
+  if (terminalCnFlag.value)
+    return terminalCnFlag.value.getBoundingClientRect().width / 2
+  else return DataConstant.ByteLen.cn
+})
 
 watch(terminalLog, () => {
   jumpToBottom()
@@ -199,8 +209,8 @@ onMounted(() => {
           : windowRect.width - 40, //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
         clientHeight: windowRect.height, //  可显示内容范围高度
         charWidth: {
-          en: byteLen.en, //  单个英文字符宽度
-          cn: byteLen.cn, //  单个中文字符宽度
+          en: byteLenEn.value, //  单个英文字符宽度
+          cn: byteLenCn.value, //  单个中文字符宽度
         },
       }
     }
@@ -244,13 +254,8 @@ onMounted(async () => {
       allCommandStore.push(cmd)
     })
   }
-  if (terminalEnFlag.value)
-    byteLen.en = terminalEnFlag.value.getBoundingClientRect().width / 2
 
-  if (terminalCnFlag.value)
-    byteLen.cn = terminalCnFlag.value.getBoundingClientRect().width / 2
-
-  cursor.defaultWidth = byteLen.en
+  cursor.defaultWidth = byteLenEn.value
   if (terminalWindow.value && terminalContainer.value && terminalHeader.value && terminalInputPrompt.value) {
     if (terminalWindow.value)
       terminalWindow.value.scrollTop = terminalWindow.value.offsetHeight
@@ -728,10 +733,10 @@ function switchNextCmd() {
   historyStore.setIdx(props.name, cmdIdx)
   doSearchCmd(command.value.trim().split(' ')[0])
 }
-function calculateStringWidth(str: string) {
+function calculateStringWidth(str: string): number {
   let width = 0
   for (const char of str)
-    width += _getByteLen(char) === 1 ? byteLen.en : byteLen.cn
+    width += _getByteLen(char) === 1 ? byteLenEn.value : byteLenCn.value
 
   return width
 }
@@ -935,7 +940,8 @@ useKeydownListener((event: KeyboardEvent) => {
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="commandFormatter(command)" /><span
-            v-show="cursor.show" class="cursor disable-select"
+            v-show="cursor.show"
+            class="cursor disable-select"
             :style="`width:${cursor.width}px;left:${cursor.left}px;top:${cursor.top}px;`"
           >&nbsp;</span>
           <input
@@ -959,11 +965,13 @@ useKeydownListener((event: KeyboardEvent) => {
     <div v-if="enableExampleHint">
       <slot name="helpBox" :show-header="showHeader" :item="searchCmd.item">
         <div
-          v-if="searchCmd.item && !_screenType().xs"
-          class="t-cmd-help"
+          v-if="searchCmd.item && !_screenType().xs" class="t-cmd-help"
           :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
         >
-          <p v-if="searchCmd.item.description" class="text" style="margin: 15px 0" v-html="searchCmd.item.description" />
+          <p
+            v-if="searchCmd.item.description" class="text" style="margin: 15px 0"
+            v-html="searchCmd.item.description"
+          />
           <div v-if="searchCmd.item.example && searchCmd.item.example.length > 0">
             <div v-for="(it, idx) in searchCmd.item.example" :key="idx" class="text">
               <div v-if="searchCmd.item.example.length === 1">

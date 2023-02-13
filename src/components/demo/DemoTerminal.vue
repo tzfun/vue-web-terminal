@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DragableConfType, ElementInfo, MessageType, TerminalAsk, TerminalFlash } from '../../index'
-import Terminal from '../../VueTerminal.vue'
-import { LocalTerminalConstants } from './LocalTerminalConstants'
+import Terminal from '../../index'
+import { LocalTerminalConstants } from './DemoTerminalConstants'
 const props = defineProps<{
   initCmd?: string
 }>()
