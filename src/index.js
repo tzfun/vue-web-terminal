@@ -15,4 +15,7 @@ Terminal.install = function (Vue, options) {
     Vue.component(this.name, this);
 }
 
-export default Terminal
+if (typeof window !== 'undefined' && window.Vue) {
+    Terminal.install(window.Vue);
+}
+export default Terminal;
