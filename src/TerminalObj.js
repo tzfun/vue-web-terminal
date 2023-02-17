@@ -1,94 +1,89 @@
 import historyStore from "./HistoryStore.js";
 
-const instance = new TerminalObj()
+// const instance = new TerminalObj()
+const pool = {}; let options = {};
 
-function TerminalObj() {
-    let pool = {}
-    let options = {}
+function register(name, listener) {
+    if (pool[name] != null) {
+        throw Error(`Unable to register an existing terminal: ${name}`)
+    }
+    pool[name] = listener
+}
 
-    let setOptions = function (ops) {
+function unregister(name) {
+    delete pool[name]
+}
+
+const TerminalProxy = {
+
+    setOptions(ops) {
         options = ops
-    }
+    },
 
-    let getOptions = function () {
+    getOptions() {
         return options
-    }
+    },
 
-    let register = function (name, listener) {
-        if (pool[name] != null) {
-            throw Error(`Unable to register an existing terminal: ${name}`)
-        }
-        pool[name] = listener
-    }
-
-    let unregister = function (name) {
-        delete pool[name]
-    }
-
-    let post = function (name = 'terminal', event, options) {
+    post(name = 'terminal', event, options) {
         let listener = pool[name]
         if (listener != null) {
             return listener(event, options)
         }
-    }
+    },
 
-    let pushMessage = function (name, options) {
-        return post(name, 'pushMessage', options)
-    }
+    pushMessage(name, options) {
+        return TerminalProxy.post(name, 'pushMessage', options)
+    },
 
-    let getHistory = function () {
+    getHistory() {
         return historyStore
-    }
+    },
 
-    let fullscreen = function (name) {
-        return post(name, "fullscreen")
-    }
+    fullscreen(name) {
+        return TerminalProxy.post(name, "fullscreen")
+    },
 
-    let isFullscreen = function (name) {
-        return post(name, 'isFullscreen')
-    }
+    isFullscreen(name) {
+        return TerminalProxy.post(name, 'isFullscreen')
+    },
 
-    let dragging = function (name, options) {
-        return post(name, 'dragging', options)
-    }
+    dragging(name, options) {
+        return TerminalProxy.post(name, 'dragging', options)
+    },
 
-    let execute = function (name, options) {
-        return post(name, 'execute', options)
-    }
+    execute(name, options) {
+        return TerminalProxy.post(name, 'execute', options)
+    },
 
-    let focus = function (name) {
-        return post(name, 'focus')
-    }
+    focus(name) {
+        return TerminalProxy.post(name, 'focus')
+    },
 
-    let elementInfo = function (name) {
-        return post(name, 'elementInfo')
-    }
+    elementInfo(name) {
+        return TerminalProxy.post(name, 'elementInfo')
+    },
 
-    let textEditorOpen = function (name, options) {
-        return post(name, 'textEditorOpen', options)
-    }
+    textEditorOpen(name, options) {
+        return TerminalProxy.post(name, 'textEditorOpen', options)
+    },
 
-    let textEditorClose = function (name) {
-        return post(name, 'textEditorClose')
-    }
-
-    return {
-        setOptions,
-        getOptions,
-        post,
-        register,
-        unregister,
-        pushMessage,
-        getHistory,
-        fullscreen,
-        isFullscreen,
-        dragging,
-        execute,
-        focus,
-        elementInfo,
-        textEditorOpen,
-        textEditorClose
-    }
+    textEditorClose(name) {
+        return TerminalProxy.post(name, 'textEditorClose')
+    },
 }
 
-export default instance
+export default TerminalProxy;
+const { pushMessage, fullscreen, isFullscreen, dragging, execute, focus, elementInfo, textEditorClose, textEditorOpen } = TerminalProxy;
+export {
+    register,
+    unregister,
+    pushMessage,
+    fullscreen,
+    isFullscreen,
+    dragging,
+    execute,
+    focus,
+    elementInfo,
+    textEditorClose,
+    textEditorOpen
+}
