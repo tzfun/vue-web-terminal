@@ -1,4 +1,4 @@
-import { _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml } from "./Util.js";
+import { _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml, on, off } from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 import TerminalFlash from "./TerminalFlash.js";
@@ -313,11 +313,12 @@ export default {
                 this.$emit('onKeydown', event, this.getName())
             }
         }
-        window.addEventListener('keydown', this.keydownListener);
+        // window.addEventListener('keydown', this.keydownListener);
+        on(window, 'keydown', this.keydownListener);
         let safariStyleCache = {};
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
-            window.addEventListener(item, () => {
+            on(window, item, () => {
                 let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
                 if (isFullScreen) {
                     //  进入全屏
@@ -356,7 +357,8 @@ export default {
     },
     destroyed() {
         this.$emit('destroyed', this.getName())
-        window.removeEventListener('keydown', this.keydownListener)
+        // window.removeEventListener('keydown', this.keydownListener)
+        off(window, 'keydown', this.keydownListener);
         unregister(this.getName())
     },
     watch: {
@@ -642,8 +644,9 @@ export default {
                                 this.showInputLine = true
                                 this._endExecCallBack()
                             }
-
+                            //this is Does not meet the specification of vue
                             this.$emit("execCmd", cmdKey, this.command, success, failed, this.getName())
+                            this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
                             return
                         }
                     }
