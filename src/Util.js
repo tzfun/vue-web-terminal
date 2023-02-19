@@ -131,9 +131,9 @@ export function _getDifferent(one, two) {
 }
 
 export function on(dom, eventName, handler) {
-    dom.addEventListener(eventName, handler);
+    dom && dom.addEventListener && dom.addEventListener(eventName, handler);
 }
 
 export function off(dom, eventName, handler) {
-    dom.removeEventListener(eventName, handler);
+    dom && dom.removeEventListener && dom.removeEventListener(eventName, handler);
 }

@@ -645,6 +645,8 @@ export default {
                                 this._endExecCallBack()
                             }
                             //this is Does not meet the specification of vue
+                            //vue关于事件名字是由自己的规范的，应该是 xxx-yyy-zzz这样,不要用这种
+                            //more info https://github.com/vuejs/vue/blob/a9ca2d85193e435e668ba25ace481bfb176b0c6e/src/core/instance/events.ts?_pjax=%23js-repo-pjax-container#L135
                             this.$emit("execCmd", cmdKey, this.command, success, failed, this.getName())
                             this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
                             return
