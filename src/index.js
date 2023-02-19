@@ -12,6 +12,10 @@ Terminal.install = function (Vue, options) {
     Terminal.$api = TerminalObj
     Terminal.$Flash = TerminalFlash
     Terminal.$Ask = TerminalAsk
+    Vue.component(this.name, this);
 }
 
-export default Terminal
+if (typeof window !== 'undefined' && window.Vue) {
+    Terminal.install(window.Vue);
+}
+export default Terminal;
