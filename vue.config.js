@@ -1,5 +1,5 @@
 const name = "vue-web-terminal"
-let path = require('path')
+// let path = require('path')
 
 module.exports = {
     publicPath: './',
@@ -17,29 +17,29 @@ module.exports = {
             umdNamedDefine: true
         }
     },
-    chainWebpack: (config) => {
-        config.plugins.delete('preload')
-        config.plugins.delete('prefetch')
-        config.plugins.delete('html')
+    // chainWebpack: (config) => {
+    //     config.plugins.delete('preload')
+    //     config.plugins.delete('prefetch')
+    //     config.plugins.delete('html')
 
-        config.module
-            .rule("js")
-            .include.add(path.resolve(__dirname, "packages"))
-            .end()
-            .use("babel")
-            .loader("babel-loader")
-            .tap((options) => {
-                return options;
-            });
+    //     config.module
+    //         .rule("js")
+    //         .include.add(path.resolve(__dirname, "packages"))
+    //         .end()
+    //         .use("babel")
+    //         .loader("babel-loader")
+    //         .tap((options) => {
+    //             return options;
+    //         });
 
-        config.optimization
-            .minimize(true)
-            .minimizer('terser')
-            .tap(args => {
-                let {terserOptions} = args[0];
-                terserOptions.compress.drop_console = false;
-                terserOptions.compress.drop_debugger = true;
-                return args
-            });
-    },
+    //     config.optimization
+    //         .minimize(false)
+    //         .minimizer('terser')
+    //         .tap(args => {
+    //             let {terserOptions} = args[0];
+    //             terserOptions.compress.drop_console = false;
+    //             terserOptions.compress.drop_debugger = true;
+    //             return args
+    //         });
+    // },
 };
