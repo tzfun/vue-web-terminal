@@ -137,3 +137,16 @@ export function on(dom, eventName, handler) {
 export function off(dom, eventName, handler) {
     dom && dom.removeEventListener && dom.removeEventListener(eventName, handler);
 }
+
+export function getClipboardText() {
+    if (navigator && navigator.clipboard) {
+        return navigator.clipboard.readText();
+    }
+    return null;
+}
+
+export function pointInRect(point, rect) {
+    const { x, y } = point;
+    const dx = rect.x, dy = rect.y, width = rect.width, height = rect.height;
+    return x >= dx && x <= dx + width && y >= dy && y <= dy + height;
+}

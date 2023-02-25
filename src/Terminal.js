@@ -1,4 +1,4 @@
-import { _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml, on, off } from "./Util.js";
+import { _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml, on, off, pointInRect, getClipboardText } from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 import TerminalFlash from "./TerminalFlash.js";
@@ -315,6 +315,33 @@ export default {
         }
         // window.addEventListener('keydown', this.keydownListener);
         on(window, 'keydown', this.keydownListener);
+
+        this.contextMenuClick = (event) => {
+            const terminalContainer = this.$refs.terminalContainer;
+            if (!terminalContainer || !terminalContainer.getBoundingClientRect) {
+                return;
+            }
+            const rect = terminalContainer.getBoundingClientRect();
+            if (!pointInRect(event, rect)) {
+                return;
+            }
+            const clipboardText = getClipboardText();
+            if (clipboardText) {
+                event.preventDefault();
+                clipboardText.then(text => {
+                    if (!text) {
+                        return;
+                    }
+                    const command = this.command;
+                    const comandText = command && command.length ? `${command} ${text}` : text;
+                    this.command = comandText;
+                    this.$refs.cmdInput.focus();
+                }).catch(error => {
+                    console.error(error);
+                })
+            }
+        }
+        on(window, 'contextmenu', this.contextMenuClick);
         let safariStyleCache = {};
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
@@ -359,6 +386,7 @@ export default {
         this.$emit('destroyed', this.getName())
         // window.removeEventListener('keydown', this.keydownListener)
         off(window, 'keydown', this.keydownListener);
+        off(window, 'contextmenu', this.contextMenuClick);
         unregister(this.getName())
     },
     watch: {
