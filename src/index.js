@@ -19,3 +19,6 @@ if (typeof window !== 'undefined' && window.Vue) {
     Terminal.install(window.Vue);
 }
 export default Terminal;
+export const api = TerminalObj;
+export const Flash = TerminalFlash;
+export const Ask = TerminalAsk;
