@@ -4,7 +4,7 @@
        ref="terminalContainer" @click="_focus">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
-           :style="_draggable() ? 'cursor: move;' : ''">
+           :style="_draggable() ? 'cursor: move;' : ''" @dblclick="_fullscreen">
         <slot name="header">
           <div class="t-header">
             <h4>
