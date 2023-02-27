@@ -1,8 +1,10 @@
-import Terminal from './Terminal.vue'
+import TerminalComponent from './Terminal.vue'
 import TerminalObj from './TerminalObj.js'
 import JsonViewer from 'vue-json-viewer'
 import TerminalFlash from "@/TerminalFlash";
 import TerminalAsk from "@/TerminalAsk";
+
+export const Terminal = TerminalComponent;
 
 Terminal.install = function (Vue, options) {
     Vue.use(JsonViewer)
@@ -19,3 +21,6 @@ if (typeof window !== 'undefined' && window.Vue) {
     Terminal.install(window.Vue);
 }
 export default Terminal;
+export const api = TerminalObj;
+export const Flash = TerminalFlash;
+export const Ask = TerminalAsk;
