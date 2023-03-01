@@ -553,7 +553,24 @@ export default {
                 this.command = this.searchCmd.item.key
             }
         },
-        _focus() {
+        _focus(e) {
+            //  点击部分dom时不触发
+            if (e && e.target) {
+                let dom = e.target
+                let topDom = this.$refs.terminalContainer
+                let trigger = true;
+                while (dom && dom !== topDom) {
+                    let classList = dom.classList
+                    if (classList && classList.contains("json-viewer-container")) {
+                        trigger = false
+                        break
+                    }
+                    dom = dom.parentElement
+                }
+                if (!trigger) {
+                    return
+                }
+            }
             this.$nextTick(function () {
                 if (this.ask.open) {
                     this.$refs.askInput.focus()
