@@ -130,22 +130,22 @@ export function _getDifferent(one, two) {
     return diff;
 }
 
-export function on(dom, eventName, handler) {
+export function _eventOn(dom, eventName, handler) {
     dom && dom.addEventListener && dom.addEventListener(eventName, handler);
 }
 
-export function off(dom, eventName, handler) {
+export function _eventOff(dom, eventName, handler) {
     dom && dom.removeEventListener && dom.removeEventListener(eventName, handler);
 }
 
-export function getClipboardText() {
+export function _getClipboardText() {
     if (navigator && navigator.clipboard) {
         return navigator.clipboard.readText();
     }
     return null;
 }
 
-export function pointInRect(point, rect) {
+export function _pointInRect(point, rect) {
     const { x, y } = point;
     const dx = rect.x, dy = rect.y, width = rect.width, height = rect.height;
     return x >= dx && x <= dx + width && y >= dy && y <= dy + height;

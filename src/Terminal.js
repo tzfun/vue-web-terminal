@@ -1,20 +1,31 @@
-import { _getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml, on, off, pointInRect, getClipboardText } from "./Util.js";
+import {
+    _getByteLen,
+    _html,
+    _isEmpty,
+    _isSafari,
+    _nonEmpty,
+    _unHtml,
+    _getClipboardText,
+    _eventOff,
+    _eventOn,
+    _pointInRect
+} from "./Util.js";
 import historyStore from "./HistoryStore.js";
 import TerminalObj from './TerminalObj.js'
 import TerminalFlash from "./TerminalFlash.js";
 import TerminalAsk from "@/TerminalAsk";
 import {
-    register,
-    unregister,
-    pushMessage,
-    fullscreen,
-    isFullscreen,
     dragging,
+    elementInfo,
     execute,
     focus,
-    elementInfo,
+    fullscreen,
+    isFullscreen,
+    pushMessage,
+    register,
     textEditorClose,
-    textEditorOpen
+    textEditorOpen,
+    unregister
 } from './TerminalObj';
 
 let idx = 0;
@@ -215,6 +226,30 @@ export default {
         //  按下Tab键处理函数
         tabKeyHandler: {
             type: Function
+        },
+        /**
+         * 用户自定义命令搜索提示实现
+         *
+         * @param commandStore 命令集合
+         * @param key   目标key
+         *
+         * @return 命令项，格式如下：
+         *                 {
+         *                     key: 'help',
+         *                     title: 'Help',
+         *                     group: 'local',
+         *                     usage: 'help [pattern]',
+         *                     description: 'Show command document.',
+         *                     example: [
+         *                         {
+         *                             des: "Get all commands.",
+         *                             cmd: 'help'
+         *                         }
+         *                     ]
+         *                 }
+         */
+        searchHandler: {
+            type: Function
         }
     },
     created() {
@@ -314,7 +349,7 @@ export default {
             }
         }
         // window.addEventListener('keydown', this.keydownListener);
-        on(window, 'keydown', this.keydownListener);
+        _eventOn(window, 'keydown', this.keydownListener);
 
         this.contextMenuClick = (event) => {
             const terminalContainer = this.$refs.terminalContainer;
@@ -322,10 +357,10 @@ export default {
                 return;
             }
             const rect = terminalContainer.getBoundingClientRect();
-            if (!pointInRect(event, rect)) {
+            if (!_pointInRect(event, rect)) {
                 return;
             }
-            const clipboardText = getClipboardText();
+            const clipboardText = _getClipboardText();
             if (clipboardText) {
                 event.preventDefault();
                 clipboardText.then(text => {
@@ -341,11 +376,11 @@ export default {
                 })
             }
         }
-        on(window, 'contextmenu', this.contextMenuClick);
+        _eventOn(window, 'contextmenu', this.contextMenuClick);
         let safariStyleCache = {};
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
-            on(window, item, () => {
+            _eventOn(window, item, () => {
                 let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
                 if (isFullScreen) {
                     //  进入全屏
@@ -385,8 +420,8 @@ export default {
     destroyed() {
         this.$emit('destroyed', this.getName())
         // window.removeEventListener('keydown', this.keydownListener)
-        off(window, 'keydown', this.keydownListener);
-        off(window, 'contextmenu', this.contextMenuClick);
+        _eventOff(window, 'keydown', this.keydownListener);
+        _eventOff(window, 'contextmenu', this.contextMenuClick);
         unregister(this.getName())
     },
     watch: {
@@ -453,6 +488,14 @@ export default {
             if (!this.autoHelp) {
                 return;
             }
+
+            //  用户自定义搜索实现
+            if (this.searchHandler) {
+                this.searchCmd.item = this.searchHandler(this.allCommandStore, key)
+                this._jumpToBottom()
+                return;
+            }
+
             let cmd = key
             if (cmd == null) {
                 cmd = this.command.split(' ')[0]
@@ -768,7 +811,7 @@ export default {
             this.$nextTick(() => {
                 let box = this.$refs.terminalWindow
                 if (box != null) {
-                    box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' })
+                    box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
                 }
             })
         },
@@ -835,7 +878,7 @@ export default {
 
             let lineWidth = this.$refs.terminalInputBox.getBoundingClientRect().width
 
-            let pos = { left: 0, top: 0 }
+            let pos = {left: 0, top: 0}
             //  当前字符长度
             let charWidth = this.cursorConf.defaultWidth
             //  前一个字符的长度
@@ -1097,9 +1140,9 @@ export default {
         _getPosition() {
             if (this._draggable()) {
                 let box = this.$refs.terminalContainer
-                return { x: parseInt(box.style.left), y: parseInt(box.style.top) }
+                return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
             } else {
-                return { x: 0, y: 0 }
+                return {x: 0, y: 0}
             }
         },
         _onAskInput() {
