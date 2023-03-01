@@ -14,6 +14,11 @@ function unregister(name) {
     delete pool[name]
 }
 
+function rename(newName, oldName, listener) {
+    unregister(oldName)
+    register(newName, listener);
+}
+
 const TerminalProxy = {
 
     setOptions(ops) {
@@ -77,6 +82,7 @@ const { pushMessage, fullscreen, isFullscreen, dragging, execute, focus, element
 export {
     register,
     unregister,
+    rename,
     pushMessage,
     fullscreen,
     isFullscreen,

@@ -1,17 +1,17 @@
 import {
+    _eventOff,
+    _eventOn,
     _getByteLen,
+    _getClipboardText,
     _html,
     _isEmpty,
     _isSafari,
     _nonEmpty,
-    _unHtml,
-    _getClipboardText,
-    _eventOff,
-    _eventOn,
-    _pointInRect
+    _pointInRect,
+    _unHtml
 } from "./Util.js";
 import historyStore from "./HistoryStore.js";
-import TerminalObj from './TerminalObj.js'
+import TerminalObj, {rename} from './TerminalObj.js'
 import TerminalFlash from "./TerminalFlash.js";
 import TerminalAsk from "@/TerminalAsk";
 import {
@@ -141,7 +141,8 @@ export default {
                 onBlur: () => {
                     this.textEditor.focus = false
                 }
-            }
+            },
+            terminalListener: null
         }
     },
     props: {
@@ -253,7 +254,7 @@ export default {
         }
     },
     created() {
-        register(this.getName(), (type, options) => {
+        this.terminalListener = (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
             } else if (type === 'fullscreen') {
@@ -300,7 +301,8 @@ export default {
             } else {
                 console.error("Unsupported event type: " + type)
             }
-        })
+        }
+        register(this.getName(), this.terminalListener)
     },
     async mounted() {
         this.$emit('initBefore', this.getName())
@@ -433,6 +435,11 @@ export default {
                 this.$nextTick(() => {
                     this.inputBoxParam.promptWidth = this.$refs.terminalInputPrompt.getBoundingClientRect().width
                 })
+            }
+        },
+        name: {
+            handler(newVal, oldVal) {
+                rename(newVal, oldVal, this.terminalListener)
             }
         }
     },
