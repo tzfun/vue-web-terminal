@@ -370,8 +370,7 @@ export default {
                         return;
                     }
                     const command = this.command;
-                    const comandText = command && command.length ? `${command} ${text}` : text;
-                    this.command = comandText;
+                    this.command = command && command.length ? `${command} ${text}` : text;
                     this.$refs.cmdInput.focus();
                 }).catch(error => {
                     console.error(error);
@@ -571,6 +570,7 @@ export default {
                     return
                 }
             }
+
             this.$nextTick(function () {
                 if (this.ask.open) {
                     this.$refs.askInput.focus()
@@ -1057,31 +1057,31 @@ export default {
 
             let isDragging = false;
 
-            dragArea.onmousedown = e1 => {
+            _eventOn(dragArea, 'mousedown', evt => {
                 if (this._fullscreenState) {
                     return
                 }
-                let e = e1 || window.event;
+                let e = evt || window.event;
                 mouseOffsetX = e.clientX - box.offsetLeft;
                 mouseOffsetY = e.clientY - box.offsetTop;
 
                 isDragging = true
                 window.style['user-select'] = 'none'
-            }
+            })
 
-            document.onmousemove = e2 => {
+            _eventOn(box, 'mousemove', evt => {
                 if (isDragging) {
-                    let e = e2 || window.event;
+                    let e = evt || window.event;
                     let moveX = e.clientX - mouseOffsetX;
                     let moveY = e.clientY - mouseOffsetY;
                     this._dragging(moveX, moveY)
                 }
-            }
+            })
 
-            document.onmouseup = () => {
+            _eventOn(box, 'mouseup', () => {
                 isDragging = false
                 window.style['user-select'] = 'unset'
-            }
+            })
         },
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
