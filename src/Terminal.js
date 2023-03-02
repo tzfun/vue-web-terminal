@@ -592,7 +592,7 @@ export default {
             if (e && e.target) {
                 let dom = e.target
                 let topDom = this.$refs.terminalContainer
-                let trigger = true;
+                let trigger = e.target.offsetParent && e.target.parentElement;
                 while (dom && dom !== topDom) {
                     let classList = dom.classList
                     if (classList && classList.contains("json-viewer-container")) {

@@ -74,9 +74,9 @@
                 </span>
               </slot>
             </span>
-            <div v-else-if="item.type === 'json'">
+            <div v-else-if="item.type === 'json'" class="json-viewer-container">
               <slot name="json" :message="item">
-                <span style="position: relative" class="json-viewer-container">
+                <span style="position: relative">
                   <json-viewer :expand-depth="item.depth"
                                sort boxed copyable expanded
                                :key="idx + '_' + item.depth"
