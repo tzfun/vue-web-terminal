@@ -145,8 +145,86 @@ export function _getClipboardText() {
     return null;
 }
 
+export function _copyTextToClipboard(text) {
+    if (text && navigator && navigator.clipboard) {
+        navigator.clipboard.writeText(text.replace(/nbsp;/g, ' ')).then(() => {
+        })
+    }
+}
+
 export function _pointInRect(point, rect) {
-    const { x, y } = point;
+    const {x, y} = point;
     const dx = rect.x, dy = rect.y, width = rect.width, height = rect.height;
     return x >= dx && x <= dx + width && y >= dy && y <= dy + height;
+}
+
+export function _getSelection() {
+    if (window.getSelection) {
+        return window.getSelection()
+    } else {
+        return document.getSelection()
+    }
+}
+
+export function _parseToJson(obj) {
+    if (typeof obj === 'object' && obj) {
+        return obj;
+    } else if (typeof obj === 'string') {
+        try {
+            return JSON.parse(obj);
+        } catch (e) {
+            return obj;
+        }
+    }
+}
+
+export function _openUrl(url) {
+    let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
+    if (match.test(url)) {
+        if (!url.startsWith("http") && !url.startsWith("https")) {
+            window.open(`http://${url}`)
+        } else {
+            window.open(url);
+        }
+    } else {
+        this._pushMessage({
+            class: 'error', type: 'normal', content: "Invalid website url"
+        })
+    }
+}
+
+/**
+ * 默认命令行样式格式化实现
+ *
+ * @param cmd
+ * @return {string}
+ * @private
+ */
+export function _defaultCommandFormatter(cmd) {
+    let split = cmd.split(" ")
+    let formatted = ''
+    for (let i = 0; i < split.length; i++) {
+        let char = _html(split[i])
+        if (i === 0) {
+            formatted += `<span class='t-cmd-key'>${char}</span>`
+        } else if (char.startsWith("-")) {
+            formatted += `<span class="t-cmd-arg">${char}</span>`
+        } else if (char.length > 0) {
+            formatted += `<span>${char}</span>`
+        }
+        if (i < split.length - 1) {
+            formatted += "<span>&nbsp;</span>"
+        }
+    }
+    return formatted
+}
+
+export function _isParentDom(target, parent) {
+    while (target) {
+        if (target === parent) {
+            return true;
+        }
+        target = target.parentElement
+    }
+    return false;
 }

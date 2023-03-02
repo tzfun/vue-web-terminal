@@ -1,12 +1,14 @@
 import {
+    _copyTextToClipboard,
+    _defaultCommandFormatter,
     _eventOff,
     _eventOn,
     _getByteLen,
-    _getClipboardText,
+    _getClipboardText, _getSelection,
     _html,
-    _isEmpty,
+    _isEmpty, _isParentDom,
     _isSafari,
-    _nonEmpty,
+    _nonEmpty, _openUrl, _parseToJson,
     _pointInRect,
     _unHtml
 } from "./Util.js";
@@ -56,7 +58,6 @@ export default {
             jsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             showInputLine: true,
             terminalLog: [],
-            keydownListener: null,
             searchCmd: {
                 item: null
             },
@@ -331,7 +332,6 @@ export default {
         this.inputBoxParam.promptWidth = promptRect.width
         this.inputBoxParam.promptHeight = promptRect.height
 
-
         this.keydownListener = event => {
             if (this._isActive()) {
                 if (this.cursorConf.show) {
@@ -350,7 +350,6 @@ export default {
                 this.$emit('onKeydown', event, this.getName())
             }
         }
-        // window.addEventListener('keydown', this.keydownListener);
         _eventOn(window, 'keydown', this.keydownListener);
 
         this.contextMenuClick = (event) => {
@@ -358,10 +357,23 @@ export default {
             if (!terminalContainer || !terminalContainer.getBoundingClientRect) {
                 return;
             }
+
             const rect = terminalContainer.getBoundingClientRect();
             if (!_pointInRect(event, rect)) {
                 return;
             }
+
+            if (!_isParentDom(event.target, terminalContainer)) {
+                return;
+            }
+
+            let selection = _getSelection()
+            if (!selection.isCollapsed) {
+                event.preventDefault();
+                _copyTextToClipboard(selection.toString())
+                return;
+            }
+
             const clipboardText = _getClipboardText();
             if (clipboardText) {
                 event.preventDefault();
@@ -371,7 +383,7 @@ export default {
                     }
                     const command = this.command;
                     this.command = command && command.length ? `${command} ${text}` : text;
-                    this.$refs.cmdInput.focus();
+                    this._focus()
                 }).catch(error => {
                     console.error(error);
                 })
@@ -420,7 +432,6 @@ export default {
     },
     destroyed() {
         this.$emit('destroyed', this.getName())
-        // window.removeEventListener('keydown', this.keydownListener)
         _eventOff(window, 'keydown', this.keydownListener);
         _eventOff(window, 'contextmenu', this.contextMenuClick);
         unregister(this.getName())
@@ -438,7 +449,7 @@ export default {
         },
         name: {
             handler(newVal, oldVal) {
-                rename(newVal, oldVal, this.terminalListener)
+                rename(newVal ? newVal : this.getName(), oldVal ? oldVal : this._name, this.terminalListener)
             }
         }
     },
@@ -548,7 +559,7 @@ export default {
             }
         },
         _fillCmd() {
-            if (this.searchCmd.item != null) {
+            if (this.searchCmd.item) {
                 this.command = this.searchCmd.item.key
             }
         },
@@ -580,20 +591,13 @@ export default {
                     }
                 } else {
                     //  没有被选中
-                    if (this._getSelection().isCollapsed) {
+                    if (_getSelection().isCollapsed) {
                         this.$refs.cmdInput.focus()
                     } else {
                         this.cursorConf.show = true
                     }
                 }
             })
-        },
-        _getSelection() {
-            if (window.getSelection) {
-                return window.getSelection()
-            } else {
-                return document.getSelection()
-            }
         },
         /**
          * help命令执行后调用此方法
@@ -685,7 +689,7 @@ export default {
                             this._doClear(split);
                             break;
                         case 'open':
-                            this._openUrl(split[1]);
+                            _openUrl(split[1]);
                             break;
                         default: {
                             this.showInputLine = false
@@ -742,7 +746,6 @@ export default {
                             //this is Does not meet the specification of vue
                             //vue关于事件名字是由自己的规范的，应该是 xxx-yyy-zzz这样,不要用这种
                             //more info https://github.com/vuejs/vue/blob/a9ca2d85193e435e668ba25ace481bfb176b0c6e/src/core/instance/events.ts?_pjax=%23js-repo-pjax-container#L135
-                            this.$emit("execCmd", cmdKey, this.command, success, failed, this.getName())
                             this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
                             return
                         }
@@ -767,15 +770,7 @@ export default {
             this._focus()
         },
         _parseToJson(obj) {
-            if (typeof obj === 'object' && obj) {
-                return obj;
-            } else if (typeof obj === 'string') {
-                try {
-                    return JSON.parse(obj);
-                } catch (e) {
-                    return obj;
-                }
-            }
+            return _parseToJson(obj)
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
@@ -869,20 +864,6 @@ export default {
             }
             this.perfWarningRate.size = 0
             this.perfWarningRate.count = 0
-        },
-        _openUrl(url) {
-            let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
-            if (match.test(url)) {
-                if (!url.startsWith("http") && !url.startsWith("https")) {
-                    window.open(`http://${url}`)
-                } else {
-                    window.open(url);
-                }
-            } else {
-                this._pushMessage({
-                    class: 'error', type: 'normal', content: "Invalid website url"
-                })
-            }
         },
         _resetCursorPos(cmd) {
             this.cursorConf.idx = (cmd == null ? this.command : cmd).length
@@ -1144,22 +1125,7 @@ export default {
             if (this.commandFormatter != null) {
                 return this.commandFormatter(cmd)
             }
-            let split = cmd.split(" ")
-            let formatted = ''
-            for (let i = 0; i < split.length; i++) {
-                let char = _html(split[i])
-                if (i === 0) {
-                    formatted += `<span class='t-cmd-key'>${char}</span>`
-                } else if (char.startsWith("-")) {
-                    formatted += `<span class="t-cmd-arg">${char}</span>`
-                } else if (char.length > 0) {
-                    formatted += `<span>${char}</span>`
-                }
-                if (i < split.length - 1) {
-                    formatted += "<span>&nbsp;</span>"
-                }
-            }
-            return formatted
+            return _defaultCommandFormatter(cmd)
         },
         _getPosition() {
             if (this._draggable()) {
