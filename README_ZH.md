@@ -72,7 +72,7 @@ const app = createApp(App).use(Terminal)
 
 <template>
   <div id="app">
-    <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
+    <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
   </div>
 </template>
 
@@ -118,21 +118,22 @@ body, html, #app {
 
 terminal标签支持的属性参数表
 
-| 参数                        | 说明                                                           | 类型       | 默认值                                              |
-|---------------------------|--------------------------------------------------------------|----------|--------------------------------------------------|
-| name                      | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                      | string   | terminal                                         |
-| context                   | 上下文内容                                                        | string   | /vue-web-terminal                                |
-| title                     | header中显示的标题                                                 | string   | vue-web-terminal                                 |
-| show-header               | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                               | boolean  | true                                             |
-| init-log                  | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示          | array    | 略                                                |
-| warn-log-count-limit      | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                | number   | 200                                              |
-| auto-help                 | 是否打开命令行自动搜索提示功能                                              | boolean  | true                                             |
-| enable-example-hint       | 是否显示右上角命令样例提示，前提是开启了`auto-help`                              | boolean  | true                                             |
-| command-store             | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                         | array    | [内置命令](#内置命令)                                    |
-| command-store-sort        | 命令行库排序，自定义命令库的显示排序规则                                         | function | function(a,b)                                    |
-| input-filter              | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                         | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf                 | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                | object   | 见[拖拽功能](#拖拽功能)                                   |
-| command-formatter         | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式 | function | function(cmd)                                    |
+| 参数                   | 说明                                                           | 类型         | 默认值                                              |
+|----------------------|--------------------------------------------------------------|------------|--------------------------------------------------|
+| name                 | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                      | string     | terminal                                         |
+| context              | 上下文内容                                                        | string     | /vue-web-terminal                                |
+| title                | header中显示的标题                                                 | string     | vue-web-terminal                                 |
+| show-header          | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                               | boolean    | true                                             |
+| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示          | array      | 略                                                |
+| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                | number     | 200                                              |
+| auto-help            | 是否打开命令行自动搜索提示功能                                              | boolean    | true                                             |
+| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                              | boolean    | true                                             |
+| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                         | array      | [内置命令](#内置命令)                                    |
+| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                         | function   | function(a,b)                                    |
+| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                         | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                | object     | 见[拖拽功能](#拖拽功能)                                   |
+| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式 | function   | function(cmd)                                    |
+| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                        | function   | function(event)                                  | 
 
 > 下面是已移除属性
 >
@@ -147,13 +148,12 @@ terminal标签支持的事件表
 
 | 事件名称            | 说明                                                                                                    | 回调参数                                       |
 |-----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd         | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd   | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown       | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
-| onClick         | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
-| initBefore      | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
-| initComplete    | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
-| tabKeyHandler   | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                                                 | `(event)`                                  |
+| exec-cmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| before-exec-cmd | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
+| on-keydown      | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
+| on-click        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
+| init-before     | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
+| init-complete   | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
 
 **特别说明**：execCmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
 
@@ -183,7 +183,7 @@ Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之
 example:
 
 ```vue
-<terminal :name="name" @execCmd="onExecCmd">
+<terminal :name="name" @exec-cmd="onExecCmd">
   <template #header>
     This is my custom header
   </template>
@@ -756,7 +756,7 @@ Terminal.$api.textEditorOpen(this.name, {
 
 ```vue
 <template>
-  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
+  <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
       <textarea name="editor" 
                 class="text-editor" 
