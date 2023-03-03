@@ -72,7 +72,7 @@ const app = createApp(App).use(Terminal)
 
 <template>
   <div id="app">
-    <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
+    <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
   </div>
 </template>
 
@@ -146,14 +146,14 @@ terminal标签支持的属性参数表
 
 terminal标签支持的事件表
 
-| 事件名称            | 说明                                                                                                    | 回调参数                                       |
-|-----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| exec-cmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| before-exec-cmd | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
-| on-keydown      | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
-| on-click        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
-| init-before     | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
-| init-complete   | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| 事件名称          | 说明                                                                                                    | 回调参数                                       |
+|---------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
+| onKeydown     | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
+| onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
+| initBefore    | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
+| initComplete  | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
 
 **特别说明**：execCmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
 
@@ -183,7 +183,7 @@ Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之
 example:
 
 ```vue
-<terminal :name="name" @exec-cmd="onExecCmd">
+<terminal :name="name" @execCmd="onExecCmd">
   <template #header>
     This is my custom header
   </template>
@@ -756,7 +756,7 @@ Terminal.$api.textEditorOpen(this.name, {
 
 ```vue
 <template>
-  <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
+  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
     <template #textEditor="{ data }">
       <textarea name="editor" 
                 class="text-editor" 

@@ -73,7 +73,7 @@ Example:
 
 <template>
   <div id="app">
-    <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
+    <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
   </div>
 </template>
 
@@ -147,14 +147,14 @@ Terminal tag supports attribute parameter table.
 
 Terminal tag support event table
 
-| Event name      | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| exec-cmd        | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
-| before-exec-cmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
-| on-keydown      | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
-| on-click        | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
-| init-before     | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
-| init-complete   | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
+| Event name    | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| execCmd       | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
+| beforeExecCmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
+| onKeydown     | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
+| onClick       | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
+| initBefore    | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
+| initComplete  | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
 
 **Special note**: The `success` callback parameter of `execCmd` supports multiple data types, and the execution logic of different data types will be different:
 
@@ -184,7 +184,7 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 example:
 
 ```vue
-<terminal :name="name" @exec-cmd="onExecCmd">
+<terminal :name="name" @execCmd="onExecCmd">
   <template #header>
     This is my custom header
   </template>
@@ -760,7 +760,7 @@ The plugin provides an `onKeydown` event, which is the best way for you to contr
 
 ```vue
 <template>
-  <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
+  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
     <template #textEditor="{ data }">
       <textarea name="editor" 
                 class="text-editor" 
