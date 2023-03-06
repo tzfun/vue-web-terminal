@@ -20,6 +20,4 @@ function renameFile(oldFile, newFile) {
 }
 
 deleteFile('demo.html')
-deleteFile(`${projectName}.common.js`)
-deleteFile(`${projectName}.umd.js`)
-renameFile(`${projectName}.umd.min.js`, `${projectName}.js`)
+renameFile(`${projectName}.umd.js`, `${projectName}.js`)

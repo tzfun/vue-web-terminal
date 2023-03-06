@@ -4,12 +4,14 @@ import {
     _eventOff,
     _eventOn,
     _getByteLen,
-    _getClipboardText, _getSelection,
+    _getClipboardText,
+    _getSelection,
     _html,
-    _isEmpty, _isParentDom,
+    _isEmpty,
     _isSafari,
-    _nonEmpty, _openUrl, _parseToJson,
-    _pointInRect,
+    _nonEmpty,
+    _openUrl,
+    _parseToJson,
     _unHtml
 } from "./Util.js";
 import historyStore from "./HistoryStore.js";
@@ -364,31 +366,19 @@ export default {
         }
         _eventOn(window, 'keydown', this.keydownListener);
 
+        let selectContentText = null
+
         this.contextMenuClick = (event) => {
-            const terminalContainer = this.$refs.terminalContainer;
-            if (!terminalContainer || !terminalContainer.getBoundingClientRect) {
-                return;
-            }
+            event.preventDefault();
 
-            const rect = terminalContainer.getBoundingClientRect();
-            if (!_pointInRect(event, rect)) {
-                return;
-            }
-
-            if (!_isParentDom(event.target, terminalContainer)) {
-                return;
-            }
-
-            let selection = _getSelection()
-            if (!selection.isCollapsed) {
-                event.preventDefault();
-                _copyTextToClipboard(selection.toString())
+            if (selectContentText) {
+                _copyTextToClipboard(selectContentText)
+                selectContentText = null
                 return;
             }
 
             const clipboardText = _getClipboardText();
             if (clipboardText) {
-                event.preventDefault();
                 clipboardText.then(text => {
                     if (!text) {
                         return;
@@ -401,7 +391,16 @@ export default {
                 })
             }
         }
-        _eventOn(window, 'contextmenu', this.contextMenuClick);
+
+        //  先暂存选中文本
+        _eventOn(el, 'mousedown', () => {
+            let selection = _getSelection();
+            if (!selection.isCollapsed) {
+                selectContentText = selection.toString()
+            }
+        });
+        _eventOn(el, 'contextmenu', this.contextMenuClick);
+
         let safariStyleCache = {};
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
@@ -451,7 +450,6 @@ export default {
     destroyed() {
         this.$emit('destroyed', this.getName())
         _eventOff(window, 'keydown', this.keydownListener);
-        _eventOff(window, 'contextmenu', this.contextMenuClick);
         unregister(this.getName())
     },
     watch: {
@@ -605,6 +603,8 @@ export default {
                     return
                 }
             }
+
+            console.log("trigger focus")
 
             this.$nextTick(function () {
                 if (this.ask.open) {

@@ -141,14 +141,39 @@ export function _eventOff(dom, eventName, handler) {
 export function _getClipboardText() {
     if (navigator && navigator.clipboard) {
         return navigator.clipboard.readText();
+    } else {
+        let pasteTarget = document.createElement("div");
+        pasteTarget.contentEditable = true;
+        let actElem = document.activeElement.appendChild(pasteTarget).parentNode;
+        pasteTarget.focus();
+        //  可能会失败
+        document.execCommand("paste")
+        let paste = pasteTarget.innerText;
+        actElem.removeChild(pasteTarget);
+        return paste;
     }
-    return null;
 }
 
 export function _copyTextToClipboard(text) {
-    if (text && navigator && navigator.clipboard) {
-        navigator.clipboard.writeText(text.replace(/nbsp;/g, ' ')).then(() => {
+    if (!text) {
+        return
+    }
+    text = text.replace(/nbsp;/g, ' ')
+    if (navigator && navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
         })
+    } else {
+        let textArea = document.createElement("textarea")
+        textArea.value = text
+        textArea.style.position = "absolute"
+        textArea.style.opacity = 0
+        textArea.style.left = "-999999px"
+        textArea.style.top = "-999999px"
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        document.execCommand('copy')
+        textArea.remove()
     }
 }
 

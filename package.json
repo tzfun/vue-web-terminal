@@ -6,7 +6,7 @@
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --dest lib src/index.js",
+    "build": "vue-cli-service build --target lib --formats umd --dest lib src/index.js && node package.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
