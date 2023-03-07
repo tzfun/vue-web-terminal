@@ -13,6 +13,7 @@ gulpfile.js
 babel.config.js
 webpack.config.js
 vue.config.js
-lib/index.html
+package.js
+lib/*.html
 lib/*.chunk.*
 lib/*.txt
