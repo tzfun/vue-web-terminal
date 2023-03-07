@@ -1095,7 +1095,7 @@ export default {
                 window.style['user-select'] = 'none'
             })
 
-            _eventOn(box, 'mousemove', evt => {
+            _eventOn(document, 'mousemove', evt => {
                 if (isDragging) {
                     let e = evt || window.event;
                     let moveX = e.clientX - mouseOffsetX;
@@ -1104,7 +1104,7 @@ export default {
                 }
             })
 
-            _eventOn(box, 'mouseup', () => {
+            _eventOn(document, 'mouseup', () => {
                 isDragging = false
                 window.style['user-select'] = 'unset'
             })
