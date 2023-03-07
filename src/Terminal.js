@@ -55,7 +55,9 @@ export default {
                 show: false
             },
             byteLen: {
-                en: 8, cn: 13
+                init: false,
+                en: 8,
+                cn: 13
             },
             jsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             showInputLine: true,
@@ -258,7 +260,15 @@ export default {
             type: Function
         }
     },
-    created() {
+    async mounted() {
+        /**
+         * 不规范的事件命名，后续版本将移除
+         * @deprecated
+         */
+        this.$emit('initBefore', this.getName())
+
+        this.$emit('init-before', this.getName())
+
         this.terminalListener = (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
@@ -309,15 +319,6 @@ export default {
             }
         }
         register(this.getName(), this.terminalListener)
-    },
-    async mounted() {
-        /**
-         * 不规范的事件命名，后续版本将移除
-         * @deprecated
-         */
-        this.$emit('initBefore', this.getName())
-
-        this.$emit('init-before', this.getName())
 
         if (this.initLog != null) {
             await this._pushMessageBatch(this.initLog, true)
@@ -330,18 +331,11 @@ export default {
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
 
-        this.byteLen = {
-            en: this.$refs.terminalEnFlag.getBoundingClientRect().width / 2,
-            cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
-        }
-        this.cursorConf.defaultWidth = this.byteLen.en
+        this._calculateByteLen()
+        this._calculatePromptLen()
 
         let el = this.$refs.terminalWindow
         el.scrollTop = el.offsetHeight;
-
-        let promptRect = this.$refs.terminalInputPrompt.getBoundingClientRect()
-        this.inputBoxParam.promptWidth = promptRect.width
-        this.inputBoxParam.promptHeight = promptRect.height
 
         this.keydownListener = event => {
             if (this._isActive()) {
@@ -464,7 +458,7 @@ export default {
         context: {
             handler() {
                 this.$nextTick(() => {
-                    this.inputBoxParam.promptWidth = this.$refs.terminalInputPrompt.getBoundingClientRect().width
+                    this._calculatePromptLen()
                 })
             }
         },
@@ -524,6 +518,37 @@ export default {
             this.$emit('onClick', key, this.getName())
 
             this.$emit('on-click', key, this.getName())
+        },
+        _calculateByteLen() {
+            if (this.byteLen.init) {
+                return
+            }
+            let enGhost = this.$refs.terminalEnFlag
+            if (enGhost) {
+                let rect = enGhost.getBoundingClientRect()
+                if (rect && rect.width > 0) {
+                    this.byteLen = {
+                        init: true,
+                        en: rect.width / 2,
+                        cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
+                    }
+
+                    this.cursorConf.defaultWidth = this.byteLen.en
+                }
+            }
+        },
+        _calculatePromptLen() {
+            if (this.inputBoxParam.promptWidth > 0) {
+                return
+            }
+            let prompt = this.$refs.terminalInputPrompt
+            if (prompt) {
+                let rect = prompt.getBoundingClientRect()
+                if (rect.width > 0) {
+                    this.inputBoxParam.promptWidth = rect.width
+                    this.inputBoxParam.promptHeight = rect.height
+                }
+            }
         },
         _resetSearchKey() {
             this.searchCmd.item = null
@@ -617,19 +642,21 @@ export default {
             }
             this._onActive()
             this.$nextTick(function () {
+                let input
                 if (this.ask.open) {
-                    this.$refs.askInput.focus()
+                    input = this.$refs.askInput
                 } else if (this.textEditor.open) {
-                    if (this.$refs.textEditor) {
-                        this.$refs.textEditor.focus()
-                    }
+                    input = this.$refs.textEditor
                 } else {
                     //  没有被选中
                     if (_getSelection().isCollapsed) {
-                        this.$refs.cmdInput.focus()
+                        input = this.$refs.cmdInput
                     } else {
                         this.cursorConf.show = true
                     }
+                }
+                if (input) {
+                    input.focus()
                 }
             })
         },
@@ -910,6 +937,7 @@ export default {
             this.perfWarningRate.count = 0
         },
         _resetCursorPos(cmd) {
+            this._calculateByteLen()
             this.cursorConf.idx = (cmd == null ? this.command : cmd).length
             this.cursorConf.left = 'unset'
             this.cursorConf.top = 'unset'
@@ -920,10 +948,14 @@ export default {
             let idx = this.cursorConf.idx
             let command = cmd == null ? this.command : cmd
 
+            this._calculateByteLen()
+
             if (idx < 0 || idx >= command.length) {
                 this._resetCursorPos()
                 return
             }
+
+            this._calculatePromptLen()
 
             let lineWidth = this.$refs.terminalInputBox.getBoundingClientRect().width
 
