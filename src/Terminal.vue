@@ -8,7 +8,7 @@
         <slot name="header">
           <div class="t-header">
             <h4>
-              <span @click="_triggerClick('title')" class="disable-select" style="cursor: pointer;">{{ title }}</span>
+              <span @click="_triggerClick('title')" class="t-disable-select" style="cursor: pointer;">{{ title }}</span>
             </h4>
             <ul class="t-shell-dots">
               <li class="shell-dot-item t-shell-dots-red">
@@ -74,7 +74,7 @@
                 </span>
               </slot>
             </span>
-            <div v-else-if="item.type === 'json'" class="json-viewer-container">
+            <div v-else-if="item.type === 'json'" class="t-json-container">
               <slot name="json" :message="item">
                 <span style="position: relative">
                   <json-viewer :expand-depth="item.depth"
@@ -94,13 +94,13 @@
                 </span>
               </slot>
             </div>
-            <div v-else-if="item.type === 'code'">
+            <div v-else-if="item.type === 'code'" class="t-code-container">
               <slot name="code" :message="item">
                 <div class="t-code">
-                  <div v-if="terminalObj.getOptions().highlight">
+                  <div v-if="terminalObj.getOptions().highlight" class="t-vue-highlight">
                     <highlightjs ref="highlightjs" autodetect :code="item.content"/>
                   </div>
-                  <div v-else-if="terminalObj.getOptions().codemirror">
+                  <div v-else-if="terminalObj.getOptions().codemirror" class="t-vue-codemirror">
                     <codemirror ref="codemirror" v-model="item.content" :options="terminalObj.getOptions().codemirror"/>
                   </div>
                   <div v-else style="background: rgb(39 50 58);">
@@ -112,22 +112,20 @@
             </div>
             <div v-else-if="item.type === 'table'">
               <slot name="table" :message="item">
-                <div class="t-table-container">
-                  <table class="t-table t-border-dashed">
-                    <thead>
-                    <tr class="t-border-dashed">
-                      <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
-                      <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
-                        <div v-html="it"></div>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <table class="t-table t-border-dashed">
+                  <thead>
+                  <tr class="t-border-dashed">
+                    <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
+                    <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
+                      <div v-html="it"></div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
               </slot>
             </div>
             <div v-else-if="item.type === 'html'">
@@ -153,14 +151,14 @@
                  @keyup.enter="_onAskInput">
         </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
-          <span class="prompt t-cmd-line-content disable-select" ref="terminalInputPrompt">
+          <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" class="cursor disable-select"
+            v-show="cursorConf.show" class="cursor t-disable-select"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
-                 class="t-cmd-input disable-select"
+                 class="t-cmd-input t-disable-select"
                  ref="cmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
@@ -172,14 +170,14 @@
                  @keyup.up.exact="_switchPreCmd"
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
-          <span class="t-flag t-cmd-line disable-select">
+          <span class="t-flag t-cmd-line t-disable-select">
             <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
             <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
           </span>
         </p>
-        <slot name="helpCmd" :item="searchCmd.item">
+        <slot name="helpCmd" :item="searchCmd">
           <p class="t-help-msg">
-            {{ searchCmd.item == null ? '' : searchCmd.item.usage }}
+            {{ searchCmd.item ? searchCmd.item.usage : '' }}
           </p>
         </slot>
       </div>
@@ -212,13 +210,13 @@
         </div>
       </slot>
     </div>
-    <div class="text-editor-container" v-if="textEditor.open"
+    <div class="t-text-editor-container" v-if="textEditor.open"
          :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
       <slot name="textEditor" :data="textEditor">
-        <textarea name="editor" ref="textEditor" class="text-editor" v-model="textEditor.value"
+        <textarea name="editor" ref="textEditor" class="t-text-editor" v-model="textEditor.value"
                   @focus="textEditor.onFocus" @blur="textEditor.onBlur"></textarea>
-        <div class="text-editor-floor" align="center">
-          <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+        <div class="t-text-editor-floor" align="center">
+          <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
         </div>
       </slot>
     </div>

@@ -183,26 +183,27 @@ Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之
 example:
 
 ```vue
-<terminal :name="name" @execCmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
-  
-  <template #json="data">
-    {{ data.message }}
-  </template>
-  
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
 
-  <template #textEditor="{data}">
-      <textarea name="editor" class="text-editor" v-model="data.value"
+<terminal :name="name" @execCmd="onExecCmd">
+<template #header>
+  This is my custom header
+</template>
+
+<template #json="data">
+  {{ data.message }}
+</template>
+
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
+
+<template #textEditor="{data}">
+      <textarea name="editor" class="t-text-editor" v-model="data.value"
                 @focus="data.onFocus" @blur="data.onBlur"></textarea>
-    <div class="text-editor-floor" align="center">
-      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-    </div>
-  </template>
+  <div class="t-text-editor-floor" align="center">
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+  </div>
+</template>
 </terminal>
 ```
 
@@ -755,19 +756,20 @@ Terminal.$api.textEditorOpen(this.name, {
 插件提供了一个`onKeydown`事件，此事件是你控制**活跃状态**下Terminal快捷键最好的方法，这里以文本编辑器为例，设定用户按快捷键`Ctrl + S`就表示完成编辑并保存
 
 ```vue
+
 <template>
   <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
     <template #textEditor="{ data }">
-      <textarea name="editor" 
-                class="text-editor" 
+      <textarea name="editor"
+                class="t-text-editor"
                 v-model="data.value"
-                @focus="data.onFocus" 
+                @focus="data.onFocus"
                 @blur="data.onBlur"></textarea>
-      
-      <div class="text-editor-floor" align="center">
-        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+
+      <div class="t-text-editor-floor" align="center">
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
       </div>
-      
+
     </template>
   </terminal>
 </template>

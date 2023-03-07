@@ -145,7 +145,9 @@ export default {
                     this.textEditor.focus = false
                 }
             },
-            terminalListener: null
+            terminalListener: null,
+            //  用户点击在这些dom上不会触发focus
+            ignoreFocusDomClass: ["t-json-container", "t-code-container", "t-table"]
         }
     },
     props: {
@@ -266,6 +268,7 @@ export default {
                 return this._fullscreenState
             } else if (type === 'dragging') {
                 if (this._draggable()) {
+                    this._onActive()
                     this._dragging(options.x, options.y)
                 } else {
                     console.warn("Terminal is not draggable")
@@ -389,6 +392,8 @@ export default {
                 }).catch(error => {
                     console.error(error);
                 })
+            } else {
+                this._focus()
             }
         }
 
@@ -593,9 +598,16 @@ export default {
                 let trigger = e.target.offsetParent && e.target.parentElement;
                 while (dom && dom !== topDom) {
                     let classList = dom.classList
-                    if (classList && classList.contains("json-viewer-container")) {
-                        trigger = false
-                        break
+                    if (classList) {
+                        for (let clazz of this.ignoreFocusDomClass) {
+                            if (classList.contains(clazz)) {
+                                trigger = false
+                                break
+                            }
+                        }
+                        if (!trigger) {
+                            break
+                        }
                     }
                     dom = dom.parentElement
                 }
@@ -603,9 +615,7 @@ export default {
                     return
                 }
             }
-
-            console.log("trigger focus")
-
+            this._onActive()
             this.$nextTick(function () {
                 if (this.ask.open) {
                     this.$refs.askInput.focus()
@@ -1076,6 +1086,7 @@ export default {
                 if (this._fullscreenState) {
                     return
                 }
+                this._onActive()
                 let e = evt || window.event;
                 mouseOffsetX = e.clientX - box.offsetLeft;
                 mouseOffsetY = e.clientY - box.offsetTop;
@@ -1202,6 +1213,9 @@ export default {
             return this.cursorConf.show
                 || (this.ask.open && this.$refs.askInput === document.activeElement)
                 || (this.textEditor.open && this.textEditor.focus)
+        },
+        _onActive() {
+            this.$emit('on-active', this.getName())
         }
     }
 }

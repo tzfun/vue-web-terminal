@@ -184,26 +184,27 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 example:
 
 ```vue
+
 <terminal :name="name" @execCmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
-  
-  <template #json="data">
-    {{ data.message }}
-  </template>
-  
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
-  
-  <template #textEditor="{data}">
-      <textarea name="editor" class="text-editor" v-model="data.value"
+<template #header>
+  This is my custom header
+</template>
+
+<template #json="data">
+  {{ data.message }}
+</template>
+
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
+
+<template #textEditor="{data}">
+      <textarea name="editor" class="t-text-editor" v-model="data.value"
                 @focus="data.onFocus" @blur="data.onBlur"></textarea>
-    <div class="text-editor-floor" align="center">
-      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-    </div>
-  </template>
+  <div class="t-text-editor-floor" align="center">
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+  </div>
+</template>
 </terminal>
 ```
 
@@ -759,19 +760,20 @@ If you don't like the default style, you can use Slot to customize the style of 
 The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` to indicate Finish editing and save.
 
 ```vue
+
 <template>
   <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
     <template #textEditor="{ data }">
-      <textarea name="editor" 
-                class="text-editor" 
+      <textarea name="editor"
+                class="t-text-editor"
                 v-model="data.value"
-                @focus="data.onFocus" 
+                @focus="data.onFocus"
                 @blur="data.onBlur"></textarea>
-      
-      <div class="text-editor-floor" align="center">
-        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+
+      <div class="t-text-editor-floor" align="center">
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
       </div>
-      
+
     </template>
   </terminal>
 </template>
