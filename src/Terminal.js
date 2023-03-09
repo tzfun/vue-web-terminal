@@ -392,8 +392,9 @@ export default {
         //  先暂存选中文本
         _eventOn(el, 'mousedown', () => {
             let selection = _getSelection();
-            if (!selection.isCollapsed) {
-                selectContentText = selection.toString()
+            let content = ''
+            if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
+                selectContentText = content.length > 0 ? content : selection.toString()
             }
         });
         _eventOn(el, 'contextmenu', this.contextMenuClick);
