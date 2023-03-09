@@ -148,8 +148,6 @@ export default {
                 }
             },
             terminalListener: null,
-            //  用户点击在这些dom上不会触发focus
-            ignoreFocusDomClass: ["t-json-container", "t-code-container", "t-table"]
         }
     },
     props: {
@@ -615,31 +613,7 @@ export default {
                 this.command = this.searchCmd.item.key
             }
         },
-        _focus(e) {
-            //  点击部分dom时不触发
-            if (e && e.target) {
-                let dom = e.target
-                let topDom = this.$refs.terminalContainer
-                let trigger = e.target.offsetParent && e.target.parentElement;
-                while (dom && dom !== topDom) {
-                    let classList = dom.classList
-                    if (classList) {
-                        for (let clazz of this.ignoreFocusDomClass) {
-                            if (classList.contains(clazz)) {
-                                trigger = false
-                                break
-                            }
-                        }
-                        if (!trigger) {
-                            break
-                        }
-                    }
-                    dom = dom.parentElement
-                }
-                if (!trigger) {
-                    return
-                }
-            }
+        _focus() {
             this._onActive()
             this.$nextTick(function () {
                 let input
@@ -648,12 +622,7 @@ export default {
                 } else if (this.textEditor.open) {
                     input = this.$refs.textEditor
                 } else {
-                    //  没有被选中
-                    if (_getSelection().isCollapsed) {
-                        input = this.$refs.cmdInput
-                    } else {
-                        this.cursorConf.show = true
-                    }
+                    this.cursorConf.show = true
                 }
                 if (input) {
                     input.focus()
