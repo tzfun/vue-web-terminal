@@ -1,3 +1,17 @@
+.t-window div::selection,
+.t-window a::selection,
+.t-window span::selection,
+.t-window li::selection,
+.t-window p::selection,
+.t-window code::selection,
+.t-window td::selection,
+.t-window th::selection,
+.t-window br::selection
+{
+    color: black;
+    background-color: white;
+}
+
 .t-log-box {
     display: block;
     margin-block-start: 1em;
@@ -268,11 +282,6 @@
 
 .t-help-list li {
     margin: 3px 0;
-}
-
-.t-json-deep-selector {
-    margin-top: 5px;
-    width: 140px;
 }
 
 .t-cmd-help {

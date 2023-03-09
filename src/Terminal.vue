@@ -74,11 +74,11 @@
                 </span>
               </slot>
             </span>
-            <div v-else-if="item.type === 'json'" class="t-json-container">
+            <div v-else-if="item.type === 'json'">
               <slot name="json" :message="item">
-                <span style="position: relative">
+                <span style="position: relative"  class="t-json-container">
                   <json-viewer :expand-depth="item.depth"
-                               sort boxed copyable expanded
+                               sort copyable expanded
                                :key="idx + '_' + item.depth"
                                :value="_parseToJson(item.content)">
                   </json-viewer>
@@ -225,6 +225,7 @@
 
 <script>
 import './css/scrollbar.css'
+import './css/json.css'
 import './css/style.css'
 import 'vue-json-viewer/style.css'
 import TerminalJs from './Terminal.js'

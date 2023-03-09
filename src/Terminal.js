@@ -848,6 +848,12 @@ export default {
             if (!valid) {
                 console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
                 message.type = 'normal'
+            } else {
+                if (message.type === 'json') {
+                    if (!message.depth) {
+                        message.depth = 1;
+                    }
+                }
             }
             return valid
         },
