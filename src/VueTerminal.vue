@@ -5,7 +5,6 @@ import './css/style.css'
 import type { CSSProperties } from 'vue'
 import type { DragableConfType } from './models/DraggableInterface'
 import {
-  _getByteLen,
   _html,
   _isEmpty,
   _nonEmpty,
@@ -33,6 +32,7 @@ import { useTerminalFullscreen, useUpdateFullscreenStyle } from './utils/Fullscr
 import { fullScreenStyle } from './utils/ContainerUtil'
 import TextEditor from './components/TextEditor.vue'
 import { useFlagWidth } from './utils/CharWidthUtil'
+import { calculateCursorPos } from './utils/CursorUtil'
 
 export interface TerminalProps {
   /** 终端唯一名称 */
@@ -586,7 +586,7 @@ function resetCursorPos(cmd?: string) {
   cursor.top = 'unset'
   cursor.width = cursor.defaultWidth
 }
-function calculateCursorPos(cmd?: string) {
+function updateCursorPos(cmd?: string) {
   //  idx可以认为是需要光标覆盖字符的索引
   const idx = cursor.idx
   const _cmd = cmd ?? command.value
@@ -598,37 +598,20 @@ function calculateCursorPos(cmd?: string) {
 
   const lineWidth = terminalInputBox.value?.getBoundingClientRect().width ?? 0
 
-  const pos = { left: 0, top: 0 }
-  //  当前字符长度
-  let charWidth = cursor.defaultWidth
-  //  前一个字符的长度
-  let preWidth = inputBoxParam.promptWidth
-
-  //  先找到被覆盖字符的位置
-  for (let i = 0; i <= idx; i++) {
-    charWidth = calculateStringWidth(command.value[i])
-    pos.left += preWidth
-    preWidth = charWidth
-    if (pos.left > lineWidth) {
-      //  行高是20px
-      pos.top += 20
-      pos.left = charWidth
-    }
-  }
-
-  cursor.left = pos.left
-  cursor.top = pos.top
-  cursor.width = charWidth
+  const cursorPos = calculateCursorPos(_cmd, idx, lineWidth, cursor.defaultWidth, inputBoxParam.promptWidth, byteLen) 
+  cursor.left = cursorPos.left
+  cursor.top = cursorPos.top
+  cursor.width = cursorPos.width
 }
 function cursorGoLeft() {
   if (cursor.idx > 0)
     cursor.idx--
-  calculateCursorPos()
+  updateCursorPos()
 }
 function cursorGoRight() {
   if (cursor.idx < command.value.length)
     cursor.idx++
-  calculateCursorPos()
+  updateCursorPos()
 }
 function saveCurCommand() {
   if (_nonEmpty(command.value))
@@ -723,13 +706,6 @@ function switchNextCmd() {
   historyStore.setIdx(props.name, cmdIdx)
   doSearchCmd(command.value.trim().split(' ')[0])
 }
-function calculateStringWidth(str: string): number {
-  let width = 0
-  for (const char of str)
-    width += _getByteLen(char) === 1 ? byteLen.en : byteLen.cn
-
-  return width
-}
 function onInput(e: Event) {
   if (props.inputFilter) {
     const value = (e.target as HTMLInputElement).value
@@ -748,7 +724,7 @@ function onInput(e: Event) {
 
   nextTick(() => {
     checkInputCursor()
-    calculateCursorPos()
+    updateCursorPos()
   })
 }
 function checkInputCursor() {
@@ -780,7 +756,7 @@ function onInputKeyup(e: KeyboardEvent) {
       && (key === 'arrowright' || key === 'arrowleft'))
   ) {
     checkInputCursor()
-    calculateCursorPos()
+    updateCursorPos()
   }
 }
 function commandFormatter(cmd?: string) {
