@@ -5,11 +5,11 @@ export function useFlagWidth() {
   const terminalCnFlag = ref<HTMLSpanElement>()
   const byteLen = reactive(DataConstant.ByteLen)
   const updateByteLen = () => {
-    if (terminalEnFlag.value && terminalEnFlag.value.clientWidth)
-      byteLen.en = terminalEnFlag.value.clientWidth / 2
+    if (terminalEnFlag.value && terminalEnFlag.value.getBoundingClientRect().width)
+      byteLen.en = terminalEnFlag.value.getBoundingClientRect().width / 2
 
-    if (terminalCnFlag.value && terminalCnFlag.value.clientWidth)
-      byteLen.cn = terminalCnFlag.value.clientWidth / 2
+    if (terminalCnFlag.value && terminalCnFlag.value.getBoundingClientRect().width)
+      byteLen.cn = terminalCnFlag.value.getBoundingClientRect().width / 2
   }
   onMounted(updateByteLen)
   // 使用ref访问dom不是响应式的, 因此应使用onUpdated
