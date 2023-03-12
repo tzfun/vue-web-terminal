@@ -5,10 +5,10 @@ export function useFlagWidth() {
   const terminalCnFlag = ref<HTMLSpanElement>()
   const byteLen = reactive(DataConstant.ByteLen)
   const updateByteLen = () => {
-    if (terminalEnFlag.value)
+    if (terminalEnFlag.value && terminalEnFlag.value.clientWidth)
       byteLen.en = terminalEnFlag.value.clientWidth / 2
 
-    if (terminalCnFlag.value)
+    if (terminalCnFlag.value && terminalCnFlag.value.clientWidth)
       byteLen.cn = terminalCnFlag.value.clientWidth / 2
   }
   onMounted(updateByteLen)
