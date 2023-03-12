@@ -598,7 +598,7 @@ function updateCursorPos(cmd?: string) {
 
   const lineWidth = terminalInputBox.value?.getBoundingClientRect().width ?? 0
 
-  const cursorPos = calculateCursorPos(_cmd, idx, lineWidth, cursor.defaultWidth, inputBoxParam.promptWidth, byteLen) 
+  const cursorPos = calculateCursorPos(_cmd, idx, lineWidth, cursor.defaultWidth, inputBoxParam.promptWidth, byteLen)
   cursor.left = cursorPos.left
   cursor.top = cursorPos.top
   cursor.width = cursorPos.width
