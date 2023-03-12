@@ -31,7 +31,7 @@ import TerminalObj from './TerminalObj'
 import { useTerminalFullscreen, useUpdateFullscreenStyle } from './utils/FullscreenUtil'
 import { fullScreenStyle } from './utils/ContainerUtil'
 import TextEditor from './components/TextEditor.vue'
-import { useFlagWidth } from './utils/CharWidthUtil'
+import { useFlagWidth, usePromptSize } from './utils/CharWidthUtil'
 import { calculateCursorPos } from './utils/CursorUtil'
 
 export interface TerminalProps {
@@ -110,12 +110,6 @@ const terminalLog = reactive<MessageType[]>([])
 const perfWarningRate = reactive({
   count: 0,
 })
-const inputBoxParam = reactive({
-  boxWidth: 0,
-  boxHeight: 0,
-  promptWidth: 0,
-  promptHeight: 0,
-})
 const flash = reactive({
   open: false,
   content: '',
@@ -134,7 +128,6 @@ const terminalHeader = ref<HTMLDivElement>()
 const cmdInput = ref<HTMLInputElement>()
 const askInput = ref<HTMLInputElement>()
 const terminalInputBox = ref<HTMLParagraphElement>()
-const terminalInputPrompt = ref<HTMLSpanElement>()
 const textEditorComp = ref<InstanceType<typeof TextEditor> | null>(null)
 
 const { fullscreen, toggleFullscreen } = useTerminalFullscreen()
@@ -142,18 +135,10 @@ useUpdateFullscreenStyle(fullscreen, containerStyle)
 useDrag(draggable(), fullscreen, terminalHeader, terminalContainer, props.dragConf)
 
 const { byteLen, terminalEnFlag, terminalCnFlag } = useFlagWidth()
+const { inputPromptSize, terminalInputPrompt } = usePromptSize()
 
 watch(terminalLog, () => {
   jumpToBottom()
-})
-
-watch(() => props.context, () => {
-  nextTick(() => {
-    if (terminalInputPrompt.value) {
-      inputBoxParam.promptWidth
-        = terminalInputPrompt.value.getBoundingClientRect().width
-    }
-  })
 })
 
 onMounted(() => {
@@ -246,14 +231,9 @@ onMounted(async () => {
   }
 
   cursor.defaultWidth = byteLen.en
-  if (terminalWindow.value && terminalContainer.value && terminalHeader.value && terminalInputPrompt.value) {
+  if (terminalWindow.value && terminalContainer.value && terminalHeader.value) {
     if (terminalWindow.value)
       terminalWindow.value.scrollTop = terminalWindow.value.offsetHeight
-
-    //  计算context的宽度和行高，用于跨行时定位光标位置
-    const promptRect = terminalInputPrompt.value.getBoundingClientRect()
-    inputBoxParam.promptHeight = promptRect.height
-    inputBoxParam.promptWidth = promptRect.width
   }
 
   emit('initComplete', props.name)
@@ -598,7 +578,7 @@ function updateCursorPos(cmd?: string) {
 
   const lineWidth = terminalInputBox.value?.getBoundingClientRect().width ?? 0
 
-  const cursorPos = calculateCursorPos(_cmd, idx, lineWidth, cursor.defaultWidth, inputBoxParam.promptWidth, byteLen)
+  const cursorPos = calculateCursorPos(_cmd, idx, lineWidth, cursor.defaultWidth, inputPromptSize.width, byteLen)
   cursor.left = cursorPos.left
   cursor.top = cursorPos.top
   cursor.width = cursorPos.width

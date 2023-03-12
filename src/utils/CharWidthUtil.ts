@@ -16,3 +16,22 @@ export function useFlagWidth() {
   onUpdated(updateByteLen)
   return { byteLen, terminalEnFlag, terminalCnFlag }
 }
+
+export function usePromptSize() {
+  const terminalInputPrompt = ref<HTMLSpanElement>()
+  const inputPromptSize = reactive({
+    width: 0,
+    height: 0,
+  })
+  const updateInputBoxSize = () => {
+    if (terminalInputPrompt.value) {
+      //  计算context的宽度和行高，用于跨行时定位光标位置
+      const promptRect = terminalInputPrompt.value.getBoundingClientRect()
+      inputPromptSize.height = promptRect.height
+      inputPromptSize.width = promptRect.width
+    }
+  }
+  onMounted(updateInputBoxSize)
+  onUpdated(updateInputBoxSize)
+  return { inputPromptSize, terminalInputPrompt }
+}
