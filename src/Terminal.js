@@ -537,9 +537,6 @@ export default {
             }
         },
         _calculatePromptLen() {
-            if (this.inputBoxParam.promptWidth > 0) {
-                return
-            }
             let prompt = this.$refs.terminalInputPrompt
             if (prompt) {
                 let rect = prompt.getBoundingClientRect()
