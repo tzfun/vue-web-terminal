@@ -244,10 +244,23 @@ export function _defaultCommandFormatter(cmd) {
     return formatted
 }
 
-export function _isParentDom(target, parent) {
+/**
+ * 判断一个Dom A是否是另一个Dom B的孩子节点
+ *
+ * @param target    目标Dom，A
+ * @param parent    父级Dom，B
+ * @param clazz     中断类，当检索到当前节点拥有这个 class 时就中断搜索，用于优化处理，避免搜索整个Dom树
+ * @return {boolean}
+ * @private
+ */
+export function _isParentDom(target, parent, clazz = null) {
     while (target) {
         if (target === parent) {
             return true;
+        }
+
+        if (clazz && target.classList.contains(clazz)) {
+            break
         }
         target = target.parentElement
     }

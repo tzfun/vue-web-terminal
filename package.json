@@ -2,7 +2,7 @@
   "name": "vue-web-terminal",
   "version": "2.1.6",
   "description": "A lightweight and powerful web terminal plugin, suitable for vue3. 轻量、功能强大的网页端Terminal插件，适配vue3",
-  "license":"Apache-2.0",
+  "license": "Apache-2.0",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -23,12 +23,13 @@
     "css-loader": "^6.6.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "svg-sprite-loader": "^6.0.11",
+    "uglifyjs-webpack-plugin": "^2.1.3",
     "vue": "^2.6.11",
     "vue-loader": "^15.9.8",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.46.0",
-    "webpack-cli": "^4.9.2",
-    "uglifyjs-webpack-plugin": "^2.1.3"
+    "webpack-cli": "^4.9.2"
   },
   "eslintConfig": {
     "root": true,
