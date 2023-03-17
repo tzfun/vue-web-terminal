@@ -233,7 +233,7 @@ export default {
                                     ])
                                     setTimeout(() => {
                                         this.nextGuide()
-                                    }, 200)
+                                    }, 1500)
                                 }
                             })
                         }

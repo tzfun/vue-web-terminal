@@ -1,14 +1,14 @@
 <template>
   <div id="app">
     <div v-if="editMode">
-      <terminal-page></terminal-page>
+      <terminal-page @close="editMode=false" :init-cmd="localInitCmd"></terminal-page>
     </div>
     <div v-else>
       <div>
         <img :src="require('@/assert/logo.svg')" class="logo" alt="terminal-logo">
         <h1 class="title">vue-web-terminal</h1>
-        <p class="des">A lightweight, powerful and highly extensible web page emulation command line terminal plugin.</p>
-        <p class="des">一个轻量、功能强大、拓展性高的网页仿真命令行终端插件。</p>
+        <p class="des">A lightweight, powerful, and highly extensible imperative web emulation terminal plugin.</p>
+        <p class="des">一个轻量、功能强大、拓展性高的命令式网页仿真终端插件。</p>
 
         <div align="center" style="margin: 30px 0">
           <a href='https://gitee.com/tzfun/vue-web-terminal' style="margin-left: -30px;">
@@ -67,8 +67,8 @@ h1, p {
 .btn-local {
   color: #ffffff;
   background-color: #3eaf7c;
-  border-color: rgba(240,246,252,0.1);
-  box-shadow: 0 0 transparent,0 0 transparent;
+  border-color: rgba(240, 246, 252, 0.1);
+  box-shadow: 0 0 transparent, 0 0 transparent;
   border-bottom: 1px solid #389d70;
 }
 

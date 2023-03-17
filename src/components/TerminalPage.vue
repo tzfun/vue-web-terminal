@@ -28,8 +28,10 @@
                          :init-cmd="item.localInitCmd"
                          :show-header="item.showHeader"
                          :drag-conf="item.dragConf"
+                         :style="item.style"
                          @on-active="onActive(key, $event)"
-                         @close="closeWindow(key, item.name)">
+                         @close="closeWindow(key, item.name)"
+                         ref="fullscreenTerminal">
           </LocalTerminal>
         </div>
         <div v-else-if="item.length > 0">
@@ -47,9 +49,17 @@
         </div>
       </div>
     </div>
-    <div class="editor-container">
+    <div class="editor-container" v-if="showEditor">
       <div class="editor-body">
-        <div class="demo-btn">
+        <div class="editor-icon">
+          <img style="width: 250px" :src="require('@/../public/logo.png')" alt="vue-web-terminal">
+          <div>
+            <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" alt="vue2"></a>
+            <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3" style="margin-left: 15px;"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" alt="vue3"></a>
+          </div>
+        </div>
+
+        <div class="demo-btn" style="margin-top: 30px">
           <button class="btn" @click="terminals.default.show = !terminals.default.show">示例 1</button>
         </div>
         <div class="demo-btn">
@@ -59,7 +69,7 @@
           <button class="btn" @click="terminals.fullscreen.show = !terminals.fullscreen.show">示例 3</button>
         </div>
         <div class="demo-btn">
-          <button class="btn" @click="createNew">新建一个窗口</button>
+          <button class="btn" @click="createNew">新建一（多）个窗口</button>
         </div>
 
         <div class="help-container">
@@ -142,7 +152,6 @@ export default TerminalPageJs;
   display: flex;
   justify-content: center;
   width: 100%;
-  padding: 15px;
 }
 
 .demo-btn .btn {
@@ -155,7 +164,6 @@ export default TerminalPageJs;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  padding: 30px;
 }
 
 .help-title {
@@ -175,6 +183,13 @@ export default TerminalPageJs;
 
 .help-list li {
   margin: 15px;
+}
+
+.editor-icon {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
 }
 
 </style>

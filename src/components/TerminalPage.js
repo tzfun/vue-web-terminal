@@ -1,22 +1,19 @@
 import LocalTerminal from "@/components/LocalTerminal.vue";
-import {getQuery} from "@/common/util";
 
 export default {
     name: "TerminalPage",
     components: {LocalTerminal},
     data() {
         return {
+            showEditor: false,
             terminals: {
                 default: {
-                    show: true,
+                    show: false,
                     name: 'vue-web-terminal [default]',
                     context: '/vue-web-terminal/default',
                     localInitCmd: null,
                     showHeader: true,
-                    dragConf: {
-                        width: 500,
-                        height: 500
-                    }
+                    dragConf: null
                 },
                 fullscreen: {
                     show: false,
@@ -40,17 +37,27 @@ export default {
             releaseSeq: []
         }
     },
-    created() {
-        let defaultTerminal = this.terminals.default
-        this.initWindowSize(defaultTerminal.dragConf)
-        let query = getQuery()
-        if (query.cmd && query.cmd.trim().length > 0) {
-            defaultTerminal.localInitCmd = query.cmd
-            defaultTerminal.show = true
+    props: {
+        initCmd: String
+    },
+    mounted() {
+        let defaultTerminal
+        if (document.body.clientWidth > 960) {
+            this.showEditor = true
+            defaultTerminal = this.terminals.default
+        } else {
+            defaultTerminal = this.terminals.fullscreen
+            defaultTerminal.name = 'vue-web-terminal'
+            defaultTerminal.context = '/vue-web-terminal'
+            defaultTerminal.style = "position:fixed;"
         }
+        defaultTerminal.localInitCmd = this.initCmd
+        defaultTerminal.dragConf = this.initWindowSize()
+        defaultTerminal.show = true
     },
     methods: {
-        initWindowSize(dragConf) {
+        initWindowSize() {
+            let dragConf = {}
             let width = document.body.clientWidth
             if (width < 960) {
                 dragConf = null
@@ -61,6 +68,14 @@ export default {
                 dragConf.width = 900
                 dragConf.height = 700
             }
+            if (this.showEditor && dragConf) {
+                let height = document.body.clientHeight
+                dragConf.init = {
+                    x: (width - 500 - dragConf.width) / 2,
+                    y: (height - dragConf.width) / 2
+                }
+            }
+            return dragConf
         },
         createNew() {
             let seq
@@ -111,6 +126,9 @@ export default {
                 }
             } else {
                 this.terminals[key].show = false
+            }
+            if (!this.showEditor) {
+                this.$emit("close")
             }
         },
         onActive(key, name) {
