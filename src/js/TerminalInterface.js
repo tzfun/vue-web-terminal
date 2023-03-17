@@ -1,6 +1,5 @@
 import historyStore from "./HistoryStore.js";
 
-// const instance = new TerminalObj()
 const pool = {}; let options = {};
 
 function register(name, listener) {
@@ -19,7 +18,7 @@ function rename(newName, oldName, listener) {
     register(newName, listener);
 }
 
-const TerminalProxy = {
+const TerminalInterface = {
 
     setOptions(ops) {
         options = ops
@@ -37,7 +36,7 @@ const TerminalProxy = {
     },
 
     pushMessage(name, options) {
-        return TerminalProxy.post(name, 'pushMessage', options)
+        return TerminalInterface.post(name, 'pushMessage', options)
     },
 
     getHistory() {
@@ -45,40 +44,40 @@ const TerminalProxy = {
     },
 
     fullscreen(name) {
-        return TerminalProxy.post(name, "fullscreen")
+        return TerminalInterface.post(name, "fullscreen")
     },
 
     isFullscreen(name) {
-        return TerminalProxy.post(name, 'isFullscreen')
+        return TerminalInterface.post(name, 'isFullscreen')
     },
 
     dragging(name, options) {
-        return TerminalProxy.post(name, 'dragging', options)
+        return TerminalInterface.post(name, 'dragging', options)
     },
 
     execute(name, options) {
-        return TerminalProxy.post(name, 'execute', options)
+        return TerminalInterface.post(name, 'execute', options)
     },
 
     focus(name) {
-        return TerminalProxy.post(name, 'focus')
+        return TerminalInterface.post(name, 'focus')
     },
 
     elementInfo(name) {
-        return TerminalProxy.post(name, 'elementInfo')
+        return TerminalInterface.post(name, 'elementInfo')
     },
 
     textEditorOpen(name, options) {
-        return TerminalProxy.post(name, 'textEditorOpen', options)
+        return TerminalInterface.post(name, 'textEditorOpen', options)
     },
 
     textEditorClose(name) {
-        return TerminalProxy.post(name, 'textEditorClose')
+        return TerminalInterface.post(name, 'textEditorClose')
     },
 }
 
-export default TerminalProxy;
-const { pushMessage, fullscreen, isFullscreen, dragging, execute, focus, elementInfo, textEditorClose, textEditorOpen } = TerminalProxy;
+export default TerminalInterface;
+const { pushMessage, fullscreen, isFullscreen, dragging, execute, focus, elementInfo, textEditorClose, textEditorOpen } = TerminalInterface;
 export {
     register,
     unregister,

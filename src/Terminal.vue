@@ -6,22 +6,7 @@
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
            :style="_draggable() ? 'cursor: move;' : ''" @dblclick="_fullscreen">
         <slot name="header">
-          <div class="t-header">
-            <h4>
-              <span @click="_triggerClick('title')" class="t-disable-select" style="cursor: pointer;">{{ title }}</span>
-            </h4>
-            <ul class="t-shell-dots">
-              <li class="shell-dot-item t-shell-dots-red">
-                <svg @click="_triggerClick('close')"><use xlink:href="#close"></use></svg>
-              </li>
-              <li class="shell-dot-item t-shell-dots-yellow">
-                <svg @click="_triggerClick('minScreen')"><use xlink:href="#min"></use></svg>
-              </li>
-              <li class="shell-dot-item t-shell-dots-green">
-                <svg @click="_triggerClick('fullScreen')"><use xlink:href="#max"></use></svg>
-              </li>
-            </ul>
-          </div>
+          <t-header :title="title"></t-header>
         </slot>
       </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
@@ -33,66 +18,22 @@
           <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
-                <span class="t-content-normal">
-                  <span v-if="_nonEmpty(item.tag == null ? item.class : item.tag)"
-                        :class="item.class"
-                        style="margin-right: 10px">{{ item.tag == null ? item.class : item.tag }}</span>
-                  <span v-html="item.content"></span>
-                </span>
+                <t-view-normal :item="item"></t-view-normal>
               </slot>
             </span>
             <div v-else-if="item.type === 'json'">
               <slot name="json" :message="item">
-                <span style="position: relative"  class="t-json-container">
-                  <json-viewer :expand-depth="item.depth"
-                               sort copyable expanded
-                               :key="idx + '_' + item.depth"
-                               :value="_parseToJson(item.content)">
-                  </json-viewer>
-                  <select class="t-json-deep-selector" v-model="item.depth">
-                    <option value="" disabled selected hidden label="Choose a display deep"></option>
-                    <option
-                        v-for="i in jsonViewDepth"
-                        :key="i"
-                        :label="`Deep ${i}`"
-                        :value="i">
-                    </option>
-                  </select>
-                </span>
+                <t-view-json :item="item" :idx="idx"></t-view-json>
               </slot>
             </div>
-            <div v-else-if="item.type === 'code'" class="t-code-container">
+            <div v-else-if="item.type === 'code'">
               <slot name="code" :message="item">
-                <div class="t-code">
-                  <div v-if="terminalObj.getOptions().highlight" class="t-vue-highlight">
-                    <highlightjs ref="highlightjs" autodetect :code="item.content"/>
-                  </div>
-                  <div v-else-if="terminalObj.getOptions().codemirror" class="t-vue-codemirror">
-                    <codemirror ref="codemirror" v-model="item.content" :options="terminalObj.getOptions().codemirror"/>
-                  </div>
-                  <div v-else style="background: rgb(39 50 58);">
-                    <pre style="padding: 1em;margin: 0"><code style="font-size: 15px"
-                                                              v-html="item.content"></code></pre>
-                  </div>
-                </div>
+                <t-view-code :item="item" :idx="idx"></t-view-code>
               </slot>
             </div>
             <div v-else-if="item.type === 'table'">
               <slot name="table" :message="item">
-                <table class="t-table t-border-dashed">
-                  <thead>
-                  <tr class="t-border-dashed">
-                    <td v-for="it in item.content.head" :key="it" class="t-border-dashed">{{ it }}</td>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr v-for="(row, idx) in item.content.rows" :key="idx" class="t-border-dashed">
-                    <td v-for="(it, idx) in row" :key="idx" class="t-border-dashed">
-                      <div v-html="it"></div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
+                <t-view-table :item="item" :idx="idx"></t-view-table>
               </slot>
             </div>
             <div v-else-if="item.type === 'html'">
@@ -142,49 +83,22 @@
             <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
           </span>
         </p>
-        <slot name="helpCmd" :item="searchCmd">
+        <slot name="helpCmd" :item="searchCmdResult">
           <p class="t-help-msg">
-            {{ searchCmd.item ? searchCmd.item.usage : '' }}
+            {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
           </p>
         </slot>
       </div>
     </div>
     <div v-if="enableExampleHint">
-      <slot name="helpBox" :showHeader="showHeader" :item="searchCmd.item">
-        <div class="t-cmd-help"
-             :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
-             v-if="searchCmd.item != null && !(require('./Util.js'))._screenType().xs">
-          <p class="text" v-if="searchCmd.item.description != null" style="margin: 15px 0"
-             v-html="searchCmd.item.description"></p>
-          <div v-if="searchCmd.item.example != null && searchCmd.item.example.length > 0">
-            <div v-for="(it,idx) in searchCmd.item.example" :key="idx" class="text">
-              <div v-if="searchCmd.item.example.length === 1">
-                <span>Example: <code>{{ it.cmd }}</code> {{ it.des }}</span>
-              </div>
-              <div v-else>
-                <div class="t-cmd-help-eg">
-                  eg{{ (searchCmd.item.example.length > 1 ? (idx + 1) : '') }}:
-                </div>
-                <div class="t-cmd-help-example">
-                  <ul class="t-example-ul">
-                    <li class="t-example-li"><code>{{ it.cmd }}</code></li>
-                    <li class="t-example-li"><span v-if="it.des != null" class="t-cmd-help-des">{{ it.des }}</span></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
+        <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
       </slot>
     </div>
     <div class="t-text-editor-container" v-if="textEditor.open"
          :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
       <slot name="textEditor" :data="textEditor">
-        <textarea name="editor" ref="textEditor" class="t-text-editor" v-model="textEditor.value"
-                  @focus="textEditor.onFocus" @blur="textEditor.onBlur"></textarea>
-        <div class="t-text-editor-floor" align="center">
-          <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
-        </div>
+        <t-editor :config="textEditor" @close="_textEditorClose" ref="textEditor"></t-editor>
       </slot>
     </div>
   </div>

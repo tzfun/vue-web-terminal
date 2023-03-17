@@ -1,4 +1,4 @@
-import TerminalCallback from "@/TerminalCallback";
+import TerminalCallback from "@/js/TerminalCallback";
 
 class TerminalAsk extends TerminalCallback {
     ask(options) {

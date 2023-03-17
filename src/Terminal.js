@@ -12,14 +12,13 @@ import {
     _isSafari,
     _nonEmpty,
     _openUrl,
-    _parseToJson,
     _pointInRect,
     _unHtml
-} from "./Util.js";
-import historyStore from "./HistoryStore.js";
-import {rename} from './TerminalObj.js'
-import TerminalFlash from "./TerminalFlash.js";
-import TerminalAsk from "@/TerminalAsk";
+} from "./js/Util.js";
+import historyStore from "./js/HistoryStore.js";
+import {rename} from './js/TerminalInterface.js'
+import TerminalFlash from "./js/TerminalFlash.js";
+import TerminalAsk from "@/js/TerminalAsk";
 import {
     dragging,
     elementInfo,
@@ -32,8 +31,16 @@ import {
     textEditorClose,
     textEditorOpen,
     unregister
-} from './TerminalObj';
-import {terminalData, terminalProps} from "@/TerminalAttribute";
+} from './js/TerminalInterface';
+import {terminalProps} from "@/js/TerminalAttribute";
+import THeader from "@/components/THeader.vue";
+import TViewJson from "@/components/TViewJson.vue";
+import TViewNormal from "@/components/TViewNormal.vue";
+import TViewCode from "@/components/TViewCode.vue";
+import TViewTable from "@/components/TViewTable.vue";
+import THelpBox from "@/components/THelpBox.vue";
+import TEditor from "@/components/TEditor.vue";
+import {defaultCommands} from "@/js/Configuration";
 
 let idx = 0;
 
@@ -44,8 +51,66 @@ function generateTerminalName() {
 
 export default {
     name: 'Terminal',
+    components: {THelpBox, TViewNormal, THeader, TViewJson, TViewCode, TViewTable, TEditor},
     data() {
-        return terminalData()
+        return {
+            command: "",
+            commandLog: [],
+            cursorConf: {
+                defaultWidth: 6,
+                width: 6,
+                left: 'unset',
+                top: 'unset',
+                idx: 0, //  从0开始
+                show: false
+            },
+            byteLen: {
+                init: false,
+                en: 8,
+                cn: 13
+            },
+            showInputLine: true,
+            terminalLog: [],
+            searchCmdResult: {
+                item: null
+            },
+            allCommandStore: [],
+            _fullscreenState: false,
+            perfWarningRate: {
+                count: 0
+            },
+            inputBoxParam: {
+                boxWidth: 0,
+                boxHeight: 0,
+                promptWidth: 0,
+                promptHeight: 0
+            },
+            flash: {
+                open: false,
+                content: null
+            },
+            ask: {
+                open: false,
+                question: null,
+                isPassword: false,
+                callback: null,
+                autoReview: false,
+                input: ''
+            },
+            textEditor: {
+                open: false,
+                focus: false,
+                value: '',
+                onClose: null,
+                onFocus: () => {
+                    this.textEditor.focus = true
+                },
+                onBlur: () => {
+                    this.textEditor.focus = false
+                }
+            },
+            terminalListener: null,
+        }
     },
     props: terminalProps(),
     async mounted() {
@@ -112,6 +177,7 @@ export default {
             await this._pushMessageBatch(this.initLog, true)
         }
 
+        this.allCommandStore = this.allCommandStore.concat(defaultCommands)
         if (this.commandStore != null) {
             if (this.commandStoreSort != null) {
                 this.commandStore.sort(this.commandStoreSort)
@@ -125,11 +191,13 @@ export default {
         let el = this.$refs.terminalWindow
         el.scrollTop = el.offsetHeight;
 
+        let selectContentText = null
+
         _eventOn(window, "click", this.clickListener = e => {
             let activeCursor = false
-
-            if (el && el.getBoundingClientRect && _pointInRect(e, el.getBoundingClientRect())) {
-                activeCursor = _isParentDom(e.target, el, "t-window")
+            let window = this.$refs.terminalWindow
+            if (window && window.getBoundingClientRect && _pointInRect(e, window.getBoundingClientRect())) {
+                activeCursor = _isParentDom(e.target, window, "t-window")
             }
 
             this.cursorConf.show = activeCursor
@@ -159,8 +227,6 @@ export default {
                 this.$emit('on-keydown', event, this.getName())
             }
         });
-
-        let selectContentText = null
 
         //  先暂存选中文本
         _eventOn(el, 'mousedown', () => {
@@ -345,7 +411,7 @@ export default {
             }
         },
         _resetSearchKey() {
-            this.searchCmd.item = null
+            this.searchCmdResult.item = null
         },
         _searchCmd(key) {
             if (!this.autoHelp) {
@@ -354,7 +420,7 @@ export default {
 
             //  用户自定义搜索实现
             if (this.searchHandler) {
-                this.searchCmd.item = this.searchHandler(this.allCommandStore, key)
+                this.searchCmdResult.item = this.searchHandler(this.allCommandStore, key)
                 this._jumpToBottom()
                 return;
             }
@@ -396,17 +462,17 @@ export default {
                         })
                         target = matchSet[0].item
                     } else {
-                        this.searchCmd.item = null
+                        this.searchCmdResult.item = null
                         return
                     }
                 }
-                this.searchCmd.item = target
+                this.searchCmdResult.item = target
                 this._jumpToBottom()
             }
         },
         _fillCmd() {
-            if (this.searchCmd.item) {
-                this.command = this.searchCmd.item.key
+            if (this.searchCmdResult.item) {
+                this.command = this.searchCmdResult.item.key
             }
         },
         _focus() {
@@ -604,9 +670,6 @@ export default {
             this._resetCursorPos()
             this.cursorConf.show = true
             this._focus()
-        },
-        _parseToJson(obj) {
-            return _parseToJson(obj)
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)

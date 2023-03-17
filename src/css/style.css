@@ -27,6 +27,7 @@
     -ms-transition: opacity 0.2s ease;
     -webkit-transition: opacity 0.2s ease;
     -o-transition: opacity 0.2s ease;
+    margin-bottom: 1px;
 }
 
 .t-shell-dots:hover .t-shell-dot {

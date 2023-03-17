@@ -1,124 +1,35 @@
-import TerminalObj from "@/TerminalObj";
-
-export function terminalData() {
+export function terminalHeaderProps() {
     return {
-        terminalObj: TerminalObj,
-        command: "",
-        commandLog: [],
-        cursorConf: {
-            defaultWidth: 6,
-            width: 6,
-            left: 'unset',
-            top: 'unset',
-            idx: 0, //  从0开始
-            show: false
+        //  终端标题
+        title: {
+            type: String, default: 'vue-web-terminal'
         },
-        byteLen: {
-            init: false,
-            en: 8,
-            cn: 13
-        },
-        jsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        showInputLine: true,
-        terminalLog: [],
-        searchCmd: {
-            item: null
-        },
-        allCommandStore: [
-            {
-                key: 'help',
-                title: 'Help',
-                group: 'local',
-                usage: 'help [pattern]',
-                description: 'Show command document.',
-                example: [
-                    {
-                        des: "Get all commands.",
-                        cmd: 'help'
-                    }, {
-                        des: "Get help documentation for exact match commands.",
-                        cmd: 'help refresh'
-                    }, {
-                        des: "Get help documentation for fuzzy matching commands.",
-                        cmd: 'help *e*'
-                    }, {
-                        des: "Get help documentation for specified group, match key must start with ':'.",
-                        cmd: 'help :groupA'
-                    }
-                ]
-            }, {
-                key: 'clear',
-                title: 'Clear screen or history logs',
-                group: 'local',
-                usage: 'clear [history]',
-                description: 'Clear screen or history.',
-                example: [
-                    {
-                        cmd: 'clear',
-                        des: 'Clear all records on the current screen.'
-                    }, {
-                        cmd: 'clear history',
-                        des: 'Clear command history'
-                    }
-                ]
-            }, {
-                key: 'open',
-                title: 'Open page',
-                group: 'local',
-                usage: 'open <url>',
-                description: 'Open a specified page.',
-                example: [{
-                    cmd: 'open blog.beifengtz.com'
-                }]
-            }
-        ],
-        _fullscreenState: false,
-        perfWarningRate: {
-            count: 0
-        },
-        inputBoxParam: {
-            boxWidth: 0,
-            boxHeight: 0,
-            promptWidth: 0,
-            promptHeight: 0
-        },
-        flash: {
-            open: false,
-            content: null
-        },
-        ask: {
-            open: false,
-            question: null,
-            isPassword: false,
-            callback: null,
-            autoReview: false,
-            input: ''
-        },
-        textEditor: {
-            open: false,
-            focus: false,
-            value: '',
-            onClose: null,
-            onFocus: () => {
-                this.textEditor.focus = true
-            },
-            onBlur: () => {
-                this.textEditor.focus = false
+    }
+}
+
+export function terminalViewerProps() {
+    return {
+        item: {
+            type: Object,
+            default: () => {
+                return {
+                    class: null,
+                    type: 'normal',
+                    content: null,
+                    tag: null
+                }
             }
         },
-        terminalListener: null,
+        idx: Number | String
     }
 }
 
 export function terminalProps() {
     return {
+        ...terminalHeaderProps(),
         name: {
             type: String,
             default: ''
-        },
-        //  终端标题
-        title: {
-            type: String, default: 'vue-web-terminal'
         },
         //  初始化日志内容
         initLog: {
