@@ -1,7 +1,7 @@
 [中文版](./README_ZH.md) | English
 
 <div align=center>
-<img src=public/logo.svg/>
+<img src=public/logo.png/>
 </div>
 
 # vue-web-terminal
