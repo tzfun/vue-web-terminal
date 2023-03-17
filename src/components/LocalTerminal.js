@@ -1,5 +1,6 @@
-import Terminal from "vue-web-terminal"
+import {Terminal, api as TerminalApi, Ask as TerminalAsk, Flash as TerminalFlash} from "vue-web-terminal"
 import {exampleCode} from "@/demo/Demo";
+import {commands} from "@/components/LocalTerminalData";
 
 export default {
     name: 'LocalTerminal',
@@ -7,110 +8,13 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.3',
+                vue2: '2.1.7',
                 vue3: '3.1.3'
             },
             name: 'my-terminal',
             title: '👌vue-web-terminal',
             context: '/vue-web-terminal/demo',
-            cmdStore: [
-                {
-                    "key": "fail",
-                    "group": "demo",
-                    "usage": 'fail',
-                    "description": "模拟错误结果返回"
-                },
-                {
-                    "key": "json",
-                    "group": "demo",
-                    "usage": 'json',
-                    "description": "模拟json结果显示"
-                },
-                {
-                    "key": "code",
-                    "group": "demo",
-                    "usage": 'code',
-                    "description": "模拟code结果显示"
-                },
-                {
-                    "key": "table",
-                    "group": "demo",
-                    "usage": 'table',
-                    "description": "模拟表格结果显示"
-                },
-                {
-                    "key": "html",
-                    "group": "demo",
-                    "usage": 'html',
-                    "description": "模拟自定义html结果显示"
-                },
-                {
-                    "key": "loop",
-                    "group": "demo",
-                    "usage": 'loop',
-                    "description": "模拟批量结果显示"
-                },
-                {
-                    "key": "context",
-                    "group": "demo",
-                    "usage": 'context <ctx>',
-                    "description": "修改上下文",
-                    "example": [
-                        {
-                            "cmd": "context /vue/terminal/dev",
-                            "des": "修改上下文为'/vue/terminal/dev'"
-                        }
-                    ]
-                },
-                {
-                    "key": "fullscreen",
-                    "group": "demo",
-                    "usage": 'fullscreen',
-                    "description": "切换全屏模式"
-                },
-                {
-                    "key": "drag",
-                    "group": "demo",
-                    "usage": 'drag <x> <y>',
-                    "description": "模拟拖拽窗口，x为左边界，y为右边界，单位px",
-                    "example": [
-                        {
-                            "cmd": "drag 20 100",
-                            "des": "拖拽位置到（20,100）"
-                        }
-                    ]
-                },
-                {
-                    "key": "info",
-                    "group": "demo",
-                    "usage": 'info',
-                    "description": "获取当前窗口信息"
-                },
-                {
-                    "key": "random",
-                    "group": "demo",
-                    "usage": 'random',
-                    "description": "随机生成标签"
-                },
-                {
-                    "key": "flash",
-                    "group": "demo",
-                    "usage": 'flash',
-                    "description": "即时回显，模拟执行下载命令"
-                },
-                {
-                    "key": "ask",
-                    "group": "demo",
-                    "usage": 'ask',
-                    "description": "用户输入，模拟执行登录"
-                },
-                {
-                    "key": "edit",
-                    "group": "demo",
-                    "usage": 'edit',
-                    "description": "打开文本编辑器"
-                }
-            ],
+            cmdStore: [],
             dragConf: {
                 width: 700,
                 height: 500
@@ -158,8 +62,8 @@ export default {
                 `
             }
         ]
-    },
-    mounted() {
+        this.cmdStore = this.cmdStore.concat(commands)
+
         let width = document.body.clientWidth
         if (width < 960) {
             this.dragConf = null
@@ -260,7 +164,7 @@ export default {
                               `
                 })
             } else if (key === 'fullscreen') {
-                Terminal.$api.fullscreen(this.name)
+                TerminalApi.fullscreen(this.name)
                 success({
                     type: 'normal',
                     class: 'success',
@@ -268,7 +172,7 @@ export default {
                 })
             } else if (key === 'loop') {
                 for (let i = 0; i < 10; i++) {
-                    Terminal.$api.pushMessage(this.name, {
+                    TerminalApi.pushMessage(this.name, {
                         type: "normal",
                         content: "loop => " + i
                     })
@@ -276,30 +180,31 @@ export default {
                 success()
             } else if (key === 'drag') {
                 let split = command.split(" ");
-                Terminal.$api.dragging(this.name, {x: parseInt(split[1]), y: parseInt(split[2])})
+                TerminalApi.dragging(this.name, {x: parseInt(split[1]), y: parseInt(split[2])})
                 success()
             } else if (key === 'info') {
-                let info = Terminal.$api.elementInfo(this.name)
+                let info = TerminalApi.elementInfo(this.name)
                 success({
                     type: 'json',
                     content: JSON.stringify(info)
                 })
-            } else if (key === 'random') {
+            } else if (key === 'list') {
                 let allClass = ['success', 'error', 'system', 'info', 'warning'];
-
-                let clazz = allClass[Math.floor(Math.random() * allClass.length)];
-                success({
-                    type: 'normal',
-                    class: clazz,
-                    tag: "random: " + clazz,
-                    content: 'random number: ' + Math.floor(Math.random() * 10)
+                allClass.forEach(clazz => {
+                    TerminalApi.pushMessage(this.name, {
+                        type: 'normal',
+                        class: clazz,
+                        tag: clazz,
+                        content: `这是 ${clazz} 级别的消息`
+                    })
                 })
+                success()
             } else if (key === 'ask') {
                 let arg = command.split(' ')
                 if (arg.length >= 2 && arg[1] === 'guide') {
                     this.askGuide(key, command, success, failed)
                 } else {
-                    let asker = new Terminal.$Ask()
+                    let asker = new TerminalAsk()
                     success(asker)
                     asker.ask({
                         question: '请输入用户名：',
@@ -332,7 +237,7 @@ export default {
                     success()
                 }
             } else if (key === 'edit') {
-                Terminal.$api.textEditorOpen(this.name, {
+                TerminalApi.textEditorOpen(this.name, {
                     content: exampleCode,
                     onClose: value => {
                         this.enableTextEditor = false
@@ -364,7 +269,7 @@ export default {
             if (key === "close") {
                 this.$emit('onClose')
             } else {
-                Terminal.$api.pushMessage(this.name, {
+                TerminalApi.pushMessage(this.name, {
                     tag: 'success',
                     class: 'system',
                     content: `User clicked <span class="t-cmd-key">${key}</span>`
@@ -386,13 +291,13 @@ export default {
         },
         initComplete() {
             if (this.initCmd) {
-                Terminal.$api.execute(this.name, this.initCmd)
+                TerminalApi.execute(this.name, this.initCmd)
             } else {
-                Terminal.$api.execute(this.name, 'ask guide')
+                TerminalApi.execute(this.name, 'ask guide')
             }
         },
         askGuide(key, command, success) {
-            let asker = new Terminal.$Ask()
+            let asker = new TerminalAsk()
             success(asker)
 
             asker.ask({
@@ -406,7 +311,7 @@ export default {
                     asker.finish()
                 }
             })
-            Terminal.$api.focus()
+            TerminalApi.focus()
         },
         nextGuide() {
             if (this.guide.step === 0) {
@@ -414,7 +319,7 @@ export default {
             }
             let message = null
             if (this.guide.step === 1) {
-                this.guide.command = 'random'
+                this.guide.command = 'list'
                 message = `👉 [${this.guide.step}] 首先带你认识一下支持的消息格式，默认的消息是普通文本格式，请输入<span class="t-cmd-key">${this.guide.command}</span>随机一条文本消息`
             } else if (this.guide.step === 2) {
                 this.guide.command = 'json'
@@ -444,8 +349,8 @@ export default {
                 this.guide.command = null
                 message = `🎉 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。
                         <br>🤗 更多关于插件的内容请前往 <a class='t-a' target='_blank' href="https://github.com/tzfun/vue-web-terminal">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐️支持一下吧~`
-                Terminal.$api.execute(this.name, 'help')
-                Terminal.$api.pushMessage(this.name, {
+                TerminalApi.execute(this.name, 'help')
+                TerminalApi.pushMessage(this.name, {
                     content: message
                 })
                 this.guide.step = 0
@@ -455,23 +360,23 @@ export default {
             }
             this.guide.step++
 
-            Terminal.$api.pushMessage(this.name, {
+            TerminalApi.pushMessage(this.name, {
                 content: message
             })
 
         },
         async showFlash(success) {
-            Terminal.$api.pushMessage(this.name, {
+            TerminalApi.pushMessage(this.name, {
                 content: '🔍︎ Comparing versions, the relevant dependency files will be downloaded soon...'
             })
-            Terminal.$api.pushMessage(this.name, {
+            TerminalApi.pushMessage(this.name, {
                 content: '🚚 Start downloading dependent files'
             })
 
-            let flash = new Terminal.$Flash()
+            let flash = new TerminalFlash()
             success(flash)
 
-            let terminalInfo = Terminal.$api.elementInfo(this.name)
+            let terminalInfo = TerminalApi.elementInfo(this.name)
             let start = new Date().getTime()
 
             await this.mockLoading(flash, 'vue', terminalInfo)
@@ -479,7 +384,7 @@ export default {
             await this.mockLoading(flash, 'core.js', terminalInfo)
 
             let useTime = ((new Date().getTime() - start) / 1000).toFixed(2)
-            Terminal.$api.pushMessage(this.name, {
+            TerminalApi.pushMessage(this.name, {
                 content: `🎉 All dependencies has downloaded <span style="color:green;">successful</span>, done in ${useTime} s`
             })
             this.nextGuide()
@@ -514,7 +419,7 @@ export default {
                         clearInterval(flashInterval)
                         let useTime = ((new Date().getTime() - startTime) / 1000).toFixed(2)
                         //  结束后向控制台追加成功日志
-                        Terminal.$api.pushMessage(this.name, {
+                        TerminalApi.pushMessage(this.name, {
                             content: `✔︎ <span style="color: aqua">${fileName}</span> download successful! use <span>${useTime}</span> s`
                         })
                         resolve()
@@ -523,7 +428,7 @@ export default {
             })
         },
         _textEditorClose() {
-            Terminal.$api.textEditorClose(this.name)
+            TerminalApi.textEditorClose(this.name)
         }
     }
 }

@@ -4,9 +4,6 @@
       <LocalTerminal v-if="showLocal"
                      @onClose="showLocal = false; localInitCmd = null"
                      :init-cmd="localInitCmd"></LocalTerminal>
-
-      <SshTerminal v-if="showSsh"
-                   @onClose="showSsh = false"></SshTerminal>
     </div>
     <div v-else>
       <div>
@@ -34,7 +31,6 @@
       </div>
       <div class="btn-box">
         <button v-show="!showLocal && !showSsh" @click="showLocal=true" class="btn btn-local">Get Started →</button>
-<!--        <button v-show="!showLocal && !showSsh" @click="showSsh=true" class="btn">SSH Demo</button>-->
       </div>
     </div>
 
