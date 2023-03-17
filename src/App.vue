@@ -64,19 +64,6 @@ h1, p {
   padding-bottom: 100px;
 }
 
-.btn {
-  margin: 15px;
-  padding: 0.5em 1.5em;
-  font-size: 1.2em;
-  border-radius: 5px;
-  border: none;
-  box-shadow: 1px 1px 15px rgb(0 0 0 / 20%);
-  transition: background-color .1s ease;
-  box-sizing: border-box;
-  cursor: pointer;
-  font-weight: bold;
-}
-
 .btn-local {
   color: #ffffff;
   background-color: #3eaf7c;
@@ -254,5 +241,18 @@ body, html, #app {
   border-radius: 3px;
   border-right: none;
   border-top: none;
+}
+
+.btn {
+  margin: 15px;
+  padding: 0.5em 1.5em;
+  font-size: 1.2em;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 1px 1px 15px rgb(0 0 0 / 20%);
+  transition: background-color .1s ease;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>

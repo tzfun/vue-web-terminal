@@ -34,7 +34,7 @@
         </div>
         <div v-else-if="item.length > 0">
           <div v-for="(it,k) in item" :key="k">
-            <LocalTerminal v-if="it.show"
+            <LocalTerminal v-show="it.show"
                            :name="it.name"
                            :context="it.context"
                            :init-cmd="it.localInitCmd"
@@ -48,10 +48,33 @@
       </div>
     </div>
     <div class="editor-container">
-      <button @click="terminals.default.show = !terminals.default.show">关闭 / 打开 示例 1</button>
-      <button @click="terminals.bottom.show = !terminals.bottom.show">关闭 / 打开 示例 2</button>
-      <button @click="terminals.fullscreen.show = !terminals.fullscreen.show">关闭 / 打开 示例 3</button>
-      <button @click="createNew">新建一个窗口</button>
+      <div class="editor-body">
+        <div class="demo-btn">
+          <button class="btn" @click="terminals.default.show = !terminals.default.show">示例 1</button>
+        </div>
+        <div class="demo-btn">
+          <button class="btn" @click="terminals.bottom.show = !terminals.bottom.show">示例 2</button>
+        </div>
+        <div class="demo-btn">
+          <button class="btn" @click="terminals.fullscreen.show = !terminals.fullscreen.show">示例 3</button>
+        </div>
+        <div class="demo-btn">
+          <button class="btn" @click="createNew">新建一个窗口</button>
+        </div>
+
+        <div class="help-container">
+          <h1 class="help-title">使用小技巧</h1>
+          <ul class="help-list">
+            <li>拖动示例1窗口Header可以拖拽</li>
+            <li>双击窗口Header可以全屏</li>
+            <li>选中内容右键可以复制到剪切板</li>
+            <li>输入时右键可以粘贴剪切板内容</li>
+          </ul>
+
+          <h3 class="help-title">注意：本Demo部分功能在 Vue3 版本不支持！</h3>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -87,11 +110,13 @@ export default TerminalPageJs;
 
 .editor-container {
   width: 500px;
-  background-color: #2c3e50;
+  background-color: #41b883;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .bottom-container {
-  border-top: 1px solid blueviolet;
   position: absolute;
   left: 0;
   bottom: 0;
@@ -106,6 +131,50 @@ export default TerminalPageJs;
   width: 100%;
   height: 100%;
   z-index: 200;
+}
+
+.demo-btn-list {
+  display: flex;
+  justify-content: center;
+}
+
+.demo-btn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 15px;
+}
+
+.demo-btn .btn {
+  width: 70%;
+  color: #3eaf7c;
+  background-color: #ffffff;
+}
+
+.help-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 30px;
+}
+
+.help-title {
+  text-align: center;
+}
+
+.help-title, .help-list {
+  color: white;
+  width: 100%;
+}
+
+.help-list {
+  margin-left: 74px;
+  list-style: decimal;
+  font-size: 20px;
+}
+
+.help-list li {
+  margin: 15px;
 }
 
 </style>

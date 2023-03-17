@@ -36,9 +36,8 @@ export default {
                 },
                 list: []
             },
-
-            showDefault: false,
-            localInitCmd: null
+            multiSeq: 1,
+            releaseSeq: []
         }
     },
     created() {
@@ -64,11 +63,16 @@ export default {
             }
         },
         createNew() {
-            let seq = this.terminals.list.length + 1
+            let seq
+            if (this.releaseSeq.length === 0) {
+                seq = parseInt(this.multiSeq.toString())
+            } else {
+                seq = this.releaseSeq[0]
+            }
             this.terminals.list.push({
                 show: true,
-                name: `vue-web-terminal [multi-${seq}]`,
-                context: `/vue-web-terminal/multi-${seq}`,
+                name: `vue-web-terminal [multi-${this.multiSeq}]`,
+                context: `/vue-web-terminal/multi-${this.multiSeq}`,
                 localInitCmd: null,
                 showHeader: true,
                 dragConf: {
@@ -81,14 +85,29 @@ export default {
                     }
                 }
             })
+            if (this.releaseSeq.length !== 0) {
+                this.releaseSeq.splice(0, 1)
+            }
+            this.multiSeq++
         },
         closeWindow(key, name) {
             if (key === 'list') {
-                for (const item of this.terminals.list) {
-                    if (item.name === name) {
-                        item.show = false
+                let idx = -1
+                for (let i in this.terminals.list) {
+                    if (this.terminals.list[i].name === name) {
+                        idx = i;
                         break
                     }
+                }
+                if (idx >= 0) {
+                    this.releaseSeq.push(idx)
+                    this.terminals.list[idx].show = false
+                }
+
+                if (this.releaseSeq.length === this.terminals.list.length) {
+                    this.terminals.list = []
+                    this.releaseSeq = []
+                    this.multiSeq = 1
                 }
             } else {
                 this.terminals[key].show = false
