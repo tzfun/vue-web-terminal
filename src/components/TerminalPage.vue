@@ -60,22 +60,26 @@
         </div>
 
         <div class="demo-btn" style="margin-top: 30px">
-          <button class="btn" @click="terminals.default.show = !terminals.default.show">示例 1</button>
+          <button :class="'btn ' + (terminals.default.show ? 'active' :'btn-default')"
+                  @click="showDemo('default')">可拖拽示例</button>
         </div>
         <div class="demo-btn">
-          <button class="btn" @click="terminals.bottom.show = !terminals.bottom.show">示例 2</button>
+          <button :class="'btn ' + (terminals.bottom.show ? 'active' :'btn-default')"
+                  @click="showDemo('bottom')">固定位置示例</button>
         </div>
         <div class="demo-btn">
-          <button class="btn" @click="terminals.fullscreen.show = !terminals.fullscreen.show">示例 3</button>
+          <button :class="'btn ' + (terminals.fullscreen.show ? 'active' :'btn-default')"
+                  @click="showDemo('fullscreen')">全屏示例</button>
         </div>
         <div class="demo-btn">
-          <button class="btn" @click="createNew">新建一（多）个窗口</button>
+          <button :class="'btn ' + (terminals.list.length > 0 ? 'active' :'btn-default')"
+                  @click="showDemo('list')">多窗口示例（多次戳我）</button>
         </div>
 
         <div class="help-container">
-          <h1 class="help-title">使用小技巧</h1>
+          <h2 class="help-title">使用小技巧</h2>
           <ul class="help-list">
-            <li>拖动示例1窗口Header可以拖拽</li>
+            <li>拖动窗口Header可以拖拽</li>
             <li>双击窗口Header可以全屏</li>
             <li>选中内容右键可以复制到剪切板</li>
             <li>输入时右键可以粘贴剪切板内容</li>
@@ -156,8 +160,6 @@ export default TerminalPageJs;
 
 .demo-btn .btn {
   width: 70%;
-  color: #3eaf7c;
-  background-color: #ffffff;
 }
 
 .help-container {
@@ -179,6 +181,8 @@ export default TerminalPageJs;
   margin-left: 74px;
   list-style: decimal;
   font-size: 20px;
+  padding-top: 0;
+  margin-top: 0;
 }
 
 .help-list li {
@@ -192,4 +196,16 @@ export default TerminalPageJs;
   margin-top: 40px;
 }
 
+</style>
+
+<style>
+.btn-default {
+  color: #3eaf7c;
+  background-color: #ffffff;
+}
+
+.active {
+  background-color: #70d095;
+  color: white;
+}
 </style>

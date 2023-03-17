@@ -72,10 +72,27 @@ export default {
                 let height = document.body.clientHeight
                 dragConf.init = {
                     x: (width - 500 - dragConf.width) / 2,
-                    y: (height - dragConf.width) / 2
+                    y: (height - dragConf.height) / 2
                 }
             }
             return dragConf
+        },
+        showDemo(type) {
+            for(let t in this.terminals) {
+                if (t !== 'list') {
+                    this.terminals[t].show = t === type
+                }
+            }
+            if (type === 'list') {
+                this.createNew()
+            } else {
+                this.resetList()
+            }
+        },
+        resetList() {
+            this.terminals.list = []
+            this.releaseSeq = []
+            this.multiSeq = 1
         },
         createNew() {
             let seq
@@ -120,9 +137,7 @@ export default {
                 }
 
                 if (this.releaseSeq.length === this.terminals.list.length) {
-                    this.terminals.list = []
-                    this.releaseSeq = []
-                    this.multiSeq = 1
+                    this.resetList()
                 }
             } else {
                 this.terminals[key].show = false
