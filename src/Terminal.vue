@@ -83,7 +83,7 @@
             <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
           </span>
         </p>
-        <slot name="helpCmd" :item="searchCmdResult">
+        <slot name="helpCmd" :item="searchCmdResult.item">
           <p class="t-help-msg">
             {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
           </p>
