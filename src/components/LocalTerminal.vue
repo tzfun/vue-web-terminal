@@ -1,27 +1,27 @@
 <template>
   <terminal
       :name="name"
-      :title="title"
+      :title="name"
       :init-log="initLog"
       :input-filter="inputFilter"
       :context="context"
       :command-store="cmdStore"
       :warn-log-count-limit="200"
       :drag-conf="dragConf"
-      show-header
+      :show-header="showHeader"
       @exec-cmd="onExecCmd"
       @on-click="onClick"
       @on-keydown="onKeydown"
       @init-before="initBefore"
       @init-complete="initComplete"
-      style="position: fixed">
+      @on-active="onActive">
     <template #textEditor="{data}">
       <codemirror ref="customTextEditor" class="my-text-editor" v-model="data.value"
                   :options="codemirrorOptions"
                   @focus="data.onFocus"
                   @blur="data.onBlur"/>
-      <div class="text-editor-floor" align="center">
-        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+      <div class="t-text-editor-floor" align="center">
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
       </div>
     </template>
   </terminal>

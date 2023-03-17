@@ -1,4 +1,4 @@
-import {Terminal, api as TerminalApi, Ask as TerminalAsk, Flash as TerminalFlash} from "vue-web-terminal"
+import {api as TerminalApi, Ask as TerminalAsk, Flash as TerminalFlash, Terminal} from "vue-web-terminal"
 import {exampleCode} from "@/demo/Demo";
 import {commands} from "@/components/LocalTerminalData";
 
@@ -11,14 +11,7 @@ export default {
                 vue2: '2.1.7',
                 vue3: '3.1.3'
             },
-            name: 'my-terminal',
-            title: '👌vue-web-terminal',
-            context: '/vue-web-terminal/demo',
             cmdStore: [],
-            dragConf: {
-                width: 700,
-                height: 500
-            },
             initLog: null,
             guide: {
                 step: 0,
@@ -38,9 +31,29 @@ export default {
         }
     },
     props: {
+        name: String,
+        context: {
+            type: String,
+            default: '/vue-web-terminal/demo'
+        },
         initCmd: {
             type: String,
             default: null
+        },
+        showHeader: {
+            type: Boolean,
+            default: true
+        },
+        dragConf: {
+            type: Object,
+            default: () => {
+                return {
+                    dragConf: {
+                        width: 700,
+                        height: 500
+                    }
+                }
+            }
         }
     },
     created() {
@@ -63,19 +76,11 @@ export default {
             }
         ]
         this.cmdStore = this.cmdStore.concat(commands)
-
-        let width = document.body.clientWidth
-        if (width < 960) {
-            this.dragConf = null
-        } else if (width >= 960 && width < 1264) {
-            this.dragConf.width = "80%"
-            this.dragConf.height = "80%"
-        } else if (width >= 1264) {
-            this.dragConf.width = "60%"
-            this.dragConf.height = "65%"
-        }
     },
     methods: {
+        onActive(name) {
+            this.$emit('on-active', name)
+        },
         /**
          * 当用户输入自定义命令时调用
          *
@@ -209,13 +214,23 @@ export default {
                     asker.ask({
                         question: '请输入用户名：',
                         autoReview: true,
-                        callback: () => {
+                        callback: username => {
                             asker.ask({
                                 question: '请输入密码：',
                                 autoReview: true,
                                 isPassword: true,
-                                callback: () => {
+                                callback: password => {
                                     asker.finish()
+                                    TerminalApi.pushMessage(this.name, [
+                                        {
+                                            class: "system",
+                                            content: `用户输入的内容：`
+                                        }, {
+                                            content: `username: ${username}`
+                                        }, {
+                                            content: `password: ${password}`
+                                        }
+                                    ])
                                     setTimeout(() => {
                                         this.nextGuide()
                                     }, 200)
@@ -256,7 +271,6 @@ export default {
                 })
                 this.enableTextEditor = true
                 this.$nextTick(() => {
-                    console.log(this.$refs.customTextEditor.codemirror)
                     this.$refs.customTextEditor.codemirror.focus()
                 })
                 return;
@@ -267,13 +281,7 @@ export default {
         },
         onClick(key) {
             if (key === "close") {
-                this.$emit('onClose')
-            } else {
-                TerminalApi.pushMessage(this.name, {
-                    tag: 'success',
-                    class: 'system',
-                    content: `User clicked <span class="t-cmd-key">${key}</span>`
-                })
+                this.$emit('close', this.name)
             }
         },
         onKeydown(event) {

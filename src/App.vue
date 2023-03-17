@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <div class="terminal-container" v-if="showLocal || showSsh">
-      <LocalTerminal v-if="showLocal"
-                     @onClose="showLocal = false; localInitCmd = null"
-                     :init-cmd="localInitCmd"></LocalTerminal>
+    <div v-if="editMode">
+      <terminal-page></terminal-page>
     </div>
     <div v-else>
       <div>
@@ -30,7 +28,7 @@
         </div>
       </div>
       <div class="btn-box">
-        <button v-show="!showLocal && !showSsh" @click="showLocal=true" class="btn btn-local">Get Started →</button>
+        <button v-show="!editMode" @click="editMode=true" class="btn btn-local">Get Started →</button>
       </div>
     </div>
 
@@ -89,15 +87,6 @@ h1, p {
 
 .btn-local:hover {
   background-color: #4abf8a;
-}
-
-.terminal-container {
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
 }
 
 .logo {

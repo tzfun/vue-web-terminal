@@ -1,22 +1,15 @@
-import LocalTerminal from "@/components/LocalTerminal.vue";
-import {getQuery} from "@/common/util";
+import TerminalPage from "@/components/TerminalPage.vue";
 
 export default {
     name: 'App',
-    components: {LocalTerminal},
+    components: {TerminalPage},
     data() {
         return {
-            showLocal: false,
-            showSsh: false,
-            localInitCmd:null
+            editMode: false
         }
     },
     created() {
-        let query = getQuery()
-        if (query.cmd && query.cmd.trim().length > 0) {
-            this.localInitCmd = query.cmd
-            this.showLocal = true
-        }
+
     },
     mounted() {
 
