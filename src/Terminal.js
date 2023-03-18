@@ -114,11 +114,6 @@ export default {
     },
     props: terminalProps(),
     async mounted() {
-        /**
-         * 不规范的事件命名，后续版本将移除
-         * @deprecated
-         */
-        this.$emit('initBefore', this.getName())
 
         this.$emit('init-before', this.getName())
 
@@ -222,12 +217,6 @@ export default {
                     }
                 }
 
-                /**
-                 * 不规范的事件命名，后续版本将移除
-                 * @deprecated
-                 */
-                this.$emit('onKeydown', event, this.getName())
-
                 this.$emit('on-keydown', event, this.getName())
             }
         });
@@ -304,11 +293,6 @@ export default {
         })
 
         this._initDrag()
-        /**
-         * 不规范的事件命名，后续版本将移除
-         * @deprecated
-         */
-        this.$emit('initComplete', this.getName())
 
         this.$emit('init-complete', this.getName())
     },
@@ -378,11 +362,6 @@ export default {
             } else if (key === 'minScreen' && this._fullscreenState) {
                 this._fullscreen()
             }
-            /**
-             * 不规范的事件命名，后续版本将移除
-             * @deprecated
-             */
-            this.$emit('onClick', key, this.getName())
 
             this.$emit('on-click', key, this.getName())
         },
@@ -576,12 +555,6 @@ export default {
                 try {
                     let split = this.command.split(" ")
                     let cmdKey = split[0];
-                    /**
-                     * 不规范的事件命名，后续版本将移除
-                     * @deprecated
-                     */
-                    this.$emit("beforeExecCmd", cmdKey, this.command, this.getName())
-
                     this.$emit("before-exec-cmd", cmdKey, this.command, this.getName())
                     switch (cmdKey) {
                         case 'help': {
@@ -648,12 +621,6 @@ export default {
                                 this.showInputLine = true
                                 this._endExecCallBack()
                             }
-
-                            /**
-                             * 不规范的事件命名，后续版本将移除
-                             * @deprecated
-                             */
-                            this.$emit("execCmd", cmdKey, this.command, success, failed, this.getName())
 
                             this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
                             return
