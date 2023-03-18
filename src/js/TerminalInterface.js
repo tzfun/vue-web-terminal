@@ -59,20 +59,20 @@ const TerminalInterface = {
         return TerminalInterface.post(name, 'execute', options)
     },
 
-    focus(name) {
-        return TerminalInterface.post(name, 'focus')
+    focus(name, options) {
+        return TerminalInterface.post(name, 'focus', options)
     },
 
-    elementInfo(name) {
-        return TerminalInterface.post(name, 'elementInfo')
+    elementInfo(name, options) {
+        return TerminalInterface.post(name, 'elementInfo', options)
     },
 
     textEditorOpen(name, options) {
         return TerminalInterface.post(name, 'textEditorOpen', options)
     },
 
-    textEditorClose(name) {
-        return TerminalInterface.post(name, 'textEditorClose')
+    textEditorClose(name, options) {
+        return TerminalInterface.post(name, 'textEditorClose', options)
     },
 }
 

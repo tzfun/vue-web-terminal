@@ -1,4 +1,4 @@
-export const defaultCommands = [
+export const DEFAULT_COMMANDS = [
     {
         key: 'help',
         title: 'Help',
@@ -46,3 +46,18 @@ export const defaultCommands = [
         }]
     }
 ]
+
+export const MESSAGE_TYPE = {
+    NORMAL: 'normal',
+    JSON: 'json',
+    CODE: 'code',
+    TABLE: 'table',
+    HTML: 'html'
+}
+
+export const MESSAGE_CLASS = {
+    ERROR: 'error',
+    INFO: 'info',
+    WARN: 'warning',
+    SYSTEM: 'system'
+}

@@ -1,3 +1,5 @@
+import {MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
+
 /**
  * 将空格、回车、Tab转译为html
  *
@@ -213,7 +215,7 @@ export function _openUrl(url) {
         }
     } else {
         this._pushMessage({
-            class: 'error', type: 'normal', content: "Invalid website url"
+            class: MESSAGE_CLASS.ERROR, type: MESSAGE_TYPE.NORMAL, content: "Invalid website url"
         })
     }
 }

@@ -10,7 +10,7 @@
         </slot>
       </div>
       <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
-           ref="terminalWindow" @click="_focus">
+           ref="terminalWindow" @click="_focus" @dblclick="_focus(true)">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>

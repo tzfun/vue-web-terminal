@@ -40,7 +40,7 @@ import TViewCode from "@/components/TViewCode.vue";
 import TViewTable from "@/components/TViewTable.vue";
 import THelpBox from "@/components/THelpBox.vue";
 import TEditor from "@/components/TEditor.vue";
-import {defaultCommands} from "@/js/Configuration";
+import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
 
 let idx = 0;
 
@@ -131,7 +131,6 @@ export default {
                 return this._fullscreenState
             } else if (type === 'dragging') {
                 if (this._draggable()) {
-                    this._onActive()
                     this._dragging(options.x, options.y)
                 } else {
                     console.warn("Terminal is not draggable")
@@ -142,7 +141,7 @@ export default {
                     this._execute()
                 }
             } else if (type === 'focus') {
-                this._focus()
+                this._focus(options)
             } else if (type === 'elementInfo') {
                 let windowEle = this.$refs.terminalWindow
                 let windowRect = windowEle.getBoundingClientRect()
@@ -177,7 +176,7 @@ export default {
             await this._pushMessageBatch(this.initLog, true)
         }
 
-        this.allCommandStore = this.allCommandStore.concat(defaultCommands)
+        this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
         if (this.commandStore != null) {
             if (this.commandStoreSort != null) {
                 this.commandStore.sort(this.commandStoreSort)
@@ -201,6 +200,11 @@ export default {
             }
 
             this.cursorConf.show = activeCursor
+            if (activeCursor) {
+                this._onActive()
+            } else {
+                this._onInactive()
+            }
         })
 
         _eventOn(window, 'keydown', this.keydownListener = event => {
@@ -475,7 +479,7 @@ export default {
                 this.command = this.searchCmdResult.item.key
             }
         },
-        _focus() {
+        _focus(enforceFocus = false) {
             this._onActive()
             this.$nextTick(function () {
                 let input
@@ -484,6 +488,9 @@ export default {
                 } else if (this.textEditor.open) {
                     input = this.$refs.textEditor
                 } else {
+                    if (enforceFocus) {
+                        input = this.$refs.cmdInput
+                    }
                     this.cursorConf.show = true
                 }
                 if (input) {
@@ -558,7 +565,7 @@ export default {
                 content.rows.push(row)
             })
             this._pushMessage({
-                type: 'table',
+                type: MESSAGE_TYPE.TABLE,
                 content: content
             })
         },
@@ -635,7 +642,7 @@ export default {
                             let failed = (message = 'Failed to execute.') => {
                                 if (message != null) {
                                     this._pushMessage({
-                                        type: 'normal', class: 'error', content: message
+                                        type: MESSAGE_TYPE.NORMAL, class: MESSAGE_CLASS.ERROR, content: message
                                     })
                                 }
                                 this.showInputLine = true
@@ -655,8 +662,8 @@ export default {
                 } catch (e) {
                     console.error(e)
                     this._pushMessage({
-                        type: 'normal',
-                        class: 'error',
+                        type: MESSAGE_TYPE.NORMAL,
+                        class: MESSAGE_CLASS.ERROR,
                         content: _html(_unHtml(e.stack)),
                         tag: 'error'
                     })
@@ -675,9 +682,9 @@ export default {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
             if (!valid) {
                 console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
-                message.type = 'normal'
+                message.type = MESSAGE_TYPE.NORMAL
             } else {
-                if (message.type === 'json') {
+                if (message.type === MESSAGE_TYPE.JSON) {
                     if (!message.depth) {
                         message.depth = 1;
                     }
@@ -710,13 +717,20 @@ export default {
             if (message == null) return
             if (message instanceof Array) return this._pushMessageBatch(message, ignoreCheck)
 
+            if (message instanceof String) {
+                message = {
+                    type: MESSAGE_TYPE.NORMAL,
+                    content: message
+                }
+            }
+
             this._filterMessageType(message)
 
             this.terminalLog.push(message);
             if (!ignoreCheck) {
                 this._checkTerminalLog()
             }
-            if (message.type === 'json') {
+            if (message.type === MESSAGE_TYPE.JSON) {
                 setTimeout(() => {
                     this._jumpToBottom()
                 }, 80)
@@ -747,8 +761,8 @@ export default {
                 this.perfWarningRate.count = Math.floor(count / this.warnLogCountLimit)
                 this._pushMessage({
                     content: `Terminal log count exceeded <strong style="color: red">${count}/${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
-                    class: 'system',
-                    type: 'normal'
+                    class: MESSAGE_CLASS.SYSTEM,
+                    type: MESSAGE_TYPE.NORMAL
                 }, true)
             }
         },
@@ -954,7 +968,6 @@ export default {
                 if (this._fullscreenState) {
                     return
                 }
-                this._onActive()
                 let e = evt || window.event;
                 mouseOffsetX = e.clientX - box.offsetLeft;
                 mouseOffsetY = e.clientY - box.offsetTop;
@@ -1084,6 +1097,9 @@ export default {
         },
         _onActive() {
             this.$emit('on-active', this.getName())
+        },
+        _onInactive() {
+            this.$emit('on-inactive', this.getName())
         }
     }
 }
