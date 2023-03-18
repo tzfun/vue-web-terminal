@@ -1,5 +1,5 @@
 <template>
-  <div class="t-container"
+  <div :class="'t-container ' + (_isActive() ? '' : 't-disable-select')"
        :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
        ref="terminalContainer">
     <div class="terminal">
