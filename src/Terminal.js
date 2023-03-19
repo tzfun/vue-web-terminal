@@ -465,7 +465,7 @@ export default {
                 } else if (this.textEditor.open) {
                     input = this.$refs.textEditor
                 } else {
-                    if (enforceFocus) {
+                    if (enforceFocus === true) {
                         input = this.$refs.cmdInput
                     }
                     this.cursorConf.show = true
@@ -641,8 +641,10 @@ export default {
             this._resetCursorPos()
             if (this._isActive()) {
                 this._focus()
+                this.cursorConf.show = true
+            } else {
+                this.cursorConf.show = false
             }
-            this.cursorConf.show = true
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
@@ -683,7 +685,7 @@ export default {
             if (message == null) return
             if (message instanceof Array) return this._pushMessageBatch(message, ignoreCheck)
 
-            if (message instanceof String) {
+            if (typeof message === 'string') {
                 message = {
                     type: MESSAGE_TYPE.NORMAL,
                     content: message

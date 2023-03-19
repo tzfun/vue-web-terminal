@@ -1,0 +1,124 @@
+<template>
+  <div id="app">
+    <div v-for="(item,i) in terminals" :key="i">
+      <terminal
+          v-show="item.show"
+          :name="item.name"
+          :title="item.name"
+          :context="item.context"
+          :warn-log-count-limit="200"
+          :drag-conf="item.dragConf"
+          show-header
+          @exec-cmd="onExecCmd"
+          @on-active="onActive"
+          @on-inactive="onInactive"
+          style="position: fixed">
+      </terminal>
+    </div>
+  </div>
+
+</template>
+
+<script>
+import {Terminal, api as TerminalApi} from '../src/index.js'
+
+export default {
+  name: "App",
+  components: {Terminal},
+  data() {
+    return {
+      terminals: [
+        {
+          show: true,
+          name: 'terminal-test',
+          context: '/vue-web-terminal/test',
+          dragConf: {
+            width: "60%",
+            height: "50%",
+            zIndex: 100,
+            init: {
+              x: 100,
+              y: 70
+            }
+          }
+        }
+      ]
+    }
+  },
+  methods: {
+    onExecCmd(key, command, success, failed, name) {
+      if (key === 'list') {
+        success("hello")
+      } else if (key === 'loop') {
+        let count = 0
+        let timer = setInterval(() => {
+          if (count++ > 10) {
+            clearInterval(timer)
+            success()
+          }
+          TerminalApi.pushMessage(name, "loop: " + count)
+        }, 500)
+      } else if (key === 'close') {
+        let activeNext
+        this.terminals.forEach(o => {
+          if (o.name === name) {
+            o.show = false
+          }
+          if (o.show) {
+            activeNext = o.name
+          }
+        })
+        if (activeNext) {
+          TerminalApi.focus(activeNext, true)
+        }
+        success()
+      } else if (key === 'new') {
+        let seq = this.terminals.length
+        this.terminals.push({
+          show: true,
+          name: 'terminal-test-' + seq,
+          context: '/vue-web-terminal/test/' + seq,
+          dragConf: {
+            width: "60%",
+            height: "50%",
+            zIndex: 100,
+            init: {
+              x: 100 + seq * 50,
+              y: 70 + seq * 20
+            }
+          }
+        })
+        success()
+      } else {
+        failed("Unknown command: " + key)
+      }
+    },
+    onActive(name) {
+      this.terminals.forEach(o => {
+        if (o.name === name) {
+          o.dragConf.zIndex = 101
+        }
+      })
+    },
+    onInactive(name) {
+      this.terminals.forEach(o => {
+        if (o.name === name) {
+          o.dragConf.zIndex = 100
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style>
+body, html, #app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  font-family: Menlo, Consolas, monospace;
+  overflow: auto;
+}
+</style>
