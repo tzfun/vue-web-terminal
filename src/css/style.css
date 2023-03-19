@@ -27,7 +27,7 @@
     -ms-transition: opacity 0.2s ease;
     -webkit-transition: opacity 0.2s ease;
     -o-transition: opacity 0.2s ease;
-    margin-bottom: 1px;
+    margin-bottom: 0;
 }
 
 .t-shell-dots:hover .t-shell-dot {
@@ -389,7 +389,7 @@ pre {
 
 .t-vue-codemirror div,
 .t-vue-highlight div {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .t-code .t-vue-codemirror .vue-codemirror .CodeMirror {

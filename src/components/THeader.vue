@@ -7,7 +7,7 @@
     </h4>
     <ul class="t-shell-dots">
       <li class="shell-dot-item t-shell-dots-red"
-          @click="$parent._triggerClick('close')">
+          @click="$parent._triggerClick('close')" title="关闭">
         <svg t="1645078279626"
              class="t-shell-dot"
              viewBox="0 0 1024 1024"
@@ -21,7 +21,7 @@
         </svg>
       </li>
       <li class="shell-dot-item t-shell-dots-yellow"
-          @click="$parent._triggerClick('minScreen')">
+          @click="$parent._triggerClick('minScreen')" title="最小化">
         <svg t="1645078503601"
              class="t-shell-dot"
              viewBox="0 0 1024 1024"
@@ -35,7 +35,7 @@
         </svg>
       </li>
       <li class="shell-dot-item t-shell-dots-green"
-          @click="$parent._triggerClick('fullScreen')">
+          @click="$parent._triggerClick('fullScreen')" title="最大化">
         <svg t="1645078604258"
              class="t-shell-dot"
              viewBox="0 0 1024 1024"

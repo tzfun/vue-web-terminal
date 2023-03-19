@@ -74,7 +74,6 @@
                  @keyup="_onInputKeyup"
                  @input="_onInput"
                  @focusin="cursorConf.show = true"
-                 @focusout="cursorConf.show = false"
                  @keyup.up.exact="_switchPreCmd"
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
@@ -106,7 +105,6 @@
 
 <script>
 import './css/scrollbar.css'
-import './css/json.css'
 import './css/style.css'
 import 'vue-json-viewer/style.css'
 import TerminalJs from './Terminal.js'

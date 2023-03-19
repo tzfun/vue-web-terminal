@@ -108,8 +108,7 @@ export default {
                 onBlur: () => {
                     this.textEditor.focus = false
                 }
-            },
-            terminalListener: null,
+            }
         }
     },
     props: terminalProps(),
@@ -117,7 +116,7 @@ export default {
 
         this.$emit('init-before', this.getName())
 
-        this.terminalListener = (type, options) => {
+        register(this.getName(), this.terminalListener = (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
             } else if (type === 'fullscreen') {
@@ -128,7 +127,7 @@ export default {
                 if (this._draggable()) {
                     this._dragging(options.x, options.y)
                 } else {
-                    console.warn("Terminal is not draggable")
+                    console.warn("Terminal is not draggable: " + this.getName())
                 }
             } else if (type === 'execute') {
                 if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
@@ -162,10 +161,9 @@ export default {
             } else if (type === 'textEditorClose') {
                 return this._textEditorClose()
             } else {
-                console.error("Unsupported event type: " + type)
+                console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
             }
-        }
-        register(this.getName(), this.terminalListener)
+        })
 
         if (this.initLog != null) {
             await this._pushMessageBatch(this.initLog, true)
@@ -636,14 +634,15 @@ export default {
                     })
                 }
             }
-            this._focus()
             this._endExecCallBack()
         },
         _endExecCallBack() {
             this.command = ""
             this._resetCursorPos()
+            if (this._isActive()) {
+                this._focus()
+            }
             this.cursorConf.show = true
-            this._focus()
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)

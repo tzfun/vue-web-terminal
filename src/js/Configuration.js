@@ -56,6 +56,7 @@ export const MESSAGE_TYPE = {
 }
 
 export const MESSAGE_CLASS = {
+    SUCCESS: 'success',
     ERROR: 'error',
     INFO: 'info',
     WARN: 'warning',
