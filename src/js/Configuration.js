@@ -52,7 +52,8 @@ export const MESSAGE_TYPE = {
     JSON: 'json',
     CODE: 'code',
     TABLE: 'table',
-    HTML: 'html'
+    HTML: 'html',
+    ANSI: 'ansi'
 }
 
 export const MESSAGE_CLASS = {

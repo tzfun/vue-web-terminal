@@ -1,0 +1,228 @@
+.t-ansi-0 {
+    /*    no style  */
+}
+
+.t-ansi-1 {
+    font-weight: bold;
+}
+
+.t-ansi-2 {
+    font-weight: 200;
+}
+
+.t-ansi-3 {
+    font-style:oblique;
+}
+
+.t-ansi-4 {
+    text-decoration: underline;
+}
+
+@-webkit-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.t-ansi-5, .t-ansi-6 {
+    animation: blink 1s linear infinite;
+    -webkit-animation: blink 1s linear infinite;
+    -moz-animation: blink 1s linear infinite;
+    -ms-animation: blink 1s linear infinite;
+    -o-animation: blink 1s linear infinite;
+}
+
+.t-ansi-7 {
+    background-color: white;
+    color: #1C1D21;
+}
+
+.t-ansi-8 {
+    visibility: hidden;
+}
+
+.t-ansi-9 {
+    text-decoration:line-through;
+}
+
+.t-ansi-21,.t-ansi-22 {
+    font-weight: unset;
+}
+
+.t-ansi-23 {
+    font-style:unset;
+}
+
+.t-ansi-24, .t-ansi-29 {
+    text-decoration: none;
+}
+
+.t-ansi-25, .t-ansi-26 {
+    animation: none;
+    -webkit-animation: none;
+    -moz-animation: none;
+    -ms-animation: none;
+    -o-animation: none;
+}
+
+.t-ansi-27 {
+    background-color: inherit;
+    color: inherit;
+}
+
+.t-ansi-28 {
+    visibility: unset;
+}
+
+/*   前景色   */
+.t-ansi-30 {
+    color: black;
+}
+
+.t-ansi-31 {
+    color: #f10606;
+}
+
+.t-ansi-32 {
+    color: #14cb14;
+}
+
+.t-ansi-33 {
+    color: yellow;
+}
+
+.t-ansi-34 {
+    color: #3993d4;
+}
+
+.t-ansi-35 {
+    color: #bd12bd;
+}
+
+.t-ansi-36 {
+    color: #0eb4b4;
+}
+
+.t-ansi-37 {
+    color: white;
+}
+
+.t-ansi-90 {
+    color: #585859;
+}
+
+.t-ansi-91 {
+    color: #ef353a;
+}
+
+.t-ansi-92 {
+    color: #4ec215;
+}
+
+.t-ansi-93 {
+    color: #e3bd01;
+}
+
+.t-ansi-94 {
+    color: #1faffe;
+}
+
+.t-ansi-95 {
+    color: #eb7dec;
+}
+
+.t-ansi-96 {
+    color: #00e3e4;
+}
+
+.t-ansi-97 {
+    color: #fdfdfe;
+}
+
+/*  后景色 */
+.t-ansi-40 {
+    background-color: black;
+}
+
+.t-ansi-41 {
+    background-color: #f10606;
+}
+
+.t-ansi-42 {
+    background-color: #14cb14;
+}
+
+.t-ansi-43 {
+    background-color: yellow;
+}
+
+.t-ansi-44 {
+    background-color: #3993d4;
+}
+
+.t-ansi-45 {
+    background-color: #bd12bd;
+}
+
+.t-ansi-46 {
+    background-color: #0eb4b4;
+}
+
+.t-ansi-47 {
+    background-color: white;
+}
+
+.t-ansi-100 {
+    background-color: #585859;
+}
+
+.t-ansi-101 {
+    background-color: #ef353a;
+}
+
+.t-ansi-102 {
+    background-color: #4ec215;
+}
+
+.t-ansi-103 {
+    background-color: #e3bd01;
+}
+
+.t-ansi-104 {
+    background-color: #1faffe;
+}
+
+.t-ansi-105 {
+    background-color: #eb7dec;
+}
+
+.t-ansi-106 {
+    background-color: #00e3e4;
+}
+
+.t-ansi-107 {
+    background-color: #fdfdfe;
+}
+
+.t-ansi-line {
+    min-height: 20px;
+}
+
+.t-ansi-char {
+    min-width: 7px;
+    min-height: 20px;
+    font-size: inherit;
+    display: inline-block;
+    height: 100%;
+    vertical-align: top;
+    font-weight: bold;
+}

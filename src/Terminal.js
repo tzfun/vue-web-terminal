@@ -41,6 +41,7 @@ import TViewTable from "@/components/TViewTable.vue";
 import THelpBox from "@/components/THelpBox.vue";
 import TEditor from "@/components/TEditor.vue";
 import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
+import {_parseANSI} from "@/js/ansi/ANSI";
 
 let idx = 0;
 
@@ -690,6 +691,11 @@ export default {
                     type: MESSAGE_TYPE.NORMAL,
                     content: message
                 }
+            }
+
+            if (message.type === MESSAGE_TYPE.ANSI) {
+                message.type = MESSAGE_TYPE.HTML
+                message.content = _parseANSI(message.content)
             }
 
             this._filterMessageType(message)
