@@ -87,21 +87,19 @@
             {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
           </p>
         </slot>
+        <div v-if="enableExampleHint">
+          <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
+            <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
+          </slot>
+        </div>
+
+        <div class="t-text-editor-container" v-if="textEditor.open">
+          <slot name="textEditor" :data="textEditor">
+            <t-editor :config="textEditor" v-model="textEditor.value" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
+          </slot>
+        </div>
       </div>
     </div>
-    <div v-if="enableExampleHint">
-      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
-        <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
-      </slot>
-    </div>
-
-    <div class="t-text-editor-container" v-if="textEditor.open"
-         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
-      <slot name="textEditor" :data="textEditor">
-        <t-editor :config="textEditor" :modelValue="textEditor.value" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
-      </slot>
-    </div>
-
   </div>
 </template>
 

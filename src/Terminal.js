@@ -213,8 +213,8 @@ export default {
             let tWindow = this.terminalWindow
             if (tWindow && tWindow.getBoundingClientRect && _pointInRect(e, tWindow.getBoundingClientRect())) {
                 activeCursor = _isParentDom(e.target, tWindow, "t-window")
+                console.log("set cursor: ", activeCursor, e.target)
             }
-
             this.cursorConf.show = activeCursor
             if (activeCursor) {
                 this._onActive()
@@ -614,7 +614,6 @@ export default {
                                         this.flash.open = true
                                         return
                                     } else if (message instanceof TerminalAsk) {
-
                                         message.onAsk((options) => {
                                             this.ask.input = ''
                                             this.ask.isPassword = options.isPassword
@@ -968,9 +967,10 @@ export default {
             let isDragging = false;
 
             _eventOn(dragArea, 'mousedown', evt => {
-                if (this._fullscreenState) {
+                if (this.fullscreenState) {
                     return
                 }
+                this._onActive()
                 let e = evt || window.event;
                 mouseOffsetX = e.clientX - box.offsetLeft;
                 mouseOffsetY = e.clientY - box.offsetTop;
@@ -989,6 +989,9 @@ export default {
             })
 
             _eventOn(document, 'mouseup', () => {
+                if (isDragging) {
+                    this._onActive()
+                }
                 isDragging = false
                 window.style['user-select'] = 'unset'
             })
@@ -998,7 +1001,7 @@ export default {
             let clientHeight = document.body.clientHeight
             let container = this.terminalContainer
 
-            let xVal,yVal
+            let xVal, yVal
             if (x > clientWidth - container.clientWidth) {
                 xVal = clientWidth - container.clientWidth
             } else {
@@ -1020,6 +1023,8 @@ export default {
 
             container.style.left = xVal + "px";
             container.style.top = yVal + "px";
+
+            console.log(container.style.left, container.style.top)
         },
         _getDragStyle() {
             let clientWidth = document.body.clientWidth
@@ -1093,9 +1098,9 @@ export default {
                 this.textEditor.value = ''
                 if (this.textEditor.onClose) {
                     this.textEditor.onClose(content)
+                    this.textEditor.onClose = null
                 }
-                this.textEditor.onClose = null
-                this._focus()
+                this._focus(true)
                 return content
             }
         },

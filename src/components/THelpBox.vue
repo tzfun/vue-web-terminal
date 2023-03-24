@@ -1,6 +1,6 @@
 <template>
   <div class="t-cmd-help"
-       :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
+       :style="showHeader ? 'max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
        v-if="result && result.item && !_screenType().xs">
     <p class="text" v-if="result.item.description != null" style="margin: 15px 0"
        v-html="result.item.description"></p>

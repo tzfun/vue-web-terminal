@@ -106,6 +106,17 @@ export default {
           type: 'ansi',
           content: ansiContent
         })
+      } else if (key === 'edit') {
+        TerminalApi.textEditorOpen(name,{
+          content: 'Please edit this file',
+          onClose: (value) => {
+            console.log(value)
+            success({
+              type: "code",
+              content: value
+            })
+          }
+        })
       } else {
         failed("Unknown command: " + key)
       }

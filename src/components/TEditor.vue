@@ -35,6 +35,9 @@ export default {
       textEditor
     }
   },
+  mounted() {
+    this.value = this.config.value
+  },
   methods: {
     focus() {
       this.textEditor.focus()
