@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import {Terminal, api as TerminalApi} from '../src/index.js'
+import {api as TerminalApi, Terminal} from '../src/index.js'
 
 export default {
   name: "App",
@@ -49,15 +49,6 @@ export default {
     onExecCmd(key, command, success, failed, name) {
       if (key === 'list') {
         success("hello")
-      } else if (key === 'loop') {
-        let count = 0
-        let timer = setInterval(() => {
-          if (count++ > 10) {
-            clearInterval(timer)
-            success()
-          }
-          TerminalApi.pushMessage(name, "loop: " + count)
-        }, 500)
       } else if (key === 'close') {
         let activeNext
         this.terminals.forEach(o => {
@@ -72,6 +63,22 @@ export default {
           TerminalApi.focus(activeNext, true)
         }
         success()
+      } else if (key === 'loop') {
+        let count = 0;
+        let interval = setInterval(() => {
+          if (count++ > 20) {
+            clearInterval(interval)
+            success()
+          }
+          for (let i = 0; i < 20; i++) {
+            TerminalApi.pushMessage(name, {
+              type: 'normal',
+              class: 'system',
+              tag: 'output',
+              content: "random content: " + Math.random()
+            });
+          }
+        }, 100)
       } else if (key === 'new') {
         let seq = this.terminals.length
         this.terminals.push({

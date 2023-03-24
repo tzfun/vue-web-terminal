@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "test": "vue-cli-service serve Test/main.js",
+    "test": "vue-cli-service serve test/main.js",
     "build": "vue-cli-service build --target lib --formats umd --dest lib src/index.js && node package.js",
     "lint": "vue-cli-service lint"
   },
