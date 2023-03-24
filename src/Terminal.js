@@ -1,12 +1,53 @@
 import {nextTick, ref} from 'vue'
-import {_getByteLen, _html, _isEmpty, _isSafari, _nonEmpty, _unHtml} from "./Util.js";
-import historyStore from "./HistoryStore.js";
-import TerminalObj from './TerminalObj.js';
-import TerminalFlash from "./TerminalFlash.js";
-import TerminalAsk from "@/TerminalAsk";
+import {
+    _copyTextToClipboard, _defaultCommandFormatter, _eventOff,
+    _eventOn,
+    _getByteLen, _getClipboardText, _getSelection,
+    _html,
+    _isEmpty,
+    _isParentDom,
+    _isSafari,
+    _nonEmpty, _openUrl,
+    _pointInRect,
+    _unHtml
+} from "./js/Util.js";
+import historyStore from "./js/HistoryStore.js";
+import {
+    dragging,
+    elementInfo,
+    execute,
+    focus,
+    fullscreen,
+    isFullscreen,
+    pushMessage,
+    register, rename,
+    textEditorClose,
+    textEditorOpen,
+    unregister
+} from './js/TerminalInterface';
+import TerminalFlash from "./js/TerminalFlash.js";
+import TerminalAsk from "@/js/TerminalAsk";
+import THeader from "@/components/THeader.vue";
+import TViewNormal from "@/components/TViewNormal.vue";
+import TViewJson from "@/components/TViewJson.vue";
+import TViewCode from "@/components/TViewCode.vue";
+import TViewTable from "@/components/TViewTable.vue";
+import THelpBox from "@/components/THelpBox.vue";
+import TEditor from "@/components/TEditor.vue";
+import {terminalProps} from "@/js/TerminalAttribute";
+import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
+import {_parseANSI} from "@/js/ansi/ANSI";
+
+let idx = 0;
+
+function generateTerminalName() {
+    idx++;
+    return `terminal_${idx}`;
+}
 
 export default {
     name: 'Terminal',
+    components: {TEditor, THelpBox, TViewTable, TViewCode, TViewJson, TViewNormal, THeader},
     data() {
         return {
             command: "",
@@ -15,69 +56,22 @@ export default {
                 defaultWidth: 6,
                 width: 6,
                 left: 'unset',
-                top: 0,
+                top: 'unset',
                 idx: 0, //  从0开始
                 show: false
             },
             byteLen: {
-                en: 8, cn: 13
+                init: false,
+                en: 8,
+                cn: 13
             },
-            jsonViewDepth: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             showInputLine: true,
             terminalLog: [],
-            keydownListener: null,
-            searchCmd: {
+            searchCmdResult: {
                 item: null
             },
-            allCommandStore: [
-                {
-                    key: 'help',
-                    title: 'Help',
-                    group: 'local',
-                    usage: 'help [pattern]',
-                    description: 'Show command document.',
-                    example: [
-                        {
-                            des: "Get all commands.",
-                            cmd: 'help'
-                        }, {
-                            des: "Get help documentation for exact match commands.",
-                            cmd: 'help refresh'
-                        }, {
-                            des: "Get help documentation for fuzzy matching commands.",
-                            cmd: 'help *e*'
-                        }, {
-                            des: "Get help documentation for specified group, match key must start with ':'.",
-                            cmd: 'help :groupA'
-                        }
-                    ]
-                }, {
-                    key: 'clear',
-                    title: 'Clear screen or history logs',
-                    group: 'local',
-                    usage: 'clear [history]',
-                    description: 'Clear screen or history.',
-                    example: [
-                        {
-                            cmd: 'clear',
-                            des: 'Clear all records on the current screen.'
-                        }, {
-                            cmd: 'clear history',
-                            des: 'Clear command history'
-                        }
-                    ]
-                }, {
-                    key: 'open',
-                    title: 'Open page',
-                    group: 'local',
-                    usage: 'open <url>',
-                    description: 'Open a specified page.',
-                    example: [{
-                        cmd: 'open blog.beifengtz.com'
-                    }]
-                }
-            ],
-            fullscreen: false,
+            allCommandStore: [],
+            fullscreenState: false,
             perfWarningRate: {
                 count: 0
             },
@@ -99,152 +93,70 @@ export default {
                 autoReview: false,
                 input: ''
             },
-            textEditorData: {
+            textEditor: {
                 open: false,
                 focus: false,
                 value: '',
                 onClose: null,
                 onFocus: () => {
-                    this.textEditorData.focus = true
+                    this.textEditor.focus = true
                 },
                 onBlur: () => {
-                    this.textEditorData.focus = false
+                    this.textEditor.focus = false
                 }
             }
         }
     },
-    props: {
-        name: {
-            type: String, default: 'terminal'
-        },
-        //  终端标题
-        title: {
-            type: String, default: 'vue-web-terminal'
-        },
-        //  初始化日志内容
-        initLog: {
-            type: Array, default: () => {
-                return [{
-                    type: 'normal',
-                    content: "Terminal Initializing ..."
-                }, {
-                    type: 'normal',
-                    content: "Current login time: " + new Date().toLocaleString()
-                }, {
-                    type: 'normal',
-                    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
-                }]
-            }
-        },
-        //  上下文
-        context: {
-            type: String,
-            default: '/vue-web-terminal'
-        },
-        //  命令行搜索以及help指令用
-        commandStore: {
-            type: Array
-        },
-        //   命令行排序方式
-        commandStoreSort: {
-            type: Function
-        },
-        //  记录条数超出此限制会发出警告
-        warnLogCountLimit: {
-            type: Number, default: 200
-        },
-        //  自动搜索帮助
-        autoHelp: {
-            type: Boolean,
-            default: true
-        },
-        //  显示终端头部
-        showHeader: {
-            type: Boolean,
-            default: true
-        },
-        //  是否开启命令提示
-        enableExampleHint: {
-            type: Boolean,
-            default: true
-        },
-        //  输入过滤器
-        inputFilter: {
-            type: Function
-        },
-        //  拖拽配置
-        dragConf: {
-            type: Object,
-            default: () => {
-                /*
-                {
-                    width: 700,
-                    height: 500,
-                    zIndex: 100,
-                    init: {
-                        x: null,
-                        y: null
-                    }
-                }
-                **/
-                return null
-            }
-        },
-        commandFormatter: {
-            type: Function
-        },
-        //  按下Tab键处理函数
-        tabKeyHandler: {
-            type: Function
-        }
-    },
-    emits: ["onKeydown", "onClick", "beforeExecCmd", "execCmd", "destroyed", "initBefore", "initComplete"],
+    props: terminalProps(),
+    emits: ["on-keydown", "on-click", "before-exec-cmd", "exec-cmd", "destroyed", "init-before", "init-complete",'on-active','on-inactive'],
     setup() {
         const terminalContainer = ref(null)
         const terminalHeader = ref(null)
         const terminalWindow = ref(null)
-        const cmdInput = ref(null)
-        const askInput = ref(null)
+        const terminalCmdInput = ref(null)
+        const terminalAskInput = ref(null)
         const terminalInputBox = ref(null)
         const terminalInputPrompt = ref(null)
         const terminalEnFlag = ref(null)
         const terminalCnFlag = ref(null)
-        const terminalObj = TerminalObj
-        const textEditor = ref(null)
+        const terminalTextEditor = ref(null)
 
         return {
             terminalContainer,
             terminalHeader,
             terminalWindow,
-            cmdInput,
-            askInput,
+            terminalCmdInput,
+            terminalAskInput,
             terminalInputBox,
             terminalInputPrompt,
-            terminalObj,
             terminalEnFlag,
             terminalCnFlag,
-            textEditor
+            terminalTextEditor
         }
     },
-    created() {
-        TerminalObj.register(this.name, (type, options) => {
+    async mounted() {
+        this.$emit('init-before', this.getName())
+
+        register(this.getName(), this.terminalListener = (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
             } else if (type === 'fullscreen') {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
-                return this.fullscreen
+                return this.fullscreenState
             } else if (type === 'dragging') {
                 if (this._draggable()) {
                     this._dragging(options.x, options.y)
                 } else {
-                    console.warn("Terminal is not draggable")
+                    console.warn("Terminal is not draggable: " + this.getName())
                 }
             } else if (type === 'execute') {
-                if (_nonEmpty(options)) {
+                if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
                     this.command = options
                     this._execute()
                 }
+            } else if (type === 'focus') {
+                this._focus(options)
             } else if (type === 'elementInfo') {
                 let windowRect = this.terminalWindow.getBoundingClientRect()
                 let containerRect = this.terminalContainer.getBoundingClientRect()
@@ -261,50 +173,56 @@ export default {
                         cn: this.byteLen.cn             //  单个中文字符宽度
                     }
                 }
-            } else if (type === 'focus') {
-                this._focus()
             } else if (type === 'textEditorOpen') {
                 let opt = options || {}
-                this.textEditorData.value = opt.content
-                this.textEditorData.open = true
-                this.textEditorData.onClose = opt.onClose
+                this.textEditor.value = opt.content
+                this.textEditor.open = true
+                this.textEditor.onClose = opt.onClose
                 this._focus()
             } else if (type === 'textEditorClose') {
                 return this._textEditorClose()
             } else {
-                console.error("Unsupported event type: " + type)
+                console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
             }
         })
-    },
-    async mounted() {
-        this.$emit('initBefore', this.name)
 
         if (this.initLog != null) {
             await this._pushMessageBatch(this.initLog, true)
         }
 
+        this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
         if (this.commandStore != null) {
             if (this.commandStoreSort != null) {
                 this.commandStore.sort(this.commandStoreSort)
             }
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
-        this.byteLen = {
-            en: this.terminalEnFlag.getBoundingClientRect().width / 2,
-            cn: this.terminalCnFlag.getBoundingClientRect().width / 2
-        }
-        this.cursorConf.defaultWidth = this.byteLen.en
+
+        this._calculateByteLen()
+        this._calculatePromptLen()
 
         if (this.terminalWindow != null) {
             this.terminalWindow.scrollTop = this.terminalWindow.offsetHeight;
         }
 
-        //  计算context的宽度和行高，用于跨行时定位光标位置
-        let promptRect = this.terminalInputPrompt.getBoundingClientRect()
-        this.inputBoxParam.promptHeight = promptRect.height
-        this.inputBoxParam.promptWidth = promptRect.width
+        let selectContentText = null
 
-        this.keydownListener = event => {
+        _eventOn(window, "click", this.clickListener = e => {
+            let activeCursor = false
+            let tWindow = this.terminalWindow
+            if (tWindow && tWindow.getBoundingClientRect && _pointInRect(e, tWindow.getBoundingClientRect())) {
+                activeCursor = _isParentDom(e.target, tWindow, "t-window")
+            }
+
+            this.cursorConf.show = activeCursor
+            if (activeCursor) {
+                this._onActive()
+            } else {
+                this._onInactive()
+            }
+        })
+
+        _eventOn(window, 'keydown', this.keydownListener = event => {
             if (this._isActive()) {
                 if (this.cursorConf.show) {
                     if (event.key.toLowerCase() === 'tab') {
@@ -314,19 +232,54 @@ export default {
                             this.tabKeyHandler(event)
                         }
                         event.preventDefault()
-                    } else if (document.activeElement !== this.$refs.cmdInput) {
-                        this.$refs.cmdInput.focus()
+                    } else if (this.terminalCmdInput && document.activeElement !== this.terminalCmdInput) {
+                        this.terminalCmdInput.focus()
                     }
                 }
-                this.$emit('onKeydown', event, this.name)
+
+                this.$emit('on-keydown', event, this.getName())
             }
-        }
-        window.addEventListener('keydown', this.keydownListener);
+        })
+
+        //  先暂存选中文本
+        _eventOn(this.terminalWindow, 'mousedown', () => {
+            let selection = _getSelection();
+            let content = ''
+            if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
+                selectContentText = content.length > 0 ? content : selection.toString()
+            }
+        });
+        _eventOn(this.terminalWindow, 'contextmenu', this.contextMenuClick = (event) => {
+            event.preventDefault();
+
+            if (selectContentText) {
+                _copyTextToClipboard(selectContentText)
+                selectContentText = null
+                return;
+            }
+
+            const clipboardText = _getClipboardText();
+            if (clipboardText) {
+                clipboardText.then(text => {
+                    if (!text) {
+                        return;
+                    }
+                    const command = this.command;
+                    this.command = command && command.length ? `${command} ${text}` : text;
+                    this._focus()
+                }).catch(error => {
+                    console.error(error);
+                })
+            } else {
+                this._focus()
+            }
+        })
+
         let safariStyleCache = {};
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
-            window.addEventListener(item, () => {
-                let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
+            _eventOn(window, item, () => {
+                let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement
                 if (isFullScreen) {
                     //  进入全屏
                     if (_isSafari()) {
@@ -346,7 +299,7 @@ export default {
                     }
                 } else {
                     //  退出全屏
-                    this.fullscreen = false
+                    this.fullscreenState = false
                     if (_isSafari()) {
                         let container = this.terminalContainer
                         container.style.position = safariStyleCache.position
@@ -360,12 +313,13 @@ export default {
         })
 
         this._initDrag()
-        this.$emit('initComplete', this.name)
+        this.$emit('init-complete', this.getName())
     },
     unmounted() {
-        this.$emit('destroyed', this.name)
-        window.removeEventListener('keydown', this.keydownListener)
-        TerminalObj.unregister(this.name)
+        this.$emit('destroyed', this.getName())
+        _eventOff(window, 'keydown', this.keydownListener)
+        _eventOff(window, "click", this.clickListener)
+        unregister(this.getName())
     },
     watch: {
         terminalLog: {
@@ -377,31 +331,108 @@ export default {
         context: {
             handler() {
                 nextTick(() => {
-                    this.inputBoxParam.promptWidth = this.terminalInputPrompt.getBoundingClientRect().width
+                    this._calculatePromptLen()
                 }).then(() => {
                 })
+            }
+        },
+        name: {
+            handler(newVal, oldVal) {
+                rename(newVal ? newVal : this.getName(), oldVal ? oldVal : this._name, this.terminalListener)
             }
         }
     },
     methods: {
+        pushMessage(message) {
+            pushMessage(this.getName(), message);
+        },
+        fullscreen() {
+            return fullscreen(this.getName());
+        },
+        isFullscreen() {
+            return isFullscreen(this.getName());
+        },
+        dragging(options) {
+            return dragging(this.getName(), options);
+        },
+        execute(options) {
+            return execute(this.getName(), options);
+        },
+        focus() {
+            return focus(this.getName());
+        },
+        elementInfo() {
+            return elementInfo(this.getName());
+        },
+        textEditorClose(options) {
+            return textEditorClose(this.getName(), options);
+        },
+        textEditorOpen(options) {
+            return textEditorOpen(this.getName(), options);
+        },
+        getName() {
+            if (this.name) {
+                return this.name;
+            }
+            if (!this._name) {
+                this._name = generateTerminalName();
+            }
+            return this._name;
+        },
         _triggerClick(key) {
-            if (key === 'fullScreen' && !this.fullscreen) {
+            if (key === 'fullScreen' && !this.fullscreenState) {
                 this._fullscreen()
-            } else if (key === 'minScreen' && this.fullscreen) {
+            } else if (key === 'minScreen' && this.fullscreenState) {
                 this._fullscreen()
             }
-            this.$emit('onClick', key, this.name)
+            this.$emit('on-click', key, this.getName())
+        },
+        _calculateByteLen() {
+            if (this.byteLen.init) {
+                return
+            }
+            let enGhost = this.terminalEnFlag
+            if (enGhost) {
+                let rect = enGhost.getBoundingClientRect()
+                if (rect && rect.width > 0) {
+                    this.byteLen = {
+                        init: true,
+                        en: rect.width / 2,
+                        cn: this.terminalCnFlag.getBoundingClientRect().width / 2
+                    }
+
+                    this.cursorConf.defaultWidth = this.byteLen.en
+                }
+            }
+        },
+        _calculatePromptLen() {
+            let prompt = this.terminalInputPrompt
+            if (prompt) {
+                let rect = prompt.getBoundingClientRect()
+                if (rect.width > 0) {
+                    this.inputBoxParam.promptWidth = rect.width
+                    this.inputBoxParam.promptHeight = rect.height
+                }
+            }
         },
         _resetSearchKey() {
-            this.searchCmd.item = null
+            this.searchCmdResult.item = null
         },
         _searchCmd(key) {
             if (!this.autoHelp) {
-                return;
+                return
             }
+
+            //  用户自定义搜索实现
+            if (this.searchHandler) {
+                this.searchCmdResult.item = this.searchHandler(this.allCommandStore, key)
+                this._jumpToBottom()
+                return
+            }
+
             let cmd = key
             if (cmd == null) {
-                cmd = this.command
+                cmd = this.command.split(' ')[0]
             }
             if (_isEmpty(cmd)) {
                 this._resetSearchKey()
@@ -436,44 +467,38 @@ export default {
                         })
                         target = matchSet[0].item
                     } else {
-                        this.searchCmd.item = null
+                        this.searchCmdResult.item = null
                         return
                     }
                 }
-                this.searchCmd.item = target
+                this.searchCmdResult.item = target
                 this._jumpToBottom()
             }
         },
         _fillCmd() {
-            if (this.searchCmd.item != null) {
-                this.command = this.searchCmd.item.key
+            if (this.searchCmdResult.item) {
+                this.command = this.searchCmdResult.item.key
             }
         },
-        _focus() {
+        _focus(enforceFocus = false) {
+            this._onActive()
             nextTick(() => {
+                let input
                 if (this.ask.open) {
-                    this.askInput.focus()
-                } else if (this.textEditorData.open) {
-                    if (this.textEditor) {
-                        this.textEditor.focus()
-                    }
+                    input = this.terminalAskInput
+                } else if (this.textEditor.open) {
+                    input = this.terminalTextEditor
                 } else {
-                    //  没有被选中
-                    if (this._getSelection().isCollapsed) {
-                        this.cmdInput.focus()
-                    } else {
-                        this.cursorConf.show = true
+                    if (enforceFocus === true) {
+                        input = this.terminalCmdInput
                     }
+                    this.cursorConf.show = true
+                }
+                if (input) {
+                    input.focus()
                 }
             }).then(() => {
             })
-        },
-        _getSelection() {
-            if (window.getSelection) {
-                return window.getSelection()
-            } else {
-                return document.getSelection()
-            }
         },
         /**
          * help命令执行后调用此方法
@@ -542,7 +567,7 @@ export default {
                 content.rows.push(row)
             })
             this._pushMessage({
-                type: 'table',
+                type: MESSAGE_TYPE.TABLE,
                 content: content
             })
         },
@@ -553,7 +578,7 @@ export default {
                 try {
                     let split = this.command.split(" ")
                     let cmdKey = split[0];
-                    this.$emit("beforeExecCmd", cmdKey, this.command, this.name)
+                    this.$emit("before-exec-cmd", cmdKey, this.command, this.getName())
                     switch (cmdKey) {
                         case 'help': {
                             let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
@@ -565,7 +590,7 @@ export default {
                             this._doClear(split);
                             break;
                         case 'open':
-                            this._openUrl(split[1]);
+                            _openUrl(split[1]);
                             break;
                         default: {
                             this.showInputLine = false
@@ -614,52 +639,50 @@ export default {
                             let failed = (message = 'Failed to execute.') => {
                                 if (message != null) {
                                     this._pushMessage({
-                                        type: 'normal', class: 'error', content: message
+                                        type: MESSAGE_TYPE.NORMAL, class: MESSAGE_CLASS.ERROR, content: message
                                     })
                                 }
                                 this.showInputLine = true
                                 this._endExecCallBack()
                             }
 
-                            this.$emit("execCmd", cmdKey, this.command, success, failed, this.name)
+                            this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
                             return
                         }
                     }
                 } catch (e) {
                     console.error(e)
                     this._pushMessage({
-                        type: 'normal',
-                        class: 'error',
+                        type: MESSAGE_TYPE.NORMAL,
+                        class: MESSAGE_CLASS.ERROR,
                         content: _html(_unHtml(e.stack)),
                         tag: 'error'
                     })
                 }
             }
-            this._focus()
             this._endExecCallBack()
         },
         _endExecCallBack() {
             this.command = ""
             this._resetCursorPos()
-            this.cursorConf.show = true
-            this._focus()
-        },
-        _parseToJson(obj) {
-            if (typeof obj === 'object' && obj) {
-                return obj;
-            } else if (typeof obj === 'string') {
-                try {
-                    return JSON.parse(obj);
-                } catch (e) {
-                    return obj;
-                }
+            if (this._isActive()) {
+                this._focus()
+                this.cursorConf.show = true
+            } else {
+                this.cursorConf.show = false
             }
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
             if (!valid) {
                 console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
-                message.type = 'normal'
+                message.type = MESSAGE_TYPE.NORMAL
+            } else {
+                if (message.type === MESSAGE_TYPE.JSON) {
+                    if (!message.depth) {
+                        message.depth = 1;
+                    }
+                }
             }
             return valid
         },
@@ -689,6 +712,18 @@ export default {
             if (message == null) return
             if (message instanceof Array) return this._pushMessageBatch(message, ignoreCheck)
 
+            if (typeof message === 'string') {
+                message = {
+                    type: MESSAGE_TYPE.NORMAL,
+                    content: message
+                }
+            }
+
+            if (message.type === MESSAGE_TYPE.ANSI) {
+                message.type = MESSAGE_TYPE.HTML
+                message.content = _parseANSI(message.content)
+            }
+
             this._filterMessageType(message)
 
             this.terminalLog.push(message)
@@ -696,7 +731,7 @@ export default {
                 this._checkTerminalLog()
             }
 
-            if (message.type === 'json') {
+            if (message.type === MESSAGE_TYPE.JSON) {
                 setTimeout(() => {
                     this._jumpToBottom()
                 }, 80)
@@ -728,14 +763,14 @@ export default {
                 this.perfWarningRate.count = Math.floor(count / this.warnLogCountLimit)
                 this._pushMessage({
                     content: `Terminal log count exceeded <strong style="color: red">${count}/${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
-                    class: 'system',
-                    type: 'normal'
+                    class: MESSAGE_CLASS.SYSTEM,
+                    type: MESSAGE_TYPE.NORMAL
                 }, true)
             }
         },
         _saveCurCommand() {
             if (_nonEmpty(this.command)) {
-                historyStore.pushCmd(this.name, this.command)
+                historyStore.pushCmd(this.getName(), this.command)
             }
 
             this.terminalLog.push({
@@ -747,26 +782,13 @@ export default {
             if (args.length === 1) {
                 this.terminalLog = [];
             } else if (args.length === 2 && args[1] === 'history') {
-                historyStore.clearLog(this.name)
+                historyStore.clearLog(this.getName())
             }
             this.perfWarningRate.size = 0
             this.perfWarningRate.count = 0
         },
-        _openUrl(url) {
-            let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
-            if (match.test(url)) {
-                if (!url.startsWith("http") && !url.startsWith("https")) {
-                    window.open(`http://${url}`)
-                } else {
-                    window.open(url);
-                }
-            } else {
-                this._pushMessage({
-                    class: 'error', type: 'normal', content: "Invalid website url"
-                })
-            }
-        },
         _resetCursorPos(cmd) {
+            this._calculateByteLen()
             this.cursorConf.idx = (cmd == null ? this.command : cmd).length
             this.cursorConf.left = 'unset'
             this.cursorConf.top = 'unset'
@@ -780,6 +802,10 @@ export default {
             if (idx < 0 || idx >= command.length) {
                 this._resetCursorPos()
                 return
+            }
+
+            if (this.inputBoxParam.promptWidth === 0) {
+                this._calculatePromptLen()
             }
 
             let lineWidth = this.terminalInputBox.getBoundingClientRect().width
@@ -802,8 +828,8 @@ export default {
                 }
             }
 
-            this.cursorConf.left = pos.left
-            this.cursorConf.top = pos.top
+            this.cursorConf.left = pos.left + 'px'
+            this.cursorConf.top = pos.top + 'px'
             this.cursorConf.width = charWidth
         },
         _cursorGoLeft() {
@@ -819,19 +845,19 @@ export default {
             this._calculateCursorPos()
         },
         _switchPreCmd() {
-            let cmdLog = historyStore.getLog(this.name)
-            let cmdIdx = historyStore.getIdx(this.name)
+            let cmdLog = historyStore.getLog(this.getName())
+            let cmdIdx = historyStore.getIdx(this.getName())
             if (cmdLog.length !== 0 && cmdIdx > 0) {
                 cmdIdx -= 1;
                 this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
             }
             this._resetCursorPos()
-            historyStore.setIdx(this.name, cmdIdx)
+            historyStore.setIdx(this.getName(), cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
         _switchNextCmd() {
-            let cmdLog = historyStore.getLog(this.name)
-            let cmdIdx = historyStore.getIdx(this.name)
+            let cmdLog = historyStore.getLog(this.getName())
+            let cmdIdx = historyStore.getIdx(this.getName())
             if (cmdLog.length !== 0 && cmdIdx < cmdLog.length - 1) {
                 cmdIdx += 1;
                 this.command = cmdLog[cmdIdx] == null ? [] : cmdLog[cmdIdx];
@@ -840,7 +866,7 @@ export default {
                 this.command = '';
             }
             this._resetCursorPos()
-            historyStore.setIdx(this.name, cmdIdx)
+            historyStore.setIdx(this.getName(), cmdIdx)
             this._searchCmd(this.command.trim().split(" ")[0])
         },
         _calculateStringWidth(str) {
@@ -873,7 +899,7 @@ export default {
             })
         },
         _checkInputCursor() {
-            let eIn = this.cmdInput
+            let eIn = this.terminalCmdInput
             if (eIn.selectionStart !== this.cursorConf.idx) {
                 this.cursorConf.idx = eIn.selectionStart
             }
@@ -899,7 +925,7 @@ export default {
         },
         _fullscreen() {
             let fullArea = this.terminalContainer
-            if (this.fullscreen) {
+            if (this.fullscreenState) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.webkitCancelFullScreen) {
@@ -921,7 +947,7 @@ export default {
                     fullArea.msRequestFullscreen();
                 }
             }
-            this.fullscreen = !this.fullscreen
+            this.fullscreenState = !this.fullscreenState
         },
         _draggable() {
             return this.showHeader && this.dragConf
@@ -940,31 +966,31 @@ export default {
 
             let isDragging = false;
 
-            dragArea.onmousedown = e1 => {
-                if (this.fullscreen) {
+            _eventOn(dragArea, 'mousedown', evt => {
+                if (this._fullscreenState) {
                     return
                 }
-                let e = e1 || window.event;
+                let e = evt || window.event;
                 mouseOffsetX = e.clientX - box.offsetLeft;
                 mouseOffsetY = e.clientY - box.offsetTop;
 
                 isDragging = true
                 window.style['user-select'] = 'none'
-            }
+            })
 
-            document.onmousemove = e2 => {
+            _eventOn(document, 'mousemove', evt => {
                 if (isDragging) {
-                    let e = e2 || window.event;
+                    let e = evt || window.event;
                     let moveX = e.clientX - mouseOffsetX;
                     let moveY = e.clientY - mouseOffsetY;
                     this._dragging(moveX, moveY)
                 }
-            }
+            })
 
-            document.onmouseup = () => {
+            _eventOn(document, 'mouseup', () => {
                 isDragging = false
                 window.style['user-select'] = 'unset'
-            }
+            })
         },
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
@@ -1027,22 +1053,7 @@ export default {
             if (this.commandFormatter != null) {
                 return this.commandFormatter(cmd)
             }
-            let split = cmd.split(" ")
-            let formatted = ''
-            for (let i = 0; i < split.length; i++) {
-                let char = _html(split[i])
-                if (i === 0) {
-                    formatted += `<span class='t-cmd-key'>${char}</span>`
-                } else if (char.startsWith("-")) {
-                    formatted += `<span class="t-cmd-arg">${char}</span>`
-                } else if (char.length > 0) {
-                    formatted += `<span>${char}</span>`
-                }
-                if (i < split.length - 1) {
-                    formatted += "<span>&nbsp;</span>"
-                }
-            }
-            return formatted
+            return _defaultCommandFormatter(cmd)
         },
         _getPosition() {
             if (this._draggable()) {
@@ -1055,7 +1066,6 @@ export default {
         _onAskInput() {
             if (this.ask.autoReview) {
                 this._pushMessage({
-                    time: '',
                     content: this.ask.question + (this.ask.isPassword ? '*'.repeat(this.ask.input.length) : this.ask.input)
                 })
             }
@@ -1065,14 +1075,14 @@ export default {
             }
         },
         _textEditorClose() {
-            if (this.textEditorData.open) {
-                this.textEditorData.open = false
-                let content = this.textEditorData.value
-                this.textEditorData.value = ''
-                if (this.textEditorData.onClose) {
-                    this.textEditorData.onClose(content)
+            if (this.textEditor.open) {
+                this.textEditor.open = false
+                let content = this.textEditor.value
+                this.textEditor.value = ''
+                if (this.textEditor.onClose) {
+                    this.textEditor.onClose(content)
                 }
-                this.textEditorData.onClose = null
+                this.textEditor.onClose = null
                 this._focus()
                 return content
             }
@@ -1084,8 +1094,14 @@ export default {
          */
         _isActive() {
             return this.cursorConf.show
-                || (this.ask.open && this.askInput === document.activeElement)
-                || (this.textEditorData.open && this.textEditorData.focus)
+                || (this.ask.open && this.terminalAskInput === document.activeElement)
+                || (this.textEditor.open && this.textEditor.focus)
+        },
+        _onActive() {
+            this.$emit('on-active', this.getName())
+        },
+        _onInactive() {
+            this.$emit('on-inactive', this.getName())
         }
     }
 }

@@ -5,10 +5,8 @@
   "license":"Apache-2.0",
   "private": false,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build-cli": "vue-cli-service build --target lib --dest lib src/index.js && python modify_lib.py",
-    "build-wc": "vue-cli-service build --target wc --dest lib src/Terminal.vue",
-    "build": "webpack --mode=production --config webpack.config.js",
+    "test": "vue-cli-service serve --mode test --target wc test/main.js",
+    "build": "vue-cli-service build --target lib --formats umd --dest lib src/index.js && node package.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

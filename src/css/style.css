@@ -1,3 +1,17 @@
+.t-window div::selection,
+.t-window a::selection,
+.t-window span::selection,
+.t-window li::selection,
+.t-window p::selection,
+.t-window code::selection,
+.t-window td::selection,
+.t-window th::selection,
+.t-window br::selection
+{
+    color: black;
+    background-color: white;
+}
+
 .t-log-box {
     display: block;
     margin-block-start: 1em;
@@ -13,6 +27,7 @@
     -ms-transition: opacity 0.2s ease;
     -webkit-transition: opacity 0.2s ease;
     -o-transition: opacity 0.2s ease;
+    margin-bottom: 0;
 }
 
 .t-shell-dots:hover .t-shell-dot {
@@ -270,11 +285,6 @@
     margin: 3px 0;
 }
 
-.t-json-deep-selector {
-    margin-top: 5px;
-    width: 140px;
-}
-
 .t-cmd-help {
     position: absolute;
     right: 15px;
@@ -333,6 +343,7 @@
 
 pre {
     position: relative;
+    margin: 0;
 }
 
 .t-example-ul {
@@ -341,7 +352,7 @@ pre {
     list-style: none;
 }
 
-.t-table-container {
+.t-table {
     max-width: 100%;
     overflow: auto;
     padding: 0;
@@ -374,15 +385,19 @@ pre {
     position: relative;
     max-height: 500px;
     overflow: auto;
-    font-size: 20px;
 }
 
-.CodeMirror {
-    height: unset !important;
+.t-vue-codemirror div,
+.t-vue-highlight div {
+    font-size: 14px;
+}
+
+.t-code .t-vue-codemirror .vue-codemirror .CodeMirror {
+    height: unset;
     border: none;
 }
 
-.text-editor-container {
+.t-text-editor-container {
     position: absolute;
     left: 0;
     top: 0;
@@ -391,7 +406,7 @@ pre {
     z-index: 1;
 }
 
-.text-editor {
+.t-text-editor {
     color: #fff;
     width: calc(100% - 10px);
     height: calc(100% - 35px);
@@ -404,12 +419,12 @@ pre {
     font-size: 15px;
 }
 
-.text-editor:focus-visible, .text-editor:focus {
+.t-text-editor:focus-visible, .t-text-editor:focus {
     outline: none;
     outline-offset: unset;
 }
 
-.text-editor-floor {
+.t-text-editor-floor {
     background-color: rgb(72 69 69);
     position: absolute;
     height: 35px;
@@ -418,7 +433,7 @@ pre {
     left: 0;
 }
 
-.text-editor-floor-btn {
+.t-text-editor-floor-btn {
     color: white;
     background-color: rgba(0,0,0,0);
     border: none;
@@ -427,9 +442,10 @@ pre {
     cursor: pointer;
 }
 
-.disable-select {
+.t-disable-select {
     user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    -moz-user-select:none;
     -webkit-user-select: none;
+    -ms-user-select: none;
+    -khtml-user-selece:none;
 }

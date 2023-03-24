@@ -1,0 +1,51 @@
+<template>
+  <div class="t-editor">
+    <textarea name="editor" ref="textEditor" class="t-text-editor" v-model="value"
+              @focus="config.onFocus" @blur="config.onBlur"></textarea>
+    <div class="t-text-editor-floor" align="center">
+      <button class="t-text-editor-floor-btn" @click="$emit('close')">Save & Close</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import {ref} from "vue";
+
+export default {
+  name: "TEditor",
+  data() {
+    return {
+      value: ''
+    }
+  },
+  props: {
+    config: Object,
+    modelValue: String
+  },
+  watch: {
+    value: {
+      handler(newVal) {
+        this.$emit("update:modelValue", newVal)
+      }
+    }
+  },
+  setup() {
+    const textEditor = ref(null)
+    return {
+      textEditor
+    }
+  },
+  methods: {
+    focus() {
+      this.textEditor.focus()
+    }
+  }
+}
+</script>
+
+<style scoped>
+.t-editor {
+  width: 100%;
+  height: 100%;
+}
+</style>

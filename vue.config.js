@@ -1,4 +1,5 @@
 const name = "vue-web-terminal"
+const env = process.env.NODE_ENV
 
 module.exports = {
     publicPath: './',
@@ -10,18 +11,13 @@ module.exports = {
     filenameHashing: false,
     configureWebpack: {
         output: {
-            filename: `${name}.js`,
+            filename: env === 'test' ? `[name].js` : `${name}.js`,
             chunkFilename: `${name}.chunk.js`,
             libraryTarget: 'umd',
             umdNamedDefine: true
         }
     },
     chainWebpack: (config) => {
-
-        config.plugins.delete('preload')
-        config.plugins.delete('prefetch')
-        config.plugins.delete('html')
-
         config.module
             .rule('vue')
             .use('vue-loader')
@@ -31,15 +27,5 @@ module.exports = {
                 }
                 return options
             })
-
-        config.optimization
-            .minimize(true)
-            .minimizer('terser')
-            .tap(args => {
-                let {terserOptions} = args[0];
-                terserOptions.compress.drop_console = false;
-                terserOptions.compress.drop_debugger = true;
-                return args
-            });
     },
 };
