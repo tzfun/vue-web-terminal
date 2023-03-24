@@ -51,7 +51,7 @@
         <div v-if="ask.open && ask.question">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
-                 ref="askInput"
+                 ref="terminalAskInput"
                  v-model="ask.input"
                  class="t-ask-input"
                  autocomplete="off"
@@ -67,7 +67,7 @@
             :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
                  class="t-cmd-input t-disable-select"
-                 ref="cmdInput"
+                 ref="terminalCmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
                  @keydown="_onInputKeydown"
@@ -98,7 +98,7 @@
     <div class="t-text-editor-container" v-if="textEditor.open"
          :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
       <slot name="textEditor" :data="textEditor">
-        <t-editor :config="textEditor" :modelValue="textEditor.value" @close="_textEditorClose" ref="textEditor"></t-editor>
+        <t-editor :config="textEditor" :modelValue="textEditor.value" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>
     </div>
 

@@ -104,11 +104,12 @@ export default {
                 onBlur: () => {
                     this.textEditor.focus = false
                 }
-            }
+            },
+            containerStyleStore: null
         }
     },
     props: terminalProps(),
-    emits: ["on-keydown", "on-click", "before-exec-cmd", "exec-cmd", "destroyed", "init-before", "init-complete",'on-active','on-inactive'],
+    emits: ["on-keydown", "on-click", "before-exec-cmd", "exec-cmd", "destroyed", "init-before", "init-complete", 'on-active', 'on-inactive'],
     setup() {
         const terminalContainer = ref(null)
         const terminalHeader = ref(null)
@@ -134,7 +135,7 @@ export default {
             terminalTextEditor
         }
     },
-    async mounted() {
+    mounted() {
         this.$emit('init-before', this.getName())
 
         register(this.getName(), this.terminalListener = (type, options) => {
@@ -187,7 +188,7 @@ export default {
         })
 
         if (this.initLog != null) {
-            await this._pushMessageBatch(this.initLog, true)
+            this._pushMessageBatch(this.initLog, true)
         }
 
         this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
@@ -232,7 +233,7 @@ export default {
                             this.tabKeyHandler(event)
                         }
                         event.preventDefault()
-                    } else if (this.terminalCmdInput && document.activeElement !== this.terminalCmdInput) {
+                    } else if (document.activeElement !== this.terminalCmdInput) {
                         this.terminalCmdInput.focus()
                     }
                 }
@@ -248,8 +249,9 @@ export default {
             if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
                 selectContentText = content.length > 0 ? content : selection.toString()
             }
-        });
-        _eventOn(this.terminalWindow, 'contextmenu', this.contextMenuClick = (event) => {
+        })
+
+        _eventOn(this.terminalWindow, 'contextmenu', event => {
             event.preventDefault();
 
             if (selectContentText) {
@@ -273,24 +275,24 @@ export default {
             } else {
                 this._focus()
             }
-        })
+        });
 
-        let safariStyleCache = {};
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
             _eventOn(window, item, () => {
                 let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement
+                let container = this.terminalContainer
                 if (isFullScreen) {
+                    //  存储窗口样式
+                    this.containerStyleStore = {
+                        position: container.style.position,
+                        width: container.style.width,
+                        height: container.style.height,
+                        left: container.style.left,
+                        top: container.style.top
+                    }
                     //  进入全屏
                     if (_isSafari()) {
-                        let container = this.terminalContainer
-                        safariStyleCache = {
-                            position: container.style.position,
-                            width: container.style.width,
-                            height: container.style.height,
-                            left: container.style.left,
-                            top: container.style.top
-                        }
                         container.style.position = 'fixed'
                         container.style.width = '100%'
                         container.style.height = '100%'
@@ -300,13 +302,12 @@ export default {
                 } else {
                     //  退出全屏
                     this.fullscreenState = false
-                    if (_isSafari()) {
-                        let container = this.terminalContainer
-                        container.style.position = safariStyleCache.position
-                        container.style.width = safariStyleCache.width
-                        container.style.height = safariStyleCache.height
-                        container.style.left = safariStyleCache.left
-                        container.style.top = safariStyleCache.top
+                    if (this.containerStyleStore) {
+                        container.style.position = this.containerStyleStore.position
+                        container.style.width = this.containerStyleStore.width
+                        container.style.height = this.containerStyleStore.height
+                        container.style.left = this.containerStyleStore.left
+                        container.style.top = this.containerStyleStore.top
                     }
                 }
             });
@@ -737,7 +738,7 @@ export default {
                 }, 80)
             }
         },
-        async _pushMessageBatch(messages, ignoreCheck = false) {
+        _pushMessageBatch(messages, ignoreCheck = false) {
             for (let m of messages) {
                 this._filterMessageType(m)
                 this.terminalLog.push(m)
@@ -995,19 +996,30 @@ export default {
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
-            let box = this.terminalContainer
+            let container = this.terminalContainer
 
-            if (x > clientWidth - box.clientWidth) {
-                box.style.left = (clientWidth - box.clientWidth) + "px";
+            let xVal,yVal
+            if (x > clientWidth - container.clientWidth) {
+                xVal = clientWidth - container.clientWidth
             } else {
-                box.style.left = Math.max(0, x) + "px";
+                xVal = Math.max(0, x)
             }
 
-            if (y > clientHeight - box.clientHeight) {
-                box.style.top = (clientHeight - box.clientHeight) + "px";
+            if (y > clientHeight - container.clientHeight) {
+                yVal = clientHeight - container.clientHeight
             } else {
-                box.style.top = Math.max(0, y) + "px";
+                yVal = Math.max(0, y)
             }
+
+            if (this.dragConf) {
+                this.dragConf.init = {
+                    x: xVal,
+                    y: yVal
+                }
+            }
+
+            container.style.left = xVal + "px";
+            container.style.top = yVal + "px";
         },
         _getDragStyle() {
             let clientWidth = document.body.clientWidth
