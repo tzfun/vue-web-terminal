@@ -1,13 +1,18 @@
 import {nextTick, ref} from 'vue'
 import {
-    _copyTextToClipboard, _defaultCommandFormatter, _eventOff,
+    _copyTextToClipboard,
+    _defaultCommandFormatter,
+    _eventOff,
     _eventOn,
-    _getByteLen, _getClipboardText, _getSelection,
+    _getByteLen,
+    _getClipboardText,
+    _getSelection,
     _html,
     _isEmpty,
     _isParentDom,
     _isSafari,
-    _nonEmpty, _openUrl,
+    _nonEmpty,
+    _openUrl,
     _pointInRect,
     _unHtml
 } from "./js/Util.js";
@@ -20,7 +25,8 @@ import {
     fullscreen,
     isFullscreen,
     pushMessage,
-    register, rename,
+    register,
+    rename,
     textEditorClose,
     textEditorOpen,
     unregister
@@ -105,7 +111,8 @@ export default {
                     this.textEditor.focus = false
                 }
             },
-            containerStyleStore: null
+            containerStyleStore: null,
+            containerStyle: null
         }
     },
     props: terminalProps(),
@@ -137,55 +144,7 @@ export default {
     },
     mounted() {
         this.$emit('init-before', this.getName())
-
-        register(this.getName(), this.terminalListener = (type, options) => {
-            if (type === 'pushMessage') {
-                this._pushMessage(options)
-            } else if (type === 'fullscreen') {
-                this._fullscreen()
-            } else if (type === 'isFullscreen') {
-                return this.fullscreenState
-            } else if (type === 'dragging') {
-                if (this._draggable()) {
-                    this._dragging(options.x, options.y)
-                } else {
-                    console.warn("Terminal is not draggable: " + this.getName())
-                }
-            } else if (type === 'execute') {
-                if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
-                    this.command = options
-                    this._execute()
-                }
-            } else if (type === 'focus') {
-                this._focus(options)
-            } else if (type === 'elementInfo') {
-                let windowRect = this.terminalWindow.getBoundingClientRect()
-                let containerRect = this.terminalContainer.getBoundingClientRect()
-                let hasScroll = this.terminalWindow.scrollHeight > this.terminalWindow.clientHeight
-                    || this.terminalWindow.offsetHeight > this.terminalWindow.clientHeight
-                return {
-                    pos: this._getPosition(),           //  窗口所在位置
-                    screenWidth: containerRect.width,   //  窗口整体宽度
-                    screenHeight: containerRect.height, //  窗口整体高度
-                    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-                    clientHeight: windowRect.height,    //  可显示内容范围高度
-                    charWidth: {
-                        en: this.byteLen.en,            //  单个英文字符宽度
-                        cn: this.byteLen.cn             //  单个中文字符宽度
-                    }
-                }
-            } else if (type === 'textEditorOpen') {
-                let opt = options || {}
-                this.textEditor.value = opt.content
-                this.textEditor.open = true
-                this.textEditor.onClose = opt.onClose
-                this._focus()
-            } else if (type === 'textEditorClose') {
-                return this._textEditorClose()
-            } else {
-                console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
-            }
-        })
+        this._initContainerStyle()
 
         if (this.initLog != null) {
             this._pushMessageBatch(this.initLog, true)
@@ -199,9 +158,6 @@ export default {
             this.allCommandStore = this.allCommandStore.concat(this.commandStore)
         }
 
-        this._calculateByteLen()
-        this._calculatePromptLen()
-
         if (this.terminalWindow != null) {
             this.terminalWindow.scrollTop = this.terminalWindow.offsetHeight;
         }
@@ -213,7 +169,6 @@ export default {
             let tWindow = this.terminalWindow
             if (tWindow && tWindow.getBoundingClientRect && _pointInRect(e, tWindow.getBoundingClientRect())) {
                 activeCursor = _isParentDom(e.target, tWindow, "t-window")
-                console.log("set cursor: ", activeCursor, e.target)
             }
             this.cursorConf.show = activeCursor
             if (activeCursor) {
@@ -277,43 +232,82 @@ export default {
             }
         });
 
+        let containerStyleCache = null;
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
             _eventOn(window, item, () => {
                 let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement
-                let container = this.terminalContainer
                 if (isFullScreen) {
                     //  存储窗口样式
-                    this.containerStyleStore = {
-                        position: container.style.position,
-                        width: container.style.width,
-                        height: container.style.height,
-                        left: container.style.left,
-                        top: container.style.top
-                    }
+                    containerStyleCache = JSON.parse(JSON.stringify(this.containerStyleStore))
+
                     //  进入全屏
                     if (_isSafari()) {
-                        container.style.position = 'fixed'
-                        container.style.width = '100%'
-                        container.style.height = '100%'
-                        container.style.left = '0'
-                        container.style.top = '0'
+                        this.containerStyleStore.width = '100%'
+                        this.containerStyleStore.height = '100%'
+                        this.containerStyleStore.left = '0'
+                        this.containerStyleStore.top = '0'
                     }
                 } else {
                     //  退出全屏
                     this.fullscreenState = false
-                    if (this.containerStyleStore) {
-                        container.style.position = this.containerStyleStore.position
-                        container.style.width = this.containerStyleStore.width
-                        container.style.height = this.containerStyleStore.height
-                        container.style.left = this.containerStyleStore.left
-                        container.style.top = this.containerStyleStore.top
+                    if (containerStyleCache) {
+                        this.containerStyleStore = containerStyleCache
                     }
                 }
             });
         })
 
         this._initDrag()
+
+        register(this.getName(), this.terminalListener = (type, options) => {
+            if (type === 'pushMessage') {
+                this._pushMessage(options)
+            } else if (type === 'fullscreen') {
+                this._fullscreen()
+            } else if (type === 'isFullscreen') {
+                return this.fullscreenState
+            } else if (type === 'dragging') {
+                if (this._draggable()) {
+                    this._dragging(options.x, options.y)
+                } else {
+                    console.warn("Terminal is not draggable: " + this.getName())
+                }
+            } else if (type === 'execute') {
+                if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
+                    this.command = options
+                    this._execute()
+                }
+            } else if (type === 'focus') {
+                this._focus(options)
+            } else if (type === 'elementInfo') {
+                let windowRect = this.terminalWindow.getBoundingClientRect()
+                let containerRect = this.terminalContainer.getBoundingClientRect()
+                let hasScroll = this.terminalWindow.scrollHeight > this.terminalWindow.clientHeight
+                    || this.terminalWindow.offsetHeight > this.terminalWindow.clientHeight
+                return {
+                    pos: this._getPosition(),           //  窗口所在位置
+                    screenWidth: containerRect.width,   //  窗口整体宽度
+                    screenHeight: containerRect.height, //  窗口整体高度
+                    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+                    clientHeight: windowRect.height,    //  可显示内容范围高度
+                    charWidth: {
+                        en: this.byteLen.en,            //  单个英文字符宽度
+                        cn: this.byteLen.cn             //  单个中文字符宽度
+                    }
+                }
+            } else if (type === 'textEditorOpen') {
+                let opt = options || {}
+                this.textEditor.value = opt.content
+                this.textEditor.open = true
+                this.textEditor.onClose = opt.onClose
+                this._focus()
+            } else if (type === 'textEditorClose') {
+                return this._textEditorClose()
+            } else {
+                console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
+            }
+        })
         this.$emit('init-complete', this.getName())
     },
     unmounted() {
@@ -398,8 +392,8 @@ export default {
                 if (rect && rect.width > 0) {
                     this.byteLen = {
                         init: true,
-                        en: rect.width / 2,
-                        cn: this.terminalCnFlag.getBoundingClientRect().width / 2
+                        en: rect.width,
+                        cn: this.terminalCnFlag.getBoundingClientRect().width
                     }
 
                     this.cursorConf.defaultWidth = this.byteLen.en
@@ -828,8 +822,8 @@ export default {
                 }
             }
 
-            this.cursorConf.left = pos.left + 'px'
-            this.cursorConf.top = pos.top + 'px'
+            this.cursorConf.left = pos.left
+            this.cursorConf.top = pos.top
             this.cursorConf.width = charWidth
         },
         _cursorGoLeft() {
@@ -952,6 +946,60 @@ export default {
         _draggable() {
             return this.showHeader && this.dragConf
         },
+        _initContainerStyle() {
+            let containerStyleStore = {}
+            if (this._draggable()) {
+                let clientWidth = document.body.clientWidth
+                let clientHeight = document.body.clientHeight
+
+                let confWidth = this.dragConf.width
+                let width = confWidth == null ? 700 : confWidth
+
+                if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
+                    width = clientWidth * (parseInt(confWidth) / 100)
+                }
+                let confHeight = this.dragConf.height
+                let height = confHeight == null ? 500 : confHeight
+                if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
+                    height = clientHeight * (parseInt(confHeight) / 100)
+                }
+
+                let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
+
+                let initX, initY
+
+                let initPos = this.dragConf.init
+                if (initPos && initPos.x && initPos.y) {
+                    initX = initPos.x
+                    initY = initPos.y
+                } else {
+                    initX = (clientWidth - width) / 2
+                    initY = (clientHeight - height) / 2
+                }
+                containerStyleStore.position = 'fixed'
+                containerStyleStore.width = width + 'px'
+                containerStyleStore.height = height + 'px'
+                containerStyleStore.left = initX + 'px'
+                containerStyleStore.top = initY + 'px'
+                containerStyleStore['z-index'] = zIndex
+                containerStyleStore['border-radius'] = '15px'
+            } else {
+                containerStyleStore.width = '100%'
+                containerStyleStore.height = '100%'
+                containerStyleStore['border-radius'] = '0'
+            }
+            this.containerStyleStore = containerStyleStore
+        },
+        _getContainerStyle() {
+            if (this.containerStyleStore) {
+                let styles = []
+                for (let key in this.containerStyleStore) {
+                    styles.push(`${key}:${this.containerStyleStore[key]}`)
+                }
+                return styles.join(';')
+            }
+            return ''
+        },
         _initDrag() {
             if (!this._draggable()) {
                 return
@@ -1021,47 +1069,8 @@ export default {
                 }
             }
 
-            container.style.left = xVal + "px";
-            container.style.top = yVal + "px";
-
-            console.log(container.style.left, container.style.top)
-        },
-        _getDragStyle() {
-            let clientWidth = document.body.clientWidth
-            let clientHeight = document.body.clientHeight
-
-            let confWidth = this.dragConf.width
-            let width = confWidth == null ? 700 : confWidth
-
-            if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
-                width = clientWidth * (parseInt(confWidth) / 100)
-            }
-            let confHeight = this.dragConf.height
-            let height = confHeight == null ? 500 : confHeight
-            if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
-                height = clientHeight * (parseInt(confHeight) / 100)
-            }
-
-            let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
-
-            let initX, initY
-
-            let initPos = this.dragConf.init
-            if (initPos && initPos.x && initPos.y) {
-                initX = initPos.x
-                initY = initPos.y
-            } else {
-                initX = (clientWidth - width) / 2
-                initY = (clientHeight - height) / 2
-            }
-            return `position:fixed;
-            width:${width}px;
-            height:${height}px;
-            z-index: ${zIndex};
-            left:${initX}px;
-            top:${initY}px;
-            border-radius:15px;
-            `
+            this.containerStyleStore.left = xVal + "px";
+            this.containerStyleStore.top = yVal + "px";
         },
         _nonEmpty(obj) {
             return _nonEmpty(obj)

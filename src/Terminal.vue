@@ -1,6 +1,6 @@
 <template>
   <div :class="'t-container ' + (_isActive() ? '' : 't-disable-select')"
-       :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
+       :style="_getContainerStyle()"
        ref="terminalContainer">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
@@ -78,8 +78,8 @@
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
           <span class="t-flag t-cmd-line t-disable-select">
-            <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
+            <span class="t-cmd-line-content" ref="terminalEnFlag">a</span>
+            <span class="t-cmd-line-content" ref="terminalCnFlag">你</span>
           </span>
         </p>
         <slot name="helpCmd" :item="searchCmdResult.item">
