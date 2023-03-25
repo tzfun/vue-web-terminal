@@ -1,6 +1,6 @@
 <template>
   <div :class="'t-container ' + (_isActive() ? '' : 't-disable-select')"
-       :style="_draggable() ? _getDragStyle() : 'width:100%;height:100%;border-radius:0;'"
+       :style="_getContainerStyle()"
        ref="terminalContainer">
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
@@ -51,7 +51,7 @@
         <div v-if="ask.open && ask.question">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
-                 ref="askInput"
+                 ref="terminalAskInput"
                  v-model="ask.input"
                  class="t-ask-input"
                  autocomplete="off"
@@ -67,7 +67,7 @@
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
                  class="t-cmd-input t-disable-select"
-                 ref="cmdInput"
+                 ref="terminalCmdInput"
                  autocomplete="off"
                  auto-complete="new-password"
                  @keydown="_onInputKeydown"
@@ -78,8 +78,8 @@
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
           <span class="t-flag t-cmd-line t-disable-select">
-            <span class="t-cmd-line-content" ref="terminalEnFlag">aa</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlag">你好</span>
+            <span class="t-cmd-line-content" ref="terminalEnFlag">a</span>
+            <span class="t-cmd-line-content" ref="terminalCnFlag">你</span>
           </span>
         </p>
         <slot name="helpCmd" :item="searchCmdResult.item">
@@ -87,18 +87,18 @@
             {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
           </p>
         </slot>
+        <div v-if="enableExampleHint">
+          <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
+            <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
+          </slot>
+        </div>
+
+        <div class="t-text-editor-container" v-if="textEditor.open">
+          <slot name="textEditor" :data="textEditor">
+            <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
+          </slot>
+        </div>
       </div>
-    </div>
-    <div v-if="enableExampleHint">
-      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
-        <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
-      </slot>
-    </div>
-    <div class="t-text-editor-container" v-if="textEditor.open"
-         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
-      <slot name="textEditor" :data="textEditor">
-        <t-editor :config="textEditor" @close="_textEditorClose" ref="textEditor"></t-editor>
-      </slot>
     </div>
   </div>
 </template>
@@ -111,7 +111,6 @@ import 'vue-json-viewer/style.css'
 import TerminalJs from './Terminal.js'
 
 export default TerminalJs
-
 </script>
 
 <style scoped>

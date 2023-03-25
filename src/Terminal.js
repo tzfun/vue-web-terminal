@@ -15,9 +15,8 @@ import {
     _pointInRect,
     _unHtml
 } from "./js/Util.js";
-import historyStore from "./js/HistoryStore.js";
-import {rename} from './js/TerminalInterface.js'
-import TerminalFlash from "./js/TerminalFlash.js";
+import historyStore from "@/js/HistoryStore.js";
+import TerminalFlash from "@/js/TerminalFlash.js";
 import TerminalAsk from "@/js/TerminalAsk";
 import {
     dragging,
@@ -28,6 +27,7 @@ import {
     isFullscreen,
     pushMessage,
     register,
+    rename,
     textEditorClose,
     textEditorOpen,
     unregister
@@ -76,7 +76,7 @@ export default {
                 item: null
             },
             allCommandStore: [],
-            _fullscreenState: false,
+            fullscreenState: false,
             perfWarningRate: {
                 count: 0
             },
@@ -109,13 +109,138 @@ export default {
                 onBlur: () => {
                     this.textEditor.focus = false
                 }
-            }
+            },
+            containerStyleStore: null
         }
     },
     props: terminalProps(),
-    async mounted() {
-
+    mounted() {
         this.$emit('init-before', this.getName())
+
+        this._initContainerStyle()
+
+        if (this.initLog != null) {
+            this._pushMessageBatch(this.initLog, true)
+        }
+
+        this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
+        if (this.commandStore != null) {
+            if (this.commandStoreSort != null) {
+                this.commandStore.sort(this.commandStoreSort)
+            }
+            this.allCommandStore = this.allCommandStore.concat(this.commandStore)
+        }
+
+        let el = this.$refs.terminalWindow
+        el.scrollTop = el.offsetHeight;
+
+        let selectContentText = null
+
+        _eventOn(window, "click", this.clickListener = e => {
+            let activeCursor = false
+            let container = this.$refs.terminalContainer
+            if (container && container.getBoundingClientRect && _pointInRect(e, container.getBoundingClientRect())) {
+                activeCursor = _isParentDom(e.target, container, "t-container")
+            }
+            this.cursorConf.show = activeCursor
+            if (activeCursor) {
+                this._onActive()
+            } else {
+                this._onInactive()
+            }
+        })
+
+        _eventOn(window, 'keydown', this.keydownListener = event => {
+            if (this._isActive()) {
+                if (this.cursorConf.show) {
+                    if (event.key.toLowerCase() === 'tab') {
+                        if (this.tabKeyHandler == null) {
+                            this._fillCmd()
+                        } else {
+                            this.tabKeyHandler(event)
+                        }
+                        event.preventDefault()
+                    } else if (document.activeElement !== this.$refs.terminalCmdInput) {
+                        this.$refs.terminalCmdInput.focus()
+                    }
+                }
+
+                this.$emit('on-keydown', event, this.getName())
+            }
+        });
+
+        //  先暂存选中文本
+        _eventOn(el, 'mousedown', () => {
+            let selection = _getSelection();
+            let content = ''
+            if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
+                selectContentText = content.length > 0 ? content : selection.toString()
+            }
+        });
+        _eventOn(el, 'contextmenu', this.contextMenuClick = (event) => {
+            event.preventDefault();
+
+            if (selectContentText) {
+                _copyTextToClipboard(selectContentText)
+                selectContentText = null
+                return;
+            }
+
+            const clipboardText = _getClipboardText();
+            if (clipboardText) {
+                clipboardText.then(text => {
+                    if (!text) {
+                        return;
+                    }
+                    const command = this.command;
+                    this.command = command && command.length ? `${command}${text}` : text;
+                    this._focus()
+                }).catch(error => {
+                    console.error(error);
+                })
+            } else {
+                this._focus()
+            }
+        });
+
+        let safariStyleCache = {};
+        //  监听全屏事件，用户ESC退出时需要设置全屏状态
+        ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
+            _eventOn(window, item, () => {
+                let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
+                if (isFullScreen) {
+                    //  进入全屏
+                    if (_isSafari()) {
+                        let container = this.$refs.terminalContainer
+                        safariStyleCache = {
+                            position: container.style.position,
+                            width: container.style.width,
+                            height: container.style.height,
+                            left: container.style.left,
+                            top: container.style.top
+                        }
+                        container.style.position = 'fixed'
+                        container.style.width = '100%'
+                        container.style.height = '100%'
+                        container.style.left = '0'
+                        container.style.top = '0'
+                    }
+                } else {
+                    //  退出全屏
+                    this.fullscreenState = false
+                    if (_isSafari()) {
+                        let container = this.$refs.terminalContainer
+                        container.style.position = safariStyleCache.position
+                        container.style.width = safariStyleCache.width
+                        container.style.height = safariStyleCache.height
+                        container.style.left = safariStyleCache.left
+                        container.style.top = safariStyleCache.top
+                    }
+                }
+            });
+        })
+
+        this._initDrag()
 
         register(this.getName(), this.terminalListener = (type, options) => {
             if (type === 'pushMessage') {
@@ -123,7 +248,7 @@ export default {
             } else if (type === 'fullscreen') {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
-                return this._fullscreenState
+                return this.fullscreenState
             } else if (type === 'dragging') {
                 if (this._draggable()) {
                     this._dragging(options.x, options.y)
@@ -165,134 +290,6 @@ export default {
                 console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
             }
         })
-
-        if (this.initLog != null) {
-            await this._pushMessageBatch(this.initLog, true)
-        }
-
-        this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
-        if (this.commandStore != null) {
-            if (this.commandStoreSort != null) {
-                this.commandStore.sort(this.commandStoreSort)
-            }
-            this.allCommandStore = this.allCommandStore.concat(this.commandStore)
-        }
-
-        this._calculateByteLen()
-        this._calculatePromptLen()
-
-        let el = this.$refs.terminalWindow
-        el.scrollTop = el.offsetHeight;
-
-        let selectContentText = null
-
-        _eventOn(window, "click", this.clickListener = e => {
-            let activeCursor = false
-            let window = this.$refs.terminalWindow
-            if (window && window.getBoundingClientRect && _pointInRect(e, window.getBoundingClientRect())) {
-                activeCursor = _isParentDom(e.target, window, "t-window")
-            }
-
-            this.cursorConf.show = activeCursor
-            if (activeCursor) {
-                this._onActive()
-            } else {
-                this._onInactive()
-            }
-        })
-
-        _eventOn(window, 'keydown', this.keydownListener = event => {
-            if (this._isActive()) {
-                if (this.cursorConf.show) {
-                    if (event.key.toLowerCase() === 'tab') {
-                        if (this.tabKeyHandler == null) {
-                            this._fillCmd()
-                        } else {
-                            this.tabKeyHandler(event)
-                        }
-                        event.preventDefault()
-                    } else if (document.activeElement !== this.$refs.cmdInput) {
-                        this.$refs.cmdInput.focus()
-                    }
-                }
-
-                this.$emit('on-keydown', event, this.getName())
-            }
-        });
-
-        //  先暂存选中文本
-        _eventOn(el, 'mousedown', () => {
-            let selection = _getSelection();
-            let content = ''
-            if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
-                selectContentText = content.length > 0 ? content : selection.toString()
-            }
-        });
-        _eventOn(el, 'contextmenu', this.contextMenuClick = (event) => {
-            event.preventDefault();
-
-            if (selectContentText) {
-                _copyTextToClipboard(selectContentText)
-                selectContentText = null
-                return;
-            }
-
-            const clipboardText = _getClipboardText();
-            if (clipboardText) {
-                clipboardText.then(text => {
-                    if (!text) {
-                        return;
-                    }
-                    const command = this.command;
-                    this.command = command && command.length ? `${command} ${text}` : text;
-                    this._focus()
-                }).catch(error => {
-                    console.error(error);
-                })
-            } else {
-                this._focus()
-            }
-        });
-
-        let safariStyleCache = {};
-        //  监听全屏事件，用户ESC退出时需要设置全屏状态
-        ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
-            _eventOn(window, item, () => {
-                let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
-                if (isFullScreen) {
-                    //  进入全屏
-                    if (_isSafari()) {
-                        let container = this.$refs.terminalContainer
-                        safariStyleCache = {
-                            position: container.style.position,
-                            width: container.style.width,
-                            height: container.style.height,
-                            left: container.style.left,
-                            top: container.style.top
-                        }
-                        container.style.position = 'fixed'
-                        container.style.width = '100%'
-                        container.style.height = '100%'
-                        container.style.left = '0'
-                        container.style.top = '0'
-                    }
-                } else {
-                    //  退出全屏
-                    this._fullscreenState = false
-                    if (_isSafari()) {
-                        let container = this.$refs.terminalContainer
-                        container.style.position = safariStyleCache.position
-                        container.style.width = safariStyleCache.width
-                        container.style.height = safariStyleCache.height
-                        container.style.left = safariStyleCache.left
-                        container.style.top = safariStyleCache.top
-                    }
-                }
-            });
-        })
-
-        this._initDrag()
-
         this.$emit('init-complete', this.getName())
     },
     destroyed() {
@@ -316,6 +313,9 @@ export default {
             handler(newVal, oldVal) {
                 rename(newVal ? newVal : this.getName(), oldVal ? oldVal : this._name, this.terminalListener)
             }
+        },
+        "dragConf.zIndex"(newVal) {
+            this.containerStyleStore['z-index'] = newVal
         }
     },
     methods: {
@@ -356,9 +356,9 @@ export default {
             return this._name;
         },
         _triggerClick(key) {
-            if (key === 'fullScreen' && !this._fullscreenState) {
+            if (key === 'fullScreen' && !this.fullscreenState) {
                 this._fullscreen()
-            } else if (key === 'minScreen' && this._fullscreenState) {
+            } else if (key === 'minScreen' && this.fullscreenState) {
                 this._fullscreen()
             }
 
@@ -374,8 +374,8 @@ export default {
                 if (rect && rect.width > 0) {
                     this.byteLen = {
                         init: true,
-                        en: rect.width / 2,
-                        cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 2
+                        en: rect.width,
+                        cn: this.$refs.terminalCnFlag.getBoundingClientRect().width
                     }
 
                     this.cursorConf.defaultWidth = this.byteLen.en
@@ -462,12 +462,12 @@ export default {
             this.$nextTick(function () {
                 let input
                 if (this.ask.open) {
-                    input = this.$refs.askInput
+                    input = this.$refs.terminalAskInput
                 } else if (this.textEditor.open) {
-                    input = this.$refs.textEditor
+                    input = this.$refs.terminalTextEditor
                 } else {
                     if (enforceFocus === true) {
-                        input = this.$refs.cmdInput
+                        input = this.$refs.terminalCmdInput
                     }
                     this.cursorConf.show = true
                 }
@@ -575,6 +575,7 @@ export default {
                                     this.showInputLine = true
                                     this._endExecCallBack()
                                 }
+
                                 if (message != null) {
                                     //  实时回显处理
                                     if (message instanceof TerminalFlash) {
@@ -588,7 +589,6 @@ export default {
                                         this.flash.open = true
                                         return
                                     } else if (message instanceof TerminalAsk) {
-
                                         message.onAsk((options) => {
                                             this.ask.input = ''
                                             this.ask.isPassword = options.isPassword
@@ -700,20 +700,21 @@ export default {
 
             this._filterMessageType(message)
 
-            this.terminalLog.push(message);
+            this.terminalLog.push(message)
             if (!ignoreCheck) {
                 this._checkTerminalLog()
             }
+
             if (message.type === MESSAGE_TYPE.JSON) {
                 setTimeout(() => {
                     this._jumpToBottom()
                 }, 80)
             }
         },
-        async _pushMessageBatch(messages, ignoreCheck = false) {
+        _pushMessageBatch(messages, ignoreCheck = false) {
             for (let m of messages) {
                 this._filterMessageType(m)
-                this.terminalLog.push(m);
+                this.terminalLog.push(m)
             }
             if (!ignoreCheck) {
                 this._checkTerminalLog()
@@ -744,6 +745,7 @@ export default {
             if (_nonEmpty(this.command)) {
                 historyStore.pushCmd(this.getName(), this.command)
             }
+
             this.terminalLog.push({
                 type: "cmdLine",
                 content: `${this.context} > ${this._commandFormatter(this.command)}`
@@ -871,7 +873,7 @@ export default {
             })
         },
         _checkInputCursor() {
-            let eIn = this.$refs['cmdInput']
+            let eIn = this.$refs.terminalCmdInput
             if (eIn.selectionStart !== this.cursorConf.idx) {
                 this.cursorConf.idx = eIn.selectionStart
             }
@@ -897,7 +899,7 @@ export default {
         },
         _fullscreen() {
             let fullArea = this.$refs.terminalContainer
-            if (this._fullscreenState) {
+            if (this.fullscreenState) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.webkitCancelFullScreen) {
@@ -919,10 +921,64 @@ export default {
                     fullArea.msRequestFullscreen();
                 }
             }
-            this._fullscreenState = !this._fullscreenState
+            this.fullscreenState = !this.fullscreenState
         },
         _draggable() {
             return this.showHeader && this.dragConf
+        },
+        _initContainerStyle() {
+            let containerStyleStore = {}
+            if (this._draggable()) {
+                let clientWidth = document.body.clientWidth
+                let clientHeight = document.body.clientHeight
+
+                let confWidth = this.dragConf.width
+                let width = confWidth == null ? 700 : confWidth
+
+                if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
+                    width = clientWidth * (parseInt(confWidth) / 100)
+                }
+                let confHeight = this.dragConf.height
+                let height = confHeight == null ? 500 : confHeight
+                if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
+                    height = clientHeight * (parseInt(confHeight) / 100)
+                }
+
+                let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
+
+                let initX, initY
+
+                let initPos = this.dragConf.init
+                if (initPos && initPos.x && initPos.y) {
+                    initX = initPos.x
+                    initY = initPos.y
+                } else {
+                    initX = (clientWidth - width) / 2
+                    initY = (clientHeight - height) / 2
+                }
+                containerStyleStore.position = 'fixed'
+                containerStyleStore.width = width + 'px'
+                containerStyleStore.height = height + 'px'
+                containerStyleStore.left = initX + 'px'
+                containerStyleStore.top = initY + 'px'
+                containerStyleStore['z-index'] = zIndex
+                containerStyleStore['border-radius'] = '15px'
+            } else {
+                containerStyleStore.width = '100%'
+                containerStyleStore.height = '100%'
+                containerStyleStore['border-radius'] = '0'
+            }
+            this.containerStyleStore = containerStyleStore
+        },
+        _getContainerStyle() {
+            if (this.containerStyleStore) {
+                let styles = []
+                for (let key in this.containerStyleStore) {
+                    styles.push(`${key}:${this.containerStyleStore[key]}`)
+                }
+                return styles.join(';')
+            }
+            return ''
         },
         _initDrag() {
             if (!this._draggable()) {
@@ -939,9 +995,10 @@ export default {
             let isDragging = false;
 
             _eventOn(dragArea, 'mousedown', evt => {
-                if (this._fullscreenState) {
+                if (this.fullscreenState) {
                     return
                 }
+                this._onActive()
                 let e = evt || window.event;
                 mouseOffsetX = e.clientX - box.offsetLeft;
                 mouseOffsetY = e.clientY - box.offsetTop;
@@ -960,6 +1017,9 @@ export default {
             })
 
             _eventOn(document, 'mouseup', () => {
+                if (isDragging) {
+                    this._onActive()
+                }
                 isDragging = false
                 window.style['user-select'] = 'unset'
             })
@@ -967,56 +1027,30 @@ export default {
         _dragging(x, y) {
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
-            let box = this.$refs.terminalContainer
+            let container = this.$refs.terminalContainer
 
-            if (x > clientWidth - box.clientWidth) {
-                box.style.left = (clientWidth - box.clientWidth) + "px";
+            let xVal, yVal
+            if (x > clientWidth - container.clientWidth) {
+                xVal = clientWidth - container.clientWidth
             } else {
-                box.style.left = Math.max(0, x) + "px";
+                xVal = Math.max(0, x)
             }
 
-            if (y > clientHeight - box.clientHeight) {
-                box.style.top = (clientHeight - box.clientHeight) + "px";
+            if (y > clientHeight - container.clientHeight) {
+                yVal = clientHeight - container.clientHeight
             } else {
-                box.style.top = Math.max(0, y) + "px";
-            }
-        },
-        _getDragStyle() {
-            let clientWidth = document.body.clientWidth
-            let clientHeight = document.body.clientHeight
-
-            let confWidth = this.dragConf.width
-            let width = confWidth == null ? 700 : confWidth
-
-            if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
-                width = clientWidth * (parseInt(confWidth) / 100)
-            }
-            let confHeight = this.dragConf.height
-            let height = confHeight == null ? 500 : confHeight
-            if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
-                height = clientHeight * (parseInt(confHeight) / 100)
+                yVal = Math.max(0, y)
             }
 
-            let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
-
-            let initX, initY
-
-            let initPos = this.dragConf.init
-            if (initPos && initPos.x && initPos.y) {
-                initX = initPos.x
-                initY = initPos.y
-            } else {
-                initX = (clientWidth - width) / 2
-                initY = (clientHeight - height) / 2
+            if (this.dragConf) {
+                this.dragConf.init = {
+                    x: xVal,
+                    y: yVal
+                }
             }
-            return `position:fixed;
-            width:${width}px;
-            height:${height}px;
-            z-index: ${zIndex};
-            left:${initX}px;
-            top:${initY}px;
-            border-radius:15px;
-            `
+
+            this.containerStyleStore.left = xVal + "px";
+            this.containerStyleStore.top = yVal + "px";
         },
         _nonEmpty(obj) {
             return _nonEmpty(obj)
@@ -1053,9 +1087,9 @@ export default {
                 this.textEditor.value = ''
                 if (this.textEditor.onClose) {
                     this.textEditor.onClose(content)
+                    this.textEditor.onClose = null
                 }
-                this.textEditor.onClose = null
-                this._focus()
+                this._focus(true)
                 return content
             }
         },
@@ -1066,7 +1100,7 @@ export default {
          */
         _isActive() {
             return this.cursorConf.show
-                || (this.ask.open && this.$refs.askInput === document.activeElement)
+                || (this.ask.open && this.$refs.terminalAskInput === document.activeElement)
                 || (this.textEditor.open && this.textEditor.focus)
         },
         _onActive() {

@@ -6,8 +6,7 @@
 .t-window code::selection,
 .t-window td::selection,
 .t-window th::selection,
-.t-window br::selection
-{
+.t-window br::selection {
     color: black;
     background-color: white;
 }
@@ -287,6 +286,7 @@
 
 .t-cmd-help {
     position: absolute;
+    top: 15px;
     right: 15px;
     z-index: 99;
     background-color: black !important;
@@ -435,7 +435,7 @@ pre {
 
 .t-text-editor-floor-btn {
     color: white;
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     border: none;
     outline: none;
     margin-top: 10px;
@@ -444,8 +444,8 @@ pre {
 
 .t-disable-select {
     user-select: none;
-    -moz-user-select:none;
+    -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    -khtml-user-selece:none;
+    -khtml-user-selece: none;
 }
