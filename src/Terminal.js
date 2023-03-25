@@ -73,6 +73,9 @@ export default {
             showInputLine: true,
             terminalLog: [],
             searchCmdResult: {
+                //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
+                show: false,
+                defaultBoxRect: null,
                 item: null
             },
             allCommandStore: [],
@@ -646,6 +649,8 @@ export default {
             } else {
                 this.cursorConf.show = false
             }
+            this.searchCmdResult.show = true
+            this.searchCmdResult.defaultBoxRect = null
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
@@ -870,6 +875,16 @@ export default {
             this.$nextTick(() => {
                 this._checkInputCursor()
                 this._calculateCursorPos()
+
+                let point = this.$refs.terminalCursor.getBoundingClientRect()
+                let rect = this.searchCmdResult.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
+                if (point && rect && _pointInRect(point, rect)) {
+                    this.searchCmdResult.show = false
+                    this.searchCmdResult.defaultBoxRect = rect
+                } else {
+                    this.searchCmdResult.show = true
+                    this.searchCmdResult.defaultBoxRect = null
+                }
             })
         },
         _checkInputCursor() {

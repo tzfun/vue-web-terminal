@@ -63,7 +63,7 @@
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" class="cursor t-disable-select"
+            v-show="cursorConf.show" class="cursor t-disable-select" ref="terminalCursor"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
                  class="t-cmd-input t-disable-select"
@@ -87,18 +87,19 @@
             {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
           </p>
         </slot>
-        <div v-if="enableExampleHint">
-          <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
-            <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
-          </slot>
-        </div>
-
-        <div class="t-text-editor-container" v-if="textEditor.open">
-          <slot name="textEditor" :data="textEditor">
-            <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
-          </slot>
-        </div>
       </div>
+    </div>
+    <div v-if="enableExampleHint">
+      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
+        <t-help-box ref="terminalHelpBox" :show-header="showHeader" :result="searchCmdResult"
+                    v-show="searchCmdResult.show"></t-help-box>
+      </slot>
+    </div>
+
+    <div class="t-text-editor-container" v-if="textEditor.open">
+      <slot name="textEditor" :data="textEditor">
+        <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
+      </slot>
     </div>
   </div>
 </template>
