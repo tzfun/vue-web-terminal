@@ -58,8 +58,8 @@ export default {
             command: "",
             commandLog: [],
             cursorConf: {
-                defaultWidth: 6,
-                width: 6,
+                defaultWidth: 7,
+                width: 7,
                 left: 'unset',
                 top: 'unset',
                 idx: 0, //  从0开始

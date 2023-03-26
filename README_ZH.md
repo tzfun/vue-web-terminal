@@ -72,7 +72,7 @@ const app = createApp(App).use(Terminal)
 
 <template>
   <div id="app">
-    <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
+    <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
   </div>
 </template>
 
@@ -118,22 +118,23 @@ body, html, #app {
 
 terminal标签支持的属性参数表
 
-| 参数                   | 说明                                                           | 类型         | 默认值                                              |
-|----------------------|--------------------------------------------------------------|------------|--------------------------------------------------|
-| name                 | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                      | string     | terminal                                         |
-| context              | 上下文内容                                                        | string     | /vue-web-terminal                                |
-| title                | header中显示的标题                                                 | string     | vue-web-terminal                                 |
-| show-header          | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                               | boolean    | true                                             |
-| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示          | array      | 略                                                |
-| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                | number     | 200                                              |
-| auto-help            | 是否打开命令行自动搜索提示功能                                              | boolean    | true                                             |
-| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                              | boolean    | true                                             |
-| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                         | array      | [内置命令](#内置命令)                                    |
-| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                         | function   | function(a,b)                                    |
-| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                         | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                | object     | 见[拖拽功能](#拖拽功能)                                   |
-| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式 | function   | function(cmd)                                    |
-| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                        | function   | function(event)                                  | 
+| 参数                   | 说明                                                                  | 类型         | 默认值                                              |
+|----------------------|---------------------------------------------------------------------|------------|--------------------------------------------------|
+| name                 | Terminal实例名称，同一页面的name必须唯一，Api中使用也需用到此值                             | string     | terminal                                         |
+| context              | 上下文内容                                                               | string     | /vue-web-terminal                                |
+| title                | header中显示的标题                                                        | string     | vue-web-terminal                                 |
+| show-header          | 是否显示header，此开关会影响[拖拽功能](#拖拽功能)                                      | boolean    | true                                             |
+| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                 | array      | 略                                                |
+| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                       | number     | 200                                              |
+| auto-help            | 是否打开命令行自动搜索提示功能                                                     | boolean    | true                                             |
+| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                     | boolean    | true                                             |
+| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                | array      | [内置命令](#内置命令)                                    |
+| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                                | function   | function(a,b)                                    |
+| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                                | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                       | object     | 见[拖拽功能](#拖拽功能)                                   |
+| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式        | function   | function(cmd)                                    |
+| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                               | function   | function(event)                                  | 
+| search-handler       | 用户自定义命令搜索提示实现，方法需返回一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function   | function(commandStore, key)                      | 
 
 > 下面是已移除属性
 >
@@ -146,22 +147,29 @@ terminal标签支持的属性参数表
 
 terminal标签支持的事件表
 
-| 事件名称          | 说明                                                                                                    | 回调参数                                       |
-|---------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd       | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown     | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
-| onClick       | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
-| initBefore    | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
-| initComplete  | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| 事件名称            | 说明                                                                                                    | 回调参数                                       |
+|-----------------|-------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| exec-cmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显！**，其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
+| before-exec-cmd | 用户敲下回车之后执行命令之前触发                                                                                      | `(cmdKey, command, name)`                  |
+| on-keydown      | 当获取命令输入光标焦点时，按下任意键触发                                                                                  | `(event, name)`                            |
+| on-click        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                        | `(key, name)`                              |
+| init-before     | 生命周期函数，插件初始化之前触发                                                                                      | `(name)`                                   |
+| init-complete   | 生命周期函数，插件初始化完成之后触发                                                                                    | `(name)`                                   |
+| on-active       | 窗口活跃时触发                                                                                               | `(name)`                                   |
+| on-inactive     | 窗口由活跃状态变为不活跃状态时触发                                                                                     | `(name)`                                   |
 
-**特别说明**：execCmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
+**特别说明**：exec-cmd的`success`回调参数支持多种数据类型，不同数据类型执行逻辑也会不同：
 
 * 不传任何参数，立即结束本次执行
 * 传入一个[消息对象](#消息对象)，将会向记录中追加一条消息，并立即结束本次执行
 * 传入一个[消息对象](#消息对象)数组，将会向记录中追加多条消息，并立即结束本次执行
 * 传入一个`Terminal.$Flash`对象，将会进入[实时回显](#实时回显)处理逻辑，本次执行并不会结束，直到调用`finish()`
 * 传入一个`Terminal.$Ask`对象，将会进入[用户询问输入](#用户询问输入)处理逻辑，本次执行并不会结束，直到调用`finish()`
+
+> 注意：
+> 
+> 从`2.1.7`和`3.1.3`版本开始，事件的驼峰命名被移除，如果你的版本是在这之后，请使用中划线命名，比如`@exec-cmd="onExecCmd"`
+> [issue#41](https://github.com/tzfun/vue-web-terminal/issues/41)
 
 ## Slots
 
@@ -184,7 +192,7 @@ example:
 
 ```vue
 
-<terminal :name="name" @execCmd="onExecCmd">
+<terminal :name="name" @exec-cmd="onExecCmd">
 <template #header>
   This is my custom header
 </template>
@@ -211,13 +219,39 @@ example:
 
 本插件提供了一些 Api 可以使用 Js 主动向插件发起事件请求。
 
-注意：**所有的API接口调用都需要用到Terminal的`name`**
+你有两种方式调用API：
 
+1). **获取全局API对象**
+
+注意：**全局API接口调用都需要用到Terminal的`name`**
+
+旧版本兼容方式（不推荐）
 ```js
 import Terminal from "vue-web-terminal"
 
-//  获取api
-Terminal.$api
+//  调用API
+Terminal.$api.pushMessage('my-terminal', 'hello world!')
+```
+
+新版本方式（推荐）
+```js
+import {api as TerminalApi} from "vue-web-terminal"
+
+//  调用API
+TerminalApi.pushMessage('my-terminal', 'hello world!')
+```
+
+2). **获取实例调用API**
+
+这种方法调用所有的API接口都不需要传入name
+```js
+//  vue template code
+<terminal ref='myTerminal'></terminal>
+
+//  ......
+
+//  vue js code
+this.$refs.myTerminal.pushMessage('hello world!')
 ```
 
 > 已移除api
@@ -237,7 +271,7 @@ let message = {
   class: 'warning',
   content: 'This is a wanning message.'
 }
-Terminal.$api.pushMessage('my-terminal', message)
+TerminalApi.pushMessage('my-terminal', message)
 
 //  推送多条消息
 let messages = [
@@ -245,7 +279,7 @@ let messages = [
   {content: "message 2"},
   {content: "message 3"}
 ]
-Terminal.$api.pushMessage('my-terminal', messages)
+TerminalApi.pushMessage('my-terminal', messages)
 ```
 
 ### fullscreen()
@@ -253,7 +287,7 @@ Terminal.$api.pushMessage('my-terminal', messages)
 使当前terminal进入或退出全屏
 
 ```js
-Terminal.$api.fullscreen('my-terminal')
+TerminalApi.fullscreen('my-terminal')
 ```
 
 ### isFullscreen()
@@ -262,7 +296,7 @@ Terminal.$api.fullscreen('my-terminal')
 
 ```js
 //  true or false
-let fullscreen = Terminal.$api.isFullscreen('my-terminal')
+let fullscreen = TerminalApi.isFullscreen('my-terminal')
 ```
 
 ### dragging()
@@ -270,7 +304,7 @@ let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 当开启[拖拽功能](#拖拽功能)时可以使用下面这种方式来改变窗口位置，其中参数`x`是terminal左边框到浏览器可视范围左边框的距离，`y`是terminal上边框到浏览器可视范围上边框的距离，单位px。
 
 ```js
-Terminal.$api.dragging('my-terminal', {
+TerminalApi.dragging('my-terminal', {
   x: 100,
   y: 200
 })
@@ -281,15 +315,18 @@ Terminal.$api.dragging('my-terminal', {
 可以使用api向Terminal执行一个命令，执行过程会回显在Terminal窗口中，这是一种用脚本模拟用户执行命令的方式
 
 ```js
-Terminal.$api.execute('my-terminal', 'help :local')
+TerminalApi.execute('my-terminal', 'help :local')
 ```
 
 ### focus()
 
-获取Terminal输入焦点。插件内有两处输入点，一是命令行输入，一是[Ask用户输入](#用户询问输入)
+获取Terminal输入焦点。插件内有三处输入点：
+* 命令行输入，focus方法传入`true`则表示强制获取输入焦点，否则只会获得光标焦点并使terminal触发`on-active`事件。
+* [Ask用户输入](#用户询问输入)焦点，当处于ask模式下获取相应的输入焦点
+* [文本编辑器](#文本编辑器)焦点，当处于文本编辑模式下获取相应的输入框焦点，如果你用了slot来自定义实现，需要在slot中提供focus事件的入口
 
 ```js
-Terminal.$api.focus('my-terminal')
+TerminalApi.focus('my-terminal')
 ```
 
 ### elementInfo()
@@ -299,7 +336,7 @@ Terminal.$api.focus('my-terminal')
 获取Terminal窗口DOM信息，你可以通过此api获取Terminal的窗口宽度高度、显示内容的宽度高度、所在位置、单字符宽度等，单位为px
 
 ```js
-let info = Terminal.$api.elementInfo('my-terminal')
+let info = TerminalApi.elementInfo('my-terminal')
 ```
 
 info数据结构如下：
@@ -330,7 +367,7 @@ info数据结构如下：
 此API调用后将会打开文本编辑器，使用示例：
 
 ```js
-Terminal.$api.textEditorOpen('my-terminal', {
+TerminalApi.textEditorOpen('my-terminal', {
   content: 'This is the preset content',
   onClose: value => {
     console.log('Final content: ', value)
@@ -347,19 +384,19 @@ content是打开编辑器时预置的内容，如果你不想预置任何内容�
 此方法用于关闭当前打开的文本编辑器，调用后会触发打开时的`onClose`回调。
 
 ```js
-Terminal.$api.textEditorClose('my-terminal')
+TerminalApi.textEditorClose('my-terminal')
 ```
 
 ## 消息对象
 
 本插件定义了消息对象，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，`execCmd`事件的`success()`回调和`pushMessage`api都会用到它。
 
-| 属性      | 说明                             | 类型                       | 可选值                               |
-|---------|--------------------------------|--------------------------|-----------------------------------|
-| content | 必填，消息内容，不同消息格式的内容格式不一样，具体规则见下文 | string、json、object、array | /                                 |
-| type    | 消息格式类型，默认值为`normal`            | string                   | normal、json、code、table、html       |
-| class   | 消息级别，仅类型为`normal`有效            | string                   | success、error、system、info、warning |
-| tag     | 标签，仅类型为`normal`有效              | string                   | /                                 |
+| 属性      | 说明                             | 类型                        | 可选值                               |
+|---------|--------------------------------|---------------------------|-----------------------------------|
+| content | 必填，消息内容，不同消息格式的内容格式不一样，具体规则见下文 | string、json、object、array  | /                                 |
+| type    | 消息格式类型，默认值为`normal`            | string                    | normal、json、code、table、html、ansi  |
+| class   | 消息级别，仅类型为`normal`有效            | string                    | success、error、system、info、warning |
+| tag     | 标签，仅类型为`normal`有效              | string                    | /                                 |
 
 ### normal 普通文本
 
@@ -519,6 +556,22 @@ function execCmd(key, command, success) {
 }
 ```
 
+### ansi
+
+[在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=ansi)
+
+type为`ansi`时可以显示ANSI控制码样式，**目前仅支持着色控制，包含`xterm-256color`色系，其余控制码会被过滤**
+```js
+function execCmd(key, command, success) {
+  // ...
+  success({
+    type: 'ansi',
+    content: '\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m'
+  })
+  // ...
+}
+```
+
 ## 命令定义
 
 用于help和命令帮助搜索，这里的命令定义仅作为显示用，没有具体的执行逻辑，命令的执行逻辑你应该在[Events](#Events)的`execCmd`事件中实现。
@@ -652,12 +705,12 @@ dragConf完整配置结构如下：
 |--------|-------------------------------------------------------------------|---------------|
 | width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）                               | number/string |
 | height | 拖拽窗口高度，同宽度                                                        | number/string |
-| zIndex | 窗口层级，默认100                                                        | number        |
+| zIndex | 窗口层级，此值可以修改并被terminal监听，可用于多窗口层级的控制，默认100                         | number        |
 | init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px，``` {"x": 700, "y": 500}``` | object        |
 
 ![dragging.gif](public/dragging.gif)
 
-除了鼠标控制之外你还可以[调用API移动窗口位置](#dragging())
+除了鼠标控制之外你还可以[调用API移动窗口位置](#dragging--)
 
 ### 实时回显
 
@@ -668,13 +721,15 @@ Terminal默认的消息都是以追加的模式显示，当你只需要显示执
 
 在[Events](#Events)的`execCmd`事件回调中，`success`回调函数支持传入实时回显的处理对象。
 
-通过`new Terminal.$Flash()`创建一个flash对象，传入success回调中，flash对象提供两个方法：
+通过`new TerminalFlash()`创建一个flash对象，传入success回调中，flash对象提供两个方法：
 
 * `flush(string)`: 更新当前显示的内容
 * `finish()`: 结束执行
 
 ```js
-let flash = new Terminal.$Flash()
+import {Flash as TerminalFlash} from 'vue-web-terminal'
+
+let flash = new TerminalFlash()
 success(flash)
 
 let count = 0
@@ -688,6 +743,8 @@ let flashInterval = setInterval(() => {
 }, 200)
 ```
 
+> 旧版本的`Terminal.$Flash`调用方式仍然兼容，但不推荐
+
 ### 用户询问输入
 
 [在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=ask)
@@ -696,7 +753,7 @@ let flashInterval = setInterval(() => {
 
 在[Events](#Events)的`execCmd`事件回调中，`success`回调函数支持传入用户输入的处理对象。
 
-通过`new Terminal.$Ask()`创建一个新的ask对象，传入success回调中，ask对象提供两个方法：
+通过`new TerminalAsk()`创建一个新的ask对象，传入success回调中，ask对象提供两个方法：
 
 * `ask(options)`: 发起一个用户询问输入，options是一个对象，其属性解释如下（*号表示必填）：
   * `question`: string，询问的问题，或者可以理解为用户输入的前缀字串
@@ -706,7 +763,9 @@ let flashInterval = setInterval(() => {
 * `finish()`: 结束执行
 
 ```js
-let asker = new Terminal.$Ask()
+import {Ask as TerminalAsk} from 'vue-web-terminal'
+
+let asker = new TerminalAsk()
 success(asker)
 
 asker.ask({
@@ -735,7 +794,7 @@ asker.ask({
 当要对多行文本编辑时可以使用API：`textEditorOpen()`、`textEditorClose()`，具体介绍详情请见[API](#Api)部分，下面是一个简单的示例：
 
 ```js
-Terminal.$api.textEditorOpen(this.name, {
+TerminalApi.textEditorOpen(this.name, {
   content: 'Please edit this file',
   onClose: (value) => {
     console.log("用户编辑完成，文本结果：", value)
@@ -758,7 +817,7 @@ Terminal.$api.textEditorOpen(this.name, {
 ```vue
 
 <template>
-  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
+  <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
       <textarea name="editor"
                 class="t-text-editor"
@@ -775,7 +834,7 @@ Terminal.$api.textEditorOpen(this.name, {
 </template>
 
 <script>
-import Terminal from "vue-web-terminal";
+import {Terminal, api as TerminalApi} from "vue-web-terminal";
 
 export default {
   name: "TerminalOldDemo",
@@ -787,9 +846,9 @@ export default {
     }
   },
   method: {
-    onExecCmd(key, command, success, failed) {
+    onExecCmd(key, command, success, failed, name) {
       if (key === 'edit') {
-        Terminal.$api.textEditorOpen(this.name, {
+        TerminalApi.textEditorOpen(this.name, {
           content: 'Please edit this file',
           onClose: (value) => {
             this.enableTextEditor = false
@@ -809,7 +868,7 @@ export default {
       }
     },
     _textEditorClose() {
-      Terminal.$api.textEditorClose(this.name)
+      TerminalApi.textEditorClose(this.name)
     }
   }
 }
