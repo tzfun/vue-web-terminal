@@ -58,6 +58,23 @@ export default {
           }
           TerminalApi.pushMessage(name, "loop: " + count)
         }, 500)
+      } else if (key === 'json') {
+        success({
+          type: 'json',
+          content: {
+            key1: '123123',
+            key2: true,
+            key3: 123123123,
+            key4: [{
+              key:12312,
+              k:"vasdas"
+            }],
+            key5: {
+              "kasdasd": "asdasd",
+              "aksdasd": 1243123423
+            }
+          }
+        })
       } else if (key === 'close') {
         let activeNext
         this.terminals.forEach(o => {

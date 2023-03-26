@@ -1,5 +1,9 @@
 [中文版](./README_ZH.md) | English
 
+<div align=center>
+<img src=public/logo.png/>
+</div>
+
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
@@ -69,7 +73,7 @@ Example:
 
 <template>
   <div id="app">
-    <terminal name="my-terminal" @execCmd="onExecCmd"></terminal>
+    <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
   </div>
 </template>
 
@@ -115,22 +119,23 @@ body, html, #app {
 
 Terminal tag supports attribute parameter table.
 
-| Argument                | Description                                                                                                                                                                                                     | Type     | Default                                          |
-|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
-| name                    | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                                                                                                       | string   | terminal                                         |
-| context                 | Context text.                                                                                                                                                                                                   | string   | /vue-web-terminal                                |
-| title                   | The title displayed in the header.                                                                                                                                                                              | string   | vue-web-terminal                                 |
-| show-header             | Whether to display the header, this switch will affect the drag and drop function.                                                                                                                              | boolean  | true                                             |
-| init-log                | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array    | /                                                |
-| warn-log-count-limit    | If the current Terminal log number exceeds this limit, a warning will be issued. Setting a value of `<= 0` will not issue a warning.                                                                            | number   | 200                                              |
-| auto-help               | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean  | true                                             |
-| enable-example-hint     | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean  | true                                             |
-| command-store           | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array    | [Local Commands](#Local)                         |
-| command-store-sort      | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function | function(a,b)                                    |
-| input-filter            | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf               | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object   | [Drag](#Drag)                                    |
-| command-formatter       | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function | function(cmd)                                    |
-
+| Argument             | Description                                                                                                                                                                                                     | Type       | Default                                            |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|----------------------------------------------------|
+| name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                                                                                                       | string     | terminal                                           |
+| context              | Context text.                                                                                                                                                                                                   | string     | /vue-web-terminal                                  |
+| title                | The title displayed in the header.                                                                                                                                                                              | string     | vue-web-terminal                                   |
+| show-header          | Whether to display the header, this switch will affect the drag and drop function.                                                                                                                              | boolean    | true                                               |
+| init-log             | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array      | /                                                  |
+| warn-log-count-limit | If the current Terminal log number exceeds this limit, a warning will be issued. Setting a value of `<= 0` will not issue a warning.                                                                            | number     | 200                                                |
+| auto-help            | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean    | true                                               |
+| enable-example-hint  | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean    | true                                               |
+| command-store        | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array      | [Local Commands](#Local)                           |
+| command-store-sort   | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function   | function(a,b)                                      |
+| input-filter         | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function   | function(当前输入字符char, 输入框内字符串value, input事件event)   |
+| drag-conf            | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object     | [Drag](#Drag)                                      |
+| command-formatter    | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function   | function(cmd)                                      |
+| tab-key-handler      | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                 | function   | function(event)                                    |
+| search-handler       | User-defined command search prompt implementation, the method needs to return a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot             | function   | function(commandStore, key)                        |
 > Below are the removed properties
 >
 > * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
@@ -144,21 +149,28 @@ Terminal tag support event table
 
 | Event name      | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
 |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| execCmd         | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
-| beforeExecCmd   | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
-| onKeydown       | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
-| onClick         | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
-| initBefore      | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
-| initComplete    | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
-| tabKeyHandler   | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                                                                      | `(event)`                                  |
+| exec-cmd        | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
+| before-exec-cmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
+| on-keydown      | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
+| on-click        | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
+| init-before     | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
+| init-complete   | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
+| on-active       | Triggered when the window is active.                                                                                                                                                                                                                                 | `(name)`                                   |
+| on-inactive     | Triggered when the window is inactive.                                                                                                                                                                                                                               | `(name)`                                   |
 
-**Special note**: The `success` callback parameter of `execCmd` supports multiple data types, and the execution logic of different data types will be different:
+**Special note**: The `success` callback parameter of `exec-cmd` supports multiple data types, and the execution logic of different data types will be different:
 
 * If no parameters are passed, the execution will end immediately
 * Passing in a [Message](#Message) will append a message to the record and end the execution immediately
 * Pass in a [Message](#Message) array, which will append multiple messages to the record and end the execution immediately
 * Pass in a `Terminal.$Flash` object, it will enter the processing logic of [Real-time-echo(Flash)](#Flash), this execution will not end until `finish()` is called
 * Pass in a `Terminal.$Ask` object, it will enter the processing logic of [user-input](#User-input), this execution will not end until `finish()` is called
+
+> PS:
+>
+> Starting from `2.1.7` and `3.1.3` versions, the camel case naming of events has been removed. If your version is later, please use a dash name, such as `@exec-cmd="onExecCmd"`.
+> [issue#41](https://github.com/tzfun/vue-web-terminal/issues/41)
+
 
 ## Slots
 
@@ -180,26 +192,27 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 example:
 
 ```vue
-<terminal :name="name" @execCmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
-  
-  <template #json="data">
-    {{ data.message }}
-  </template>
-  
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
-  
-  <template #textEditor="{data}">
-      <textarea name="editor" class="text-editor" v-model="data.value"
+
+<terminal :name="name" @exec-cmd="onExecCmd">
+<template #header>
+  This is my custom header
+</template>
+
+<template #json="data">
+  {{ data.message }}
+</template>
+
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
+
+<template #textEditor="{data}">
+      <textarea name="editor" class="t-text-editor" v-model="data.value"
                 @focus="data.onFocus" @blur="data.onBlur"></textarea>
-    <div class="text-editor-floor" align="center">
-      <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-    </div>
-  </template>
+  <div class="t-text-editor-floor" align="center">
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+  </div>
+</template>
 </terminal>
 ```
 
@@ -207,13 +220,39 @@ example:
 
 This plugin provides some APIs that can use javascript to actively initiate event requests to the plugin.
 
-PS：**All api calls require the name of the terminal.**
+You have two ways to call the API:
 
+1). **Get the global API object**
+
+PS: **Global API interface calls need to use the `name` of Terminal.**
+
+Old version compatibility method (not recommended).
 ```js
 import Terminal from "vue-web-terminal"
 
-//  det api
-Terminal.$api
+//  invoke api
+Terminal.$api.pushMessage('my-terminal', 'hello world!')
+```
+
+New version method (recommended).
+```js
+import {api as TerminalApi} from "vue-web-terminal"
+
+//  invoke api
+TerminalApi.pushMessage('my-terminal', 'hello world!')
+```
+
+2). **Get the instance call API**
+
+This method calls all API interfaces without passing in the name
+```js
+//  vue template code
+<terminal ref='myTerminal'></terminal>
+
+//  ......
+
+//  vue js code
+this.$refs.myTerminal.pushMessage('hello world!')
 ```
 
 > Removed api
@@ -237,7 +276,7 @@ let message = {
   content: 'This is a wanning message.'
 }
 
-Terminal.$api.pushMessage(name, message)
+TerminalApi.pushMessage(name, message)
 
 // push multiple messages
 let messages = [
@@ -245,7 +284,7 @@ let messages = [
   {content: "message 2"},
   {content: "message 3"}
 ]
-Terminal.$api.pushMessage(name, messages)
+TerminalApi.pushMessage(name, messages)
 ```
 
 ### fullscreen()
@@ -253,7 +292,7 @@ Terminal.$api.pushMessage(name, messages)
 Make the current terminal enter or exit full screen.
 
 ```js
-Terminal.$api.fullscreen('my-terminal')
+TerminalApi.fullscreen('my-terminal')
 ```
 
 ### isFullscreen()
@@ -262,7 +301,7 @@ Determine if the current state is full screen.
 
 ```js
 //  true or false
-let fullscreen = Terminal.$api.isFullscreen('my-terminal')
+let fullscreen = TerminalApi.isFullscreen('my-terminal')
 ```
 
 ### dragging()
@@ -270,7 +309,7 @@ let fullscreen = Terminal.$api.isFullscreen('my-terminal')
 When [Feature Drag](#Drag) is enabled, you can use the following method to simulate drag to change the window position, where the parameter `x` is the distance from the left border of the terminal to the left border of the browser's visible range, `y ` is the distance from the upper border of the terminal to the upper border of the browser's visible range, in px.
 
 ```js
-Terminal.$api.dragging('my-terminal', {
+TerminalApi.dragging('my-terminal', {
   x: 100,
   y: 200
 })
@@ -281,7 +320,7 @@ Terminal.$api.dragging('my-terminal', {
 You can use the api to execute a command to the Terminal, and the execution process will be echoed in the Terminal window. This is a way to use a script to simulate the user executing the command.
 
 ```js
-Terminal.$api.execute('my-terminal', 'help :local')
+TerminalApi.execute('my-terminal', 'help :local')
 ```
 
 ### focus()
@@ -289,7 +328,7 @@ Terminal.$api.execute('my-terminal', 'help :local')
 Get the Terminal input focus. There are two input points in the plugin, one is command line input, the other is [User-input](#User-input).
 
 ```js
-Terminal.$api.focus('my-terminal')
+TerminalApi.focus('my-terminal')
 ```
 
 ### elementInfo()
@@ -299,7 +338,7 @@ Terminal.$api.focus('my-terminal')
 Get the DOM information of the terminal window. You can use this api to get the terminal's screen width and height, the width and height of the displayed content, the location, the width of a single character, etc. The unit is px.
 
 ```js
-let info = Terminal.$api.elementInfo('my-terminal')
+let info = TerminalApi.elementInfo('my-terminal')
 ```
 
 The info data structure is as follows:
@@ -330,7 +369,7 @@ The following image clearly describes what these values mean:
 A text editor will open after this API call.
 
 ```js
-Terminal.$api.textEditorOpen('my-terminal', {
+TerminalApi.textEditorOpen('my-terminal', {
   content: 'This is the preset content',
   onClose: value => {
     console.log('Final content: ', value)
@@ -347,19 +386,19 @@ For more information on how to use text editors, see [Text Editor](#TextEditor).
 This method is used to close the currently opened text editor. After calling, it will trigger the `onClose` callback when it is opened.
 
 ```js
-Terminal.$api.textEditorClose('my-terminal')
+TerminalApi.textEditorClose('my-terminal')
 ```
 
 ## Message
 
 This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `execCmd` event and the `pushMessage` api.
 
-| Prop    | Description                                                                                                                    | Type                     | Options                           |
-|---------|--------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------------|
-| content | Required. The specific content, the content type of different message formats is different, the specific rules are as follows. | string、json、object、array | /                                 |
-| type    | Message format type, default is `normal`.                                                                                      | string                   | normal、json、code、table、html       |
-| class   | Message level, only valid for type `normal`.                                                                                   | string                   | success、error、system、info、warning |
-| tag     | Display label, only valid for type `normal`.                                                                                   | string                   | /                                 |
+| Prop    | Description                                                                                                                    | Type                          | Options                           |
+|---------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------|-----------------------------------|
+| content | Required. The specific content, the content type of different message formats is different, the specific rules are as follows. | string、json、object、array、ansi | /                                 |
+| type    | Message format type, default is `normal`.                                                                                      | string                        | normal、json、code、table、html       |
+| class   | Message level, only valid for type `normal`.                                                                                   | string                        | success、error、system、info、warning |
+| tag     | Display label, only valid for type `normal`.                                                                                   | string                        | /                                 |
 
 ### normal
 
@@ -516,6 +555,23 @@ function execCmd(key, command, success) {
 }
 ```
 
+
+### ansi
+
+[Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=ansi)
+
+When the type is `ansi`, the ANSI control code style can be displayed. **Currently only supports coloring control, including `xterm-256color` color system, and other control codes will be filtered**.
+```js
+function execCmd(key, command, success) {
+  // ...
+  success({
+    type: 'ansi',
+    content: '\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m'
+  })
+  // ...
+}
+```
+
 ## Command
 
 For help and command search, the command definition here is only for display, there is no specific execution logic, the execution logic of the command should be implemented in the `execCmd` event of [Events](#Events).
@@ -648,12 +704,12 @@ The complete configuration structure of `dragConf` is as follows:
 |--------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
 | width  | The width of the drag window, which can be a number (in px) or a percentage (relative to the browser window).                                                    | number/string |
 | height | Drag window height, which can be a number (in px) or a percentage (relative to the browser window).                                                              | number/string |
-| zIndex | Window level, default 100.                                                                                                                                       | number        |
+| zIndex | Window level, this value can be modified and monitored by the terminal, which can be used for multi-window level control, default 100.                           | number        |
 | init   | Window initialization position, if not filled, the default position is in the center of the browser window, where x and y are in px. ``` {"x": 700, "y": 500}``` | object        |
 
 ![dragging.gif](public/dragging.gif)
 
-In addition to mouse control, you can also [call API to simulate dragging](#dragging())
+In addition to mouse control, you can also [call API to simulate dragging](#dragging--)
 
 ### Flash
 
@@ -665,13 +721,15 @@ For example, when `gradle` or `npm` download dependencies, the process of downlo
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
 
-Create a new flash object through `new Terminal.$Flash()` and pass it into the success callback. The flash object provides two methods:
+Create a new flash object through `new TerminalFlash()` and pass it into the success callback. The flash object provides two methods:
 
 * `flush(string)`: Update what is currently displayed
 * `finish()`: End execution
 
 ```js
-let flash = new Terminal.$Flash()
+import {Flash as TerminalFlash} from 'vue-web-terminal'
+
+let flash = new TerminalFlash()
 success(flash)
 
 let count = 0
@@ -685,6 +743,8 @@ let flashInterval = setInterval(() => {
 }, 200)
 ```
 
+> The old version of `Terminal.$Flash` is still compatible, but not recommended.
+
 ### User-input
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=ask)
@@ -694,7 +754,7 @@ such as the scenario where the user needs to enter the username and password whe
 
 In the `execCmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
 
-Create a new ask object through `new Terminal.$Ask()` and pass it into the success callback. The ask object provides two methods:
+Create a new ask object through `new TerminalAsk()` and pass it into the success callback. The ask object provides two methods:
 
 * `ask(options)`: Initiate a user to ask for input, options is an object, and its properties are explained as follows (* indicates required):
   * `question`: string, The question to ask, or a prefix string that can be understood as user input
@@ -704,7 +764,9 @@ Create a new ask object through `new Terminal.$Ask()` and pass it into the succe
 * `finish()`: End execution
 
 ```js
-let asker = new Terminal.$Ask()
+import {Ask as TerminalAsk} from 'vue-web-terminal'
+
+let asker = new TerminalAsk()
 success(asker)
 
 asker.ask({
@@ -734,7 +796,7 @@ asker.ask({
 When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. For details, please refer to the [API](#Api) section. The following is a simple example:
 
 ```js
-Terminal.$api.textEditorOpen(this.name, {
+TerminalApi.textEditorOpen(this.name, {
   content: 'Please edit this file',
   onClose: (value) => {
     console.log("User edit completed, text result:", value)
@@ -755,25 +817,26 @@ If you don't like the default style, you can use Slot to customize the style of 
 The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` to indicate Finish editing and save.
 
 ```vue
+
 <template>
-  <terminal :name="name" @execCmd="onExecCmd" @onKeydown="onKeydown">
+  <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
-      <textarea name="editor" 
-                class="text-editor" 
+      <textarea name="editor"
+                class="t-text-editor"
                 v-model="data.value"
-                @focus="data.onFocus" 
+                @focus="data.onFocus"
                 @blur="data.onBlur"></textarea>
-      
-      <div class="text-editor-floor" align="center">
-        <button class="text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+
+      <div class="t-text-editor-floor" align="center">
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
       </div>
-      
+
     </template>
   </terminal>
 </template>
 
 <script>
-import Terminal from "vue-web-terminal";
+import {Terminal, api as TerminalApi} from "vue-web-terminal";
 
 export default {
   name: "TerminalOldDemo",
@@ -785,9 +848,9 @@ export default {
     }
   },
   method: {
-    onExecCmd(key, command, success, failed) {
+    onExecCmd(key, command, success, failed, name) {
       if (key === 'edit') {
-        Terminal.$api.textEditorOpen(this.name, {
+        TerminalApi.textEditorOpen(this.name, {
           content: 'Please edit this file',
           onClose: (value) => {
             this.enableTextEditor = false
@@ -807,7 +870,7 @@ export default {
       }
     },
     _textEditorClose() {
-      Terminal.$api.textEditorClose(this.name)
+      TerminalApi.textEditorClose(this.name)
     }
   }
 }

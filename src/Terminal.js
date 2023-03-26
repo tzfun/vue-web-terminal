@@ -59,8 +59,8 @@ export default {
             command: "",
             commandLog: [],
             cursorConf: {
-                defaultWidth: 6,
-                width: 6,
+                defaultWidth: 7,
+                width: 7,
                 left: 'unset',
                 top: 'unset',
                 idx: 0, //  从0开始
@@ -74,6 +74,9 @@ export default {
             showInputLine: true,
             terminalLog: [],
             searchCmdResult: {
+                //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
+                show: false,
+                defaultBoxRect: null,
                 item: null
             },
             allCommandStore: [],
@@ -127,6 +130,7 @@ export default {
         const terminalEnFlag = ref(null)
         const terminalCnFlag = ref(null)
         const terminalTextEditor = ref(null)
+        const terminalCursor = ref(null)
 
         return {
             terminalContainer,
@@ -138,11 +142,13 @@ export default {
             terminalInputPrompt,
             terminalEnFlag,
             terminalCnFlag,
-            terminalTextEditor
+            terminalTextEditor,
+            terminalCursor
         }
     },
     mounted() {
         this.$emit('init-before', this.getName())
+
         this._initContainerStyle()
 
         if (this.initLog != null) {
@@ -382,6 +388,7 @@ export default {
             } else if (key === 'minScreen' && this.fullscreenState) {
                 this._fullscreen()
             }
+
             this.$emit('on-click', key, this.getName())
         },
         _calculateByteLen() {
@@ -667,6 +674,8 @@ export default {
             } else {
                 this.cursorConf.show = false
             }
+            this.searchCmdResult.show = true
+            this.searchCmdResult.defaultBoxRect = null
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
@@ -685,7 +694,6 @@ export default {
         /**
          * message内容：
          *
-         * time: 当前时间
          * class: 类别，只可选：success、error、system、info、warning
          * type: 类型，只可选：normal、json、code、table、cmdLine、splitLine
          * content: 具体内容，不同消息内容格式不一样
@@ -795,6 +803,8 @@ export default {
             let idx = this.cursorConf.idx
             let command = cmd == null ? this.command : cmd
 
+            this._calculateByteLen()
+
             if (idx < 0 || idx >= command.length) {
                 this._resetCursorPos()
                 return
@@ -824,8 +834,8 @@ export default {
                 }
             }
 
-            this.cursorConf.left = pos.left
-            this.cursorConf.top = pos.top
+            this.cursorConf.left = pos.left + 'px'
+            this.cursorConf.top = pos.top + 'px'
             this.cursorConf.width = charWidth
         },
         _cursorGoLeft() {
@@ -891,6 +901,16 @@ export default {
             nextTick(() => {
                 this._checkInputCursor()
                 this._calculateCursorPos()
+
+                let point = this.$refs.terminalCursor.getBoundingClientRect()
+                let rect = this.searchCmdResult.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
+                if (point && rect && _pointInRect(point, rect)) {
+                    this.searchCmdResult.show = false
+                    this.searchCmdResult.defaultBoxRect = rect
+                } else {
+                    this.searchCmdResult.show = true
+                    this.searchCmdResult.defaultBoxRect = null
+                }
             }).then(() => {
             })
         },

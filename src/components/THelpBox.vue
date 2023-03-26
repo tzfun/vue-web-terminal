@@ -1,6 +1,7 @@
 <template>
   <div class="t-cmd-help"
-       :style="showHeader ? 'max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
+       ref="terminalHelpBox"
+       :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
        v-if="result && result.item && !_screenType().xs">
     <p class="text" v-if="result.item.description != null" style="margin: 15px 0"
        v-html="result.item.description"></p>
@@ -28,6 +29,7 @@
 <script>
 
 import {_screenType} from "@/js/Util";
+import {ref} from "vue";
 
 export default {
   name: "THelpBox",
@@ -35,9 +37,21 @@ export default {
     showHeader: Boolean,
     result: Object
   },
+  setup(){
+    let terminalHelpBox = ref(null)
+    return {
+      terminalHelpBox
+    }
+  },
   methods: {
     _screenType() {
       return _screenType()
+    },
+    getBoundingClientRect() {
+      let e = this.terminalHelpBox
+      if (e) {
+        return e.getBoundingClientRect()
+      }
     }
   }
 }

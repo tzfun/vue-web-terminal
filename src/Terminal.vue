@@ -21,22 +21,22 @@
                 <t-view-normal :item="item"></t-view-normal>
               </slot>
             </span>
-            <div v-if="item.type === 'json'">
+            <div v-else-if="item.type === 'json'">
               <slot name="json" :message="item">
                 <t-view-json :item="item" :idx="idx"></t-view-json>
               </slot>
             </div>
-            <div v-if="item.type === 'code'">
+            <div v-else-if="item.type === 'code'">
               <slot name="code" :message="item">
                 <t-view-code :item="item" :idx="idx"></t-view-code>
               </slot>
             </div>
-            <div v-if="item.type === 'table'">
+            <div v-else-if="item.type === 'table'">
               <slot name="table" :message="item">
                 <t-view-table :item="item" :idx="idx"></t-view-table>
               </slot>
             </div>
-            <div v-if="item.type === 'html'">
+            <div v-else-if="item.type === 'html'">
               <slot name="html" :message="item">
                 <div v-html="item.content"></div>
               </slot>
@@ -59,12 +59,12 @@
                  @keyup.enter="_onAskInput">
         </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
-          <span class="prompt t-cmd-line-content disable-select" ref="terminalInputPrompt">
+          <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" class="cursor t-disable-select"
-            :style="`width:${cursorConf.width}px;left:${cursorConf.left}px;top:${cursorConf.top}px;`">&nbsp;</span>
+            v-show="cursorConf.show" class="cursor t-disable-select" ref="terminalCursor"
+            :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text" autofocus="autofocus" v-model="command"
                  class="t-cmd-input t-disable-select"
                  ref="terminalCmdInput"
@@ -87,18 +87,19 @@
             {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
           </p>
         </slot>
-        <div v-if="enableExampleHint">
-          <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
-            <t-help-box :show-header="showHeader" :result="searchCmdResult"></t-help-box>
-          </slot>
-        </div>
-
-        <div class="t-text-editor-container" v-if="textEditor.open">
-          <slot name="textEditor" :data="textEditor">
-            <t-editor :config="textEditor" v-model="textEditor.value" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
-          </slot>
-        </div>
       </div>
+    </div>
+    <div v-if="enableExampleHint">
+      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
+        <t-help-box ref="terminalHelpBox" :show-header="showHeader" :result="searchCmdResult"
+                    v-show="searchCmdResult.show"></t-help-box>
+      </slot>
+    </div>
+
+    <div class="t-text-editor-container" v-if="textEditor.open">
+      <slot name="textEditor" :data="textEditor">
+        <t-editor :config="textEditor"  v-model="textEditor.value" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
+      </slot>
     </div>
   </div>
 </template>
