@@ -8,8 +8,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.7',
-                vue3: '3.1.3'
+                vue2: '2.1.8',
+                vue3: '3.1.4'
             },
             cmdStore: [],
             initLog: null,
@@ -233,7 +233,7 @@ export default {
                                     ])
                                     setTimeout(() => {
                                         this.nextGuide()
-                                    }, 1500)
+                                    }, 1000)
                                 }
                             })
                         }
@@ -243,6 +243,20 @@ export default {
             } else if (key === 'flash') {
                 this.showFlash(success)
                 return;
+            } else if (key === 'ansi') {
+                let ansiContent = 'vue-wen-terminal 支持 ANSI 码的着色解码功能，但暂不支持其他的光标、设备、窗口控制等，默认会将不支持的 ANSI 码过滤。\n\n\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m\n'
+                ansiContent += '\nThis is xterm-256-color content:\n'
+                for (let i = 0; i < 256; i++) {
+                    ansiContent += ('\x1B[38;5;' + i + 'mV\x1B[0m')
+                }
+                ansiContent += '\n\nThis is xterm-256-color background content:\n'
+                for (let i = 0; i < 256; i++) {
+                    ansiContent += ('\x1B[48;5;' + i + 'm \x1B[0m')
+                }
+                success({
+                    type: 'ansi',
+                    content: ansiContent
+                })
             } else if (key === 'exit') {
                 if (this.guide.step !== 0) {
                     this.guide.step = 0
@@ -328,7 +342,7 @@ export default {
             let message = null
             if (this.guide.step === 1) {
                 this.guide.command = 'list'
-                message = `👉 [${this.guide.step}] 首先带你认识一下支持的消息格式，默认的消息是普通文本格式，请输入<span class="t-cmd-key">${this.guide.command}</span>随机一条文本消息`
+                message = `👉 [${this.guide.step}] 首先带你认识一下支持的消息格式，默认的消息是普通文本格式，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 2) {
                 this.guide.command = 'json'
                 message = `👉 [${this.guide.step}] 接下来是json格式数据，请输入<span class="t-cmd-key">${this.guide.command}</span>`
@@ -345,15 +359,18 @@ export default {
                 this.guide.command = 'html'
                 message = `👉 [${this.guide.step}] 接下来是自定义html消息，你可以在此基础上构建任意你需要的消息样式，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 7) {
+                this.guide.command = 'ansi'
+                message = `👉 [${this.guide.step}] 本插件支持ANSI着色控制码的解析，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+            } else if (this.guide.step === 8) {
                 this.guide.command = 'flash'
                 message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Falsh使用，请输入<span class="t-cmd-key">${this.guide.command}</span>`
-            } else if (this.guide.step === 8) {
+            } else if (this.guide.step === 9) {
                 this.guide.command = 'edit'
                 message = `👉 [${this.guide.step}] 如果你想编辑文本文件，插件也提供了简单的文本编辑器，请输入<span class="t-cmd-key">${this.guide.command}</span>`
-            } else if (this.guide.step === 9) {
+            } else if (this.guide.step === 10) {
                 this.guide.command = 'ask'
                 message = `👉 [${this.guide.step}] 如果你想获取到用户输入可以使用插件Ask功能，请输入<span class="t-cmd-key">${this.guide.command}</span>`
-            } else if (this.guide.step === 10) {
+            } else if (this.guide.step === 11) {
                 this.guide.command = null
                 message = `🎉 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。
                         <br>🤗 更多关于插件的内容请前往 <a class='t-a' target='_blank' href="https://github.com/tzfun/vue-web-terminal">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐️支持一下吧~`
