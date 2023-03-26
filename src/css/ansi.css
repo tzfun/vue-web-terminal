@@ -18,7 +18,7 @@
     text-decoration: underline;
 }
 
-@-webkit-keyframes blink {
+@-webkit-keyframes t-blink {
     0% {
         opacity: 1;
     }
@@ -34,11 +34,11 @@
 }
 
 .t-ansi-5, .t-ansi-6 {
-    animation: blink 1s linear infinite;
-    -webkit-animation: blink 1s linear infinite;
-    -moz-animation: blink 1s linear infinite;
-    -ms-animation: blink 1s linear infinite;
-    -o-animation: blink 1s linear infinite;
+    animation: t-blink 1s linear infinite;
+    -webkit-animation: t-blink 1s linear infinite;
+    -moz-animation: t-blink 1s linear infinite;
+    -ms-animation: t-blink 1s linear infinite;
+    -o-animation: t-blink 1s linear infinite;
 }
 
 .t-ansi-7 {
