@@ -165,6 +165,7 @@ export default {
                         event.preventDefault()
                     } else if (document.activeElement !== this.$refs.terminalCmdInput) {
                         this.$refs.terminalCmdInput.focus()
+                        this._onInputKeydown(event)
                     }
                 }
 
