@@ -96,7 +96,8 @@
       </slot>
     </div>
 
-    <div class="t-text-editor-container" v-if="textEditor.open">
+    <div class="t-text-editor-container" v-if="textEditor.open"
+         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
       <slot name="textEditor" :data="textEditor">
         <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>

@@ -113,6 +113,14 @@ export default {
           type: 'ansi',
           content: ansiContent
         })
+      } else if (key === 'edit') {
+        TerminalApi.textEditorOpen(name, {
+          content: 'hello world!',
+          onClose: () => {
+            console.log("text close")
+          }
+        })
+        success()
       } else {
         failed("Unknown command: " + key)
       }

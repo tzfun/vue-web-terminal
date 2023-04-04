@@ -16,6 +16,7 @@ export default {
   },
   methods:{
     focus() {
+      console.log("==> text focus")
       this.$refs.textEditor.focus()
     }
   }

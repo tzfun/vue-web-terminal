@@ -144,8 +144,14 @@ export default {
             let container = this.$refs.terminalContainer
             if (container && container.getBoundingClientRect && _pointInRect(e, container.getBoundingClientRect())) {
                 activeCursor = _isParentDom(e.target, container, "t-container")
+                    || (e.target && e.target.classList.contains('t-text-editor-floor-btn'))
             }
-            this.cursorConf.show = activeCursor
+            if (this._isBlockCommandFocus()) {
+                this.cursorConf.show = false
+            } else {
+                this.cursorConf.show = activeCursor
+            }
+
             if (activeCursor) {
                 this._onActive()
             } else {
@@ -207,38 +213,28 @@ export default {
             }
         });
 
-        let safariStyleCache = {};
+        let containerStyleCache = null;
         //  监听全屏事件，用户ESC退出时需要设置全屏状态
         ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange'].forEach((item) => {
             _eventOn(window, item, () => {
                 let isFullScreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen || document.fullscreenElement;
+
                 if (isFullScreen) {
+                    //  存储窗口样式
+                    containerStyleCache = JSON.parse(JSON.stringify(this.containerStyleStore))
+
                     //  进入全屏
                     if (_isSafari()) {
-                        let container = this.$refs.terminalContainer
-                        safariStyleCache = {
-                            position: container.style.position,
-                            width: container.style.width,
-                            height: container.style.height,
-                            left: container.style.left,
-                            top: container.style.top
-                        }
-                        container.style.position = 'fixed'
-                        container.style.width = '100%'
-                        container.style.height = '100%'
-                        container.style.left = '0'
-                        container.style.top = '0'
+                        this.containerStyleStore.width = '100%'
+                        this.containerStyleStore.height = '100%'
+                        this.containerStyleStore.left = '0'
+                        this.containerStyleStore.top = '0'
                     }
                 } else {
                     //  退出全屏
                     this.fullscreenState = false
-                    if (_isSafari()) {
-                        let container = this.$refs.terminalContainer
-                        container.style.position = safariStyleCache.position
-                        container.style.width = safariStyleCache.width
-                        container.style.height = safariStyleCache.height
-                        container.style.left = safariStyleCache.left
-                        container.style.top = safariStyleCache.top
+                    if (containerStyleCache) {
+                        this.containerStyleStore = containerStyleCache
                     }
                 }
             });
@@ -260,7 +256,7 @@ export default {
                     console.warn("Terminal is not draggable: " + this.getName())
                 }
             } else if (type === 'execute') {
-                if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
+                if (!this._isBlockCommandFocus() && _nonEmpty(options)) {
                     this.command = options
                     this._execute()
                 }
@@ -462,22 +458,25 @@ export default {
             }
         },
         _focus(enforceFocus = false) {
-            this._onActive()
             this.$nextTick(function () {
                 let input
                 if (this.ask.open) {
                     input = this.$refs.terminalAskInput
+                    this.cursorConf.show = false
                 } else if (this.textEditor.open) {
                     input = this.$refs.terminalTextEditor
+                    this.cursorConf.show = false
                 } else {
                     if (enforceFocus === true) {
                         input = this.$refs.terminalCmdInput
                     }
                     this.cursorConf.show = true
                 }
+
                 if (input) {
                     input.focus()
                 }
+                this._onActive()
             })
         },
         /**
@@ -1124,6 +1123,14 @@ export default {
         },
         _onInactive() {
             this.$emit('on-inactive', this.getName())
+        },
+        /**
+         * 是否会阻断获取命令焦点
+         * @returns {boolean}
+         * @private
+         */
+        _isBlockCommandFocus() {
+            return this.textEditor.open || this.flash.open || this.ask.open
         }
     }
 }
