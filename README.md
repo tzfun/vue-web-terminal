@@ -196,25 +196,26 @@ example:
 
 ```vue
 <terminal :name="name" @exec-cmd="onExecCmd">
-<template #header>
-  This is my custom header
-</template>
-
-<template #json="data">
-  {{ data.message }}
-</template>
-
-<template #helpBox="{showHeader, item}">
-  {{ item }}
-</template>
-
-<template #textEditor="{data}">
+  <template #header>
+    This is my custom header
+  </template>
+  
+  <template #json="data">
+    {{ data.message }}
+  </template>
+  
+  <template #helpBox="{showHeader, item}">
+    {{ item }}
+  </template>
+  
+  <template #textEditor="{data}">
         <textarea name="editor" class="t-text-editor" v-model="data.value"
                   @focus="data.onFocus" @blur="data.onBlur"></textarea>
-  <div class="t-text-editor-floor" align="center">
-    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-  </div>
-</template>
+    <div class="t-text-editor-floor" align="center">
+      <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
+      <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)</button>
+    </div>
+  </template>
 </terminal>
 ```
 
@@ -371,13 +372,16 @@ A text editor will open after this API call.
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
   content: 'This is the preset content',
-  onClose: value => {
-    console.log('Final content: ', value)
+  onClose: (value, options) => {
+    console.log('Final content: ', value, "options:", options)
   }
 })
 ```
 
-`content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback will be triggered, and the parameter `value` is the text content in the current editor.
+`content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this
+parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback
+will be triggered, and the parameter `value` is the text content in the current editor,
+`options` is the parameter passed in when closing.
 
 For more information on how to use text editors, see [Text Editor](#TextEditor).
 
@@ -386,7 +390,9 @@ For more information on how to use text editors, see [Text Editor](#TextEditor).
 This method is used to close the currently opened text editor. After calling, it will trigger the `onClose` callback when it is opened.
 
 ```js
-TerminalApi.textEditorClose('my-terminal')
+TerminalApi.textEditorClose('my-terminal', true)
+
+TerminalApi.textEditorClose('my-terminal', false)
 ```
 
 ## Message
@@ -798,8 +804,8 @@ When you want to edit multi-line text, you can use the API: `textEditorOpen()`, 
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
   content: 'Please edit this file',
-  onClose: (value) => {
-    console.log("User edit completed, text result:", value)
+  onClose: (value, options) => {
+    console.log("User edit completed, text result:", value, "options:", options)
   }
 })
 ```
@@ -827,7 +833,8 @@ The plugin provides an `onKeydown` event, which is the best way for you to contr
                 @blur="data.onBlur"></textarea>
 
       <div class="t-text-editor-floor" align="center">
-        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close</button>
       </div>
 
     </template>
@@ -864,12 +871,12 @@ export default {
     },
     onKeydown(event) {
       if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-        this._textEditorClose()
+        this._textEditorClose(true)
         event.preventDefault()
       }
     },
-    _textEditorClose() {
-      TerminalApi.textEditorClose(this.name)
+    _textEditorClose(option) {
+      TerminalApi.textEditorClose(this.name, option)
     }
   }
 }
