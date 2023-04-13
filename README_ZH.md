@@ -209,7 +209,8 @@ example:
         <textarea name="editor" class="t-text-editor" v-model="data.value"
                   @focus="data.onFocus" @blur="data.onBlur"></textarea>
     <div class="t-text-editor-floor" align="center">
-      <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+      <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
+      <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)</button>
     </div>
   </template>
 </terminal>
@@ -370,13 +371,13 @@ info数据结构如下：
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
   content: 'This is the preset content',
-  onClose: value => {
-    console.log('Final content: ', value)
+  onClose: (value, options) => {
+    console.log('Final content: ', value, "options:", options)
   }
 })
 ```
 
-content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容。
+content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容和传入参数选项。
 
 更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器)
 
@@ -385,7 +386,9 @@ content是打开编辑器时预置的内容，如果你不想预置任何内容�
 此方法用于关闭当前打开的文本编辑器，调用后会触发打开时的`onClose`回调。
 
 ```js
-TerminalApi.textEditorClose('my-terminal')
+TerminalApi.textEditorClose('my-terminal', true)
+
+TerminalApi.textEditorClose('my-terminal', false)
 ```
 
 ## 消息对象
@@ -797,8 +800,8 @@ asker.ask({
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
   content: 'Please edit this file',
-  onClose: (value) => {
-    console.log("用户编辑完成，文本结果：", value)
+  onClose: (value, options) => {
+    console.log("用户编辑完成，文本结果：", value, "options:", options)
   }
 })
 ```
@@ -826,7 +829,8 @@ TerminalApi.textEditorOpen('my-terminal', {
                 @blur="data.onBlur"></textarea>
 
       <div class="t-text-editor-floor" align="center">
-        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
+        <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close</button>
       </div>
       
     </template>
@@ -863,12 +867,12 @@ export default {
     },
     onKeydown(event) {
       if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-        this._textEditorClose()
+        this._textEditorClose(true)
         event.preventDefault()
       }
     },
-    _textEditorClose() {
-      TerminalApi.textEditorClose(this.name)
+    _textEditorClose(option) {
+      TerminalApi.textEditorClose(this.name, option)
     }
   }
 }
