@@ -21,7 +21,9 @@
                   @focus="data.onFocus"
                   @blur="data.onBlur"/>
       <div class="t-text-editor-floor" align="center">
-        <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+        <button class="t-text-editor-floor-btn t-save-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)
+        </button>
+        <button class="t-text-editor-floor-btn t-close-btn" @click="_textEditorClose(false)">Cancel</button>
       </div>
     </template>
   </terminal>
@@ -36,6 +38,7 @@ import 'codemirror/mode/vue/vue.js'
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/addon/edit/closebrackets.js'
 import LocalTerminalJs from "@/components/LocalTerminal.js";
+
 export default LocalTerminalJs
 </script>
 
@@ -102,6 +105,7 @@ export default LocalTerminalJs
   border-left-color: #a4eac8;
   border-radius: 50%;
 }
+
 .my-text-editor {
   height: calc(100% - 35px);
 }

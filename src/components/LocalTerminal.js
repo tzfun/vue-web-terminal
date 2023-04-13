@@ -8,8 +8,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.8',
-                vue3: '3.1.4'
+                vue2: '2.1.10',
+                vue3: '3.1.6'
             },
             cmdStore: [],
             initLog: null,
@@ -268,18 +268,26 @@ export default {
             } else if (key === 'edit') {
                 TerminalApi.textEditorOpen(this.name, {
                     content: exampleCode,
-                    onClose: value => {
+                    onClose: (value, options) => {
                         this.enableTextEditor = false
-                        success([
-                            {
+                        if (options === true) {
+                            success([
+                                {
+                                    class: 'success',
+                                    content: "Edit saved successfully!"
+                                },
+                                {
+                                    type: 'code',
+                                    content: value
+                                }
+                            ])
+                        } else {
+                            success({
                                 class: 'success',
-                                content: "Edit saved successfully!"
-                            },
-                            {
-                                type: 'code',
-                                content: value
-                            }
-                        ])
+                                content: "Edit canceled!"
+                            },)
+                        }
+
                         this.nextGuide()
                     }
                 })
@@ -300,7 +308,7 @@ export default {
         },
         onKeydown(event) {
             if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-                this._textEditorClose()
+                this._textEditorClose(true)
                 event.preventDefault()
             }
         },
@@ -452,8 +460,8 @@ export default {
                 }, Math.random() * 20)
             })
         },
-        _textEditorClose() {
-            TerminalApi.textEditorClose(this.name)
+        _textEditorClose(options) {
+            TerminalApi.textEditorClose(this.name, options)
         }
     }
 }

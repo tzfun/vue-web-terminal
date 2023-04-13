@@ -55,7 +55,7 @@
           <img style="width: 250px" :src="require('@/../public/logo.png')" alt="vue-web-terminal">
           <div>
             <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" alt="vue2"></a>
-            <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3" style="margin-left: 15px;"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" alt="vue3"></a>
+            <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3-pioneer" style="margin-left: 15px;"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer" alt="vue3"></a>
           </div>
         </div>
 
