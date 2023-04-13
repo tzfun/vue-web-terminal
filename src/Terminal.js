@@ -7,10 +7,8 @@ import {
     _getClipboardText,
     _getSelection,
     _html,
-    _isEmpty,
-    _isPad,
-    _isParentDom,
-    _isPhone,
+    _isEmpty, _isPad,
+    _isParentDom, _isPhone,
     _isSafari,
     _nonEmpty,
     _openUrl,
@@ -74,8 +72,6 @@ export default {
             },
             showInputLine: true,
             terminalLog: [],
-            //  日志缓冲，需要帧渲染
-            terminalLogBuffer: [],
             searchCmdResult: {
                 //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
                 show: false,
@@ -125,8 +121,6 @@ export default {
         this.$emit('init-before', this.getName())
 
         this._initContainerStyle()
-        //  开启帧渲染
-        this._startRenderMessageInterval()
 
         if (this.initLog != null) {
             this._pushMessageBatch(this.initLog, true)
@@ -323,6 +317,9 @@ export default {
         unregister(this.getName())
     },
     watch: {
+        terminalLog() {
+            this._jumpToBottom()
+        },
         context: {
             handler() {
                 this.$nextTick(() => {
@@ -384,27 +381,6 @@ export default {
             }
 
             this.$emit('on-click', key, this.getName())
-        },
-        _startRenderMessageInterval() {
-            if (this.renderMessageInterval) {
-                return
-            }
-            let renderTime = 0
-            //  每 100 ms 作为一帧更新
-            this.renderMessageInterval = setInterval(() => {
-                if (this.terminalLogBuffer.length > 0) {
-                    renderTime = new Date().getTime()
-                    let buffer = this.terminalLogBuffer
-                    this.terminalLogBuffer = []
-                    this.terminalLog.push.apply(this.terminalLog, buffer)
-                    this._jumpToBottom()
-                }
-                //  空闲 2 秒就停止
-                if (new Date().getTime() - renderTime >= 2000) {
-                    clearInterval(this.renderMessageInterval)
-                    this.renderMessageInterval = null
-                }
-            }, 100)
         },
         _calculateByteLen() {
             if (this.byteLen.init) {
@@ -748,19 +724,22 @@ export default {
             }
 
             this._filterMessageType(message)
-            this._startRenderMessageInterval()
 
-            this.terminalLogBuffer.push(message)
-
+            this.terminalLog.push(message)
             if (!ignoreCheck) {
                 this._checkTerminalLog()
             }
+
+            if (message.type === MESSAGE_TYPE.JSON) {
+                setTimeout(() => {
+                    this._jumpToBottom()
+                }, 80)
+            }
         },
         _pushMessageBatch(messages, ignoreCheck = false) {
-            this._startRenderMessageInterval()
             for (let m of messages) {
                 this._filterMessageType(m)
-                this.terminalLogBuffer.push(m)
+                this.terminalLog.push(m)
             }
             if (!ignoreCheck) {
                 this._checkTerminalLog()
@@ -775,7 +754,7 @@ export default {
             })
         },
         _checkTerminalLog() {
-            let count = this.terminalLog.length + this.terminalLogBuffer.length
+            let count = this.terminalLog.length
             if (this.warnLogCountLimit > 0
                 && count > this.warnLogCountLimit
                 && Math.floor(count / this.warnLogCountLimit) !== this.perfWarningRate.count) {
@@ -791,15 +770,15 @@ export default {
             if (_nonEmpty(this.command)) {
                 historyStore.pushCmd(this.getName(), this.command)
             }
-            this._pushMessage({
+
+            this.terminalLog.push({
                 type: "cmdLine",
                 content: `${this.context} > ${this._commandFormatter(this.command)}`
-            })
+            });
         },
         _doClear(args) {
             if (args.length === 1) {
                 this.terminalLog = [];
-                this.terminalLogBuffer = [];
             } else if (args.length === 2 && args[1] === 'history') {
                 historyStore.clearLog(this.getName())
             }
