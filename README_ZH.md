@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -118,23 +118,23 @@ body, html, #app {
 
 terminal标签支持的属性参数表
 
-| 参数                   | 说明                                                                  | 类型         | 默认值                                              |
-|----------------------|---------------------------------------------------------------------|------------|--------------------------------------------------|
-| name                 | Terminal实例名称，同一页面的name必须唯一，API中使用也需用到此值                             | string     | terminal                                         |
-| context              | 上下文内容                                                               | string     | /vue-web-terminal                                |
-| title                | 窗口头部显示的标题                                                           | string     | vue-web-terminal                                 |
-| show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                    | boolean    | true                                             |
-| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                 | array      | 略                                                |
-| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                       | number     | 200                                              |
-| auto-help            | 是否打开命令行自动搜索提示功能                                                     | boolean    | true                                             |
-| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                     | boolean    | true                                             |
-| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                | array      | [内置命令](#内置命令)                                    |
-| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                                | function   | function(a,b)                                    |
-| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                                | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                       | object     | 见[拖拽功能](#拖拽功能)                                   |
-| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式        | function   | function(cmd)                                    |
-| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                               | function   | function(event)                                  | 
-| search-handler       | 用户自定义命令搜索提示实现，方法需返回一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function   | function(commandStore, key)                      | 
+| 参数                   | 说明                                                                        | 类型         | 默认值                                              |
+|----------------------|---------------------------------------------------------------------------|------------|--------------------------------------------------|
+| name                 | Terminal实例名称，同一页面的name必须唯一，API中使用也需用到此值                                   | string     | terminal                                         |
+| context              | 上下文内容                                                                     | string     | /vue-web-terminal                                |
+| title                | 窗口头部显示的标题                                                                 | string     | vue-web-terminal                                 |
+| show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                          | boolean    | true                                             |
+| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                       | array      | 略                                                |
+| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                             | number     | 200                                              |
+| auto-help            | 是否打开命令行自动搜索提示功能                                                           | boolean    | true                                             |
+| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                           | boolean    | true                                             |
+| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                      | array      | [内置命令](#内置命令)                                    |
+| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                                      | function   | function(a,b)                                    |
+| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                                      | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                             | object     | 见[拖拽功能](#拖拽功能)                                   |
+| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式              | function   | function(cmd)                                    |
+| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                     | function   | function(event)                                  | 
+| search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function   | function(commandStore, key, callback)            | 
 
 > 下面是已移除属性
 >
@@ -193,25 +193,25 @@ example:
 ```vue
 
 <terminal :name="name" @exec-cmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
-  
-  <template #json="data">
-    {{ data.message }}
-  </template>
-  
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
-  
-  <template #textEditor="{data}">
+<template #header>
+  This is my custom header
+</template>
+
+<template #json="data">
+  {{ data.message }}
+</template>
+
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
+
+<template #textEditor="{data}">
         <textarea name="editor" class="t-text-editor" v-model="data.value"
                   @focus="data.onFocus" @blur="data.onBlur"></textarea>
-    <div class="t-text-editor-floor" align="center">
-      <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-    </div>
-  </template>
+  <div class="t-text-editor-floor" align="center">
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+  </div>
+</template>
 </terminal>
 ```
 
@@ -828,7 +828,7 @@ TerminalApi.textEditorOpen('my-terminal', {
       <div class="t-text-editor-floor" align="center">
         <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close</button>
       </div>
-      
+
     </template>
   </terminal>
 </template>

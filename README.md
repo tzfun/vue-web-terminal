@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -122,23 +122,23 @@ body, html, #app {
 
 Terminal tag supports attribute parameter table.
 
-| Argument             | Description                                                                                                                                                                                                     | Type       | Default                                            |
-|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|----------------------------------------------------|
-| name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in API.                                                                                                       | string     | terminal                                           |
-| context              | Context text.                                                                                                                                                                                                   | string     | /vue-web-terminal                                  |
-| title                | The title displayed in the header.                                                                                                                                                                              | string     | vue-web-terminal                                   |
-| show-header          | Whether to display the header, this switch will affect the drag and [drop](#Drag) function. Only when the header is displayed can the drag and drop function provided by default be used.                       | boolean    | true                                               |
-| init-log             | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array      | /                                                  |
-| warn-log-count-limit | If the current Terminal log number exceeds this limit, a warning will be issued. Setting a value of `<= 0` will not issue a warning.                                                                            | number     | 200                                                |
-| auto-help            | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean    | true                                               |
-| enable-example-hint  | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean    | true                                               |
-| command-store        | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array      | [Local Commands](#Local)                           |
-| command-store-sort   | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function   | function(a,b)                                      |
-| input-filter         | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function   | function(当前输入字符char, 输入框内字符串value, input事件event)   |
-| drag-conf            | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object     | [Drag](#Drag)                                      |
-| command-formatter    | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function   | function(cmd)                                      |
-| tab-key-handler      | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                 | function   | function(event)                                    |
-| search-handler       | User-defined command search prompt implementation, the method needs to return a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot             | function   | function(commandStore, key)                        |
+| Argument             | Description                                                                                                                                                                                                     | Type       | Default                                          |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|--------------------------------------------------|
+| name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in API.                                                                                                       | string     | terminal                                         |
+| context              | Context text.                                                                                                                                                                                                   | string     | /vue-web-terminal                                |
+| title                | The title displayed in the header.                                                                                                                                                                              | string     | vue-web-terminal                                 |
+| show-header          | Whether to display the header, this switch will affect the drag and [drop](#Drag) function. Only when the header is displayed can the drag and drop function provided by default be used.                       | boolean    | true                                             |
+| init-log             | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array      | /                                                |
+| warn-log-count-limit | If the current Terminal log number exceeds this limit, a warning will be issued. Setting a value of `<= 0` will not issue a warning.                                                                            | number     | 200                                              |
+| auto-help            | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean    | true                                             |
+| enable-example-hint  | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean    | true                                             |
+| command-store        | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array      | [Local Commands](#Local)                         |
+| command-store-sort   | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function   | function(a,b)                                    |
+| input-filter         | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf            | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object     | [Drag](#Drag)                                    |
+| command-formatter    | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function   | function(cmd)                                    |
+| tab-key-handler      | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                 | function   | function(event)                                  |
+| search-handler       | User-defined command search prompt implementation, the callback needs to resolve a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot          | function   | function(commandStore, key, callback)            |
 > Below are the removed properties
 >
 > * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
@@ -196,25 +196,25 @@ example:
 
 ```vue
 <terminal :name="name" @exec-cmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
-  
-  <template #json="data">
-    {{ data.message }}
-  </template>
-  
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
-  
-  <template #textEditor="{data}">
+<template #header>
+  This is my custom header
+</template>
+
+<template #json="data">
+  {{ data.message }}
+</template>
+
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
+
+<template #textEditor="{data}">
         <textarea name="editor" class="t-text-editor" v-model="data.value"
                   @focus="data.onFocus" @blur="data.onBlur"></textarea>
-    <div class="t-text-editor-floor" align="center">
-      <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-    </div>
-  </template>
+  <div class="t-text-editor-floor" align="center">
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+  </div>
+</template>
 </terminal>
 ```
 
