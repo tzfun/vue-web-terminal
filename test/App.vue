@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import {api as TerminalApi, Terminal} from '../src/index.js'
+import {api as TerminalApi, Terminal, Ask as TerminalAsk} from '../src/index.js'
 
 export default {
   name: "App",
@@ -116,11 +116,23 @@ export default {
       } else if (key === 'edit') {
         TerminalApi.textEditorOpen(name, {
           content: 'hello world!',
-          onClose: () => {
-            console.log("text close")
+          onClose: (value, option) => {
+            console.log("text close, value:", value, "option:", option)
           }
         })
         success()
+      } else if (key === 'ask') {
+        let asker = new TerminalAsk()
+        success(asker)
+        asker.ask({
+          question: 'Ask? (y/n): ',
+          autoReview: true,
+          callback: value => {
+            console.log("input: ", value)
+            asker.finish()
+          }
+        })
+        TerminalApi.focus()
       } else {
         failed("Unknown command: " + key)
       }

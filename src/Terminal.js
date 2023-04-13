@@ -303,7 +303,7 @@ export default {
                 this.textEditor.onClose = opt.onClose
                 this._focus()
             } else if (type === 'textEditorClose') {
-                return this._textEditorClose()
+                return this._textEditorClose(options)
             } else {
                 console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
             }
@@ -624,6 +624,7 @@ export default {
                                         message.onFinish(() => {
                                             this.ask.open = false
                                             finish()
+                                            this._focus(true)
                                         })
                                         this.ask.open = true
                                         return
@@ -1115,13 +1116,13 @@ export default {
                 this.ask.callback(this.ask.input)
             }
         },
-        _textEditorClose() {
+        _textEditorClose(options) {
             if (this.textEditor.open) {
                 this.textEditor.open = false
                 let content = this.textEditor.value
                 this.textEditor.value = ''
                 if (this.textEditor.onClose) {
-                    this.textEditor.onClose(content)
+                    this.textEditor.onClose(content, options)
                     this.textEditor.onClose = null
                 }
                 this._focus(true)

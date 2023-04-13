@@ -3,7 +3,12 @@
     <textarea name="editor" ref="textEditor" class="t-text-editor" v-model="config.value"
               @focus="config.onFocus" @blur="config.onBlur"></textarea>
     <div class="t-text-editor-floor" align="center">
-      <button class="t-text-editor-floor-btn" @click="$emit('close')">Save & Close</button>
+      <button class="t-text-editor-floor-btn t-close-btn"
+              @click="$emit('close', false)"
+              title="Cancel Edit">Cancel</button>
+      <button class="t-text-editor-floor-btn t-save-btn"
+              @click="$emit('close', true)"
+              title="Save And Close">Save & Close</button>
     </div>
   </div>
 </template>
@@ -22,9 +27,22 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .t-editor {
   width: 100%;
   height: 100%;
+}
+.t-close-btn {
+  color: #bba9a9;
+}
+.t-close-btn:hover {
+  color: #00ffff;
+}
+
+.t-save-btn {
+  color:#00b10e;
+}
+.t-save-btn:hover {
+  color: #befcff;
 }
 </style>
