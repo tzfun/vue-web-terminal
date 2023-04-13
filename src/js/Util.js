@@ -268,3 +268,20 @@ export function _isParentDom(target, parent, clazz = null) {
     }
     return false;
 }
+
+export function _isPhone() {
+    let info = navigator.userAgent;
+    if (info) {
+        return /mobile/i.test(info)
+    }
+    let screen = _screenType()
+    return screen.xs || screen.sm
+}
+
+export function _isPad() {
+    let info = navigator.userAgent;
+    if (info) {
+        return /pad/i.test(info)
+    }
+    return _screenType().sm
+}

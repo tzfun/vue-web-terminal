@@ -7,8 +7,8 @@ import {
     _getClipboardText,
     _getSelection,
     _html,
-    _isEmpty,
-    _isParentDom,
+    _isEmpty, _isPad,
+    _isParentDom, _isPhone,
     _isSafari,
     _nonEmpty,
     _openUrl,
@@ -238,7 +238,25 @@ export default {
                     }
                 }
             });
-        })
+        });
+
+        //  如果是移动设备，需要监听touch事件来模拟双击事件
+        if (_isPhone() || _isPad()) {
+            let touchTime = 0
+            el.addEventListener('touchend', () => {
+                let now = new Date().getTime()
+                if (touchTime === 0) {
+                    touchTime = now
+                } else {
+                    if (new Date().getTime() - touchTime < 600) {
+                        //  移动端双击
+                        this._focus(true)
+                    } else {
+                        touchTime = now
+                    }
+                }
+            })
+        }
 
         this._initDrag()
 
