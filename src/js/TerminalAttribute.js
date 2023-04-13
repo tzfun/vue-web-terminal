@@ -110,8 +110,8 @@ export function terminalProps() {
          *
          * @param commandStore 命令集合
          * @param key   目标key
-         *
-         * @return 命令项，格式如下：
+         * @param callback 搜索结束回调，回调格式如下：
+         * <pre>
          *                 {
          *                     key: 'help',
          *                     title: 'Help',
@@ -125,6 +125,7 @@ export function terminalProps() {
          *                         }
          *                     ]
          *                 }
+         * </pre>
          */
         searchHandler: {
             type: Function

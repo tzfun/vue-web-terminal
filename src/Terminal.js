@@ -8,8 +8,8 @@ import {
     _getClipboardText,
     _getSelection,
     _html,
-    _isEmpty,
-    _isParentDom,
+    _isEmpty, _isPad,
+    _isParentDom, _isPhone,
     _isSafari,
     _nonEmpty,
     _openUrl,
@@ -174,8 +174,15 @@ export default {
             let container = this.terminalContainer
             if (container && container.getBoundingClientRect && _pointInRect(e, container.getBoundingClientRect())) {
                 activeCursor = _isParentDom(e.target, container, "t-container")
+                    || (e.target && e.target.classList.contains('t-text-editor-floor-btn'))
             }
-            this.cursorConf.show = activeCursor
+
+            if (this._isBlockCommandFocus()) {
+                this.cursorConf.show = false
+            } else {
+                this.cursorConf.show = activeCursor
+            }
+
             if (activeCursor) {
                 this._onActive()
             } else {
@@ -195,6 +202,7 @@ export default {
                         event.preventDefault()
                     } else if (document.activeElement !== this.terminalCmdInput) {
                         this.terminalCmdInput.focus()
+                        this._onInputKeydown(event)
                     }
                 }
 
@@ -263,6 +271,24 @@ export default {
             });
         })
 
+        //  如果是移动设备，需要监听touch事件来模拟双击事件
+        if (_isPhone() || _isPad()) {
+            let touchTime = 0
+            this.terminalWindow.addEventListener('touchend', () => {
+                let now = new Date().getTime()
+                if (touchTime === 0) {
+                    touchTime = now
+                } else {
+                    if (new Date().getTime() - touchTime < 600) {
+                        //  移动端双击
+                        this._focus(true)
+                    } else {
+                        touchTime = now
+                    }
+                }
+            })
+        }
+
         this._initDrag()
 
         register(this.getName(), this.terminalListener = (type, options) => {
@@ -279,7 +305,7 @@ export default {
                     console.warn("Terminal is not draggable: " + this.getName())
                 }
             } else if (type === 'execute') {
-                if (!this.ask.open && !this.flash.open && _nonEmpty(options)) {
+                if (!this._isBlockCommandFocus() && _nonEmpty(options)) {
                     this.command = options
                     this._execute()
                 }
@@ -429,8 +455,10 @@ export default {
 
             //  用户自定义搜索实现
             if (this.searchHandler) {
-                this.searchCmdResult.item = this.searchHandler(this.allCommandStore, key)
-                this._jumpToBottom()
+                this.searchHandler(this.allCommandStore, key, item => {
+                    this.searchCmdResult.item = item
+                    this._jumpToBottom()
+                })
                 return
             }
 
@@ -490,8 +518,10 @@ export default {
                 let input
                 if (this.ask.open) {
                     input = this.terminalAskInput
+                    this.cursorConf.show = false
                 } else if (this.textEditor.open) {
                     input = this.terminalTextEditor
+                    this.cursorConf.show = false
                 } else {
                     if (enforceFocus === true) {
                         input = this.terminalCmdInput
@@ -501,6 +531,7 @@ export default {
                 if (input) {
                     input.focus()
                 }
+                this._onActive()
             }).then(() => {
             })
         },
@@ -1150,6 +1181,14 @@ export default {
         },
         _onInactive() {
             this.$emit('on-inactive', this.getName())
+        },
+        /**
+         * 是否会阻断获取命令焦点
+         * @returns {boolean}
+         * @private
+         */
+        _isBlockCommandFocus() {
+            return this.textEditor.open || this.flash.open || this.ask.open
         }
     }
 }

@@ -13,7 +13,7 @@
            ref="terminalWindow" @click="_focus" @dblclick="_focus(true)">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
-              <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
+              <span class="t-prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
           <div v-else>
             <span v-if="item.type === 'normal'">
@@ -59,7 +59,7 @@
                  @keyup.enter="_onAskInput">
         </div>
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
-          <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
+          <span class="t-prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span> > </span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
@@ -96,7 +96,8 @@
       </slot>
     </div>
 
-    <div class="t-text-editor-container" v-if="textEditor.open">
+    <div class="t-text-editor-container" v-if="textEditor.open"
+         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
       <slot name="textEditor" :data="textEditor">
         <t-editor :config="textEditor"  v-model="textEditor.value" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>

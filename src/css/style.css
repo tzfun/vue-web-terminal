@@ -121,7 +121,7 @@
     cursor: text;
 }
 
-.t-window .prompt:before {
+.t-prompt:before {
     content: "$";
     margin-right: 10px;
     word-wrap: break-word;

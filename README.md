@@ -16,7 +16,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 
 ## Feature Support
 
-* Supported message formats: `text`, `table`, `json`, `code`/multiline text, `html`
+* Supported message formats: `text`, `table`, `json`, `code/multiline text`, `html`, `ansi`
 * Support [Flash](#Flash) real-time echo
 * Support user input.(For example, enter username and password to log in)
 * Support `Highlight.js`, `Codemirror.js` code highlighting
@@ -26,7 +26,7 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 * Support window drag
 * Support for multi-line text editing
 * Support custom command library and search for help tips, use the `Tab` key to quickly fill
-* Support User inputting filter
+* Support user inputting filter
 * Support API interface: execute command, push message, simulate drag and drop, execute, full screen, etc.
 * Provides multiple slots to support custom styles
 
@@ -34,7 +34,9 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 
 > Short description:
 >
-> It does not have the ability to execute a specific command. This ability needs to be implemented by the developer. What it is responsible for is to get the command to be executed from the user in the form of an interface, and then hand it over to the developer to implement and execute. After that, hand it over to show it to the user
+> It does not have the ability to execute a specific command. This ability needs to be implemented by the developer.
+> What it is responsible for is to get the command to be executed from the user in the form of an interface, and then
+> hand it over to the developer to implement and execute. After that, hand it over to show it to the user
 
 # Online Experience
 
@@ -44,7 +46,8 @@ Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-w
 
 # Quick Start
 
-Install vue-web-terminal by npm. The `2.x.x` version corresponds to vue2, and the `3.x.x` version corresponds to vue3. It is recommended to download the latest version corresponding to the main version.
+Install vue-web-terminal by npm. The `2.x.x` version corresponds to vue2, and the `3.x.x` version corresponds to vue3.
+It is recommended to download the latest version corresponding to the main version.
 
 ```shell
 #  install for vue2
@@ -121,10 +124,10 @@ Terminal tag supports attribute parameter table.
 
 | Argument             | Description                                                                                                                                                                                                     | Type       | Default                                            |
 |----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|----------------------------------------------------|
-| name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in Api.                                                                                                       | string     | terminal                                           |
+| name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in API.                                                                                                       | string     | terminal                                           |
 | context              | Context text.                                                                                                                                                                                                   | string     | /vue-web-terminal                                  |
 | title                | The title displayed in the header.                                                                                                                                                                              | string     | vue-web-terminal                                   |
-| show-header          | Whether to display the header, this switch will affect the drag and drop function.                                                                                                                              | boolean    | true                                               |
+| show-header          | Whether to display the header, this switch will affect the drag and [drop](#Drag) function. Only when the header is displayed can the drag and drop function provided by default be used.                       | boolean    | true                                               |
 | init-log             | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array      | /                                                  |
 | warn-log-count-limit | If the current Terminal log number exceeds this limit, a warning will be issued. Setting a value of `<= 0` will not issue a warning.                                                                            | number     | 200                                                |
 | auto-help            | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean    | true                                               |
@@ -147,24 +150,24 @@ Terminal tag supports attribute parameter table.
 
 Terminal tag support event table
 
-| Event name      | Description                                                                                                                                                                                                                                                          | Callback arguments                         |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| exec-cmd        | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing!**, the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
-| before-exec-cmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                      | `(cmdKey, command, name)`                  |
-| on-keydown      | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                    | `(event, name)`                            |
-| on-click        | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                           | `(key, name)`                              |
-| init-before     | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                          | `(name)`                                   |
-| init-complete   | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                               | `(name)`                                   |
-| on-active       | Triggered when the window is active.                                                                                                                                                                                                                                 | `(name)`                                   |
-| on-inactive     | Triggered when the window is inactive.                                                                                                                                                                                                                               | `(name)`                                   |
+| Event name      | Description                                                                                                                                                                                                                                                         | Callback arguments                         |
+|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
+| exec-cmd        | Fired when a custom command is executed. `success` and `failed` are callback functions, **must call one of the two callbacks before echoing**! the meaning of the `success` callback parameter is described below, and the `failed` callback parameter is a string. | `(cmdKey, command, success, failed, name)` |
+| before-exec-cmd | Triggered before the user presses Enter to execute the command.                                                                                                                                                                                                     | `(cmdKey, command, name)`                  |
+| on-keydown      | When the cursor focus is obtained, press any keyboard to trigger.                                                                                                                                                                                                   | `(event, name)`                            |
+| on-click        | Triggered when the user clicks the button, the parameter `key` is the unique identification of the button, there are buttons: `close`, `minScreen`, `fullScreen`, `title`.                                                                                          | `(key, name)`                              |
+| init-before     | Lifecycle function, triggered before plugin initialization.                                                                                                                                                                                                         | `(name)`                                   |
+| init-complete   | Lifecycle function, triggered after plugin initialization is complete.                                                                                                                                                                                              | `(name)`                                   |
+| on-active       | Triggered when the window is active.                                                                                                                                                                                                                                | `(name)`                                   |
+| on-inactive     | Triggered when the window is inactive.                                                                                                                                                                                                                              | `(name)`                                   |
 
 **Special note**: The `success` callback parameter of `exec-cmd` supports multiple data types, and the execution logic of different data types will be different:
 
 * If no parameters are passed, the execution will end immediately
 * Passing in a [Message](#Message) will append a message to the record and end the execution immediately
 * Pass in a [Message](#Message) array, which will append multiple messages to the record and end the execution immediately
-* Pass in a `Terminal.$Flash` object, it will enter the processing logic of [Real-time-echo(Flash)](#Flash), this execution will not end until `finish()` is called
-* Pass in a `Terminal.$Ask` object, it will enter the processing logic of [user-input](#User-input), this execution will not end until `finish()` is called
+* Pass in a `TerminalFlash` object, it will enter the processing logic of [Real-time-echo(Flash)](#Flash), this execution will not end until `finish()` is called
+* Pass in a `TerminalAsk` object, it will enter the processing logic of [user-input](#User-input), this execution will not end until `finish()` is called
 
 > PS:
 >
@@ -192,35 +195,32 @@ Terminal supports the following custom slots, this feature is supported in `2.0.
 example:
 
 ```vue
-
 <terminal :name="name" @exec-cmd="onExecCmd">
-<template #header>
-  This is my custom header
-</template>
-
-<template #json="data">
-  {{ data.message }}
-</template>
-
-<template #helpBox="{showHeader, item}">
-  {{ item }}
-</template>
-
-<template #textEditor="{data}">
-      <textarea name="editor" class="t-text-editor" v-model="data.value"
-                @focus="data.onFocus" @blur="data.onBlur"></textarea>
-  <div class="t-text-editor-floor" align="center">
-    <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
-  </div>
-</template>
+  <template #header>
+    This is my custom header
+  </template>
+  
+  <template #json="data">
+    {{ data.message }}
+  </template>
+  
+  <template #helpBox="{showHeader, item}">
+    {{ item }}
+  </template>
+  
+  <template #textEditor="{data}">
+        <textarea name="editor" class="t-text-editor" v-model="data.value"
+                  @focus="data.onFocus" @blur="data.onBlur"></textarea>
+    <div class="t-text-editor-floor" align="center">
+      <button class="t-text-editor-floor-btn" @click="_textEditorClose">Save & Close(Ctrl + S)</button>
+    </div>
+  </template>
 </terminal>
 ```
 
-## Api
+## API
 
-This plugin provides some APIs that can use javascript to actively initiate event requests to the plugin.
-
-You have two ways to call the API:
+This plugin provides some API that can use javascript to actively initiate event requests to the plugin. You have two ways to call the API:
 
 1). **Get the global API object**
 
@@ -317,7 +317,7 @@ TerminalApi.dragging('my-terminal', {
 
 ### execute()
 
-You can use the api to execute a command to the Terminal, and the execution process will be echoed in the Terminal window. This is a way to use a script to simulate the user executing the command.
+You can use the API to execute a command to the Terminal, and the execution process will be echoed in the Terminal window. This is a way to use a script to simulate the user executing the command.
 
 ```js
 TerminalApi.execute('my-terminal', 'help :local')
@@ -328,14 +328,14 @@ TerminalApi.execute('my-terminal', 'help :local')
 Get the Terminal input focus. There are two input points in the plugin, one is command line input, the other is [User-input](#User-input).
 
 ```js
-TerminalApi.focus('my-terminal')
+TerminalApi.focus('my-terminal', true)
 ```
 
 ### elementInfo()
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=info)
 
-Get the DOM information of the terminal window. You can use this api to get the terminal's screen width and height, the width and height of the displayed content, the location, the width of a single character, etc. The unit is px.
+Get the DOM information of the terminal window. You can use this API to get the terminal's screen width and height, the width and height of the displayed content, the location, the width of a single character, etc. The unit is px.
 
 ```js
 let info = TerminalApi.elementInfo('my-terminal')
@@ -391,7 +391,7 @@ TerminalApi.textEditorClose('my-terminal')
 
 ## Message
 
-This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `execCmd` event and the `pushMessage` api.
+This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `exec-cmd` event and the `pushMessage` api.
 
 | Prop    | Description                                                                                                                    | Type                          | Options                           |
 |---------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------|-----------------------------------|
@@ -574,7 +574,7 @@ function execCmd(key, command, success) {
 
 ## Command
 
-For help and command search, the command definition here is only for display, there is no specific execution logic, the execution logic of the command should be implemented in the `execCmd` event of [Events](#Events).
+For help and command search, the command definition here is only for display, there is no specific execution logic, the execution logic of the command should be implemented in the `exec-cmd` event of [Events](#Events).
 
 If the command help search function is enabled, you need to pass in a custom command library before instantiating Terminal. The incoming command library is an array of commands. The following are the rules for defining the command format:
 
@@ -719,7 +719,7 @@ The default messages of Terminal are displayed in the append mode. When you only
 and when the content does not want to exist in the record after the execution, real-time echo is a good choice.
 For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
 
-In the `execCmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
+In the `exec-cmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
 
 Create a new flash object through `new TerminalFlash()` and pass it into the success callback. The flash object provides two methods:
 
@@ -752,7 +752,7 @@ let flashInterval = setInterval(() => {
 When you need to ask the user, you can use this function to get the content entered by the user,
 such as the scenario where the user needs to enter the username and password when logging in.
 
-In the `execCmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
+In the `exec-cmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
 
 Create a new ask object through `new TerminalAsk()` and pass it into the success callback. The ask object provides two methods:
 
@@ -793,10 +793,10 @@ asker.ask({
 
 #### Use API
 
-When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. For details, please refer to the [API](#Api) section. The following is a simple example:
+When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. For details, please refer to the [API](#API) section. The following is a simple example:
 
 ```js
-TerminalApi.textEditorOpen(this.name, {
+TerminalApi.textEditorOpen('my-terminal', {
   content: 'Please edit this file',
   onClose: (value) => {
     console.log("User edit completed, text result:", value)
@@ -817,7 +817,6 @@ If you don't like the default style, you can use Slot to customize the style of 
 The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` to indicate Finish editing and save.
 
 ```vue
-
 <template>
   <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
@@ -877,10 +876,9 @@ export default {
 </script>
 ```
 
-# About the author
+# Contact
 
-I am a Java Coder, and I only know a little bit about the web(js, vue). I developed this plugin because of my interest and work needs.
-When you see the poor source code of this plugin, please understand that.
+I am a back-end Coder, and I only know a little about the front-end. I developed this plug-in because of my personal interest.
 
 If you have good ideas for code optimization or functions and are willing to contribute code, please submit [PR](https://github.com/tzfun/vue-web-terminal/pulls),
 If you have any questions about the use of the plugin or find bugs, please submit[issue](https://github.com/tzfun/vue-web-terminal/issues).
@@ -890,6 +888,17 @@ If you have any questions about the use of the plugin or find bugs, please submi
 > 📮 *beifengtz@qq.com*
 >
 > ![](https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon16_wx_logo.png) *beifeng-tz* (Add please note vue-web-terminal)
+
+## Communication group
+
+If you have any questions or encounter problems, you can ask them in the communication group, add me to the group on WeChat (see the contact information above)
+
+## Donate
+
+This plugin is completely open source and free, and it is not easy to create. If you think it is good, you can donate to support this project.
+
+Thank you for your donation:
+* [zhangpeng1314](https://gitee.com/zhangpeng1314) - ￥150
 
 # License
 
