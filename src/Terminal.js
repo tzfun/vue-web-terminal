@@ -444,8 +444,10 @@ export default {
 
             //  用户自定义搜索实现
             if (this.searchHandler) {
-                this.searchCmdResult.item = this.searchHandler(this.allCommandStore, key)
-                this._jumpToBottom()
+                this.searchHandler(this.allCommandStore, key, item => {
+                    this.searchCmdResult.item = item
+                    this._jumpToBottom()
+                })
                 return;
             }
 
