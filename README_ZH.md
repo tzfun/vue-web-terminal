@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -390,7 +390,7 @@ TerminalApi.textEditorClose('my-terminal')
 
 ## 消息对象
 
-本插件定义了消息对象，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，`execCmd`事件的`success()`回调和`pushMessage`api都会用到它。
+本插件定义了消息对象，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，`exec-cmd`事件的`success()`回调和`pushMessage`api都会用到它。
 
 | 属性      | 说明                             | 类型                        | 可选值                               |
 |---------|--------------------------------|---------------------------|-----------------------------------|
@@ -575,7 +575,7 @@ function execCmd(key, command, success) {
 
 ## 命令定义
 
-用于help和命令帮助搜索，这里的命令定义仅作为显示用，没有具体的执行逻辑，命令的执行逻辑你应该在[Events](#Events)的`execCmd`事件中实现。
+用于help和命令帮助搜索，这里的命令定义仅作为显示用，没有具体的执行逻辑，命令的执行逻辑你应该在[Events](#Events)的`exec-cmd`事件中实现。
 
 如果开启了命令帮助搜索功能，在实例化Terminal之前需要传入自定义命令库，传入的命令库为命令数组，以下是命令格式定义规则：
 
@@ -720,7 +720,7 @@ dragConf完整配置结构如下：
 Terminal默认的消息都是以追加的模式显示，当你只需要显示执行的过程，执行结束后这些内容不想存在于记录中的时候，实时回显是不错的选择。
 例如`gradle`或`npm`下载依赖包时，下载进度条动画展示的过程。
 
-在[Events](#Events)的`execCmd`事件回调中，`success`回调函数支持传入实时回显的处理对象。
+在[Events](#Events)的`exec-cmd`事件回调中，`success`回调函数支持传入实时回显的处理对象。
 
 通过`new TerminalFlash()`创建一个flash对象，传入success回调中，flash对象提供两个方法：
 
@@ -752,7 +752,7 @@ let flashInterval = setInterval(() => {
 
 当需要向用户询问时，使用此功能可以获取到用户输入的内容，例如登录时需要用户输入用户名密码的场景。
 
-在[Events](#Events)的`execCmd`事件回调中，`success`回调函数支持传入用户输入的处理对象。
+在[Events](#Events)的`exec-cmd`事件回调中，`success`回调函数支持传入用户输入的处理对象。
 
 通过`new TerminalAsk()`创建一个新的ask对象，传入success回调中，ask对象提供两个方法：
 

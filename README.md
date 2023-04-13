@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -391,7 +391,7 @@ TerminalApi.textEditorClose('my-terminal')
 
 ## Message
 
-This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `execCmd` event and the `pushMessage` api.
+This plugin defines a message object. Any information that needs to be displayed on the Terminal in the form of a record is a message object. It is used by the `success()` callback of the `exec-cmd` event and the `pushMessage` api.
 
 | Prop    | Description                                                                                                                    | Type                          | Options                           |
 |---------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------|-----------------------------------|
@@ -574,7 +574,7 @@ function execCmd(key, command, success) {
 
 ## Command
 
-For help and command search, the command definition here is only for display, there is no specific execution logic, the execution logic of the command should be implemented in the `execCmd` event of [Events](#Events).
+For help and command search, the command definition here is only for display, there is no specific execution logic, the execution logic of the command should be implemented in the `exec-cmd` event of [Events](#Events).
 
 If the command help search function is enabled, you need to pass in a custom command library before instantiating Terminal. The incoming command library is an array of commands. The following are the rules for defining the command format:
 
@@ -719,7 +719,7 @@ The default messages of Terminal are displayed in the append mode. When you only
 and when the content does not want to exist in the record after the execution, real-time echo is a good choice.
 For example, when `gradle` or `npm` download dependencies, the process of downloading the progress bar animation.
 
-In the `execCmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
+In the `exec-cmd` event callback of [Events](#Events), the `success` callback function supports the incoming Flash processing object.
 
 Create a new flash object through `new TerminalFlash()` and pass it into the success callback. The flash object provides two methods:
 
@@ -752,7 +752,7 @@ let flashInterval = setInterval(() => {
 When you need to ask the user, you can use this function to get the content entered by the user,
 such as the scenario where the user needs to enter the username and password when logging in.
 
-In the `execCmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
+In the `exec-cmd` event callback of [Events](#Events), the `success` callback function supports incoming user input processing objects.
 
 Create a new ask object through `new TerminalAsk()` and pass it into the success callback. The ask object provides two methods:
 
