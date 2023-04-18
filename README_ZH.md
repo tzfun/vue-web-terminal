@@ -140,7 +140,7 @@ terminal标签支持的属性参数表
 | search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function | function(commandStore, key, callback)            | 
 
 > 下面是已移除属性
->
+> 
 > * ~~**show-log-time**~~: `2.0.14`和`3.0.13`版本之后移除
 > * ~~**warn-log-byte-limit**~~: `2.1.0`和`3.1.0`版本之后移除
 > * ~~**warn-log-limit-enable**~~: `2.1.1`和`3.1.1`版本之后移除
