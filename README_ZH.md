@@ -138,7 +138,7 @@ terminal标签支持的属性参数表
 | command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式              | function | function(cmd)                                    |
 | tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                     | function | function(event)                                  | 
 | search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function | function(commandStore, key, callback)            | 
-
+ 
 > 下面是已移除属性
 > 
 > * ~~**show-log-time**~~: `2.0.14`和`3.0.13`版本之后移除
