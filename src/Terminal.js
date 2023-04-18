@@ -750,7 +750,7 @@ export default {
             this.$nextTick(() => {
                 let box = this.$refs.terminalWindow
                 if (box != null) {
-                    box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+                    box.scrollTo({top: box.scrollHeight, behavior: this.scrollMode})
                 }
             })
         },
