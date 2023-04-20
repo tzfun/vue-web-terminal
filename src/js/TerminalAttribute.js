@@ -132,7 +132,7 @@ export function terminalProps() {
         },
         scrollMode: {
             type: String,
-            default: 'auto'
+            default: 'smooth'
         }
     }
 }
