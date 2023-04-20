@@ -12,7 +12,9 @@
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
 
-一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← → 光标切换和 ↑ ↓ 历史命令切换。
+一个由 Vue
+构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← →
+光标切换和 ↑ ↓ 历史命令切换。
 
 ## 功能支持
 
@@ -118,26 +120,27 @@ body, html, #app {
 
 terminal标签支持的属性参数表
 
-| 参数                   | 说明                                                                        | 类型         | 默认值                                              |
-|----------------------|---------------------------------------------------------------------------|------------|--------------------------------------------------|
-| name                 | Terminal实例名称，同一页面的name必须唯一，API中使用也需用到此值                                   | string     | terminal                                         |
-| context              | 上下文内容                                                                     | string     | /vue-web-terminal                                |
-| title                | 窗口头部显示的标题                                                                 | string     | vue-web-terminal                                 |
-| show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                          | boolean    | true                                             |
-| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                       | array      | 略                                                |
-| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                             | number     | 200                                              |
-| auto-help            | 是否打开命令行自动搜索提示功能                                                           | boolean    | true                                             |
-| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                           | boolean    | true                                             |
-| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                      | array      | [内置命令](#内置命令)                                    |
-| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                                      | function   | function(a,b)                                    |
-| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                                      | function   | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                             | object     | 见[拖拽功能](#拖拽功能)                                   |
-| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式              | function   | function(cmd)                                    |
-| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                     | function   | function(event)                                  | 
-| search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function   | function(commandStore, key, callback)            | 
-
+| 参数                   | 说明                                                                        | 类型       | 默认值                                              |
+|----------------------|---------------------------------------------------------------------------|----------|--------------------------------------------------|
+| name                 | Terminal实例名称，同一页面的name必须唯一，API中使用也需用到此值                                   | string   | terminal                                         |
+| context              | 上下文内容                                                                     | string   | /vue-web-terminal                                |
+| scrollMode           | 滚动条模式                                                                     | string   | smooth/auto                                      |
+| title                | 窗口头部显示的标题                                                                 | string   | vue-web-terminal                                 |
+| show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                          | boolean  | true                                             |
+| init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                       | array    | 略                                                |
+| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                             | number   | 200                                              |
+| auto-help            | 是否打开命令行自动搜索提示功能                                                           | boolean  | true                                             |
+| enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                           | boolean  | true                                             |
+| command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                      | array    | [内置命令](#内置命令)                                    |
+| command-store-sort   | 命令行库排序，自定义命令库的显示排序规则                                                      | function | function(a,b)                                    |
+| input-filter         | 自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签                                      | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf            | 拖拽窗口配置项，**如果不配置此项宽高将会100%填充父元素，窗口宽高等同于父元素宽高**                             | object   | 见[拖拽功能](#拖拽功能)                                   |
+| command-formatter    | 命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式              | function | function(cmd)                                    |
+| tab-key-handler      | 用户键入Tab键时的逻辑处理方法，可配合`helpCmd`这个slot使用                                     | function | function(event)                                  | 
+| search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function | function(commandStore, key, callback)            | 
+ 
 > 下面是已移除属性
->
+> 
 > * ~~**show-log-time**~~: `2.0.14`和`3.0.13`版本之后移除
 > * ~~**warn-log-byte-limit**~~: `2.1.0`和`3.1.0`版本之后移除
 > * ~~**warn-log-limit-enable**~~: `2.1.1`和`3.1.1`版本之后移除
@@ -175,44 +178,44 @@ terminal标签支持的事件表
 
 Terminal支持以下自定义插槽，此功能在`2.0.11`和`3.0.8`版本及之后支持。
 
-| 插槽名称        | 参数                   | 说明                                         |
-|-------------|----------------------|--------------------------------------------|
-| header      | /                    | 自定义header样式，仍然会保留拖拽区域                      |
-| helpBox     | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果                     |
-| normal      | { message }          | 自定义`normal`类型消息                            |
-| json        | { message }          | 自定义`json`类型消息                              |
-| table       | { message }          | 自定义`table`类型消息                             |
-| code        | { message }          | 自定义`code`类型消息                              |
-| html        | { message }          | 自定义`html`类型消息                              |
-| flash       | { content }          | 自定义实时回显样式                                  |
-| helpCmd     | { item }             | 自定义命令搜索提示样式                                |
-| textEditor  | { data }             | 自定义文本编辑器样式，更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器)  |
+| 插槽名称       | 参数                   | 说明                                        |
+|------------|----------------------|-------------------------------------------|
+| header     | /                    | 自定义header样式，仍然会保留拖拽区域                     |
+| helpBox    | { showHeader, item } | 自定义命令搜索结果提示框，item为搜索结果                    |
+| normal     | { message }          | 自定义`normal`类型消息                           |
+| json       | { message }          | 自定义`json`类型消息                             |
+| table      | { message }          | 自定义`table`类型消息                            |
+| code       | { message }          | 自定义`code`类型消息                             |
+| html       | { message }          | 自定义`html`类型消息                             |
+| flash      | { content }          | 自定义实时回显样式                                 |
+| helpCmd    | { item }             | 自定义命令搜索提示样式                               |
+| textEditor | { data }             | 自定义文本编辑器样式，更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器) |
 
 example:
 
 ```vue
 
 <terminal :name="name" @exec-cmd="onExecCmd">
-  <template #header>
-    This is my custom header
-  </template>
-  
-  <template #json="data">
-    {{ data.message }}
-  </template>
-  
-  <template #helpBox="{showHeader, item}">
-    {{ item }}
-  </template>
-  
-  <template #textEditor="{data}">
+<template #header>
+  This is my custom header
+</template>
+
+<template #json="data">
+  {{ data.message }}
+</template>
+
+<template #helpBox="{showHeader, item}">
+  {{ item }}
+</template>
+
+<template #textEditor="{data}">
         <textarea name="editor" class="t-text-editor" v-model="data.value"
                   @focus="data.onFocus" @blur="data.onBlur"></textarea>
-    <div class="t-text-editor-floor" align="center">
-      <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
-      <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)</button>
-    </div>
-  </template>
+  <div class="t-text-editor-floor" align="center">
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
+    <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)</button>
+  </div>
+</template>
 </terminal>
 ```
 
@@ -225,6 +228,7 @@ example:
 注意：**全局API接口调用都需要用到Terminal的`name`**
 
 旧版本兼容方式（不推荐）
+
 ```js
 import Terminal from "vue-web-terminal"
 
@@ -233,6 +237,7 @@ Terminal.$api.pushMessage('my-terminal', 'hello world!')
 ```
 
 新版本方式（推荐）
+
 ```js
 import {api as TerminalApi} from "vue-web-terminal"
 
@@ -243,6 +248,7 @@ TerminalApi.pushMessage('my-terminal', 'hello world!')
 2). **获取实例调用API**
 
 这种方法调用所有的API接口都不需要传入name
+
 ```js
 //  vue template code
 <terminal ref='myTerminal'></terminal>
@@ -267,16 +273,16 @@ this.$refs.myTerminal.pushMessage('hello world!')
 ```js
 //  推送一条消息
 let message = {
-  class: 'warning',
-  content: 'This is a wanning message.'
+    class: 'warning',
+    content: 'This is a wanning message.'
 }
 TerminalApi.pushMessage('my-terminal', message)
 
 //  推送多条消息
 let messages = [
-  {content: "message 1"},
-  {content: "message 2"},
-  {content: "message 3"}
+    {content: "message 1"},
+    {content: "message 2"},
+    {content: "message 3"}
 ]
 TerminalApi.pushMessage('my-terminal', messages)
 ```
@@ -300,12 +306,13 @@ let fullscreen = TerminalApi.isFullscreen('my-terminal')
 
 ### dragging()
 
-当开启[拖拽功能](#拖拽功能)时可以使用下面这种方式来改变窗口位置，其中参数`x`是terminal左边框到浏览器可视范围左边框的距离，`y`是terminal上边框到浏览器可视范围上边框的距离，单位px。
+当开启[拖拽功能](#拖拽功能)时可以使用下面这种方式来改变窗口位置，其中参数`x`
+是terminal左边框到浏览器可视范围左边框的距离，`y`是terminal上边框到浏览器可视范围上边框的距离，单位px。
 
 ```js
 TerminalApi.dragging('my-terminal', {
-  x: 100,
-  y: 200
+    x: 100,
+    y: 200
 })
 ```
 
@@ -370,14 +377,15 @@ info数据结构如下：
 
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
-  content: 'This is the preset content',
-  onClose: (value, options) => {
-    console.log('Final content: ', value, "options:", options)
-  }
+    content: 'This is the preset content',
+    onClose: (value, options) => {
+        console.log('Final content: ', value, "options:", options)
+    }
 })
 ```
 
-content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容和传入参数选项。
+content是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用`textEditorClose()`
+方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容和传入参数选项。
 
 更多关于文本编辑器的使用方法见[文本编辑器](#文本编辑器)
 
@@ -393,14 +401,15 @@ TerminalApi.textEditorClose('my-terminal', false)
 
 ## 消息对象
 
-本插件定义了消息对象，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，`exec-cmd`事件的`success()`回调和`pushMessage`api都会用到它。
+本插件定义了消息对象，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，`exec-cmd`事件的`success()`
+回调和`pushMessage`api都会用到它。
 
-| 属性      | 说明                             | 类型                        | 可选值                               |
-|---------|--------------------------------|---------------------------|-----------------------------------|
-| content | 必填，消息内容，不同消息格式的内容格式不一样，具体规则见下文 | string、json、object、array  | /                                 |
-| type    | 消息格式类型，默认值为`normal`            | string                    | normal、json、code、table、html、ansi  |
-| class   | 消息级别，仅类型为`normal`有效            | string                    | success、error、system、info、warning |
-| tag     | 标签，仅类型为`normal`有效              | string                    | /                                 |
+| 属性      | 说明                             | 类型                       | 可选值                               |
+|---------|--------------------------------|--------------------------|-----------------------------------|
+| content | 必填，消息内容，不同消息格式的内容格式不一样，具体规则见下文 | string、json、object、array | /                                 |
+| type    | 消息格式类型，默认值为`normal`            | string                   | normal、json、code、table、html、ansi  |
+| class   | 消息级别，仅类型为`normal`有效            | string                   | success、error、system、info、warning |
+| tag     | 标签，仅类型为`normal`有效              | string                   | /                                 |
 
 ### normal 普通文本
 
@@ -450,7 +459,8 @@ code类型消息可以更友好的显示代码和多行文本，type为`code`，
 
 code类型消息支持 `highlight.js` 高亮显示。
 
-首先你需要配置 **Highlight.js**，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
+首先你需要配置 **Highlight.js**
+，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
 
 ```js
 import Terminal from 'vue-web-terminal'
@@ -489,14 +499,14 @@ import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
 Vue.use(Terminal, {
-  codemirror: {
-    tabSize: 4,
-    mode: 'text/x-java',
-    theme: "darcula",
-    lineNumbers: true,
-    line: true,
-    smartIndent: true
-  }
+    codemirror: {
+        tabSize: 4,
+        mode: 'text/x-java',
+        theme: "darcula",
+        lineNumbers: true,
+        line: true,
+        smartIndent: true
+    }
 })
 ```
 
@@ -542,10 +552,10 @@ type为`html`时可自定义内容格式，content为html标签构成
 
 ```js
 function execCmd(key, command, success) {
-  // ...
-  success({
-    type: 'html',
-    content: `
+    // ...
+    success({
+        type: 'html',
+        content: `
           <ul class="custom-content">
             <li class="t-dir">dir 1</li>
             <li class="t-dir">dir 2</li>
@@ -555,8 +565,8 @@ function execCmd(key, command, success) {
             <li class="t-file">file 3</li>
           </ul>
           `
-  })
-  // ...
+    })
+    // ...
 }
 ```
 
@@ -565,31 +575,33 @@ function execCmd(key, command, success) {
 [在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=ansi)
 
 type为`ansi`时可以显示ANSI控制码样式，**目前仅支持着色控制，包含`xterm-256color`色系，其余控制码会被过滤**
+
 ```js
 function execCmd(key, command, success) {
-  // ...
-  success({
-    type: 'ansi',
-    content: '\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m'
-  })
-  // ...
+    // ...
+    success({
+        type: 'ansi',
+        content: '\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m'
+    })
+    // ...
 }
 ```
 
 ## 命令定义
 
-用于help和命令帮助搜索，这里的命令定义仅作为显示用，没有具体的执行逻辑，命令的执行逻辑你应该在[Events](#Events)的`exec-cmd`事件中实现。
+用于help和命令帮助搜索，这里的命令定义仅作为显示用，没有具体的执行逻辑，命令的执行逻辑你应该在[Events](#Events)的`exec-cmd`
+事件中实现。
 
 如果开启了命令帮助搜索功能，在实例化Terminal之前需要传入自定义命令库，传入的命令库为命令数组，以下是命令格式定义规则：
 
-| 参数          | 说明                              | 类型     |
-|-------------|---------------------------------|--------|
-| key         | 命令关键字，必填                        | string |
-| title       | 显示标题                            | string |
-| group       | 分组，可自定义，内置的`help`命令可以按照此字段进行筛选  | string |
-| usage       | 使用方法                            | string |
-| description | 详细描述                            | string |
-| example     | 使用示例，见[命令示例格式](#命令示例格式)         | array  |
+| 参数          | 说明                             | 类型     |
+|-------------|--------------------------------|--------|
+| key         | 命令关键字，必填                       | string |
+| title       | 显示标题                           | string |
+| group       | 分组，可自定义，内置的`help`命令可以按照此字段进行筛选 | string |
+| usage       | 使用方法                           | string |
+| description | 详细描述                           | string |
+| example     | 使用示例，见[命令示例格式](#命令示例格式)        | array  |
 
 ### 命令示例格式
 
@@ -612,7 +624,8 @@ function execCmd(key, command, success) {
 
 [在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=help%20open)
 
-插件内置了help命令可以方便使用者查看命令的使用方法，前提是这些命令已经提前[定义](#命令定义)好了，通过help命令可以查看命令的key、分组、解释样例信息。
+插件内置了help命令可以方便使用者查看命令的使用方法，前提是这些命令已经提前[定义](#命令定义)
+好了，通过help命令可以查看命令的key、分组、解释样例信息。
 
 ```shell
 
@@ -693,7 +706,8 @@ Terminal默认内置有以下命令，且不可替代
 
 ### 拖拽功能
 
-开启拖拽功能需要将`showHeader`设置为true并配置`dragConf`，你可以通过dragConf的`width`和`height`来配置窗口大小，可以通过`init`控制窗口初始化位置，下面是一个简单的示例。
+开启拖拽功能需要将`showHeader`设置为true并配置`dragConf`，你可以通过dragConf的`width`和`height`
+来配置窗口大小，可以通过`init`控制窗口初始化位置，下面是一个简单的示例。
 
 ```vue
 
@@ -738,12 +752,12 @@ success(flash)
 
 let count = 0
 let flashInterval = setInterval(() => {
-  flash.flush(`This is flash content: ${count}`)
+    flash.flush(`This is flash content: ${count}`)
 
-  if (++count >= 20) {
-    clearInterval(flashInterval)
-    flash.finish()
-  }
+    if (++count >= 20) {
+        clearInterval(flashInterval)
+        flash.finish()
+    }
 }, 200)
 ```
 
@@ -760,10 +774,10 @@ let flashInterval = setInterval(() => {
 通过`new TerminalAsk()`创建一个新的ask对象，传入success回调中，ask对象提供两个方法：
 
 * `ask(options)`: 发起一个用户询问输入，options是一个对象，其属性解释如下（*号表示必填）：
-  * `question`: string，询问的问题，或者可以理解为用户输入的前缀字串
-  * `callback`: function，用户键入回车时的回调，参数值为用户输入的内容
-  * `autoReview`: bool，用户键入回车时是否自动追加当前的显示内容
-  * `isPassword`: bool，是否是密码输入
+    * `question`: string，询问的问题，或者可以理解为用户输入的前缀字串
+    * `callback`: function，用户键入回车时的回调，参数值为用户输入的内容
+    * `autoReview`: bool，用户键入回车时是否自动追加当前的显示内容
+    * `isPassword`: bool，是否是密码输入
 * `finish()`: 结束执行
 
 ```js
@@ -773,20 +787,20 @@ let asker = new TerminalAsk()
 success(asker)
 
 asker.ask({
-  question: 'Please input github username: ',
-  autoReview: true,
-  callback: value => {
-    console.log(value)
-    asker.ask({
-      question: 'Please input github password: ',
-      autoReview: true,
-      isPassword: true,
-      callback: () => {
-        //    do something
-        asker.finish()
-      }
-    })
-  }
+    question: 'Please input github username: ',
+    autoReview: true,
+    callback: value => {
+        console.log(value)
+        asker.ask({
+            question: 'Please input github password: ',
+            autoReview: true,
+            isPassword: true,
+            callback: () => {
+                //    do something
+                asker.finish()
+            }
+        })
+    }
 })
 ```
 
@@ -795,14 +809,15 @@ asker.ask({
 [在线Demo演示](https://tzfun.github.io/vue-web-terminal/?cmd=edit)
 
 #### 使用API
+
 当要对多行文本编辑时可以使用API：`textEditorOpen()`、`textEditorClose()`，具体介绍详情请见[API](#API)部分，下面是一个简单的示例：
 
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
-  content: 'Please edit this file',
-  onClose: (value, options) => {
-    console.log("用户编辑完成，文本结果：", value, "options:", options)
-  }
+    content: 'Please edit this file',
+    onClose: (value, options) => {
+        console.log("用户编辑完成，文本结果：", value, "options:", options)
+    }
 })
 ```
 
@@ -816,9 +831,11 @@ TerminalApi.textEditorOpen('my-terminal', {
 
 **自定义快捷键**
 
-插件提供了一个`onKeydown`事件，此事件是你控制**活跃状态**下Terminal快捷键最好的方法，这里以文本编辑器为例，设定用户按快捷键`Ctrl + S`就表示完成编辑并保存
+插件提供了一个`onKeydown`事件，此事件是你控制**活跃状态**
+下Terminal快捷键最好的方法，这里以文本编辑器为例，设定用户按快捷键`Ctrl + S`就表示完成编辑并保存
 
 ```vue
+
 <template>
   <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
@@ -883,13 +900,15 @@ export default {
 
 我是一名后端Coder，对前端仅会一点皮毛，因为个人兴趣开发了此插件，业余玩家请多指教。
 
-如果对代码优化或功能有好的想法并乐意贡献代码欢迎提交[PR](https://github.com/tzfun/vue-web-terminal/pulls)，对插件使用存在疑问或发现bug请提交[issue](https://github.com/tzfun/vue-web-terminal/issues)。
+如果对代码优化或功能有好的想法并乐意贡献代码欢迎提交[PR](https://github.com/tzfun/vue-web-terminal/pulls)
+，对插件使用存在疑问或发现bug请提交[issue](https://github.com/tzfun/vue-web-terminal/issues)。
 
 > 联系
 >
 > 📮 *beifengtz@qq.com*
 >
-> ![](https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon16_wx_logo.png) *beifeng-tz*（添加请备注vue-web-terminal）
+> ![](https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon16_wx_logo.png) *beifeng-tz*
+> （添加请备注vue-web-terminal）
 
 ## 交流群
 
@@ -900,6 +919,7 @@ export default {
 本插件完全开源免费，创作不易，如果你觉得不错可以捐赠支持本项目。
 
 感谢大佬的捐赠：
+
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - 150元
 
 # License

@@ -129,6 +129,10 @@ export function terminalProps() {
          */
         searchHandler: {
             type: Function
+        },
+        scrollMode: {
+            type: String,
+            default: 'smooth'
         }
     }
 }

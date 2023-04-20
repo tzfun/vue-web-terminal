@@ -786,7 +786,7 @@ export default {
             nextTick(() => {
                 let box = this.terminalWindow
                 if (box != null) {
-                    box.scrollTo({top: box.scrollHeight, behavior: 'smooth'})
+                    box.scrollTo({top: box.scrollHeight, behavior: this.scrollMode})
                 }
             }).then(() => {
             })
