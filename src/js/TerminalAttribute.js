@@ -130,9 +130,17 @@ export function terminalProps() {
         searchHandler: {
             type: Function
         },
+        //  滚动条滚动模式
         scrollMode: {
             type: String,
             default: 'smooth'
-        }
+        },
+        /**
+         * 在 push 消息之前触发的钩子函数，只能对message对象的属性进行修改
+         *
+         * @param message 命令对象
+         * @param name terminal name
+         */
+        pushMessageBefore: Function
     }
 }

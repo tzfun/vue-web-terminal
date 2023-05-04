@@ -9,6 +9,7 @@
           :warn-log-count-limit="200"
           :drag-conf="item.dragConf"
           show-header
+          :push-message-before="_pushMessageBefore"
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
@@ -20,7 +21,7 @@
 </template>
 
 <script>
-import {api as TerminalApi, Terminal, Ask as TerminalAsk} from '../src/index.js'
+import {api as TerminalApi, Ask as TerminalAsk, Terminal} from '../src/index.js'
 
 export default {
   name: "App",
@@ -150,6 +151,9 @@ export default {
           o.dragConf.zIndex = 100
         }
       })
+    },
+    _pushMessageBefore(message, name) {
+      console.log(message, name)
     }
   }
 }
