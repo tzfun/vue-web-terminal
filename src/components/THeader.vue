@@ -70,18 +70,11 @@ import {terminalHeaderProps} from "@/js/TerminalAttribute";
 
 export default {
   name: "THeader",
-  props: terminalHeaderProps(),
-  data() {
-    return {
-      pinColor: "#593939"
-    }
-  },
-  methods:{
-  }
+  props: terminalHeaderProps()
 }
 </script>
 
-<style>
+<style scoped>
 .pin {
   display: inline-block;
   position: absolute;
