@@ -380,6 +380,9 @@ export default {
                 this._fullscreen()
             } else if (key === 'minScreen' && this.fullscreenState) {
                 this._fullscreen()
+            } else if (key === 'pin' && this.showHeader) {
+                let pinned = this.dragConf.pinned || false
+                this.dragConf.pinned = !pinned;
             }
 
             this.$emit('on-click', key, this.getName())
@@ -1067,6 +1070,9 @@ export default {
             })
         },
         _dragging(x, y) {
+            if (this.dragConf.pinned === true) {
+                return
+            }
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
             let container = this.$refs.terminalContainer

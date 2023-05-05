@@ -40,7 +40,8 @@ export default {
             init: {
               x: 100,
               y: 70
-            }
+            },
+            pinned: false
           }
         }
       ]

@@ -3,7 +3,7 @@ export function terminalHeaderProps() {
         //  终端标题
         title: {
             type: String, default: 'vue-web-terminal'
-        },
+        }
     }
 }
 
@@ -93,7 +93,8 @@ export function terminalProps() {
                     init: {
                         x: null,
                         y: null
-                    }
+                    },
+                    pinned: false
                 }
             }
         },
