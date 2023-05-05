@@ -8,8 +8,10 @@ import {
     _getClipboardText,
     _getSelection,
     _html,
-    _isEmpty, _isPad,
-    _isParentDom, _isPhone,
+    _isEmpty,
+    _isPad,
+    _isParentDom,
+    _isPhone,
     _isSafari,
     _nonEmpty,
     _openUrl,
@@ -413,6 +415,9 @@ export default {
                 this._fullscreen()
             } else if (key === 'minScreen' && this.fullscreenState) {
                 this._fullscreen()
+            } else if (key === 'pin' && this.showHeader) {
+                let pinned = this.dragConf.pinned || false
+                this.dragConf.pinned = !pinned;
             }
 
             this.$emit('on-click', key, this.getName())
@@ -760,9 +765,7 @@ export default {
                 message.content = _parseANSI(message.content)
             }
 
-            this._filterMessageType(message)
-
-            this.terminalLog.push(message)
+            this._pushMessage0(message)
             if (!ignoreCheck) {
                 this._checkTerminalLog()
             }
@@ -775,12 +778,18 @@ export default {
         },
         _pushMessageBatch(messages, ignoreCheck = false) {
             for (let m of messages) {
-                this._filterMessageType(m)
-                this.terminalLog.push(m)
+                this._pushMessage0(m)
             }
             if (!ignoreCheck) {
                 this._checkTerminalLog()
             }
+        },
+        _pushMessage0(message) {
+            this._filterMessageType(message)
+            if (message.type !== MESSAGE_TYPE.CMD_LINE && this.pushMessageBefore) {
+                this.pushMessageBefore(message, this.getName())
+            }
+            this.terminalLog.push(message)
         },
         _jumpToBottom() {
             nextTick(() => {
@@ -1099,6 +1108,9 @@ export default {
             })
         },
         _dragging(x, y) {
+            if (this.dragConf.pinned === true) {
+                return
+            }
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
             let container = this.terminalContainer

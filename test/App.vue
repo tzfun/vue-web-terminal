@@ -9,6 +9,7 @@
           :warn-log-count-limit="200"
           :drag-conf="item.dragConf"
           show-header
+          :push-message-before="_pushMessageBefore"
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
@@ -39,7 +40,8 @@ export default {
             init: {
               x: 100,
               y: 70
-            }
+            },
+            pinned: false
           }
         }
       ]
@@ -159,6 +161,9 @@ export default {
           o.dragConf.zIndex = 100
         }
       })
+    },
+    _pushMessageBefore(message, name) {
+      console.log(message, name)
     }
   }
 }

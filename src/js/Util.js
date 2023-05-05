@@ -228,7 +228,11 @@ export function _openUrl(url) {
  * @private
  */
 export function _defaultCommandFormatter(cmd) {
-    let split = cmd.split(" ")
+    if (_isEmpty(cmd)) {
+        return ""
+    }
+    //  过滤ASCII 160的空白字符串
+    let split = cmd.replace(/\xA0/g, " ").split(" ")
     let formatted = ''
     for (let i = 0; i < split.length; i++) {
         let char = _html(split[i])

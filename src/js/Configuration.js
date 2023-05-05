@@ -48,6 +48,7 @@ export const DEFAULT_COMMANDS = [
 ]
 
 export const MESSAGE_TYPE = {
+    CMD_LINE: 'cmdLine',
     NORMAL: 'normal',
     JSON: 'json',
     CODE: 'code',
