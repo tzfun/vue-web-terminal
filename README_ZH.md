@@ -156,7 +156,7 @@ terminal标签支持的事件表
 | exec-cmd        | 执行自定义命令时触发。`success`和`failed`为回调函数，**必须调用两个回调其中之一才会回显**！其中`success`回调参数含义见下方说明，`failed`回调参数为一个string | `(cmdKey, command, success, failed, name)` |
 | before-exec-cmd | 用户敲下回车之后执行命令之前触发                                                                                     | `(cmdKey, command, name)`                  |
 | on-keydown      | 当获取命令输入光标焦点时，按下任意键触发                                                                                 | `(event, name)`                            |
-| on-click        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：close、minScreen、fullScreen、title                                       | `(key, name)`                              |
+| on-click        | 用户点击按钮时触发，参数`key`为按钮唯一识别，已有按钮：`close`, `minScreen`, `fullScreen`, `title`, `pin`                     | `(key, name)`                              |
 | init-before     | 生命周期函数，插件初始化之前触发                                                                                     | `(name)`                                   |
 | init-complete   | 生命周期函数，插件初始化完成之后触发                                                                                   | `(name)`                                   |
 | on-active       | 窗口活跃时触发                                                                                              | `(name)`                                   |
@@ -726,6 +726,7 @@ dragConf完整配置结构如下：
 | height | 拖拽窗口高度，同宽度                                                        | number/string |
 | zIndex | 窗口层级，此值可以修改并被terminal监听，可用于多窗口层级的控制，默认100                         | number        |
 | init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px，``` {"x": 700, "y": 500}``` | object        |
+| pinned | 固定窗口，固定后将无法拖拽，当点击按钮修改此值时会在`on-click`事件中触发 pin                     | boolean       |
 
 ![dragging.gif](public/dragging.gif)
 
