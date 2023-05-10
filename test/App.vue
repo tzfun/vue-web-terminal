@@ -51,6 +51,31 @@ export default {
     onExecCmd(key, command, success, failed, name) {
       if (key === 'list') {
         success("hello")
+      } else if (key === 'code') {
+        success({
+          type: 'code',
+          content: "<template>\n" +
+              "  <div id=\"app\">\n" +
+              "    <div v-for=\"(item,i) in terminals\" :key=\"i\">\n" +
+              "      <terminal\n" +
+              "          v-show=\"item.show\"\n" +
+              "          :name=\"item.name\"\n" +
+              "          :title=\"item.name\"\n" +
+              "          :context=\"item.context\"\n" +
+              "          :warn-log-count-limit=\"200\"\n" +
+              "          :drag-conf=\"item.dragConf\"\n" +
+              "          show-header\n" +
+              "          :push-message-before=\"_pushMessageBefore\"\n" +
+              "          @exec-cmd=\"onExecCmd\"\n" +
+              "          @on-active=\"onActive\"\n" +
+              "          @on-inactive=\"onInactive\"\n" +
+              "          style=\"position: fixed\">\n" +
+              "      </terminal>\n" +
+              "    </div>\n" +
+              "  </div>\n" +
+              "\n" +
+              "</template>"
+        })
       } else if (key === 'close') {
         let activeNext
         this.terminals.forEach(o => {
