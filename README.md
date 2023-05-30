@@ -721,6 +721,10 @@ The complete configuration structure of `dragConf` is as follows:
 
 In addition to mouse control, you can also [call API to simulate dragging](#dragging--)
 
+### Resize
+
+When `drag-conf` is configured, the window will enable the drag and zoom function, and the zoom touch area will be on the four corners of the window.
+
 ### Flash
 
 [Online Demo](https://tzfun.github.io/vue-web-terminal/?cmd=flash)

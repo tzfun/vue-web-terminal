@@ -707,7 +707,7 @@ Terminal默认内置有以下命令，且不可替代
 
 ### 拖拽功能
 
-开启拖拽功能需要将`showHeader`设置为true并配置`dragConf`，你可以通过dragConf的`width`和`height`
+开启拖拽功能需要将`show-header`设置为true并配置`drag-conf`，你可以通过dragConf的`width`和`height`
 来配置窗口大小，可以通过`init`控制窗口初始化位置，下面是一个简单的示例。
 
 ```vue
@@ -731,6 +731,10 @@ dragConf完整配置结构如下：
 ![dragging.gif](public/dragging.gif)
 
 除了鼠标控制之外你还可以[调用API移动窗口位置](#dragging--)
+
+### 拖拽缩放窗口
+
+当配置了`drag-conf`，窗口讲开启拖拽缩放功能，缩放触控区域在窗口的四个角上。
 
 ### 实时回显
 
