@@ -133,6 +133,10 @@ export default {
         const terminalCnFlag = ref(null)
         const terminalTextEditor = ref(null)
         const terminalCursor = ref(null)
+        const resizeLT = ref(null)
+        const resizeRT = ref(null)
+        const resizeLB = ref(null)
+        const resizeRB = ref(null)
 
         return {
             terminalContainer,
@@ -145,7 +149,11 @@ export default {
             terminalEnFlag,
             terminalCnFlag,
             terminalTextEditor,
-            terminalCursor
+            terminalCursor,
+            resizeLT,
+            resizeRT,
+            resizeLB,
+            resizeRB
         }
     },
     mounted() {
@@ -1009,6 +1017,9 @@ export default {
         _draggable() {
             return this.showHeader && this.dragConf
         },
+        _isPinned() {
+            return this.dragConf && this.dragConf.pinned
+        },
         _initContainerStyle() {
             let containerStyleStore = {}
             if (this._draggable()) {
@@ -1045,11 +1056,9 @@ export default {
                 containerStyleStore.left = initX + 'px'
                 containerStyleStore.top = initY + 'px'
                 containerStyleStore['z-index'] = zIndex
-                containerStyleStore['border-radius'] = '15px'
             } else {
                 containerStyleStore.width = '100%'
                 containerStyleStore.height = '100%'
-                containerStyleStore['border-radius'] = '0'
             }
             this.containerStyleStore = containerStyleStore
         },
@@ -1076,39 +1085,107 @@ export default {
             let window = this.terminalWindow
 
             let isDragging = false;
+            let isResize = false;
+            let resizeData = {
+                type: '',
+                boxX: 0,
+                boxY: 0,
+                boxWidth: 0,
+                boxHeight: 0,
+                cursorX: 0,
+                cursorY: 0
+            }
+
+            const storeResizeData = (type, evt) => {
+                isResize = true
+                window.style['user-select'] = 'none'
+                resizeData.type = type
+                resizeData.cursorX = evt.clientX
+                resizeData.cursorY = evt.clientY
+                resizeData.boxX = box.offsetLeft
+                resizeData.boxY = box.offsetTop
+                resizeData.boxWidth = box.clientWidth
+                resizeData.boxHeight = box.clientHeight
+            }
 
             _eventOn(dragArea, 'mousedown', evt => {
                 if (this.fullscreenState) {
                     return
                 }
                 this._onActive()
-                let e = evt || window.event;
-                mouseOffsetX = e.clientX - box.offsetLeft;
-                mouseOffsetY = e.clientY - box.offsetTop;
+                mouseOffsetX = evt.clientX - box.offsetLeft;
+                mouseOffsetY = evt.clientY - box.offsetTop;
 
                 isDragging = true
                 window.style['user-select'] = 'none'
             })
 
+            _eventOn(this.resizeLT, 'mousedown', evt => {
+                storeResizeData('lt', evt)
+            })
+            _eventOn(this.resizeRT, 'mousedown', evt => {
+                storeResizeData('rt', evt)
+            })
+            _eventOn(this.resizeLB, 'mousedown', evt => {
+                storeResizeData('lb', evt)
+            })
+            _eventOn(this.resizeRB, 'mousedown', evt => {
+                storeResizeData('rb', evt)
+            })
+
+
+
             _eventOn(document, 'mousemove', evt => {
+                if (this._isPinned()) {
+                    return
+                }
                 if (isDragging) {
-                    let e = evt || window.event;
-                    let moveX = e.clientX - mouseOffsetX;
-                    let moveY = e.clientY - mouseOffsetY;
+                    let moveX = evt.clientX - mouseOffsetX;
+                    let moveY = evt.clientY - mouseOffsetY;
                     this._dragging(moveX, moveY)
+                } else if (isResize) {
+                    const cursorOffset = {
+                        x: evt.clientX - resizeData.cursorX,
+                        y: evt.clientY - resizeData.cursorY
+                    }
+                    //  右下
+                    if (resizeData.type === 'rb') {
+                        box.style.width = (resizeData.boxWidth + cursorOffset.x) + 'px'
+                        box.style.height = (resizeData.boxHeight + cursorOffset.y) + 'px'
+                    }
+                    //  右上
+                    else if (resizeData.type === 'rt') {
+                        box.style.width = (resizeData.boxWidth + cursorOffset.x) + 'px'
+                        box.style.height = (resizeData.boxHeight - cursorOffset.y) + 'px'
+                        box.style.top = (resizeData.boxY + cursorOffset.y) + 'px'
+                    }
+                    //  左下
+                    else if (resizeData.type === 'lb') {
+                        box.style.width = (resizeData.boxWidth - cursorOffset.x) + 'px'
+                        box.style.height = (resizeData.boxHeight + cursorOffset.y) + 'px'
+                        box.style.left = (resizeData.boxX + cursorOffset.x) + 'px'
+                    }
+                    //  左上
+                    else if (resizeData.type === 'lt') {
+                        box.style.width = (resizeData.boxWidth - cursorOffset.x) + 'px'
+                        box.style.height = (resizeData.boxHeight - cursorOffset.y) + 'px'
+                        box.style.left = (resizeData.boxX + cursorOffset.x) + 'px'
+                        box.style.top = (resizeData.boxY + cursorOffset.y) + 'px'
+                    }
                 }
             })
 
             _eventOn(document, 'mouseup', () => {
-                if (isDragging) {
+                if (isDragging || isResize) {
                     this._onActive()
                 }
                 isDragging = false
+                isResize = false
                 window.style['user-select'] = 'unset'
             })
         },
         _dragging(x, y) {
-            if (this.dragConf.pinned === true) {
+            if (this._isPinned()) {
                 return
             }
             let clientWidth = document.body.clientWidth

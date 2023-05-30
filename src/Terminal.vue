@@ -2,6 +2,13 @@
   <div :class="'t-container ' + (_isActive() ? '' : 't-disable-select')"
        :style="_getContainerStyle()"
        ref="terminalContainer">
+    <div v-if="_draggable()">
+      <div class="t-point t-point-lt" ref="resizeLT"></div>
+      <div class="t-point t-point-rt" ref="resizeRT"></div>
+      <div class="t-point t-point-lb" ref="resizeLB"></div>
+      <div class="t-point t-point-rb" ref="resizeRB"></div>
+    </div>
+
     <div class="terminal">
       <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
            :style="_draggable() ? 'cursor: move;' : ''" @dblclick="_fullscreen">

@@ -1,3 +1,7 @@
+:root {
+    --t-point-size: 15px;
+}
+
 .t-window div::selection,
 .t-window a::selection,
 .t-window span::selection,
@@ -38,7 +42,6 @@
     margin: 0;
     padding: 0;
     background-color: #191b24;
-    overflow: hidden;
     border-radius: 15px;
     box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
     -moz-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
@@ -121,7 +124,7 @@
     cursor: text;
 }
 
-.t-prompt:before {
+.t-window .prompt:before {
     content: "$";
     margin-right: 10px;
     word-wrap: break-word;
@@ -448,4 +451,36 @@ pre {
     -webkit-user-select: none;
     -ms-user-select: none;
     -khtml-user-selece: none;
+}
+
+.t-point {
+    width: var(--t-point-size);
+    height: var(--t-point-size);
+    background-color: rgba(0,0,0,0);
+    position: absolute;
+    z-index: 100;
+}
+
+.t-point-lt {
+    left: calc(0px - var(--t-point-size) / 2);
+    top: calc(0px - var(--t-point-size) / 2);
+    cursor: nwse-resize;
+}
+
+.t-point-rt {
+    left: calc(100% - var(--t-point-size) / 2);
+    top: calc(0px - var(--t-point-size) / 2);
+    cursor: nesw-resize;
+}
+
+.t-point-lb {
+    left: calc(0px - var(--t-point-size) / 2);
+    top: calc(100% - var(--t-point-size) / 2);
+    cursor: nesw-resize;
+}
+
+.t-point-rb {
+    left: calc(100% - var(--t-point-size) / 2);
+    top: calc(100% - var(--t-point-size) / 2);
+    cursor: nwse-resize;
 }

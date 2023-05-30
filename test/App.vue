@@ -1,5 +1,14 @@
 <template>
   <div id="app">
+
+    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">
+      <terminal
+          name="test"
+          show-header
+          @exec-cmd="onExecCmd">
+      </terminal>
+    </div>
+
     <div v-for="(item,i) in terminals" :key="i">
       <terminal
           v-show="item.show"

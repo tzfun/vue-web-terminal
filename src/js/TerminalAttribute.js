@@ -82,21 +82,21 @@ export function terminalProps() {
         inputFilter: {
             type: Function
         },
-        //  拖拽配置
+        /**
+         * 拖拽配置
+         *                 {
+         *                     width: 700,
+         *                     height: 500,
+         *                     zIndex: 100,
+         *                     init: {
+         *                         x: null,
+         *                         y: null
+         *                     },
+         *                     pinned: false
+         *                 }
+         */
         dragConf: {
-            type: Object,
-            default: () => {
-                return {
-                    width: 700,
-                    height: 500,
-                    zIndex: 100,
-                    init: {
-                        x: null,
-                        y: null
-                    },
-                    pinned: false
-                }
-            }
+            type: Object
         },
         //  命令格式化显示函数
         commandFormatter: {
