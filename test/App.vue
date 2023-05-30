@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import {Terminal, api as TerminalApi, Ask as TerminalAsk} from '../src/index.js'
+import {api as TerminalApi, Ask as TerminalAsk, Terminal} from '../src/index.js'
 
 export default {
   name: "App",
@@ -51,6 +51,31 @@ export default {
     onExecCmd(key, command, success, failed, name) {
       if (key === 'list') {
         success("hello")
+      } else if (key === 'code') {
+        success({
+          type: 'code',
+          content: "<template>\n" +
+              "  <div id=\"app\">\n" +
+              "    <div v-for=\"(item,i) in terminals\" :key=\"i\">\n" +
+              "      <terminal\n" +
+              "          v-show=\"item.show\"\n" +
+              "          :name=\"item.name\"\n" +
+              "          :title=\"item.name\"\n" +
+              "          :context=\"item.context\"\n" +
+              "          :warn-log-count-limit=\"200\"\n" +
+              "          :drag-conf=\"item.dragConf\"\n" +
+              "          show-header\n" +
+              "          :push-message-before=\"_pushMessageBefore\"\n" +
+              "          @exec-cmd=\"onExecCmd\"\n" +
+              "          @on-active=\"onActive\"\n" +
+              "          @on-inactive=\"onInactive\"\n" +
+              "          style=\"position: fixed\">\n" +
+              "      </terminal>\n" +
+              "    </div>\n" +
+              "  </div>\n" +
+              "\n" +
+              "</template>"
+        })
       } else if (key === 'loop') {
         let count = 0
         let timer = setInterval(() => {
@@ -68,8 +93,8 @@ export default {
             key2: true,
             key3: 123123123,
             key4: [{
-              key:12312,
-              k:"vasdas"
+              key: 12312,
+              k: "vasdas"
             }],
             key5: {
               "kasdasd": "asdasd",
@@ -126,7 +151,7 @@ export default {
           content: ansiContent
         })
       } else if (key === 'edit') {
-        TerminalApi.textEditorOpen(name,{
+        TerminalApi.textEditorOpen(name, {
           content: 'Please edit this file',
           onClose: (value, option) => {
             console.log("text close, value:", value, "option:", option)
