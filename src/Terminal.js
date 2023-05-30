@@ -1087,6 +1087,8 @@ export default {
             let isDragging = false;
             let isResize = false;
             let resizeData = {
+                minWidth: 270,
+                minHeight: 180,
                 type: '',
                 boxX: 0,
                 boxY: 0,
@@ -1133,10 +1135,8 @@ export default {
                 storeResizeData('rb', evt)
             })
 
-
-
             _eventOn(document, 'mousemove', evt => {
-                if (this._isPinned()) {
+                if (this._isPinned() || this.fullscreenState) {
                     return
                 }
                 if (isDragging) {
@@ -1144,33 +1144,43 @@ export default {
                     let moveY = evt.clientY - mouseOffsetY;
                     this._dragging(moveX, moveY)
                 } else if (isResize) {
-                    const cursorOffset = {
-                        x: evt.clientX - resizeData.cursorX,
-                        y: evt.clientY - resizeData.cursorY
-                    }
+                    let cx = evt.clientX - resizeData.cursorX
+                    let cy = evt.clientY - resizeData.cursorY
                     //  右下
                     if (resizeData.type === 'rb') {
-                        box.style.width = (resizeData.boxWidth + cursorOffset.x) + 'px'
-                        box.style.height = (resizeData.boxHeight + cursorOffset.y) + 'px'
+                        cx = cx < 0 ? -Math.min(resizeData.boxWidth - resizeData.minWidth, -cx) : cx
+                        cy = cy < 0 ? -Math.min(resizeData.boxHeight - resizeData.minHeight, -cy) : cy
+
+                        this.containerStyleStore.width = (resizeData.boxWidth + cx) + 'px'
+                        this.containerStyleStore.height = (resizeData.boxHeight + cy) + 'px'
                     }
                     //  右上
                     else if (resizeData.type === 'rt') {
-                        box.style.width = (resizeData.boxWidth + cursorOffset.x) + 'px'
-                        box.style.height = (resizeData.boxHeight - cursorOffset.y) + 'px'
-                        box.style.top = (resizeData.boxY + cursorOffset.y) + 'px'
+                        cx = cx < 0 ? -Math.min(resizeData.boxWidth - resizeData.minWidth, -cx) : cx
+                        cy = cy > 0 ? Math.min(resizeData.boxHeight - resizeData.minHeight, cy) : cy
+
+                        this.containerStyleStore.width = (resizeData.boxWidth + cx) + 'px'
+                        this.containerStyleStore.height = (resizeData.boxHeight - cy) + 'px'
+                        this.containerStyleStore.top = Math.max(0, resizeData.boxY + cy) + 'px'
                     }
                     //  左下
                     else if (resizeData.type === 'lb') {
-                        box.style.width = (resizeData.boxWidth - cursorOffset.x) + 'px'
-                        box.style.height = (resizeData.boxHeight + cursorOffset.y) + 'px'
-                        box.style.left = (resizeData.boxX + cursorOffset.x) + 'px'
+                        cx = cx > 0 ? Math.min(resizeData.boxWidth - resizeData.minWidth, cx) : cx
+                        cy = cy < 0 ? -Math.min(resizeData.boxHeight - resizeData.minHeight, -cy) : cy
+
+                        this.containerStyleStore.width = (resizeData.boxWidth - cx) + 'px'
+                        this.containerStyleStore.height = (resizeData.boxHeight + cy) + 'px'
+                        this.containerStyleStore.left = Math.max(0, resizeData.boxX + cx) + 'px'
                     }
                     //  左上
                     else if (resizeData.type === 'lt') {
-                        box.style.width = (resizeData.boxWidth - cursorOffset.x) + 'px'
-                        box.style.height = (resizeData.boxHeight - cursorOffset.y) + 'px'
-                        box.style.left = (resizeData.boxX + cursorOffset.x) + 'px'
-                        box.style.top = (resizeData.boxY + cursorOffset.y) + 'px'
+                        cx = cx > 0 ? Math.min(resizeData.boxWidth - resizeData.minWidth, cx) : cx
+                        cy = cy > 0 ? Math.min(resizeData.boxHeight - resizeData.minHeight, cy) : cy
+
+                        this.containerStyleStore.width = (resizeData.boxWidth - cx) + 'px'
+                        this.containerStyleStore.height = (resizeData.boxHeight - cy) + 'px'
+                        this.containerStyleStore.left = Math.max(0, resizeData.boxX + cx) + 'px'
+                        this.containerStyleStore.top = Math.max(0, resizeData.boxY + cy) + 'px'
                     }
                 }
             })
