@@ -8,8 +8,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.10',
-                vue3: '3.1.6'
+                vue2: '2.1.12',
+                vue3: '3.1.8'
             },
             cmdStore: [],
             initLog: null,
@@ -321,7 +321,13 @@ export default {
         },
         initComplete() {
             if (this.initCmd) {
-                TerminalApi.execute(this.name, this.initCmd)
+                if (this.initCmd === 'flash') {
+                    setTimeout(() => {
+                        TerminalApi.execute(this.name, this.initCmd)
+                    }, 1000)
+                } else {
+                    TerminalApi.execute(this.name, this.initCmd)
+                }
             } else {
                 TerminalApi.execute(this.name, 'ask guide')
             }
@@ -411,7 +417,6 @@ export default {
 
             let terminalInfo = TerminalApi.elementInfo(this.name)
             let start = new Date().getTime()
-
             await this.mockLoading(flash, 'vue', terminalInfo)
             await this.mockLoading(flash, 'vue-web-terminal', terminalInfo)
             await this.mockLoading(flash, 'core.js', terminalInfo)
@@ -424,8 +429,8 @@ export default {
             flash.finish()
         },
         mockLoading(flash, fileName, terminalInfo) {
-            // 固定宽度 = 加载动画 + fileName + '[' + ']' + '100%'
-            let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en
+            // 固定宽度 = 加载动画 + fileName + '[' + ']' + '100%' + 进度条宽度
+            let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en + 20
             //  计算出进度条的 '-' 个数
             let processDots = (terminalInfo.clientWidth - fixedWidth) / terminalInfo.charWidth.en
             let prefix1 = '<span class="loading-flash" style="transform: rotate('
