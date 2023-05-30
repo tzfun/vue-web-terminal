@@ -57,7 +57,9 @@ export default {
     },
     methods: {
         initWindowSize() {
-            let dragConf = {}
+            let dragConf = {
+                pinned: false
+            }
             let width = document.body.clientWidth
             if (width < 960) {
                 dragConf = null
@@ -114,7 +116,8 @@ export default {
                     init: {
                         x: 100 + seq * 50,
                         y: 70 + seq * 30
-                    }
+                    },
+                    pinned: false
                 }
             })
             if (this.releaseSeq.length !== 0) {

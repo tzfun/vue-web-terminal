@@ -50,7 +50,8 @@ export default {
                 return {
                     dragConf: {
                         width: 700,
-                        height: 500
+                        height: 500,
+                        pinned: false
                     }
                 }
             }
