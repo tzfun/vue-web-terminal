@@ -1,57 +1,60 @@
+<script setup lang="ts">
+import {onMounted, PropType, ref, watch} from "vue";
+import {EditorConfig} from "../types";
+
+const props = defineProps({
+  config: Object as PropType<EditorConfig>,
+  modelValue: String
+})
+const emits = defineEmits(['update:modelValue', 'close'])
+const content = ref()
+const textEditorRef = ref()
+onMounted(() => {
+  content.value = props.modelValue
+})
+
+watch(
+    () => content,
+    (v) => {
+      emits('update:modelValue', v)
+    }
+)
+
+const _focus = () => {
+  textEditorRef.value.focus()
+}
+
+const _close = (flag) => {
+  emits('close', flag)
+}
+
+defineExpose({
+  focus:_focus
+})
+</script>
+
 <template>
   <div class="t-editor">
-    <textarea name="editor" ref="textEditor" class="t-text-editor" v-model="value"
-              @focus="config.onFocus" @blur="config.onBlur"></textarea>
+    <textarea name="editor"
+              ref="textEditorRef"
+              class="t-text-editor"
+              v-model="content"
+              @focus="(config as EditorConfig).onFocus"
+              @blur="(config as EditorConfig).onBlur"/>
     <div class="t-text-editor-floor" align="center">
       <button class="t-text-editor-floor-btn t-close-btn"
-              @click="$emit('close', false)"
-              title="Cancel Edit">Cancel</button>
+              @click="_close(false)"
+              title="Cancel Edit">Cancel
+      </button>
       <button class="t-text-editor-floor-btn t-save-btn"
-              @click="$emit('close', true)"
-              title="Save And Close">Save & Close</button>
+              @click="_close(true)"
+              title="Save And Close">Save & Close
+      </button>
     </div>
   </div>
 </template>
 
-<script>
-import {ref} from "vue";
-
-export default {
-  name: "TEditor",
-  data() {
-    return {
-      value: ''
-    }
-  },
-  props: {
-    config: Object,
-    modelValue: String
-  },
-  watch: {
-    value: {
-      handler(newVal) {
-        this.$emit("update:modelValue", newVal)
-      }
-    }
-  },
-  setup() {
-    const textEditor = ref(null)
-    return {
-      textEditor
-    }
-  },
-  mounted() {
-    this.value = this.config.value
-  },
-  methods: {
-    focus() {
-      this.textEditor.focus()
-    }
-  }
-}
-</script>
-
-<style>
+<style scoped>
 .t-editor {
   width: 100%;
   height: 100%;

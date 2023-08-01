@@ -1,11 +1,30 @@
+<script setup lang="ts">
+import {PropType, ref} from "vue";
+import {SearchResult} from "~/types";
+
+defineProps({
+  showHeader: Boolean,
+  result: Object as PropType<SearchResult>
+})
+const terminalHelpBoxRef = ref()
+const getClientRect = (): DOMRect => {
+  return terminalHelpBoxRef.value.getBoundingClientRect()
+}
+
+defineExpose({
+  getClientRect
+})
+</script>
+
 <template>
   <div class="t-cmd-help"
-       ref="terminalHelpBox"
-       :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
-       v-if="result && result.item && !_screenType().xs">
-    <p class="text" v-if="result.item.description != null" style="margin: 15px 0"
-       v-html="result.item.description"></p>
-    <div v-if="result.item.example != null && result.item.example.length > 0">
+       ref="terminalHelpBoxRef"
+       :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'">
+    <p class="text"
+       v-if="result.item.description"
+       style="margin: 15px 0"
+       v-html="result.item.description"/>
+    <div v-if="result.item.example && result.item.example.length > 0">
       <div v-for="(it,idx) in result.item.example" :key="idx" class="text">
         <div v-if="result.item.example.length === 1">
           <span>Example: <code>{{ it.cmd }}</code> {{ it.des }}</span>
@@ -25,37 +44,6 @@
     </div>
   </div>
 </template>
-
-<script>
-
-import {_screenType} from "@/js/Util";
-import {ref} from "vue";
-
-export default {
-  name: "THelpBox",
-  props: {
-    showHeader: Boolean,
-    result: Object
-  },
-  setup(){
-    let terminalHelpBox = ref(null)
-    return {
-      terminalHelpBox
-    }
-  },
-  methods: {
-    _screenType() {
-      return _screenType()
-    },
-    getBoundingClientRect() {
-      let e = this.terminalHelpBox
-      if (e) {
-        return e.getBoundingClientRect()
-      }
-    }
-  }
-}
-</script>
 
 <style scoped>
 

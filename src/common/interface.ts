@@ -1,6 +1,8 @@
-import historyStore from "./HistoryStore.js";
+import store from "./store";
+import {Options} from "~/types";
 
-const pool = {}; let options = {};
+const pool = {};
+let options = {};
 
 function register(name, listener) {
     if (pool[name] != null) {
@@ -20,27 +22,27 @@ function rename(newName, oldName, listener) {
 
 const TerminalInterface = {
 
-    setOptions(ops) {
+    setOptions(ops: Options) {
         options = ops
     },
 
-    getOptions() {
-        return options
+    getOptions(): Options {
+        return options as Options
     },
 
-    post(name = 'terminal', event, options) {
+    post(name: string = 'terminal', event: string, options?) {
         let listener = pool[name]
         if (listener != null) {
             return listener(event, options)
         }
     },
 
-    pushMessage(name, options) {
+    pushMessage(name, options?) {
         return TerminalInterface.post(name, 'pushMessage', options)
     },
 
     getHistory() {
-        return historyStore
+        return store
     },
 
     fullscreen(name) {
@@ -51,33 +53,43 @@ const TerminalInterface = {
         return TerminalInterface.post(name, 'isFullscreen')
     },
 
-    dragging(name, options) {
+    dragging(name, options?) {
         return TerminalInterface.post(name, 'dragging', options)
     },
 
-    execute(name, options) {
+    execute(name, options?) {
         return TerminalInterface.post(name, 'execute', options)
     },
 
-    focus(name, options) {
+    focus(name, options?) {
         return TerminalInterface.post(name, 'focus', options)
     },
 
-    elementInfo(name, options) {
+    elementInfo(name, options?) {
         return TerminalInterface.post(name, 'elementInfo', options)
     },
 
-    textEditorOpen(name, options) {
+    textEditorOpen(name, options?) {
         return TerminalInterface.post(name, 'textEditorOpen', options)
     },
 
-    textEditorClose(name, options) {
+    textEditorClose(name, options?) {
         return TerminalInterface.post(name, 'textEditorClose', options)
     },
 }
 
 export default TerminalInterface;
-const { pushMessage, fullscreen, isFullscreen, dragging, execute, focus, elementInfo, textEditorClose, textEditorOpen } = TerminalInterface;
+const {
+    pushMessage,
+    fullscreen,
+    isFullscreen,
+    dragging,
+    execute,
+    focus,
+    elementInfo,
+    textEditorClose,
+    textEditorOpen
+} = TerminalInterface;
 export {
     register,
     unregister,

@@ -1,4 +1,4 @@
-import {MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
+import {ScreenType} from "~/types";
 
 /**
  * 将空格、回车、Tab转译为html
@@ -7,7 +7,7 @@ import {MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
  * @returns {*|string}
  * @private
  */
-export function _html(str) {
+export function _html(str: string): string {
     return String(str)
         .replace(/&(?!\w+;)/g, '&amp;')
         .replace(/ /g, '&nbsp;')
@@ -61,8 +61,8 @@ export function _sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-export function _screenType(width = document.body.clientWidth) {
-    let result = {}
+export function _screenType(width: number = document.body.clientWidth): ScreenType {
+    let result: ScreenType = {}
     if (width < 600) {
         result.xs = true
     } else if (width >= 600 && width < 960) {
@@ -74,7 +74,7 @@ export function _screenType(width = document.body.clientWidth) {
     } else {
         result.xl = true
     }
-    return result
+    return result as ScreenType
 }
 
 export function _isSafari() {
@@ -140,35 +140,40 @@ export function _eventOff(dom, eventName, handler) {
     dom && dom.removeEventListener && dom.removeEventListener(eventName, handler);
 }
 
-export function _getClipboardText() {
+export function _getClipboardText():Promise<string> {
     if (navigator && navigator.clipboard) {
         return navigator.clipboard.readText();
     } else {
-        let pasteTarget = document.createElement("div");
-        pasteTarget.contentEditable = true;
-        let actElem = document.activeElement.appendChild(pasteTarget).parentNode;
-        pasteTarget.focus();
-        //  可能会失败
-        document.execCommand("paste")
-        let paste = pasteTarget.innerText;
-        actElem.removeChild(pasteTarget);
-        return paste;
+        return new Promise((resolve, reject) => {
+            try {
+                let pasteTarget = document.createElement("div");
+                pasteTarget.contentEditable = "true";
+                let actElem = document.activeElement.appendChild(pasteTarget).parentNode;
+                pasteTarget.focus();
+                //  可能会失败
+                document.execCommand("paste")
+                let paste = pasteTarget.innerText;
+                actElem.removeChild(pasteTarget);
+                resolve(paste)
+            } catch (e) {
+                reject(e)
+            }
+        })
     }
 }
 
-export function _copyTextToClipboard(text) {
+export function _copyTextToClipboard(text):Promise<any> {
     if (!text) {
         return
     }
     text = text.replace(/nbsp;/g, ' ')
     if (navigator && navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-        })
+        return navigator.clipboard.writeText(text)
     } else {
         let textArea = document.createElement("textarea")
         textArea.value = text
         textArea.style.position = "absolute"
-        textArea.style.opacity = 0
+        textArea.style.opacity = "0"
         textArea.style.left = "-999999px"
         textArea.style.top = "-999999px"
         document.body.appendChild(textArea)
@@ -176,6 +181,7 @@ export function _copyTextToClipboard(text) {
         textArea.select()
         document.execCommand('copy')
         textArea.remove()
+        return Promise.resolve()
     }
 }
 
@@ -215,7 +221,9 @@ export function _openUrl(url) {
         }
     } else {
         this._pushMessage({
-            class: MESSAGE_CLASS.ERROR, type: MESSAGE_TYPE.NORMAL, content: "Invalid website url"
+            class: 'error',
+            type: 'normal',
+            content: "Invalid website url"
         })
     }
 }
@@ -278,7 +286,7 @@ export function _isPhone() {
     if (info) {
         return /mobile/i.test(info)
     }
-    let screen = _screenType()
+    let screen: ScreenType = _screenType()
     return screen.xs || screen.sm
 }
 

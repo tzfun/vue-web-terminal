@@ -1,4 +1,6 @@
-export const DEFAULT_COMMANDS = [
+import {Command} from "~/types";
+
+export const DEFAULT_COMMANDS:Command[] = [
     {
         key: 'help',
         title: 'Help',
@@ -41,26 +43,10 @@ export const DEFAULT_COMMANDS = [
         group: 'local',
         usage: 'open <url>',
         description: 'Open a specified page.',
-        example: [{
-            cmd: 'open blog.beifengtz.com'
-        }]
+        example: [
+            {
+                cmd: 'open blog.beifengtz.com'
+            }
+        ]
     }
 ]
-
-export const MESSAGE_TYPE = {
-    CMD_LINE: 'cmdLine',
-    NORMAL: 'normal',
-    JSON: 'json',
-    CODE: 'code',
-    TABLE: 'table',
-    HTML: 'html',
-    ANSI: 'ansi'
-}
-
-export const MESSAGE_CLASS = {
-    SUCCESS: 'success',
-    ERROR: 'error',
-    INFO: 'info',
-    WARN: 'warning',
-    SYSTEM: 'system'
-}

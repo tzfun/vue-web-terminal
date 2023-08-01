@@ -1,4 +1,4 @@
-import ansi256colors from "@/js/ansi/ansi-256-colors.json";
+import ansi256colors from "./ansi-256-colors.json";
 
 export const ANSI_NUL = '\x00'
 export const ANSI_BEL = '\x07'
@@ -47,11 +47,11 @@ export const ANSI_DECD = ANSI_ESC + '#'
  * @returns string
  * @private
  */
-export function _parseANSI(str, os = 'windows') {
+export function _parseANSI(str: string, os: 'windows' | 'mac' | 'linux' | 'unix' = 'windows'): string {
     let lines = ['']
     let data = {
-        attachStyle: '',
-        styleFlag: {}
+        attachStyle: <string>'',
+        styleFlag: <Array<string | number>>[]
     }
 
     function newLine() {
@@ -59,14 +59,14 @@ export function _parseANSI(str, os = 'windows') {
         lines.push('')
     }
 
-    function fillChar(char) {
+    function fillChar(char: string) {
         try {
             let arr = char.split('')
             for (let c of arr) {
                 let charStr
                 let clazz = "t-ansi-char"
                 if (data.styleFlag.length > 0) {
-                    data.styleFlag.forEach(o => clazz += (' t-ansi-' + parseInt(o)))
+                    data.styleFlag.forEach(o => clazz += (' t-ansi-' + parseInt(String(o))))
                     charStr = `<span class="${clazz}" style="${data.attachStyle}">${c}</span>`
                 } else {
                     charStr = `<span class="${clazz}" style="${data.attachStyle}">${c}</span>`
@@ -144,11 +144,13 @@ export function _parseANSI(str, os = 'windows') {
                     if (data.styleFlag.length === 3) {
                         //  256前景色
                         if (data.styleFlag[0] === 38 && data.styleFlag[1] === 5) {
+                            // @ts-ignore
                             data.attachStyle += `color:${ansi256colors['c' + data.styleFlag[2]]};`
                             data.styleFlag = []
                         }
                         //  256背景色
                         else if (data.styleFlag[0] === 48 && data.styleFlag[1] === 5) {
+                            // @ts-ignore
                             data.attachStyle += `background-color:${ansi256colors['c' + data.styleFlag[2]]};`
                             data.styleFlag = []
                         } else {
