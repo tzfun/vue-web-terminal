@@ -3,11 +3,13 @@ import '~/css/json.css'
 import {PropType, reactive} from "vue";
 import {_parseToJson} from "~/common/util.ts";
 import {Message} from "~/types";
+import JsonViewer from 'vue-json-viewer'
 
 defineProps({
   message: Object as PropType<Message>,
   idx: [Number, String]
 })
+
 const jsonViewDepth = reactive([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 </script>

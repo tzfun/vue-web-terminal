@@ -5,7 +5,7 @@
 
 import '~/css/style.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
-import {Command} from "~/types";
+import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {ref} from "vue";
 
 const terminals = ref<any>([
@@ -26,7 +26,7 @@ const terminals = ref<any>([
   }
 ])
 
-const onExecCmd = (key: string, command: Command, success: Function, failed: Function, name: string) => {
+const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: FailedFunc, name: string) => {
   if (key === 'list') {
     success("hello")
   } else if (key === 'code') {
@@ -81,8 +81,8 @@ const onExecCmd = (key: string, command: Command, success: Function, failed: Fun
       }
     })
   } else if (key === 'close') {
-    let activeNext
-    terminals.value.forEach(o => {
+    let activeNext: string
+    terminals.value.forEach((o: any) => {
       if (o.name === name) {
         o.show = false
       }
@@ -131,8 +131,12 @@ const onExecCmd = (key: string, command: Command, success: Function, failed: Fun
   } else if (key === 'edit') {
     TerminalApi.textEditorOpen(name, {
       content: 'Please edit this file',
-      onClose: (value, option) => {
+      onClose: (value: string, option: boolean) => {
         console.log("text close, value:", value, "option:", option)
+        success({
+          type: 'code',
+          content: value
+        })
       }
     })
   } else if (key === 'ask') {
@@ -141,7 +145,7 @@ const onExecCmd = (key: string, command: Command, success: Function, failed: Fun
     asker.ask({
       question: 'Ask? (y/n): ',
       autoReview: true,
-      callback: value => {
+      callback: (value: string) => {
         console.log("input: ", value)
         asker.finish()
       }
@@ -152,22 +156,22 @@ const onExecCmd = (key: string, command: Command, success: Function, failed: Fun
   }
 }
 
-const onActive = (name) => {
-  terminals.value.forEach(o => {
+const onActive = (name: string) => {
+  terminals.value.forEach((o: any) => {
     if (o.name === name) {
       o.dragConf.zIndex = 101
     }
   })
 }
 
-const onInactive = (name) => {
-  terminals.value.forEach(o => {
+const onInactive = (name: string) => {
+  terminals.value.forEach((o: any) => {
     if (o.name === name) {
       o.dragConf.zIndex = 100
     }
   })
 }
-const pushMessageBefore = (message, name) => {
+const pushMessageBefore = (message: Message, name: string) => {
   console.log(message, name)
 }
 
@@ -175,13 +179,13 @@ const pushMessageBefore = (message, name) => {
 <template>
   <div id="app">
 
-<!--    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">-->
-<!--      <terminal-->
-<!--          name="test"-->
-<!--          show-header-->
-<!--          @exec-cmd="onExecCmd">-->
-<!--      </terminal>-->
-<!--    </div>-->
+    <!--    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">-->
+    <!--      <terminal-->
+    <!--          name="test"-->
+    <!--          show-header-->
+    <!--          @exec-cmd="onExecCmd">-->
+    <!--      </terminal>-->
+    <!--    </div>-->
 
     <div v-for="(item,i) in terminals" :key="i">
       <terminal

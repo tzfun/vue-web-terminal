@@ -211,7 +211,7 @@ export function _parseToJson(obj) {
     }
 }
 
-export function _openUrl(url) {
+export function _openUrl(url: string, pushMessage: Function) {
     let match = /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/?:]?.*$/;
     if (match.test(url)) {
         if (!url.startsWith("http") && !url.startsWith("https")) {
@@ -220,7 +220,7 @@ export function _openUrl(url) {
             window.open(url);
         }
     } else {
-        this._pushMessage({
+        pushMessage({
             class: 'error',
             type: 'normal',
             content: "Invalid website url"

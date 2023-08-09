@@ -1,21 +1,22 @@
 import store from "./store";
 import {Options} from "~/types";
+import type {TerminalApiListenerFunc} from "~/types";
 
 const pool = {};
 let options = {};
 
-function register(name, listener) {
-    if (pool[name] != null) {
+function register(name: string, listener: TerminalApiListenerFunc) {
+    if (pool[name]) {
         throw Error(`Unable to register an existing terminal: ${name}`)
     }
     pool[name] = listener
 }
 
-function unregister(name) {
+function unregister(name: string) {
     delete pool[name]
 }
 
-function rename(newName, oldName, listener) {
+function rename(newName: string, oldName: string, listener: TerminalApiListenerFunc) {
     unregister(oldName)
     register(newName, listener);
 }
@@ -30,14 +31,14 @@ const TerminalInterface = {
         return options as Options
     },
 
-    post(name: string = 'terminal', event: string, options?) {
+    post(name: string = 'terminal', event: string, options?: any) {
         let listener = pool[name]
         if (listener != null) {
             return listener(event, options)
         }
     },
 
-    pushMessage(name, options?) {
+    pushMessage(name: string, options?: any) {
         return TerminalInterface.post(name, 'pushMessage', options)
     },
 
@@ -45,35 +46,35 @@ const TerminalInterface = {
         return store
     },
 
-    fullscreen(name) {
+    fullscreen(name: string) {
         return TerminalInterface.post(name, "fullscreen")
     },
 
-    isFullscreen(name) {
+    isFullscreen(name: string) {
         return TerminalInterface.post(name, 'isFullscreen')
     },
 
-    dragging(name, options?) {
+    dragging(name: string, options?: any) {
         return TerminalInterface.post(name, 'dragging', options)
     },
 
-    execute(name, options?) {
+    execute(name: string, options?: any) {
         return TerminalInterface.post(name, 'execute', options)
     },
 
-    focus(name, options?) {
+    focus(name: string, options?: any) {
         return TerminalInterface.post(name, 'focus', options)
     },
 
-    elementInfo(name, options?) {
+    elementInfo(name: string, options?: any) {
         return TerminalInterface.post(name, 'elementInfo', options)
     },
 
-    textEditorOpen(name, options?) {
+    textEditorOpen(name: string, options?: any) {
         return TerminalInterface.post(name, 'textEditorOpen', options)
     },
 
-    textEditorClose(name, options?) {
+    textEditorClose(name: string, options?: any) {
         return TerminalInterface.post(name, 'textEditorClose', options)
     },
 }

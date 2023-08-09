@@ -71,6 +71,13 @@ export type Message = {
     depth?: number
 }
 
+export type AskConfig = {
+    isPassword: boolean
+    question: string,
+    autoReview: boolean
+    callback?: (value: string) => void
+}
+
 export type CommandStoreSortFunc = (a: any, b: any) => number
 
 export type InputFilterFunc = (str1: string, str2: string, event: InputEvent) => string | null
@@ -83,6 +90,12 @@ export type SearchHandlerCallbackFunc = (cmd: Command) => void
 
 export type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHandlerCallbackFunc) => void
 
+export type TerminalApiListenerFunc = (type: string, options?: any) => any | void
+
+export type SuccessFunc = (message?: Message | Array<Message> | string | TerminalFlash | TerminalAsk) => void
+
+export type FailedFunc = (message: string) => void
+
 class TerminalCallback {
 
     onFinishListener: Function
@@ -93,7 +106,7 @@ class TerminalCallback {
         }
     }
 
-    onFinish(callback) {
+    onFinish(callback: Function) {
         this.onFinishListener = callback
     }
 }
@@ -101,13 +114,13 @@ class TerminalCallback {
 export class TerminalAsk extends TerminalCallback {
     handler: Function
 
-    ask(options) {
+    ask(options: AskConfig) {
         if (this.handler != null) {
             this.handler(options)
         }
     }
 
-    onAsk(callback) {
+    onAsk(callback: (config: AskConfig) => void) {
         this.handler = callback
     }
 }
@@ -115,13 +128,13 @@ export class TerminalAsk extends TerminalCallback {
 export class TerminalFlash extends TerminalCallback {
     handler: Function
 
-    flush(msg) {
+    flush(msg: string) {
         if (this.handler != null) {
             this.handler(msg)
         }
     }
 
-    onFlush(callback) {
+    onFlush(callback: (msg: string) => void) {
         this.handler = callback
     }
 }

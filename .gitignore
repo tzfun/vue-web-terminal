@@ -7,18 +7,27 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# local env files
+.env.local
+.env.*.local
+
 node_modules
 dist
 dist-ssr
 *.local
+/lib
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
+.vscode
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+/vue-web-terminal.css
+/vue-web-terminal.js

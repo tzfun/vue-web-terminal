@@ -5,15 +5,16 @@ import '~/css/style.css'
 import 'vue-json-viewer/style.css'
 import {computed, nextTick, onMounted, onUnmounted, PropType, reactive, ref, watch} from "vue";
 import {
+  AskConfig,
   Command,
   CommandFormatterFunc,
   CommandStoreSortFunc,
   DragConfig,
-  EditorConfig,
+  EditorConfig, FailedFunc,
   InputFilterFunc,
   Message,
   Position,
-  SearchHandlerFunc,
+  SearchHandlerFunc, SuccessFunc,
   TabKeyHandlerFunc,
   TerminalAsk,
   TerminalFlash
@@ -34,7 +35,8 @@ import {
   _isSafari,
   _nonEmpty,
   _openUrl,
-  _pointInRect, _screenType,
+  _pointInRect,
+  _screenType,
   _unHtml
 } from "~/common/util.ts";
 import {register, rename, unregister} from "~/common/interface.ts";
@@ -367,7 +369,7 @@ onMounted(() => {
 
   _initDrag()
 
-  register(getName(), terminalListener.value = (type, options) => {
+  register(getName(), terminalListener.value = (type: string, options?: any) => {
     if (type === 'pushMessage') {
       _pushMessage(options)
     } else if (type === 'fullscreen') {
@@ -597,23 +599,25 @@ const _fillCmd = () => {
 }
 
 const _focus = (enforceFocus?: boolean | MouseEvent) => {
-  _onActive()
-  let input
-  if (ask.open) {
-    input = terminalAskInputRef.value
-    cursorConf.show = false
-  } else if (textEditor.open) {
-    input = terminalTextEditorRef.value
-    cursorConf.show = false
-  } else {
-    if (enforceFocus === true) {
-      input = terminalCmdInputRef.value
+  nextTick(() => {
+    _onActive()
+    let input: HTMLInputElement
+    if (ask.open) {
+      input = terminalAskInputRef.value
+      cursorConf.show = false
+    } else if (textEditor.open) {
+      input = terminalTextEditorRef.value
+      cursorConf.show = false
+    } else {
+      if (enforceFocus === true) {
+        input = terminalCmdInputRef.value
+      }
+      cursorConf.show = true
     }
-    cursorConf.show = true
-  }
-  if (input) {
-    input.focus()
-  }
+    if (input) {
+      input.focus()
+    }
+  })
 }
 
 /**
@@ -707,20 +711,20 @@ const _execute = () => {
           _doClear(split);
           break;
         case 'open':
-          _openUrl(split[1]);
+          _openUrl(split[1], _pushMessage);
           break;
         default: {
           showInputLine.value = false
-          let _success = (message) => {
+          let _success:SuccessFunc = (message) => {
             let _finish = () => {
               showInputLine.value = true
               _endExecCallBack()
             }
 
-            if (message != null) {
+            if (message) {
               //  实时回显处理
               if (message instanceof TerminalFlash) {
-                message.onFlush(msg => {
+                message.onFlush((msg:string) => {
                   flash.content = msg
                 })
                 message.onFinish(() => {
@@ -730,7 +734,7 @@ const _execute = () => {
                 flash.open = true
                 return
               } else if (message instanceof TerminalAsk) {
-                message.onAsk((options) => {
+                message.onAsk((options: AskConfig) => {
                   ask.input = ''
                   ask.isPassword = options.isPassword
                   ask.question = _html(options.question)
@@ -753,8 +757,8 @@ const _execute = () => {
             _finish()
           }
 
-          let _failed = (message = 'Failed to execute.') => {
-            if (message != null) {
+          let _failed:FailedFunc = (message) => {
+            if (message) {
               _pushMessage({
                 type: 'normal',
                 class: 'error',
@@ -1383,6 +1387,7 @@ const _onInactive = () => {
                  ref="terminalAskInputRef"
                  v-model="ask.input"
                  class="t-ask-input"
+                 autofocus
                  autocomplete="off"
                  auto-complete="new-password"
                  @keyup.enter="_onAskInput">

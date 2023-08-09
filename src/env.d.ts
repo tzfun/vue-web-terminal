@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     TViewerJson: typeof import("~/components/TViewerJson.vue")['default']
     TViewerNormal: typeof import("~/components/TViewerNormal.vue")['default']
     TViewerTable: typeof import("~/components/TViewerTable.vue")['default']
+    JsonViewer: typeof import("vue-json-viewer")['default']
     Terminal: typeof import("~/Terminal.vue")['default']
   }
 }

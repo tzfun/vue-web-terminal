@@ -37,6 +37,7 @@ defineExpose({
   <div class="t-editor">
     <textarea name="editor"
               ref="textEditorRef"
+              autofocus
               class="t-text-editor"
               v-model="content"
               @focus="(config as EditorConfig).onFocus"
