@@ -143,6 +143,17 @@ const isBlockCommandFocus = computed(() => {
   return textEditor.open || flash.open || ask.open
 })
 
+const containerStyle = computed(() => {
+  if (containerStyleStore.value) {
+    let styles = []
+    for (let key in containerStyleStore.value) {
+      styles.push(`${key}:${containerStyleStore.value[key]}`)
+    }
+    return styles.join(';')
+  }
+  return ''
+})
+
 const _name = ref<string>()
 const command = ref<string>("")
 const cursorConf = reactive({
@@ -330,7 +341,7 @@ onMounted(() => {
       let isFullScreen = dom.fullscreenElement || dom.fullScreen || dom.mozFullScreen || dom.webkitIsFullScreen
       if (isFullScreen) {
         //  存储窗口样式
-        containerStyleCache = JSON.parse(JSON.stringify(containerStyleStore))
+        containerStyleCache = JSON.parse(JSON.stringify(containerStyleStore.value))
 
         //  进入全屏
         if (_isSafari()) {
@@ -347,7 +358,7 @@ onMounted(() => {
         }
       }
     });
-  })
+  });
 
   //  如果是移动设备，需要监听touch事件来模拟双击事件
   if (_isPhone() || _isPad()) {
@@ -715,7 +726,7 @@ const _execute = () => {
           break;
         default: {
           showInputLine.value = false
-          let _success:SuccessFunc = (message) => {
+          let _success: SuccessFunc = (message) => {
             let _finish = () => {
               showInputLine.value = true
               _endExecCallBack()
@@ -724,7 +735,7 @@ const _execute = () => {
             if (message) {
               //  实时回显处理
               if (message instanceof TerminalFlash) {
-                message.onFlush((msg:string) => {
+                message.onFlush((msg: string) => {
                   flash.content = msg
                 })
                 message.onFinish(() => {
@@ -757,7 +768,7 @@ const _execute = () => {
             _finish()
           }
 
-          let _failed:FailedFunc = (message) => {
+          let _failed: FailedFunc = (message) => {
             if (message) {
               _pushMessage({
                 type: 'normal',
@@ -1085,7 +1096,7 @@ const _initContainerStyle = () => {
 
     let zIndex = props.dragConf.zIndex ? props.dragConf.zIndex : 100
 
-    let initX, initY
+    let initX: number, initY: number
 
     let initPos = props.dragConf.init
     if (initPos && initPos.x && initPos.y) {
@@ -1106,17 +1117,6 @@ const _initContainerStyle = () => {
     styleStore.height = '100%'
   }
   containerStyleStore.value = styleStore
-}
-
-const _getContainerStyle = (): string => {
-  if (containerStyleStore.value) {
-    let styles = []
-    for (let key in containerStyleStore.value) {
-      styles.push(`${key}:${containerStyleStore.value[key]}`)
-    }
-    return styles.join(';')
-  }
-  return ''
 }
 
 const _initDrag = () => {
@@ -1145,7 +1145,7 @@ const _initDrag = () => {
     cursorY: 0
   }
 
-  const storeResizeData = (type, evt) => {
+  const storeResizeData = (type: string, evt: MouseEvent) => {
     isResize = true
     window.style['user-select'] = 'none'
     resizeData.type = type
@@ -1157,7 +1157,7 @@ const _initDrag = () => {
     resizeData.boxHeight = box.clientHeight
   }
 
-  _eventOn(dragArea, 'mousedown', evt => {
+  _eventOn(dragArea, 'mousedown', (evt: MouseEvent) => {
     if (fullscreenState.value) {
       return
     }
@@ -1169,20 +1169,20 @@ const _initDrag = () => {
     window.style['user-select'] = 'none'
   })
 
-  _eventOn(resizeLTRef.value, 'mousedown', evt => {
+  _eventOn(resizeLTRef.value, 'mousedown', (evt: MouseEvent) => {
     storeResizeData('lt', evt)
   })
-  _eventOn(resizeRTRef.value, 'mousedown', evt => {
+  _eventOn(resizeRTRef.value, 'mousedown', (evt: MouseEvent) => {
     storeResizeData('rt', evt)
   })
-  _eventOn(resizeLBRef.value, 'mousedown', evt => {
+  _eventOn(resizeLBRef.value, 'mousedown', (evt: MouseEvent) => {
     storeResizeData('lb', evt)
   })
-  _eventOn(resizeRBRef.value, 'mousedown', evt => {
+  _eventOn(resizeRBRef.value, 'mousedown', (evt: MouseEvent) => {
     storeResizeData('rb', evt)
   })
 
-  _eventOn(document, 'mousemove', evt => {
+  _eventOn(document, 'mousemove', (evt: MouseEvent) => {
     if (isPinned.value || fullscreenState.value) {
       return
     }
@@ -1250,7 +1250,7 @@ const _dragging = (x: number, y: number) => {
   let clientHeight = document.body.clientHeight
   let container = terminalContainerRef.value
 
-  let xVal, yVal
+  let xVal: number, yVal: number
   if (x > clientWidth - container.clientWidth) {
     xVal = clientWidth - container.clientWidth
   } else {
@@ -1300,7 +1300,7 @@ const _onAskInput = () => {
   }
 }
 
-const _textEditorClose = (options) => {
+const _textEditorClose = (options: any) => {
   if (textEditor.open) {
     textEditor.open = false
     let content = textEditor.value
@@ -1326,7 +1326,7 @@ const _onInactive = () => {
 
 <template>
   <div :class="'t-container ' + (isActive ? '' : 't-disable-select')"
-       :style="_getContainerStyle()"
+       :style="containerStyle"
        ref="terminalContainerRef">
     <div v-if="draggable">
       <div class="t-point t-point-lt" ref="resizeLTRef"></div>
