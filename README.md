@@ -914,6 +914,7 @@ This plugin is completely open source and free, and it is not easy to create. If
 
 Thank you for your donation:
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - ￥150
+* [lilqilie](https://github.com/lilqilie) - ￥20
 
 # License
 

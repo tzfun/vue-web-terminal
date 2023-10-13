@@ -927,6 +927,7 @@ export default {
 感谢大佬的捐赠：
 
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - 150元
+* [lilqilie](https://github.com/lilqilie) - 20元
 
 # License
 
