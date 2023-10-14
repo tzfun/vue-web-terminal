@@ -141,7 +141,7 @@ Terminal tag supports attribute parameter table.
 | search-handler       | User-defined command search prompt implementation, the callback needs to resolve a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot          | function | function(commandStore, key, callback)            |
 | scroll-mode          | Scroll bar mode.                                                                                                                                                                                                | string   | smooth                                           |
 | push-message-before  | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
-
+| log-size-limit       | Limit the maximum number of displayed logs                                                                                                                                                                      | number   | 200                                              |
 > Below are the removed properties
 >
 > * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.

@@ -13,7 +13,7 @@ import {
   EditorConfig, FailedFunc,
   InputFilterFunc,
   Message,
-  Position,
+  Position, PushMessageBeforeFunc,
   SearchHandlerFunc, SuccessFunc,
   TabKeyHandlerFunc,
   TerminalAsk,
@@ -122,7 +122,12 @@ const props = defineProps({
    * @param message 命令对象
    * @param name terminal name
    */
-  pushMessageBefore: Function
+  pushMessageBefore: Function as PropType<PushMessageBeforeFunc>,
+  //  日志条数限制，命令行也算一条日志
+  logSizeLimit: {
+    type: Number,
+    default: 200
+  }
 })
 
 const draggable = computed<boolean>(() => {
@@ -860,7 +865,14 @@ const _pushMessage0 = (message: Message) => {
   if (message.type !== 'cmdLine' && props.pushMessageBefore) {
     props.pushMessageBefore(message, getName())
   }
+
   terminalLog.value.push(message)
+  //  留 10% 的缓冲
+  let limit = Math.floor(props.logSizeLimit * 1.1)
+  if (limit > 0 && terminalLog.value.length > limit) {
+    let left = terminalLog.value.length - props.logSizeLimit
+    terminalLog.value.splice(0, left)
+  }
 }
 
 const _jumpToBottom = () => {

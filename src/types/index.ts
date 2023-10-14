@@ -96,6 +96,8 @@ export type SuccessFunc = (message?: Message | Array<Message> | string | Termina
 
 export type FailedFunc = (message: string) => void
 
+export type PushMessageBeforeFunc = (message: Message, name: String) => void
+
 class TerminalCallback {
 
     onFinishListener: Function

@@ -139,6 +139,7 @@ terminal标签支持的属性参数表
 | search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function | function(commandStore, key, callback)            | 
 | scroll-mode          | 滚动条模式                                                                     | string   | smooth                                           |
 | push-message-before  | 在推送消息显示之前触发的钩子函数                                                          | function | function(message, name)                          |
+| log-size-limit       | 限制显示日志的最大条数                                                               | number   | 200                                              |
 
 > 下面是已移除属性
 >
