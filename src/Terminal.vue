@@ -283,23 +283,34 @@ onMounted(() => {
     }
   })
 
-  _eventOn(window, 'keydown', keydownListener.value = event => {
+  _eventOn(window, 'keydown', keydownListener.value = (event: KeyboardEvent) => {
     if (isActive.value) {
-      if (cursorConf.show) {
-        if (event.key.toLowerCase() === 'tab') {
-          if (props.tabKeyHandler) {
-            props.tabKeyHandler(event)
-          } else {
-            _fillCmd()
+      try{
+        let key = event.key.toLowerCase()
+        if (key.match(/c|control|meta/g)) {
+          if (event.metaKey || event.ctrlKey) {
+            return
           }
-          event.preventDefault()
-        } else if (document.activeElement !== terminalCmdInputRef.value) {
-          terminalCmdInputRef.value.focus()
-          _onInputKeydown(event)
+          if (key === 'c' && (event.metaKey || event.ctrlKey)) {
+            return
+          }
         }
+        if (cursorConf.show) {
+          if (key === 'tab') {
+            if (props.tabKeyHandler) {
+              props.tabKeyHandler(event)
+            } else {
+              _fillCmd()
+            }
+            event.preventDefault()
+          } else if (document.activeElement !== terminalCmdInputRef.value) {
+            terminalCmdInputRef.value.focus()
+            _onInputKeydown(event)
+          }
+        }
+      } finally {
+        emits('on-keydown', event, getName())
       }
-
-      emits('on-keydown', event, getName())
     }
   })
 
@@ -312,7 +323,7 @@ onMounted(() => {
     }
   })
 
-  _eventOn(terminalWindowRef, 'contextmenu', event => {
+  _eventOn(terminalWindowRef, 'contextmenu', (event: MouseEvent) => {
     event.preventDefault();
 
     if (selectContentText) {
