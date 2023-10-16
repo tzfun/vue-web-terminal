@@ -903,7 +903,7 @@ const _saveCurCommand = () => {
 
   terminalLog.value.push({
     type: "cmdLine",
-    content: `${props.context} > ${_commandFormatter(command.value)}`
+    content: `${_unHtml(props.context)} > ${_commandFormatter(command.value)}`
   });
 }
 

@@ -12,7 +12,7 @@ const terminals = ref<any>([
   {
     show: true,
     name: 'terminal-test',
-    context: '/vue-web-terminal/test',
+    context: '/vue-web-terminal/test<br/>123',
     dragConf: {
       width: "60%",
       height: "50%",
