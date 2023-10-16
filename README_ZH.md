@@ -124,6 +124,7 @@ terminal标签支持的属性参数表
 |----------------------|---------------------------------------------------------------------------|----------|--------------------------------------------------|
 | name                 | Terminal实例名称，同一页面的name必须唯一，API中使用也需用到此值                                   | string   | terminal                                         |
 | context              | 上下文内容                                                                     | string   | /vue-web-terminal                                |
+| context-suffix       | 上下文后缀符号                                                                   | string   | \>                                               |
 | title                | 窗口头部显示的标题                                                                 | string   | vue-web-terminal                                 |
 | show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                          | boolean  | true                                             |
 | init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                       | array    | 略                                                |

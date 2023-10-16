@@ -193,6 +193,7 @@ const pushMessageBefore = (message: Message, name: string) => {
           :name="item.name"
           :title="item.name"
           :context="item.context"
+          context-suffix="~# "
           :warn-log-count-limit="200"
           :drag-conf="item.dragConf"
           show-header

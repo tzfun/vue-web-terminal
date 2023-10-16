@@ -82,6 +82,10 @@ const props = defineProps({
     type: String,
     default: '/vue-web-terminal'
   },
+  contextSuffix: {
+    type: String,
+    default: ' > '
+  },
   //  命令行搜索以及help指令用
   commandStore: Array<Command>,
   //   命令行排序方式
@@ -903,7 +907,7 @@ const _saveCurCommand = () => {
 
   terminalLog.value.push({
     type: "cmdLine",
-    content: `${_unHtml(props.context)} > ${_commandFormatter(command.value)}`
+    content: `${_unHtml(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
   });
 }
 
@@ -1418,7 +1422,7 @@ const _onInactive = () => {
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBoxRef" v-show="showInputLine">
           <span class="t-prompt t-cmd-line-content t-disable-select" ref="terminalInputPromptRef">
             <span>{{ context }}</span>
-            <span> > </span>
+            <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
             v-show="cursorConf.show" class="cursor t-disable-select" ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
