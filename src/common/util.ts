@@ -132,11 +132,11 @@ export function _getDifferent(one, two) {
     return diff;
 }
 
-export function _eventOn(dom, eventName, handler) {
+export function _eventOn(dom:Document, eventName: string, handler: EventListenerOrEventListenerObject) {
     dom && dom.addEventListener && dom.addEventListener(eventName, handler);
 }
 
-export function _eventOff(dom, eventName, handler) {
+export function _eventOff(dom:Document, eventName: string, handler: EventListenerOrEventListenerObject) {
     dom && dom.removeEventListener && dom.removeEventListener(eventName, handler);
 }
 

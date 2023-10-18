@@ -319,7 +319,7 @@ onMounted(() => {
   })
 
   //  先暂存选中文本
-  _eventOn(terminalWindowRef, 'mousedown', () => {
+  _eventOn(terminalWindowRef.value, 'mousedown', () => {
     let selection = _getSelection();
     let content = ''
     if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
@@ -327,7 +327,8 @@ onMounted(() => {
     }
   })
 
-  _eventOn(terminalWindowRef, 'contextmenu', (event: MouseEvent) => {
+  _eventOn(terminalWindowRef.value, 'contextmenu', (event: MouseEvent) => {
+    console.log(event)
     event.preventDefault();
 
     if (selectContentText) {
@@ -1355,6 +1356,10 @@ const _onInactive = () => {
   <div :class="'t-container ' + (isActive ? '' : 't-disable-select')"
        :style="containerStyle"
        ref="terminalContainerRef">
+    <span class="t-flag t-cmd-line t-disable-select">
+      <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">a</span>
+      <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你</span>
+    </span>
     <div v-if="draggable">
       <div class="t-point t-point-lt" ref="resizeLTRef"></div>
       <div class="t-point t-point-rt" ref="resizeRTRef"></div>
@@ -1440,10 +1445,6 @@ const _onInactive = () => {
                  @keyup.up.exact="_switchPreCmd"
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
-          <span class="t-flag t-cmd-line t-disable-select">
-            <span class="t-cmd-line-content" ref="terminalEnFlagRef">a</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlagRef">你</span>
-          </span>
         </p>
         <slot name="helpCmd" :item="searchCmdResult.item">
           <p class="t-help-msg">
