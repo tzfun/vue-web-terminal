@@ -3,7 +3,7 @@ import {PropType, ref} from "vue";
 import {SearchResult} from "~/types";
 
 defineProps({
-  showHeader: Boolean,
+  top: Number,
   result: Object as PropType<SearchResult>
 })
 const terminalHelpBoxRef = ref()
@@ -19,7 +19,7 @@ defineExpose({
 <template>
   <div class="t-cmd-help"
        ref="terminalHelpBoxRef"
-       :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'">
+       :style="`top: ${top}px;max-height: calc(100% - ${top}px);`">
     <p class="text"
        v-if="result.item.description"
        style="margin: 15px 0"

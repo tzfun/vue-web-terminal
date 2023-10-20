@@ -219,6 +219,7 @@ textEditor.onBlur = () => {
   textEditor.focus = false
 }
 const containerStyleStore = ref<{ [prop: string]: string | number }>()
+const headerHeight = ref(0)
 
 //  references
 const terminalContainerRef = ref(null)
@@ -242,6 +243,8 @@ const resizeRBRef = ref(null)
 const clickListener = ref()
 const keydownListener = ref()
 const terminalListener = ref()
+
+const resizeObserver = ref<ResizeObserver>()
 
 onMounted(() => {
   emits('init-before', getName())
@@ -289,7 +292,7 @@ onMounted(() => {
 
   _eventOn(window, 'keydown', keydownListener.value = (event: KeyboardEvent) => {
     if (isActive.value) {
-      try{
+      try {
         let key = event.key.toLowerCase()
         if (key.match(/c|control|meta/g)) {
           if (event.metaKey || event.ctrlKey) {
@@ -399,6 +402,18 @@ onMounted(() => {
     })
   }
 
+  //  监听header的尺寸变化
+  resizeObserver.value = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      if (entry.target === terminalHeaderRef.value) {
+        updateHeaderHeight()
+      }
+    }
+  });
+  if (terminalHeaderRef.value) {
+    resizeObserver.value.observe(terminalHeaderRef.value)
+  }
+
   _initDrag()
 
   register(getName(), terminalListener.value = (type: string, options?: any) => {
@@ -460,6 +475,9 @@ onUnmounted(() => {
   emits('destroyed', getName())
   _eventOff(window, 'keydown', keydownListener.value)
   _eventOff(window, "click", clickListener.value)
+  if (resizeObserver.value && terminalHeaderRef.value) {
+    resizeObserver.value.observe(terminalHeaderRef.value)
+  }
   unregister(getName())
 })
 
@@ -503,11 +521,31 @@ watch(
     }
 )
 
+watch(
+    () => props.showHeader,
+    () => {
+      updateHeaderHeight()
+    }
+)
+
 let idx = 0;
 
 function generateTerminalName() {
   idx++;
   return `terminal_${idx}`;
+}
+
+const updateHeaderHeight = () => {
+  nextTick(() => {
+    if (terminalHeaderRef.value && terminalHeaderRef.value.getBoundingClientRect) {
+      let rect: DOMRect = terminalHeaderRef.value.getBoundingClientRect()
+      headerHeight.value = rect.height
+    } else {
+      headerHeight.value = 0
+    }
+
+    console.debug("reset header height", headerHeight.value)
+  })
 }
 
 const getName = () => {
@@ -1356,10 +1394,6 @@ const _onInactive = () => {
   <div :class="'t-container ' + (isActive ? '' : 't-disable-select')"
        :style="containerStyle"
        ref="terminalContainerRef">
-    <span class="t-flag t-cmd-line t-disable-select">
-      <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">a</span>
-      <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你</span>
-    </span>
     <div v-if="draggable">
       <div class="t-point t-point-lt" ref="resizeLTRef"></div>
       <div class="t-point t-point-rt" ref="resizeRTRef"></div>
@@ -1374,7 +1408,8 @@ const _onInactive = () => {
           <t-header :title="title" :pinned="isPinned" :draggable="draggable" @on-click="_triggerClick"></t-header>
         </slot>
       </div>
-      <div class="t-window" :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`"
+      <div class="t-window"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'}`"
            ref="terminalWindowRef" @click="_focus" @dblclick="_focus(true)">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
@@ -1456,14 +1491,14 @@ const _onInactive = () => {
     <div v-if="enableExampleHint">
       <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
         <t-help-box ref="terminalHelpBoxRef"
-                    :show-header="showHeader"
+                    :top="headerHeight + 10"
                     :result="searchCmdResult"
                     v-if="searchCmdResult.show && searchCmdResult.item && !_screenType().xs"/>
       </slot>
     </div>
 
     <div class="t-text-editor-container" v-if="textEditor.open"
-         :style="`${showHeader ? 'height:calc(100% - 34px);margin-top: 34px;' : 'height:100%'}`">
+         :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'}`">
       <slot name="textEditor" :data="textEditor">
         <t-editor :config="textEditor"
                   v-model="textEditor.value"
@@ -1471,6 +1506,10 @@ const _onInactive = () => {
                   ref="terminalTextEditorRef"></t-editor>
       </slot>
     </div>
+    <span class="t-flag t-cmd-line t-disable-select">
+      <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">a</span>
+      <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你</span>
+    </span>
   </div>
 </template>
 

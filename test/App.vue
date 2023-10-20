@@ -22,7 +22,8 @@ const terminals = ref<any>([
         y: 70
       },
       pinned: false
-    }
+    },
+    showHeader: false
   }
 ])
 
@@ -151,6 +152,13 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
       }
     })
     TerminalApi.focus(name)
+  } else if (key === 'header') {
+    terminals.value.forEach((o: any) => {
+      if (o.name === name) {
+        o.showHeader = !o.showHeader
+      }
+    })
+    success()
   } else {
     failed("Unknown command: " + key)
   }
@@ -196,13 +204,16 @@ const pushMessageBefore = (message: Message, name: string) => {
           context-suffix="~# "
           :warn-log-count-limit="200"
           :drag-conf="item.dragConf"
-          show-header
+          :show-header="item.showHeader"
           :push-message-before="pushMessageBefore"
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
           :log-size-limit="20"
           style="position: fixed">
+        <template #header>
+          <div class="custom-header">This is custom header</div>
+        </template>
       </terminal>
     </div>
   </div>
@@ -217,5 +228,11 @@ body, html, #app {
   background-color: #ffffff;
   font-family: Menlo, Consolas, monospace;
   overflow: auto;
+}
+.custom-header{
+  background-color: #0eb4b4;
+  color: white;
+  text-align: center;
+  height: 100px;
 }
 </style>
