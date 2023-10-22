@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import '~/css/scrollbar.css'
-import '~/css/ansi.css'
-import '~/css/style.css'
-import 'vue-json-viewer/style.css'
 import {computed, nextTick, onMounted, onUnmounted, PropType, reactive, ref, watch} from "vue";
 import {
   AskConfig,

@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-// import '../lib/style.css'
+// import '../lib/theme/light.css'
 // import {Terminal, TerminalApi, TerminalAsk} from '../lib/vue-web-terminal.js'
 // import {Command} from "../lib/types";
 
-import '~/css/style.css'
-import '~/css/theme/dark.css'
+import '~/css/theme/light.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {ref} from "vue";

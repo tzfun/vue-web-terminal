@@ -2,17 +2,18 @@
   "name": "vue-web-terminal",
   "version": "3.1.8",
   "description": "A lightweight and powerful web terminal plugin, suitable for vue3. 轻量、功能强大的网页端Terminal插件，适配vue3",
-  "license":"Apache-2.0",
+  "license": "Apache-2.0",
   "private": false,
   "type": "module",
   "main": "lib/vue-web-terminal.umd.cjs",
   "module": "lib/vue-web-terminal.js",
   "scripts": {
     "test": "vite",
-    "build": "vite build && vue-tsc",
+    "build": "vite build && vue-tsc && node package.js",
     "preview": "vite preview"
   },
   "dependencies": {
+    "vite-plugin-css-injected-by-js": "^3.3.0",
     "vue": "^3.3.4",
     "vue-json-viewer": "^3.0.4"
   },
@@ -20,11 +21,11 @@
     "@types/node": "^20.4.5",
     "@vitejs/plugin-vue": "^4.2.3",
     "rollup-plugin-visualizer": "^5.9.2",
+    "sass": "^1.62.1",
     "terser": "^5.19.2",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
-    "vue-tsc": "^1.8.5",
-    "sass": "^1.62.1"
+    "vue-tsc": "^1.8.5"
   },
   "browserslist": [
     "> 1%",

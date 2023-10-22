@@ -1,0 +1,15 @@
+:root {
+    --t-main-background-color: #fff;
+    --t-main-font-color: #000;
+    --t-window-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    --t-header-background-color: #959598;
+    --t-header-font-color: white;
+    --t-cursor-color: #000;
+    --t-cmd-key-color: #834dff;
+    --t-cmd-arg-color: #c0c0ff;
+    --t-link-color: #006e85;
+    --t-link-hover-color: #17b2d2;
+    --t-table-border: 1px dashed #565151;
+    --t-selection-font-color: white;
+    --t-selection-background-color: #2a2626;
+}

@@ -3,6 +3,7 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 import {visualizer} from 'rollup-plugin-visualizer'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 const pathSrc = resolve(__dirname, 'src')
 
@@ -15,7 +16,8 @@ export default defineConfig({
         visualizer({
             filename: 'stats.html',
             open: false
-        })
+        }),
+        cssInjectedByJsPlugin()
     ],
     resolve: {
         alias: {
@@ -25,9 +27,6 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             scss: {},
-        },
-        modules: {
-            globalModulePaths: ["src/css/theme/dark.css", "src/css/theme/light.css"]
         }
     },
     build: {
@@ -50,7 +49,8 @@ export default defineConfig({
                 //  https://rollupjs.org/configuration-options/#output-globals
                 globals: {
                     vue: 'Vue'
-                }
+                },
+                manualChunks: undefined,
             }
         },
         minify: 'terser',
@@ -61,7 +61,7 @@ export default defineConfig({
             },
             format: {
                 // 删除注释
-                comments: false
+                comments: true
             }
         },
         commonjsOptions: {

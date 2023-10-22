@@ -29,6 +29,11 @@
     margin: 0;
     padding: 0;
     border-radius: 15px;
+    background-color: var(--t-main-background-color);
+    box-shadow: var(--t-window-box-shadow);
+    -moz-box-shadow: var(--t-window-box-shadow);
+    -webkit-box-shadow: var(--t-window-box-shadow);
+    -o-box-shadow: var(--t-window-box-shadow);
 }
 
 .t-header-container {
@@ -42,12 +47,14 @@
 .t-header {
     text-align: center;
     padding: 2px;
+    background-color: var(--t-header-background-color);
 }
 
 .t-header h4 {
     font-size: 14px;
     margin: 5px;
     letter-spacing: 1px;
+    color: var(--t-header-font-color);
 }
 
 .t-header ul.t-shell-dots {
@@ -99,6 +106,8 @@
     font-weight: 400;
     line-height: 20px;
     cursor: text;
+    background-color: var(--t-main-background-color);
+    color: var(--t-main-font-color);
 }
 
 .t-window .prompt:before {
@@ -133,6 +142,15 @@
     position: absolute;
     height: 16px;
     margin-top: 1px;
+    background-color: var(--t-cursor-color);
+}
+
+.t-a {
+    color: var(--t-link-color);
+}
+
+.t-a:hover {
+    color: var(--t-link-hover-color);
 }
 
 .t-ask-input {
@@ -142,6 +160,7 @@
     outline: none;
     padding: 0;
     display: inline-block;
+    color: var(--t-main-font-color);
 }
 
 .t-ask-input:focus, .t-ask-input:focus-visible {
@@ -170,6 +189,7 @@
     border-image: initial;
     word-wrap: break-word;
     margin: 0;
+    background-color: var(--t-main-background-color);
 }
 
 .t-content-normal .success {
@@ -240,6 +260,11 @@
 
 .t-cmd-key {
     font-weight: 700;
+    color: var(--t-cmd-key-color);
+}
+
+.t-cmd-arg {
+    color: var(--t-cmd-arg-color);
 }
 
 .t-help-list {
@@ -324,6 +349,7 @@ pre {
 
 .t-border-dashed {
     border-collapse: collapse;
+    border: var(--t-table-border);
 }
 
 .t-table thead {
@@ -459,4 +485,18 @@ pre {
 .t-json-deep-selector:focus,
 .t-json-deep-selector:focus-visible {
     outline: none;
+}
+
+/*--------------------------selection style------------------------*/
+.t-window div::selection,
+.t-window a::selection,
+.t-window span::selection,
+.t-window li::selection,
+.t-window p::selection,
+.t-window code::selection,
+.t-window td::selection,
+.t-window th::selection,
+.t-window br::selection {
+    color: var(--t-selection-font-color);
+    background-color: var(--t-selection-background-color);
 }
