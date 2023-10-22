@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import '~/css/json.css'
 import {PropType, reactive} from "vue";
 import {_parseToJson} from "~/common/util.ts";
 import {Message} from "~/types";

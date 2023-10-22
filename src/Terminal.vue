@@ -502,7 +502,7 @@ watch(
 watch(
     () => props.name,
     (newVal, oldVal) => {
-      rename(newVal ? newVal : getName(), oldVal ? oldVal : _name, terminalListener)
+      rename(newVal ? newVal : getName(), oldVal ? oldVal : _name.value, terminalListener.value)
     }
 )
 

@@ -4,6 +4,7 @@
 // import {Command} from "../lib/types";
 
 import '~/css/style.css'
+import '~/css/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {ref} from "vue";
@@ -23,7 +24,7 @@ const terminals = ref<any>([
       },
       pinned: false
     },
-    showHeader: false
+    showHeader: true
   }
 ])
 
@@ -211,9 +212,9 @@ const pushMessageBefore = (message: Message, name: string) => {
           @on-inactive="onInactive"
           :log-size-limit="20"
           style="position: fixed">
-        <template #header>
-          <div class="custom-header">This is custom header</div>
-        </template>
+<!--        <template #header>-->
+<!--          <div class="custom-header">This is custom header</div>-->
+<!--        </template>-->
       </terminal>
     </div>
   </div>

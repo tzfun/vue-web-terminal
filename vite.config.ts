@@ -26,6 +26,9 @@ export default defineConfig({
         preprocessorOptions: {
             scss: {},
         },
+        modules: {
+            globalModulePaths: ["src/css/theme/dark.css", "src/css/theme/light.css"]
+        }
     },
     build: {
         lib: {

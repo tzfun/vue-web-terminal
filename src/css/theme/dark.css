@@ -1,0 +1,148 @@
+.t-container {
+    background-color: #191b24;
+    box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -moz-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -webkit-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    -o-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+}
+
+.t-header {
+    background-color: #959598;
+}
+
+.t-header h4 {
+    color: white;
+}
+
+.t-header-pin:hover {
+    color: #030a0a;
+}
+
+.t-window {
+    background-color: #191b24;
+    color: #fff;
+}
+
+.t-window .cursor {
+    background-color: #fff;
+}
+
+.t-ask-input {
+    color: white;
+}
+
+.t-cmd-key {
+    font-weight: 700;
+    color: yellow;
+}
+
+.t-cmd-arg {
+    color: #c0c0ff;
+}
+
+.t-cmd-input {
+    background-color: #030924;
+}
+
+.t-a {
+    color: antiquewhite;
+}
+
+.t-a:hover {
+    color: white;
+}
+
+.t-border-dashed {
+    border: 1px dashed #fff;
+}
+
+/*--------------------------selection style------------------------*/
+.t-window div::selection,
+.t-window a::selection,
+.t-window span::selection,
+.t-window li::selection,
+.t-window p::selection,
+.t-window code::selection,
+.t-window td::selection,
+.t-window th::selection,
+.t-window br::selection {
+    color: black;
+    background-color: white;
+}
+
+/*--------------------------help style------------------------*/
+.t-pre-numbering {
+    border-right: 1px solid #C3CCD0;
+    background-color: #1C1D21;
+}
+
+.t-pre-numbering li {
+    color: #AAA;
+}
+
+.t-cmd-help {
+    background-color: black !important;
+    color: white;
+    box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
+}
+
+.t-cmd-help code {
+    color: white;
+    background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.t-help-msg {
+    color: #ffffff87;
+}
+
+/*--------------------------text editor style------------------------*/
+.t-text-editor {
+    color: #fff;
+    background-color: #191b24;
+}
+
+.t-text-editor-floor {
+    background-color: rgb(72 69 69);
+}
+
+.t-text-editor-floor-btn {
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/*--------------------------json viewer style------------------------*/
+.t-json-container .jv-container.jv-light {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+}
+
+.t-json-container .jv-container.jv-light .jv-item.jv-array,
+.t-json-container .jv-container.jv-light .jv-item.jv-object {
+    color: #bdadad;
+}
+
+.t-json-container .jv-container.jv-light .jv-key {
+    color: white;
+}
+
+.t-json-container .jv-container.jv-light .jv-item.jv-boolean {
+    color: #cdc83c;
+}
+
+.t-json-container .jv-container.jv-light .jv-item.jv-number {
+    color: #f3c7fb;
+}
+
+.t-json-container .jv-container.jv-light .jv-ellipsis {
+    color: white;
+    background-color: #674848;
+}
+
+.t-json-container .jv-container .jv-more:after {
+    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 20%, rgb(255 255 255 / 10%) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgb(255 255 255 / 10%) 100%);
+}
+
+.t-json-deep-selector {
+    border: 1px solid rgb(249 249 249 / 52%);
+}
