@@ -22,7 +22,7 @@ defineProps({
                   v-model="message.content"
                   :options="TerminalInterface.getOptions().codemirror"/>
     </div>
-    <div v-else style="background: rgb(39 50 58);">
+    <div v-else class="t-code-default">
       <pre style="padding: 1em;margin: 0"><code style="font-size: 15px">{{ message.content }}</code></pre>
     </div>
   </div>

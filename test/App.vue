@@ -3,7 +3,8 @@
 // import {Terminal, TerminalApi, TerminalAsk} from '../lib/vue-web-terminal.js'
 // import {Command} from "../lib/types";
 
-import '~/css/theme/light.css'
+// import '~/css/theme/light.css'
+import '~/css/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {ref} from "vue";
