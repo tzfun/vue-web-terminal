@@ -1,6 +1,7 @@
 import {resolve} from 'path'
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
+import dts from 'vite-plugin-dts'
 
 import {visualizer} from 'rollup-plugin-visualizer'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
@@ -17,7 +18,8 @@ export default defineConfig({
             filename: 'stats.html',
             open: false
         }),
-        cssInjectedByJsPlugin()
+        cssInjectedByJsPlugin(),
+        dts()
     ],
     resolve: {
         alias: {
@@ -50,7 +52,7 @@ export default defineConfig({
                 globals: {
                     vue: 'Vue'
                 },
-                manualChunks: undefined,
+                // manualChunks: undefined,
             }
         },
         minify: 'terser',

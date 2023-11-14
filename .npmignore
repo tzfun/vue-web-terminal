@@ -3,6 +3,10 @@
 *.yml
 *.iml
 *.lock
+*.html
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
 build/
 node_modules/
 src/

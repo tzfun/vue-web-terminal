@@ -6,7 +6,7 @@ import {
   CommandFormatterFunc,
   CommandStoreSortFunc,
   DragConfig,
-  EditorConfig, FailedFunc,
+  EditorConfig, EditorSetting, FailedFunc,
   InputFilterFunc,
   Message,
   Position, PushMessageBeforeFunc,
@@ -14,7 +14,7 @@ import {
   TabKeyHandlerFunc,
   TerminalAsk,
   TerminalFlash
-} from "~/types";
+} from "./types";
 import {
   _copyTextToClipboard,
   _defaultCommandFormatter,
@@ -35,7 +35,7 @@ import {
   _screenType,
   _unHtml
 } from "~/common/util.ts";
-import {register, rename, unregister} from "~/common/interface.ts";
+import api, {register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS} from "~/common/configuration.ts";
 import {_parseANSI} from "~/ansi";
 import store from "~/common/store";
@@ -449,10 +449,8 @@ onMounted(() => {
         }
       }
     } else if (type === 'textEditorOpen') {
-      let opt: {
-        content: string,
-        onClose: Function
-      } = options || {}
+      console.error(options)
+      let opt: EditorSetting = options || {}
 
       textEditor.value = opt.content
       textEditor.open = true
@@ -1383,6 +1381,26 @@ const _onActive = () => {
 const _onInactive = () => {
   emits('on-inactive', getName())
 }
+
+defineExpose({
+  pushMessage: _pushMessage,
+  fullscreen: _fullscreen,
+  isFullscreen: (): boolean => {
+    return fullscreenState.value
+  },
+  dragging: _dragging,
+  execute: (cmd: string): any => {
+    return api.execute(getName(), cmd)
+  },
+  focus: _focus,
+  elementInfo: ():any => {
+    return api.elementInfo(getName())
+  },
+  textEditorOpen: (options?: EditorSetting) => {
+    return api.textEditorOpen(getName(), options)
+  },
+  textEditorClose: _textEditorClose
+})
 
 </script>
 

@@ -147,3 +147,20 @@ export interface TerminalStore {
     clear: (name: string) => void
     clearAll: () => void
 }
+
+export interface TerminalApi {
+    pushMessage: (name: string, options: Message | Array<Message> | string) => any
+    fullscreen: (name: string) => any
+    isFullscreen: (name: string) => any
+    dragging: (name: string, options: Position) => any
+    execute: (name: string, options: string) => any
+    focus: (name: string, options: boolean) => any
+    elementInfo: (name: string) => any
+    textEditorOpen: (name: string, options?: EditorSetting) => any
+    textEditorClose: (name: string, options?: any) => string | any
+}
+
+export interface EditorSetting {
+    content: string,
+    onClose: Function
+}

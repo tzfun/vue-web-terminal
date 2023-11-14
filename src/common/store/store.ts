@@ -6,7 +6,7 @@ const DEFAULT_STORAGE_KEY = 'terminal'
 
 export class HistoryStore implements TerminalStore {
     storageKey: string = DEFAULT_STORAGE_KEY
-    dataMap
+    dataMap: Object
 
     constructor(key?: string) {
         if (key) {
@@ -41,7 +41,7 @@ export class HistoryStore implements TerminalStore {
         window.localStorage.setItem(this.storageKey, JSON.stringify(this.dataMap))
     }
 
-    getData(name): CmdHistory {
+    getData(name: string): CmdHistory {
         let data = this.dataMap[name]
         if (data == null) {
             data = {}
@@ -50,7 +50,7 @@ export class HistoryStore implements TerminalStore {
         return data
     }
 
-    getLog(name) {
+    getLog(name: string) {
         let data = this.getData(name)
         if (!data.cmdLog) {
             data.cmdLog = []
@@ -58,7 +58,7 @@ export class HistoryStore implements TerminalStore {
         return data.cmdLog
     }
 
-    clear(name) {
+    clear(name: string) {
         let data = this.getData(name)
         data.cmdLog = []
         data.cmdIdx = 0
@@ -70,12 +70,12 @@ export class HistoryStore implements TerminalStore {
         this.store()
     }
 
-    getIdx(name) {
+    getIdx(name: string) {
         let data = this.getData(name)
         return data.cmdIdx | 0
     }
 
-    setIdx(name, idx) {
+    setIdx(name: string, idx: number) {
         this.getData(name).cmdIdx = idx
     }
 }
