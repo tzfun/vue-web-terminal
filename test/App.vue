@@ -31,6 +31,7 @@ const terminals = ref<any>([
 const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: FailedFunc, name: string) => {
   if (key === 'list') {
     success("hello")
+    TerminalApi.pushMessage(name, "?")
   } else if (key === 'code') {
     success({
       type: 'code',
