@@ -1,3 +1,3 @@
-import {HistoryStore} from "~/common/store/store.ts";
+import {TerminalStore} from "~/types";
 
-export default new HistoryStore()
+export default new TerminalStore()

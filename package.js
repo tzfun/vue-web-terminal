@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 
-function copyFile(src, dest) {
+function copyDir(src, dest) {
     fs.mkdirSync(dest)
     for (let f of fs.readdirSync(src)) {
         fs.copyFileSync(path.join(src, f), path.join(dest, f));
@@ -23,7 +23,14 @@ function deleteFile(fileOrDirName) {
     }
 }
 
-copyFile('./src/css/theme', './lib/theme');
+function copyTypes() {
+    fs.copyFileSync('./lib/types/index.d.ts', './lib/types.d.ts')
+    deleteFile('./lib/types')
+    console.log(`copied types.d.ts`)
+}
+
+copyDir('./src/css/theme', './lib/theme');
 deleteFile('./lib/ansi')
 deleteFile('./lib/common')
 deleteFile('./lib/components')
+// copyTypes()

@@ -141,24 +141,147 @@ export class TerminalFlash extends TerminalCallback {
     }
 }
 
-export interface TerminalStore {
-    push: (name: string, cmd: string) => void
-    getLog: (name: string) => string[]
-    clear: (name: string) => void
-    clearAll: () => void
+//  每个terminal实例最多保存100条记录
+const MAX_STORE_SIZE = 100
+const DEFAULT_STORAGE_KEY = 'terminal'
+export class TerminalStore {
+    storageKey: string = DEFAULT_STORAGE_KEY
+    dataMap: Object
+
+    constructor(key?: string) {
+        if (key) {
+            this.storageKey = key
+        }
+        let dataMapStr = window.localStorage.getItem(this.storageKey)
+        if (dataMapStr) {
+            this.dataMap = JSON.parse(dataMapStr)
+        } else {
+            this.dataMap = {}
+        }
+    }
+
+    push(name: string, cmd: string) {
+        let data = this.getData(name)
+        if (data.cmdLog == null) {
+            data.cmdLog = []
+        }
+        if (data.cmdLog.length === 0 || data.cmdLog[data.cmdLog.length - 1] !== cmd) {
+            data.cmdLog.push(cmd)
+
+            if (data.cmdLog.length > MAX_STORE_SIZE) {
+                data.cmdLog.splice(0, data.cmdLog.length - MAX_STORE_SIZE)
+            }
+        }
+
+        data.cmdIdx = data.cmdLog.length
+        this.store()
+    }
+
+    store() {
+        window.localStorage.setItem(this.storageKey, JSON.stringify(this.dataMap))
+    }
+
+    getData(name: string): CmdHistory {
+        let data = this.dataMap[name]
+        if (data == null) {
+            data = {}
+            this.dataMap[name] = data
+        }
+        return data
+    }
+
+    getLog(name: string) {
+        let data = this.getData(name)
+        if (!data.cmdLog) {
+            data.cmdLog = []
+        }
+        return data.cmdLog
+    }
+
+    clear(name: string) {
+        let data = this.getData(name)
+        data.cmdLog = []
+        data.cmdIdx = 0
+        this.store()
+    }
+
+    clearAll() {
+        this.dataMap = {}
+        this.store()
+    }
+
+    getIdx(name: string) {
+        let data = this.getData(name)
+        return data.cmdIdx | 0
+    }
+
+    setIdx(name: string, idx: number) {
+        this.getData(name).cmdIdx = idx
+    }
 }
 
-export interface TerminalApi {
-    pushMessage: (name: string, options: Message | Array<Message> | string) => any
-    appendMessage: (name: string, options: string) => any
-    fullscreen: (name: string) => any
-    isFullscreen: (name: string) => any
-    dragging: (name: string, options: Position) => any
-    execute: (name: string, options: string) => any
-    focus: (name: string, options: boolean) => any
-    elementInfo: (name: string) => any
-    textEditorOpen: (name: string, options?: EditorSetting) => any
-    textEditorClose: (name: string, options?: any) => string | any
+export interface TerminalApiData {
+    pool: {
+        [key: string]: TerminalApiListenerFunc
+    },
+    options?: Options
+}
+
+export class TerminalApi {
+
+    data: TerminalApiData
+
+    constructor(data: TerminalApiData) {
+        this.data = data
+    }
+
+    post(name: string = 'terminal', event: string, options?: any) {
+        console.debug(`Api receive event '${event}' from terminal '${name}' and attach options ${options}`)
+        let listener:TerminalApiListenerFunc = this.data.pool[name]
+        if (listener != null) {
+            return listener(event, options)
+        }
+    }
+
+    pushMessage(name: string, options: Message | Array<Message> | string) {
+        return this.post(name, 'pushMessage', options)
+    }
+
+    appendMessage(name: string, options: string) {
+        return this.post(name, 'appendMessage', options)
+    }
+
+    fullscreen(name: string) {
+        return this.post(name, "fullscreen")
+    }
+
+    isFullscreen(name: string) {
+        return this.post(name, 'isFullscreen')
+    }
+
+    dragging(name: string, options: Position) {
+        return this.post(name, 'dragging', options)
+    }
+
+    execute(name: string, options: string) {
+        return this.post(name, 'execute', options)
+    }
+
+    focus(name: string, options: boolean) {
+        return this.post(name, 'focus', options)
+    }
+
+    elementInfo(name: string) {
+        return this.post(name, 'elementInfo')
+    }
+
+    textEditorOpen(name: string, options?: EditorSetting) {
+        return this.post(name, 'textEditorOpen', options)
+    }
+
+    textEditorClose(name: string, options?: any): string | any {
+        return this.post(name, 'textEditorClose', options)
+    }
 }
 
 export interface EditorSetting {

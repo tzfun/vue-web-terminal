@@ -1,5 +1,4 @@
-import {TerminalApiData, TerminalApiImpl} from "~/common/api/api.ts";
-import {Options, TerminalApiListenerFunc} from "~/types";
+import {Options, TerminalApi, TerminalApiData, TerminalApiListenerFunc} from "~/types";
 
 const data: TerminalApiData = {
     pool: {},
@@ -46,4 +45,4 @@ export {
     getOptions
 }
 
-export default new TerminalApiImpl(data)
+export default new TerminalApi(data)
