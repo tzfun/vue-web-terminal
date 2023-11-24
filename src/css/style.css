@@ -59,7 +59,7 @@
 
 .t-header ul.t-shell-dots {
     position: absolute;
-    top: 5px;
+    top: 3px;
     left: 8px;
     padding-left: 0;
     margin: 0;
@@ -192,29 +192,33 @@
     background-color: var(--t-main-background-color);
 }
 
-.t-content-normal .success {
+.t-content-normal .success,
+.t-content-normal .error,
+.t-content-normal .warning,
+.t-content-normal .info,
+.t-content-normal .system {
     padding: 2px 3px;
-    background: #27ae60;
+    color: var(--t-tag-font-color);
+}
+
+.t-content-normal .success {
+    background-color: #27ae60;
 }
 
 .t-content-normal .error {
-    padding: 2px 3px;
-    background: #c0392b;
+    background-color: #c0392b;
 }
 
 .t-content-normal .warning {
-    padding: 2px 3px;
-    background: #f39c12;
+    background-color: #f39c12;
 }
 
 .t-content-normal .info {
-    padding: 2px 3px;
-    background: #2980b9;
+    background-color: #2980b9;
 }
 
 .t-content-normal .system {
-    padding: 2px 3px;
-    background: #8697a2;
+    background-color: #8697a2;
 }
 
 .t-crude-font {

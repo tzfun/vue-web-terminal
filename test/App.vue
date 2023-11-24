@@ -3,8 +3,8 @@
 // import {Terminal, TerminalApi, TerminalAsk} from '../lib/vue-web-terminal.js'
 // import {Command} from "../lib/types";
 
-// import '~/css/theme/light.css'
-import '~/css/theme/dark.css'
+import '~/css/theme/light.css'
+// import '~/css/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {ref} from "vue";
@@ -31,7 +31,26 @@ const terminals = ref<any>([
 const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: FailedFunc, name: string) => {
   if (key === 'list') {
     success("hello")
-    TerminalApi.pushMessage(name, "?")
+    TerminalApi.pushMessage(name, {
+      class: "success",
+      content: "success text"
+    })
+    TerminalApi.pushMessage(name, {
+      class: "warning",
+      content: "warning text"
+    })
+    TerminalApi.pushMessage(name, {
+      class: "error",
+      content: "error text"
+    })
+    TerminalApi.pushMessage(name, {
+      class: "system",
+      content: "system text"
+    })
+    TerminalApi.pushMessage(name, {
+      class: "info",
+      content: "info text"
+    })
   } else if (key === 'code') {
     success({
       type: 'code',

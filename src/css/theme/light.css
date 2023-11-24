@@ -2,8 +2,9 @@
     --t-main-background-color: #fff;
     --t-main-font-color: #000;
     --t-window-box-shadow: 0 0 40px 1px rgb(0 0 0 / 20%);
-    --t-header-background-color: #b59a72;
+    --t-header-background-color: #4b474c;
     --t-header-font-color: white;
+    --t-tag-font-color: #fff;
     --t-cursor-color: #000;
     --t-cmd-key-color: #834dff;
     --t-cmd-arg-color: #c0c0ff;
