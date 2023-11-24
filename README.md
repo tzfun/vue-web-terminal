@@ -292,6 +292,16 @@ let messages = [
 TerminalApi.pushMessage(name, messages)
 ```
 
+### appendMessage()
+
+> Newly added in version `3.2.0`
+
+Append content to the last message. It will be appended only if the last message exists and its type is normal, ansi, code, html, otherwise push a new message.
+
+```js
+TerminalApi.appendMessage('my-terminal', "this is append content")
+```
+
 ### fullscreen()
 
 Make the current terminal enter or exit full screen.

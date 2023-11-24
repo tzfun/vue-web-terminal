@@ -150,6 +150,7 @@ export interface TerminalStore {
 
 export interface TerminalApi {
     pushMessage: (name: string, options: Message | Array<Message> | string) => any
+    appendMessage: (name: string, options: string) => any
     fullscreen: (name: string) => any
     isFullscreen: (name: string) => any
     dragging: (name: string, options: Position) => any

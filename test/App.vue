@@ -180,6 +180,10 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
       }
     })
     success()
+  } else if (key === 'append') {
+    let content = command.split(" ")[1]
+    TerminalApi.appendMessage(name, content)
+    success()
   } else {
     failed("Unknown command: " + key)
   }

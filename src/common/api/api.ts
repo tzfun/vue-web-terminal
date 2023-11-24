@@ -32,6 +32,10 @@ export class TerminalApiImpl implements TerminalApi, TerminalSetting {
         return this.post(name, 'pushMessage', options)
     }
 
+    appendMessage(name: string, options: string) {
+        return this.post(name, 'appendMessage', options)
+    }
+
     fullscreen(name: string) {
         return this.post(name, "fullscreen")
     }

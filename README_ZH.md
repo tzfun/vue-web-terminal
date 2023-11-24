@@ -290,6 +290,16 @@ let messages = [
 TerminalApi.pushMessage('my-terminal', messages)
 ```
 
+### appendMessage()
+
+> `3.2.0`版本新增
+
+向最后一条消息追加内容。仅当最后一条消息存在，且其 type 为 normal、ansi、code、html时才会追加，否则 push 一条新消息。
+
+```js
+TerminalApi.appendMessage('my-terminal', "this is append content")
+```
+
 ### fullscreen()
 
 使当前terminal进入或退出全屏

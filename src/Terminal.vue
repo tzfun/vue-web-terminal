@@ -416,6 +416,8 @@ onMounted(() => {
   register(getName(), terminalListener.value = (type: string, options?: any) => {
     if (type === 'pushMessage') {
       _pushMessage(options)
+    } else if (type === 'appendMessage') {
+      _appendMessage(options as string)
     } else if (type === 'fullscreen') {
       _fullscreen()
     } else if (type === 'isFullscreen') {
@@ -924,6 +926,34 @@ const _pushMessage0 = (message: Message) => {
   }
 }
 
+/**
+ * 追加内容到最后一条记录中，仅当最后一条消息存在，且其格式为 normal、ansi、code、html时才会追加，
+ * 否则push一条新的消息
+ * @param message 被追加的内容，格式为string
+ */
+const _appendMessage = (message: string) => {
+  let lastMessage: Message
+  for (let i = terminalLog.value.length - 1; i >= 0; i--) {
+    let message = terminalLog.value[i]
+    if (message.type !== 'cmdLine') {
+      lastMessage = message
+      break
+    }
+  }
+  if (lastMessage) {
+    //  仅对部分格式的消息可追加
+    if (lastMessage.type === 'normal' || lastMessage.type === 'ansi'
+        || lastMessage.type === 'code' || lastMessage.type == 'html') {
+      lastMessage.content += message
+    } else {
+      console.warn(`The last message type is ${lastMessage.type}, can not append it and then push it.`)
+      _pushMessage(message)
+    }
+  } else {
+    _pushMessage(message)
+  }
+}
+
 const _jumpToBottom = () => {
   nextTick(() => {
     let box = terminalWindowRef.value
@@ -1394,7 +1424,7 @@ defineExpose({
     return api.execute(getName(), cmd)
   },
   focus: _focus,
-  elementInfo: ():any => {
+  elementInfo: (): any => {
     return api.elementInfo(getName())
   },
   textEditorOpen: (options?: EditorSetting) => {
