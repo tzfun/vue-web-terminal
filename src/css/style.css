@@ -88,7 +88,11 @@
     background-color: #2ec971;
 }
 
-.t-window, .t-ask-input, .t-window p, .t-window div {
+.t-window,
+.t-ask-input,
+.t-window p,
+.t-window div,
+.t-crude-font {
     font-size: 13px;
     font-family: Monaco, Menlo, Consolas, monospace;
 }

@@ -3,8 +3,8 @@
 // import {Terminal, TerminalApi, TerminalAsk} from '../lib/vue-web-terminal.js'
 // import {Command} from "../lib/types";
 
-import '~/css/theme/light.css'
-// import '~/css/theme/dark.css'
+// import '~/css/theme/light.css'
+import '~/css/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {ref} from "vue";
@@ -222,7 +222,7 @@ const pushMessageBefore = (message: Message, name: string) => {
           :name="item.name"
           :title="item.name"
           :context="item.context"
-          context-suffix="~# "
+          context-suffix=" > "
           :warn-log-count-limit="200"
           :drag-conf="item.dragConf"
           :show-header="item.showHeader"

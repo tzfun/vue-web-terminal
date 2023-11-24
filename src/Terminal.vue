@@ -342,6 +342,7 @@ onMounted(() => {
         if (!text) {
           return;
         }
+        text = text.trim()
         const cmd = command.value;
         command.value = cmd && cmd.length ? `${cmd}${text}` : text;
         _focus()
@@ -427,7 +428,7 @@ onMounted(() => {
       }
     } else if (type === 'execute') {
       if (!isBlockCommandFocus.value && _nonEmpty(options)) {
-        command.value = options
+        command.value = options.trim()
         _execute()
       }
     } else if (type === 'focus') {
@@ -1057,7 +1058,7 @@ const _onInput = (e: InputEvent) => {
     if (newStr == null) {
       newStr = value
     }
-    command.value = newStr
+    command.value = newStr.trim()
   }
 
   if (_isEmpty(command.value)) {
@@ -1520,7 +1521,7 @@ defineExpose({
                   ref="terminalTextEditorRef"></t-editor>
       </slot>
     </div>
-    <span class="t-flag t-cmd-line t-disable-select">
+    <span class="t-flag t-crude-font t-cmd-line t-disable-select">
       <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">a</span>
       <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你</span>
     </span>
