@@ -51,6 +51,11 @@ export function terminalProps() {
             type: String,
             default: '/vue-web-terminal'
         },
+        //  上下文后缀
+        contextSuffix: {
+            type: String,
+            default: ' > '
+        },
         //  命令行搜索以及help指令用
         commandStore: {
             type: Array

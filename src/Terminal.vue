@@ -68,7 +68,7 @@
         <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
           <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
-            <span> > </span>
+            <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
             v-show="cursorConf.show" class="cursor t-disable-select" ref="terminalCursor"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>

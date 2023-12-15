@@ -800,7 +800,7 @@ export default {
 
             this.terminalLog.push({
                 type: "cmdLine",
-                content: `${_unHtml(this.context)} > ${this._commandFormatter(this.command)}`
+                content: `${_unHtml(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
             });
         },
         _doClear(args) {
