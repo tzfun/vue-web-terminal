@@ -84,10 +84,6 @@
                  @keyup.up.exact="_switchPreCmd"
                  @keyup.down.exact="_switchNextCmd"
                  @keyup.enter="_execute">
-          <span class="t-flag t-cmd-line t-disable-select">
-            <span class="t-cmd-line-content" ref="terminalEnFlag">a</span>
-            <span class="t-cmd-line-content" ref="terminalCnFlag">你</span>
-          </span>
         </p>
         <slot name="helpCmd" :item="searchCmdResult.item">
           <p class="t-help-msg">
@@ -109,6 +105,10 @@
         <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>
     </div>
+    <span class="t-flag t-crude-font t-cmd-line t-disable-select">
+      <span class="t-cmd-line-content" ref="terminalEnFlag">a</span>
+      <span class="t-cmd-line-content" ref="terminalCnFlag">你</span>
+    </span>
   </div>
 </template>
 
