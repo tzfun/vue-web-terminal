@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -60,6 +60,8 @@ main.js中载入 Terminal 插件
 
 ```js
 import Terminal from 'vue-web-terminal'
+//  3.1.8 以后以及 2.1.12 以后版本需要引入此样式，之前版本无需引入主题样式
+import 'vue-web-terminal/lib/theme/dark.css'
 
 // for vue2
 Vue.use(Terminal)
@@ -79,38 +81,38 @@ const app = createApp(App).use(Terminal)
 </template>
 
 <script>
-import Terminal from "vue-web-terminal"
+  import Terminal from "vue-web-terminal"
 
-export default {
-  name: 'App',
-  components: {Terminal},
-  methods: {
-    onExecCmd(key, command, success, failed) {
-      if (key === 'fail') {
-        failed('Something wrong!!!')
-      } else {
-        let allClass = ['success', 'error', 'system', 'info', 'warning'];
+  export default {
+    name: 'App',
+    components: {Terminal},
+    methods: {
+      onExecCmd(key, command, success, failed) {
+        if (key === 'fail') {
+          failed('Something wrong!!!')
+        } else {
+          let allClass = ['success', 'error', 'system', 'info', 'warning'];
 
-        let clazz = allClass[Math.floor(Math.random() * allClass.length)];
-        success({
-          type: 'normal',
-          class: clazz,
-          tag: '成功',
-          content: command
-        })
+          let clazz = allClass[Math.floor(Math.random() * allClass.length)];
+          success({
+            type: 'normal',
+            class: clazz,
+            tag: '成功',
+            content: command
+          })
+        }
       }
     }
   }
-}
 </script>
 
 <style>
-body, html, #app {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
+  body, html, #app {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
 ```
 
@@ -124,6 +126,7 @@ terminal标签支持的属性参数表
 |----------------------|---------------------------------------------------------------------------|----------|--------------------------------------------------|
 | name                 | Terminal实例名称，同一页面的name必须唯一，API中使用也需用到此值                                   | string   | terminal                                         |
 | context              | 上下文内容                                                                     | string   | /vue-web-terminal                                |
+| context-suffix       | 上下文后缀符号                                                                   | string   | \>                                               |
 | title                | 窗口头部显示的标题                                                                 | string   | vue-web-terminal                                 |
 | show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                          | boolean  | true                                             |
 | init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                       | array    | 略                                                |
@@ -139,6 +142,7 @@ terminal标签支持的属性参数表
 | search-handler       | 用户自定义命令搜索提示实现，callback需接收一个命令对象，具体格式见[命令定义格式](#命令定义)，可配合`helpCmd`这个slot使用 | function | function(commandStore, key, callback)            | 
 | scroll-mode          | 滚动条模式                                                                     | string   | smooth                                           |
 | push-message-before  | 在推送消息显示之前触发的钩子函数                                                          | function | function(message, name)                          |
+| log-size-limit       | 限制显示日志的最大条数                                                               | number   | 200                                              |
 
 > 下面是已移除属性
 >
@@ -171,7 +175,7 @@ terminal标签支持的事件表
 * 传入一个`TerminalAsk`对象，将会进入[用户询问输入](#用户询问输入)处理逻辑，本次执行并不会结束，直到调用`finish()`
 
 > 注意：
-> 
+>
 > 从`2.1.7`和`3.1.3`版本开始，事件的驼峰命名被移除，如果你的版本是在这之后，请使用中划线命名，比如`@exec-cmd="onExecCmd"`
 > [issue#41](https://github.com/tzfun/vue-web-terminal/issues/41)
 
@@ -286,6 +290,16 @@ let messages = [
     {content: "message 3"}
 ]
 TerminalApi.pushMessage('my-terminal', messages)
+```
+
+### appendMessage()
+
+> `3.2.0`版本新增
+
+向最后一条消息追加内容。仅当最后一条消息存在，且其 type 为 normal、ansi、code、html时才会追加，否则 push 一条新消息。
+
+```js
+TerminalApi.appendMessage('my-terminal', "this is append content")
 ```
 
 ### fullscreen()
@@ -855,7 +869,7 @@ TerminalApi.textEditorOpen('my-terminal', {
         <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
         <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close</button>
       </div>
-      
+
     </template>
   </terminal>
 </template>
@@ -927,6 +941,7 @@ export default {
 感谢大佬的捐赠：
 
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - 150元
+* [lilqilie](https://github.com/lilqilie) - 20元
 
 # License
 

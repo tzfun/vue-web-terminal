@@ -64,10 +64,6 @@ export function terminalProps() {
         commandStoreSort: {
             type: Function
         },
-        //  记录条数超出此限制会发出警告
-        warnLogCountLimit: {
-            type: Number, default: 200
-        },
         //  自动搜索帮助
         autoHelp: {
             type: Boolean,

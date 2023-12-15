@@ -215,7 +215,9 @@ export function _openUrl(url) {
         }
     } else {
         this._pushMessage({
-            class: MESSAGE_CLASS.ERROR, type: MESSAGE_TYPE.NORMAL, content: "Invalid website url"
+            class: MESSAGE_CLASS.ERROR,
+            type: MESSAGE_TYPE.NORMAL,
+            content: "Invalid website url"
         })
     }
 }

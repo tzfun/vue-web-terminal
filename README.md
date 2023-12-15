@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -34,8 +34,8 @@ A web-side command line plugin built by `Vue`, supports multiple message formats
 
 > Short description:
 >
-> It does not have the ability to execute a specific command. This ability needs to be implemented by the developer. 
-> What it is responsible for is to get the command to be executed from the user in the form of an interface, and then 
+> It does not have the ability to execute a specific command. This ability needs to be implemented by the developer.
+> What it is responsible for is to get the command to be executed from the user in the form of an interface, and then
 > hand it over to the developer to implement and execute. After that, hand it over to show it to the user
 
 # Online Experience
@@ -46,7 +46,7 @@ Demo：[https://tzfun.github.io/vue-web-terminal/](https://tzfun.github.io/vue-w
 
 # Quick Start
 
-Install vue-web-terminal by npm. The `2.x.x` version corresponds to vue2, and the `3.x.x` version corresponds to vue3. 
+Install vue-web-terminal by npm. The `2.x.x` version corresponds to vue2, and the `3.x.x` version corresponds to vue3.
 It is recommended to download the latest version corresponding to the main version.
 
 ```shell
@@ -61,6 +61,9 @@ Use Terminal plugin in `main.js`
 
 ```js
 import Terminal from 'vue-web-terminal'
+// This style needs to be introduced in versions after 3.1.8 and 2.1.12. 
+// There is no need to introduce theme styles in previous versions.
+import 'vue-web-terminal/lib/theme/dark.css'
 
 // for vue2
 Vue.use(Terminal)
@@ -126,6 +129,7 @@ Terminal tag supports attribute parameter table.
 |----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
 | name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in API.                                                                                                       | string   | terminal                                         |
 | context              | Context text.                                                                                                                                                                                                   | string   | /vue-web-terminal                                |
+| context-suffix       | Context text suffix.                                                                                                                                                                                            | string   | \>                                               |
 | title                | The title displayed in the header.                                                                                                                                                                              | string   | vue-web-terminal                                 |
 | show-header          | Whether to display the header, this switch will affect the drag and [drop](#Drag) function. Only when the header is displayed can the drag and drop function provided by default be used.                       | boolean  | true                                             |
 | init-log             | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array    | /                                                |
@@ -141,7 +145,7 @@ Terminal tag supports attribute parameter table.
 | search-handler       | User-defined command search prompt implementation, the callback needs to resolve a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot          | function | function(commandStore, key, callback)            |
 | scroll-mode          | Scroll bar mode.                                                                                                                                                                                                | string   | smooth                                           |
 | push-message-before  | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
-
+| log-size-limit       | Limit the maximum number of displayed logs                                                                                                                                                                      | number   | 200                                              |
 > Below are the removed properties
 >
 > * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
@@ -291,6 +295,16 @@ let messages = [
 TerminalApi.pushMessage(name, messages)
 ```
 
+### appendMessage()
+
+> Newly added in version `3.2.0`
+
+Append content to the last message. It will be appended only if the last message exists and its type is normal, ansi, code, html, otherwise push a new message.
+
+```js
+TerminalApi.appendMessage('my-terminal', "this is append content")
+```
+
 ### fullscreen()
 
 Make the current terminal enter or exit full screen.
@@ -381,9 +395,9 @@ TerminalApi.textEditorOpen('my-terminal', {
 })
 ```
 
-`content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this 
-parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback 
-will be triggered, and the parameter `value` is the text content in the current editor, 
+`content` is the preset content when opening the editor. If you don’t want to preset any content, you can leave this
+parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback
+will be triggered, and the parameter `value` is the text content in the current editor,
 `options` is the parameter passed in when closing.
 
 For more information on how to use text editors, see [Text Editor](#TextEditor).
@@ -914,6 +928,7 @@ This plugin is completely open source and free, and it is not easy to create. If
 
 Thank you for your donation:
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - ￥150
+* [lilqilie](https://github.com/lilqilie) - ￥20
 
 # License
 

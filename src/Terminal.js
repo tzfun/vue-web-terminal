@@ -82,9 +82,6 @@ export default {
             },
             allCommandStore: [],
             fullscreenState: false,
-            perfWarningRate: {
-                count: 0
-            },
             inputBoxParam: {
                 boxWidth: 0,
                 boxHeight: 0,
@@ -126,8 +123,8 @@ export default {
 
         this._initContainerStyle()
 
-        if (this.initLog != null) {
-            this._pushMessageBatch(this.initLog, true)
+        if (this.initLog) {
+            this._pushMessage(this.initLog)
         }
 
         this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
@@ -150,7 +147,7 @@ export default {
                 activeCursor = _isParentDom(e.target, container, "t-container")
                     || (e.target && e.target.classList.contains('t-text-editor-floor-btn'))
             }
-            if (this._isBlockCommandFocus()) {
+            if (this.isBlockCommandFocus()) {
                 this.cursorConf.show = false
             } else {
                 this.cursorConf.show = activeCursor
@@ -164,7 +161,7 @@ export default {
         })
 
         _eventOn(window, 'keydown', this.keydownListener = event => {
-            if (this._isActive()) {
+            if (this.isActive()) {
                 try {
                     let key = event.key.toLowerCase()
                     if (key.match(/c|control|meta/g)) {
@@ -278,7 +275,7 @@ export default {
         this.resizeObserver = new ResizeObserver(entries => {
             for (const entry of entries) {
                 if (entry.target === this.$refs.terminalHeader) {
-                    this.updateHeaderHeight()
+                    this._updateHeaderHeight()
                 }
             }
         })
@@ -291,18 +288,20 @@ export default {
         register(this.getName(), this.terminalListener = (type, options) => {
             if (type === 'pushMessage') {
                 this._pushMessage(options)
+            } else if (type === 'appendMessage') {
+                this._appendMessage(options)
             } else if (type === 'fullscreen') {
                 this._fullscreen()
             } else if (type === 'isFullscreen') {
                 return this.fullscreenState
             } else if (type === 'dragging') {
-                if (this._draggable()) {
+                if (this.isDraggable()) {
                     this._dragging(options.x, options.y)
                 } else {
                     console.warn("Terminal is not draggable: " + this.getName())
                 }
             } else if (type === 'execute') {
-                if (!this._isBlockCommandFocus() && _nonEmpty(options)) {
+                if (!this.isBlockCommandFocus() && _nonEmpty(options)) {
                     this.command = options.trim()
                     this._execute()
                 }
@@ -368,7 +367,7 @@ export default {
             this.containerStyleStore['z-index'] = newVal
         },
         showHeader() {
-            this.updateHeaderHeight()
+            this._updateHeaderHeight()
         }
     },
     methods: {
@@ -408,7 +407,30 @@ export default {
             }
             return this._name;
         },
+        isPinned() {
+            return this.dragConf && this.dragConf.pinned
+        },
+        isDraggable() {
+            return this.showHeader && this.dragConf != null
+        },
+        /**
+         * 判断当前terminal是否活跃
+         * @returns {boolean}
+         */
+        isActive() {
+            return this.cursorConf.show
+                || (this.ask.open && this.$refs.terminalAskInput === document.activeElement)
+                || (this.textEditor.open && this.textEditor.focus)
+        },
+        /**
+         * 是否会阻断获取命令焦点
+         * @returns {boolean}
+         */
+        isBlockCommandFocus() {
+            return this.textEditor.open || this.flash.open || this.ask.open
+        },
         _triggerClick(key) {
+            console.debug('trigger click', key)
             if (key === 'fullScreen' && !this.fullscreenState) {
                 this._fullscreen()
             } else if (key === 'minScreen' && this.fullscreenState) {
@@ -416,11 +438,13 @@ export default {
             } else if (key === 'pin' && this.showHeader) {
                 let pinned = this.dragConf.pinned || false
                 this.dragConf.pinned = !pinned;
+
+                console.debug("pin ==>", this.isPinned())
             }
 
             this.$emit('on-click', key, this.getName())
         },
-        updateHeaderHeight() {
+        _updateHeaderHeight() {
             this.$nextTick(() => {
                 let headerRef = this.$refs.terminalHeader
                 if (headerRef && headerRef.getBoundingClientRect) {
@@ -714,7 +738,7 @@ export default {
         _endExecCallBack() {
             this.command = ""
             this._resetCursorPos()
-            if (this._isActive()) {
+            if (this.isActive()) {
                 this._focus()
                 this.cursorConf.show = true
             } else {
@@ -755,12 +779,16 @@ export default {
          * }
          *
          * @param message
-         * @param ignoreCheck
          * @private
          */
-        _pushMessage(message, ignoreCheck = false) {
-            if (message == null) return
-            if (message instanceof Array) return this._pushMessageBatch(message, ignoreCheck)
+        _pushMessage(message) {
+            if (!message) return
+            if (message instanceof Array) {
+                for (let m of message) {
+                    this._pushMessage0(m)
+                }
+                return;
+            }
 
             if (typeof message === 'string') {
                 message = {
@@ -775,22 +803,11 @@ export default {
             }
 
             this._pushMessage0(message)
-            if (!ignoreCheck) {
-                this._checkTerminalLog()
-            }
 
             if (message.type === MESSAGE_TYPE.JSON) {
                 setTimeout(() => {
                     this._jumpToBottom()
                 }, 80)
-            }
-        },
-        _pushMessageBatch(messages, ignoreCheck = false) {
-            for (let m of messages) {
-                this._pushMessage0(m)
-            }
-            if (!ignoreCheck) {
-                this._checkTerminalLog()
             }
         },
         _pushMessage0(message) {
@@ -806,6 +823,33 @@ export default {
                 this.terminalLog.splice(0, left)
             }
         },
+        /**
+         * 追加内容到最后一条记录中，仅当最后一条消息存在，且其格式为 normal、ansi、code、html时才会追加，
+         * 否则push一条新的消息
+         * @param message 被追加的内容，格式为string
+         */
+        _appendMessage(message) {
+            let lastMessage
+            for (let i = this.terminalLog.length - 1; i >= 0; i--) {
+                let message = this.terminalLog[i]
+                if (message.type !== 'cmdLine') {
+                    lastMessage = message
+                    break
+                }
+            }
+            if (lastMessage) {
+                //  仅对部分格式的消息可追加
+                if (lastMessage.type === 'normal' || lastMessage.type === 'ansi'
+                    || lastMessage.type === 'code' || lastMessage.type === 'html') {
+                    lastMessage.content += message
+                } else {
+                    console.warn(`The last message type is ${lastMessage.type}, can not append it and then push it.`)
+                    this._pushMessage(message)
+                }
+            } else {
+                this._pushMessage(message)
+            }
+        },
         _jumpToBottom() {
             this.$nextTick(() => {
                 let box = this.$refs.terminalWindow
@@ -813,19 +857,6 @@ export default {
                     box.scrollTo({top: box.scrollHeight, behavior: this.scrollMode})
                 }
             })
-        },
-        _checkTerminalLog() {
-            let count = this.terminalLog.length
-            if (this.warnLogCountLimit > 0
-                && count > this.warnLogCountLimit
-                && Math.floor(count / this.warnLogCountLimit) !== this.perfWarningRate.count) {
-                this.perfWarningRate.count = Math.floor(count / this.warnLogCountLimit)
-                this._pushMessage({
-                    content: `Terminal log count exceeded <strong style="color: red">${count}/${this.warnLogCountLimit}</strong>. If the log content is too large, it may affect the performance of the browser. It is recommended to execute the "clear" command to clear it.`,
-                    class: MESSAGE_CLASS.SYSTEM,
-                    type: MESSAGE_TYPE.NORMAL
-                }, true)
-            }
         },
         _saveCurCommand() {
             if (_nonEmpty(this.command)) {
@@ -1019,15 +1050,9 @@ export default {
             }
             this.fullscreenState = !this.fullscreenState
         },
-        _draggable() {
-            return this.showHeader && this.dragConf
-        },
-        _isPinned() {
-            return this.dragConf && this.dragConf.pinned
-        },
         _initContainerStyle() {
             let containerStyleStore = {}
-            if (this._draggable()) {
+            if (this.isDraggable()) {
                 let clientWidth = document.body.clientWidth
                 let clientHeight = document.body.clientHeight
 
@@ -1078,7 +1103,7 @@ export default {
             return ''
         },
         _initDrag() {
-            if (!this._draggable()) {
+            if (!this.isDraggable()) {
                 return
             }
             // 记录当前鼠标位置
@@ -1141,7 +1166,7 @@ export default {
             })
 
             _eventOn(document, 'mousemove', evt => {
-                if (this._isPinned() || this.fullscreenState) {
+                if (this.isPinned() || this.fullscreenState) {
                     return
                 }
                 if (isDragging) {
@@ -1200,7 +1225,7 @@ export default {
             })
         },
         _dragging(x, y) {
-            if (this._isPinned()) {
+            if (this.isPinned()) {
                 return
             }
             let clientWidth = document.body.clientWidth
@@ -1240,7 +1265,7 @@ export default {
             return _defaultCommandFormatter(cmd)
         },
         _getPosition() {
-            if (this._draggable()) {
+            if (this.isDraggable()) {
                 let box = this.$refs.terminalContainer
                 return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
             } else {
@@ -1271,29 +1296,11 @@ export default {
                 return content
             }
         },
-        /**
-         * 判断当前terminal是否活跃
-         * @returns {boolean}
-         * @private
-         */
-        _isActive() {
-            return this.cursorConf.show
-                || (this.ask.open && this.$refs.terminalAskInput === document.activeElement)
-                || (this.textEditor.open && this.textEditor.focus)
-        },
         _onActive() {
             this.$emit('on-active', this.getName())
         },
         _onInactive() {
             this.$emit('on-inactive', this.getName())
         },
-        /**
-         * 是否会阻断获取命令焦点
-         * @returns {boolean}
-         * @private
-         */
-        _isBlockCommandFocus() {
-            return this.textEditor.open || this.flash.open || this.ask.open
-        }
     }
 }

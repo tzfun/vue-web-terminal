@@ -32,6 +32,7 @@
 
 <script>
 import {api as TerminalApi, Ask as TerminalAsk, Terminal} from '../src/index.js'
+import '../src/css/theme/dark.css'
 
 export default {
   name: "App",
