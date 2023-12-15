@@ -163,21 +163,32 @@ export default {
 
         _eventOn(window, 'keydown', this.keydownListener = event => {
             if (this._isActive()) {
-                if (this.cursorConf.show) {
-                    if (event.key.toLowerCase() === 'tab') {
-                        if (this.tabKeyHandler == null) {
-                            this._fillCmd()
-                        } else {
-                            this.tabKeyHandler(event)
+                try {
+                    let key = event.key.toLowerCase()
+                    if (key.match(/c|control|meta/g)) {
+                        if (event.metaKey || event.ctrlKey) {
+                            return
                         }
-                        event.preventDefault()
-                    } else if (document.activeElement !== this.$refs.terminalCmdInput) {
-                        this.$refs.terminalCmdInput.focus()
-                        this._onInputKeydown(event)
+                        if (key === 'c' && (event.metaKey || event.ctrlKey)) {
+                            return
+                        }
                     }
+                    if (this.cursorConf.show) {
+                        if (key === 'tab') {
+                            if (this.tabKeyHandler) {
+                                this.tabKeyHandler(event)
+                            } else {
+                                this._fillCmd()
+                            }
+                            event.preventDefault()
+                        } else if (document.activeElement !== this.$refs.terminalCmdInput) {
+                            this.$refs.terminalCmdInput.focus()
+                            this._onInputKeydown(event)
+                        }
+                    }
+                } finally {
+                    this.$emit('on-keydown', event, this.getName())
                 }
-
-                this.$emit('on-keydown', event, this.getName())
             }
         });
 
