@@ -82,6 +82,8 @@ const app = createApp(App).use(Terminal)
 
 <script>
   import Terminal from "vue-web-terminal"
+  //  3.1.8 以后以及 2.1.12 以后版本需要引入此样式，之前版本无需引入主题样式
+  import 'vue-web-terminal/lib/theme/dark.css'
 
   export default {
     name: 'App',
@@ -117,6 +119,22 @@ const app = createApp(App).use(Terminal)
 ```
 
 # 插件文档
+
+## 主题
+
+从`2.1.13`和`3.2.0`版本开始，插件内置有两个主题：`dark` 和 `lignt`
+
+```js
+//  引入黑色主题
+import 'vue-web-terminal/lib/theme/dark.css'
+
+//  引入白色主题
+import 'vue-web-terminal/lib/theme/light.css'
+```
+
+如果你需要自定义主题，可以自定义相应的css变量。
+
+> 注：`2.1.12`和`3.1.8`版本以前（包含）不支持主题功能，无需引入css文件
 
 ## Attributes
 
@@ -855,7 +873,6 @@ TerminalApi.textEditorOpen('my-terminal', {
 下Terminal快捷键最好的方法，这里以文本编辑器为例，设定用户按快捷键`Ctrl + S`就表示完成编辑并保存
 
 ```vue
-
 <template>
   <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
@@ -876,6 +893,8 @@ TerminalApi.textEditorOpen('my-terminal', {
 
 <script>
 import {Terminal, api as TerminalApi} from "vue-web-terminal";
+//  3.1.8 以后以及 2.1.12 以后版本需要引入此样式，之前版本无需引入主题样式
+import 'vue-web-terminal/lib/theme/dark.css'
 
 export default {
   name: "TerminalOldDemo",

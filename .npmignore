@@ -1,6 +1,7 @@
 .*
 *.md
 *.yml
+*.yaml
 *.iml
 *.lock
 build/

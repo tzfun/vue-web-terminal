@@ -85,6 +85,9 @@ Example:
 
 <script>
 import Terminal from "vue-web-terminal"
+// This style needs to be introduced in versions after 3.1.8 and 2.1.12. 
+// There is no need to introduce theme styles in previous versions.
+import 'vue-web-terminal/lib/theme/dark.css'
 
 export default {
   name: 'App',
@@ -121,6 +124,23 @@ body, html, #app {
 
 # Document
 
+## Theme
+
+Starting from `2.1.13` and `3.2.0` versions, the plugin has two built-in themes: `dark` and `lignt`
+
+```js
+//  import dark theme
+import 'vue-web-terminal/lib/theme/dark.css'
+
+//  import light theme
+import 'vue-web-terminal/lib/theme/light.css'
+```
+
+If you need to customize the theme, you can customize the corresponding css variables.
+
+> Note: Versions before `2.1.12` and `3.1.8` (including) do not support the theme function, 
+> and there is no need to introduce css files.
+
 ## Attributes
 
 Terminal tag supports attribute parameter table.
@@ -146,6 +166,7 @@ Terminal tag supports attribute parameter table.
 | scroll-mode          | Scroll bar mode.                                                                                                                                                                                                | string   | smooth                                           |
 | push-message-before  | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
 | log-size-limit       | Limit the maximum number of displayed logs                                                                                                                                                                      | number   | 200                                              |
+
 > Below are the removed properties
 >
 > * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
@@ -865,6 +886,9 @@ The plugin provides an `onKeydown` event, which is the best way for you to contr
 
 <script>
 import {Terminal, api as TerminalApi} from "vue-web-terminal";
+// This style needs to be introduced in versions after 3.1.8 and 2.1.12. 
+// There is no need to introduce theme styles in previous versions.
+import 'vue-web-terminal/lib/theme/dark.css'
 
 export default {
   name: "TerminalOldDemo",
