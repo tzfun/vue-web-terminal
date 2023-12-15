@@ -483,7 +483,7 @@ export default {
             if (_isEmpty(cmd)) {
                 this._resetSearchKey()
             } else if (cmd.trim().indexOf(" ") < 0) {
-                let reg = new RegExp(cmd, 'i')
+                let reg = new RegExp(cmd.trim().replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')
                 let matchSet = []
 
                 let target = null

@@ -69,5 +69,13 @@
     "vue-console"
   ],
   "author": "beifengtz",
-  "main": "lib/vue-web-terminal.js"
+  "main": "lib/vue-web-terminal.js",
+  "module": "lib/vue-web-terminal.js",
+  "exports": {
+    "./lib/theme/*": "./lib/theme/*",
+    ".": {
+      "import": "./lib/vue-web-terminal.js",
+      "require": "./lib/vue-web-terminal.js"
+    }
+  }
 }

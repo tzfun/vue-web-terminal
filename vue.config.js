@@ -1,5 +1,4 @@
 const name = "vue-web-terminal"
-// let path = require('path')
 
 module.exports = {
     publicPath: './',

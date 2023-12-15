@@ -6,7 +6,7 @@
     <div v-else-if="codemirrorConf()" class="t-vue-codemirror">
       <codemirror ref="codemirror" v-model="item.content" :options="codemirrorConf()"/>
     </div>
-    <div v-else style="background: rgb(39 50 58);">
+    <div v-else class="t-code-default">
       <pre style="padding: 1em;margin: 0"><code style="font-size: 15px">{{item.content}}</code></pre>
     </div>
   </div>

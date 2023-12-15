@@ -27,22 +27,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .t-editor {
   width: 100%;
   height: 100%;
-}
-.t-close-btn {
-  color: #bba9a9;
-}
-.t-close-btn:hover {
-  color: #00ffff;
-}
-
-.t-save-btn {
-  color:#00b10e;
-}
-.t-save-btn:hover {
-  color: #befcff;
 }
 </style>
