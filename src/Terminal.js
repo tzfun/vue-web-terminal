@@ -217,6 +217,7 @@ export default {
                     if (!text) {
                         return;
                     }
+                    text = text.trim()
                     const command = this.command;
                     this.command = command && command.length ? `${command}${text}` : text;
                     this._focus()
@@ -302,7 +303,7 @@ export default {
                 }
             } else if (type === 'execute') {
                 if (!this._isBlockCommandFocus() && _nonEmpty(options)) {
-                    this.command = options
+                    this.command = options.trim()
                     this._execute()
                 }
             } else if (type === 'focus') {
@@ -943,7 +944,7 @@ export default {
                 if (newStr == null) {
                     newStr = value
                 }
-                this.command = newStr
+                this.command = newStr.trim()
             }
 
             if (_isEmpty(this.command)) {
