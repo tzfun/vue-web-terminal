@@ -142,6 +142,11 @@ export function terminalProps() {
          * @param message 命令对象
          * @param name terminal name
          */
-        pushMessageBefore: Function
+        pushMessageBefore: Function,
+        //  日志条数限制，命令行也算一条日志
+        logSizeLimit: {
+            type: Number,
+            default: 200
+        }
     }
 }

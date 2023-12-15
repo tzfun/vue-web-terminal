@@ -754,6 +754,12 @@ export default {
                 this.pushMessageBefore(message, this.getName())
             }
             this.terminalLog.push(message)
+            //  留10%的缓冲
+            let limit = Math.floor(this.logSizeLimit * 1.1)
+            if (limit > 0 && this.terminalLog.length > limit) {
+                let left = this.terminalLog.length - this.logSizeLimit
+                this.terminalLog.splice(0, left)
+            }
         },
         _jumpToBottom() {
             this.$nextTick(() => {

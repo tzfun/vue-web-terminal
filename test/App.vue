@@ -22,6 +22,7 @@
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
+          :log-size-limit="20"
           style="position: fixed">
       </terminal>
     </div>
