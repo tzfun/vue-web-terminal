@@ -1,7 +1,7 @@
 <template>
   <div class="t-cmd-help"
        ref="terminalHelpBox"
-       :style="showHeader ? 'top: 40px;max-height: calc(100% - 60px);' : 'top: 15px;max-height: calc(100% - 40px);'"
+       :style="`top: ${top}px;max-height: calc(100% - ${top}px);`"
        v-if="result && result.item && !_screenType().xs">
     <p class="text" v-if="result.item.description != null" style="margin: 15px 0"
        v-html="result.item.description"></p>
@@ -33,7 +33,7 @@ import {_screenType} from "@/js/Util";
 export default {
   name: "THelpBox",
   props: {
-    showHeader: Boolean,
+    top: Number,
     result: Object
   },
   methods: {

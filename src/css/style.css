@@ -50,8 +50,7 @@
 }
 
 .t-header-container {
-    position: absolute;
-    height: 30px;
+    position: relative;
     z-index: 2;
     top: 0;
     right: 0;

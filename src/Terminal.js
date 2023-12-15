@@ -115,7 +115,9 @@ export default {
                     this.textEditor.focus = false
                 }
             },
-            containerStyleStore: null
+            containerStyleStore: null,
+            headerHeight: 0,
+            resizeObserver: null
         }
     },
     props: terminalProps(),
@@ -271,6 +273,18 @@ export default {
             })
         }
 
+        //  监听header的尺寸变化
+        this.resizeObserver = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                if (entry.target === this.$refs.terminalHeader) {
+                    this.updateHeaderHeight()
+                }
+            }
+        })
+        if (this.$refs.terminalHeader) {
+            this.resizeObserver.observe(this.$refs.terminalHeader)
+        }
+
         this._initDrag()
 
         register(this.getName(), this.terminalListener = (type, options) => {
@@ -327,6 +341,10 @@ export default {
         this.$emit('destroyed', this.getName())
         _eventOff(window, 'keydown', this.keydownListener);
         _eventOff(window, "click", this.clickListener);
+        if (this.resizeObserver && this.$refs.terminalHeader) {
+            this.resizeObserver.unobserve(this.$refs.terminalHeader)
+            this.resizeObserver = null
+        }
         unregister(this.getName())
     },
     watch: {
@@ -347,6 +365,9 @@ export default {
         },
         "dragConf.zIndex"(newVal) {
             this.containerStyleStore['z-index'] = newVal
+        },
+        showHeader() {
+            this.updateHeaderHeight()
         }
     },
     methods: {
@@ -397,6 +418,18 @@ export default {
             }
 
             this.$emit('on-click', key, this.getName())
+        },
+        updateHeaderHeight() {
+            this.$nextTick(() => {
+                let headerRef = this.$refs.terminalHeader
+                if (headerRef && headerRef.getBoundingClientRect) {
+                    let rect = headerRef.getBoundingClientRect()
+                    this.headerHeight = rect.height
+                } else {
+                    this.headerHeight = 0
+                }
+                console.debug("reset header height", this.headerHeight)
+            })
         },
         _calculateByteLen() {
             if (this.byteLen.init) {
