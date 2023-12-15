@@ -2,19 +2,6 @@
     --t-point-size: 15px;
 }
 
-.t-window div::selection,
-.t-window a::selection,
-.t-window span::selection,
-.t-window li::selection,
-.t-window p::selection,
-.t-window code::selection,
-.t-window td::selection,
-.t-window th::selection,
-.t-window br::selection {
-    color: black;
-    background-color: white;
-}
-
 .t-log-box {
     display: block;
     margin-block-start: 1em;
@@ -41,12 +28,12 @@
     position: relative;
     margin: 0;
     padding: 0;
-    background-color: #191b24;
     border-radius: 15px;
-    box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
-    -moz-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
-    -webkit-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
-    -o-box-shadow: 0 0 20px 1px rgb(0 0 0 / 40%);
+    background-color: var(--t-main-background-color);
+    box-shadow: var(--t-window-box-shadow);
+    -moz-box-shadow: var(--t-window-box-shadow);
+    -webkit-box-shadow: var(--t-window-box-shadow);
+    -o-box-shadow: var(--t-window-box-shadow);
 }
 
 .t-header-container {
@@ -58,21 +45,21 @@
 }
 
 .t-header {
-    background-color: #959598;
     text-align: center;
     padding: 2px;
+    background-color: var(--t-header-background-color);
 }
 
 .t-header h4 {
     font-size: 14px;
     margin: 5px;
     letter-spacing: 1px;
-    color: white;
+    color: var(--t-header-font-color);
 }
 
 .t-header ul.t-shell-dots {
     position: absolute;
-    top: 5px;
+    top: 3px;
     left: 8px;
     padding-left: 0;
     margin: 0;
@@ -101,7 +88,11 @@
     background-color: #2ec971;
 }
 
-.t-window, .t-ask-input, .t-window p, .t-window div {
+.t-window,
+.t-ask-input,
+.t-window p,
+.t-window div,
+.t-crude-font {
     font-size: 13px;
     font-family: Monaco, Menlo, Consolas, monospace;
 }
@@ -114,13 +105,13 @@
     overflow: auto;
     z-index: 1;
     max-height: none;
-    background-color: #191b24;
     min-height: 140px;
     padding: 0 20px 0 20px;
     font-weight: 400;
-    color: #fff;
     line-height: 20px;
     cursor: text;
+    background-color: var(--t-main-background-color);
+    color: var(--t-main-font-color);
 }
 
 .t-window .prompt:before {
@@ -148,7 +139,6 @@
 }
 
 .t-window .cursor {
-    background-color: #fff;
     animation: cursor-flash 1s infinite;
     -webkit-animation: cursor-flash 1s infinite;
     -o-animation: cursor-flash 1s infinite;
@@ -156,16 +146,25 @@
     position: absolute;
     height: 16px;
     margin-top: 1px;
+    background-color: var(--t-cursor-color);
+}
+
+.t-a {
+    color: var(--t-link-color);
+}
+
+.t-a:hover {
+    color: var(--t-link-hover-color);
 }
 
 .t-ask-input {
     border: none;
     max-width: 300px;
-    color: white;
     background: none;
     outline: none;
     padding: 0;
     display: inline-block;
+    color: var(--t-main-font-color);
 }
 
 .t-ask-input:focus, .t-ask-input:focus-visible {
@@ -175,7 +174,6 @@
 
 .t-cmd-input {
     position: relative;
-    background: #030924;
     border: none;
     width: 1px;
     opacity: 0;
@@ -195,31 +193,36 @@
     border-image: initial;
     word-wrap: break-word;
     margin: 0;
+    background-color: var(--t-main-background-color);
+}
+
+.t-content-normal .success,
+.t-content-normal .error,
+.t-content-normal .warning,
+.t-content-normal .info,
+.t-content-normal .system {
+    padding: 2px 3px;
+    color: var(--t-tag-font-color);
 }
 
 .t-content-normal .success {
-    padding: 2px 3px;
-    background: #27ae60;
+    background-color: #27ae60;
 }
 
 .t-content-normal .error {
-    padding: 2px 3px;
-    background: #c0392b;
+    background-color: #c0392b;
 }
 
 .t-content-normal .warning {
-    padding: 2px 3px;
-    background: #f39c12;
+    background-color: #f39c12;
 }
 
 .t-content-normal .info {
-    padding: 2px 3px;
-    background: #2980b9;
+    background-color: #2980b9;
 }
 
 .t-content-normal .system {
-    padding: 2px 3px;
-    background: #8697a2;
+    background-color: #8697a2;
 }
 
 .t-crude-font {
@@ -238,9 +241,9 @@
 }
 
 .t-help-msg {
-    color: #ffffff87;
     min-height: 20px;
     margin: -8px 0 10px 0;
+    color: var(--t-cmd-help-msg-color);
 }
 
 /*手机*/
@@ -266,11 +269,11 @@
 
 .t-cmd-key {
     font-weight: 700;
-    color: yellow;
+    color: var(--t-cmd-key-color);
 }
 
 .t-cmd-arg {
-    color: #c0c0ff;
+    color: var(--t-cmd-arg-color);
 }
 
 .t-help-list {
@@ -291,20 +294,21 @@
     top: 15px;
     right: 15px;
     z-index: 99;
-    background-color: black !important;
     max-width: 50%;
     padding: 5px;
-    color: white;
-    box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
     overflow: auto;
     max-height: calc(100% - 60px);
+    background-color: var(--t-cmd-help-background-color);
+    color: var(--t-main-font-color);
+    box-shadow: var(--t-cmd-help-box-shadow);
 }
 
 .t-cmd-help code {
-    color: white;
-    background-color: rgba(0, 0, 0, 0) !important;
     border: none;
-    padding: 0;
+    padding: 2px 5px 2px 5px;
+    border-radius: 3px;
+    color: var(--t-cmd-help-code-font-color);
+    background-color: var(--t-cmd-help-code-background-color) !important;
 }
 
 .t-cmd-help-eg {
@@ -331,15 +335,12 @@
     top: 0;
     left: -30px;
     width: 30px;
-    border-right: 1px solid #C3CCD0;
-    background-color: #1C1D21;
     text-align: center;
     padding: 1em 0;
 }
 
 .t-pre-numbering li {
     list-style: none;
-    color: #AAA;
     font-size: 1em;
 }
 
@@ -362,8 +363,8 @@ pre {
 }
 
 .t-border-dashed {
-    border: 1px dashed #fff;
     border-collapse: collapse;
+    border: var(--t-table-border);
 }
 
 .t-table thead {
@@ -373,14 +374,6 @@ pre {
 .t-table, .t-table tr, .t-table td, .t-table tbody, .t-table thead {
     margin: 0;
     padding: 15px;
-}
-
-.t-a {
-    color: antiquewhite;
-}
-
-.t-a:hover {
-    color: white;
 }
 
 .t-code {
@@ -409,16 +402,16 @@ pre {
 }
 
 .t-text-editor {
-    color: #fff;
     width: calc(100% - 10px);
     height: calc(100% - 35px);
-    background-color: #191b24;
     overflow: auto;
     resize: none;
     margin: 0;
     padding: 0 5px;
     border: none;
     font-size: 15px;
+    color: var(--t-main-font-color);
+    background-color: var(--t-main-background-color);
 }
 
 .t-text-editor:focus-visible, .t-text-editor:focus {
@@ -427,21 +420,32 @@ pre {
 }
 
 .t-text-editor-floor {
-    background-color: rgb(72 69 69);
     position: absolute;
     height: 35px;
     width: 100%;
     bottom: 0;
     left: 0;
+    background-color: var(--t-text-editor-floor-background-color);
 }
 
 .t-text-editor-floor-btn {
-    color: white;
-    background-color: rgba(0, 0, 0, 0);
     border: none;
     outline: none;
     margin-top: 10px;
     cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.t-close-btn {
+    color: var(--t-text-editor-floor-close-btn-color);
+}
+
+.t-save-btn {
+    color: var(--t-text-editor-floor-save-btn-color);
+}
+
+.t-text-editor-floor-btn:hover {
+    color: var(--t-text-editor-floor-btn-hover-color);
 }
 
 .t-disable-select {
@@ -482,4 +486,82 @@ pre {
     left: calc(100% - var(--t-point-size) / 2);
     top: calc(100% - var(--t-point-size) / 2);
     cursor: nwse-resize;
+}
+
+.t-code-default {
+    background-color: var(--t-code-default-background-color);
+}
+
+/*--------------------------json viewer style------------------------*/
+.t-json-container .jv-container.jv-light {
+    border: none;
+    background-color: var(--t-json-background-color);
+    color: var(--t-main-font-color);
+}
+
+.t-json-container .jv-container .jv-code,
+.t-json-container .jv-container .jv-code.open {
+    padding-bottom: 0;
+}
+
+.t-json-container .jv-container {
+    display: inline-block;
+    min-width: 300px;
+}
+
+.t-json-container .jv-container.jv-light .jv-item.jv-array,
+.t-json-container .jv-container.jv-light .jv-item.jv-object {
+    color: var(--t-json-value-obj-color);
+}
+
+.t-json-container .jv-container.jv-light .jv-key {
+    color: var(--t-main-font-color);
+}
+
+.t-json-container .jv-container.jv-light .jv-item.jv-boolean {
+    color: var(--t-json-value-bool-color);
+}
+
+.t-json-container .jv-container.jv-light .jv-item.jv-number {
+    color: var(--t-json-value-number-color);
+}
+
+.t-json-container .jv-container.jv-light .jv-ellipsis {
+    color: var(--t-main-font-color);
+    background-color: var(--t-json-ellipsis-background-color);
+}
+
+.t-json-container .jv-container .jv-more:after {
+    background: var(--t-json-more-background-webkit);
+    background: var(--t-json-more-background);
+}
+
+.t-json-deep-selector {
+    margin-top: 8px;
+    width: 75px;
+    position: absolute;
+    margin-left: -150px;
+    font-size: 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    border: 1px solid var(--t-json-deep-selector-border-color);
+}
+
+.t-json-deep-selector:focus,
+.t-json-deep-selector:focus-visible {
+    outline: none;
+}
+
+/*--------------------------selection style------------------------*/
+.t-window div::selection,
+.t-window a::selection,
+.t-window span::selection,
+.t-window li::selection,
+.t-window p::selection,
+.t-window code::selection,
+.t-window td::selection,
+.t-window th::selection,
+.t-window br::selection {
+    color: var(--t-selection-font-color);
+    background-color: var(--t-selection-background-color);
 }

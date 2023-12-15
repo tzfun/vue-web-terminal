@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import '../css/json.css'
 import {_parseToJson} from "@/js/Util";
 import {terminalViewerProps} from "@/js/TerminalAttribute";
 

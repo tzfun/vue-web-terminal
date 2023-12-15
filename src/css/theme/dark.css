@@ -1,0 +1,48 @@
+:root {
+    --t-main-background-color: #191b24;
+    --t-main-font-color: #fff;
+    --t-window-box-shadow: 0 0 40px 1px rgb(0 0 0 / 20%);
+    --t-header-background-color: #959598;
+    --t-header-font-color: white;
+    --t-tag-font-color: #fff;
+    --t-cursor-color: #fff;
+    --t-cmd-key-color: yellow;
+    --t-cmd-arg-color: #c0c0ff;
+    --t-link-color: antiquewhite;
+    --t-link-hover-color: white;
+    --t-table-border: 1px dashed #fff;
+    --t-selection-font-color: black;
+    --t-selection-background-color: white;
+    --t-cmd-help-background-color: black;
+    --t-cmd-help-code-font-color: #fff;
+    --t-cmd-help-code-background-color: rgba(0, 0, 0, 0);
+    --t-cmd-help-msg-color: #ffffff87;
+    --t-cmd-help-box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
+    --t-text-editor-floor-background-color: rgb(72 69 69);
+    --t-text-editor-floor-close-btn-color: #bba9a9;
+    --t-text-editor-floor-save-btn-color: #00b10e;
+    --t-text-editor-floor-btn-hover-color: #befcff;
+    --t-json-background-color: rgba(0, 0, 0, 0);
+    --t-json-value-obj-color: #bdadad;
+    --t-json-value-bool-color: #cdc83c;
+    --t-json-value-number-color: #f3c7fb;
+    --t-json-ellipsis-background-color: #674848;
+    --t-json-more-background-webkit: -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 20%, rgb(255 255 255 / 10%) 100%);
+    --t-json-more-background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgb(255 255 255 / 10%) 100%);
+    --t-json-deep-selector-border-color: rgb(249 249 249 / 52%);
+    --t-code-default-background-color: rgb(39 50 58);
+}
+
+.t-header-pin:hover {
+    color: #030a0a;
+}
+
+/*--------------------------help style------------------------*/
+.t-pre-numbering {
+    border-right: 1px solid #C3CCD0;
+    background-color: #1C1D21;
+}
+
+.t-pre-numbering li {
+    color: #AAA;
+}

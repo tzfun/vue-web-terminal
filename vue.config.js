@@ -4,7 +4,19 @@ const name = "vue-web-terminal"
 module.exports = {
     publicPath: './',
     css: {
-        extract: false
+        extract: false,
+        requireModuleExtension: true,
+        loaderOptions: {
+            css: {
+                // 这里的选项会传递给 css-loader
+                modules: {
+                    exclude: [
+                        'src/css/theme/dark.css',
+                        'src/css/theme/light.css',
+                    ],
+                }
+            }
+        }
     },
     runtimeCompiler: true,
     productionSourceMap: false,
@@ -15,7 +27,7 @@ module.exports = {
             chunkFilename: `${name}.chunk.js`,
             libraryTarget: 'umd',
             umdNamedDefine: true
-        }
+        },
     },
     // chainWebpack: (config) => {
     //     const dir = path.resolve(__dirname, 'public/svg')
@@ -32,28 +44,28 @@ module.exports = {
     //     config.plugin('svg-sprite').use(require('svg-sprite-loader/plugin'), [{plainSprite: true}])
     //     config.module.rule('svg').exclude.add(dir)
 
-        //     config.plugins.delete('preload')
-        //     config.plugins.delete('prefetch')
-        //     config.plugins.delete('html')
+    //     config.plugins.delete('preload')
+    //     config.plugins.delete('prefetch')
+    //     config.plugins.delete('html')
 
-        //     config.module
-        //         .rule("js")
-        //         .include.add(path.resolve(__dirname, "packages"))
-        //         .end()
-        //         .use("babel")
-        //         .loader("babel-loader")
-        //         .tap((options) => {
-        //             return options;
-        //         });
+    //     config.module
+    //         .rule("js")
+    //         .include.add(path.resolve(__dirname, "packages"))
+    //         .end()
+    //         .use("babel")
+    //         .loader("babel-loader")
+    //         .tap((options) => {
+    //             return options;
+    //         });
 
-        //     config.optimization
-        //         .minimize(false)
-        //         .minimizer('terser')
-        //         .tap(args => {
-        //             let {terserOptions} = args[0];
-        //             terserOptions.compress.drop_console = false;
-        //             terserOptions.compress.drop_debugger = true;
-        //             return args
-        //         });
+    //     config.optimization
+    //         .minimize(false)
+    //         .minimizer('terser')
+    //         .tap(args => {
+    //             let {terserOptions} = args[0];
+    //             terserOptions.compress.drop_console = false;
+    //             terserOptions.compress.drop_debugger = true;
+    //             return args
+    //         });
     // },
 };
