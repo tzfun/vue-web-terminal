@@ -8,7 +8,7 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.12',
+                vue2: '2.1.13',
                 vue3: '3.1.8'
             },
             cmdStore: [],

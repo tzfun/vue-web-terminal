@@ -55,7 +55,7 @@
           <img style="width: 250px" :src="require('@/../public/logo.png')" alt="vue-web-terminal">
           <div>
             <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" alt="vue2"></a>
-            <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3-pioneer" style="margin-left: 15px;"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer" alt="vue3"></a>
+            <a href="https://github.com/tzfun/vue-web-terminal/tree/vue3" style="margin-left: 15px;"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" alt="vue3"></a>
           </div>
         </div>
 
@@ -85,6 +85,7 @@
             <li>输入时右键可以粘贴剪切板内容</li>
             <li>双击窗口可以强制获取焦点</li>
             <li>拖拽窗口四个角可以缩放大小</li>
+            <li>引入不同的主题css可以应用不同主题</li>
           </ul>
         </div>
       </div>
@@ -180,13 +181,13 @@ export default TerminalPageJs;
 .help-list {
   margin-left: 74px;
   list-style: decimal;
-  font-size: 20px;
+  font-size: 17px;
   padding-top: 0;
   margin-top: 0;
 }
 
 .help-list li {
-  margin: 15px;
+  margin: 12px 15px;
 }
 
 .editor-icon {

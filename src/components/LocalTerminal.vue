@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import 'vue-web-terminal/lib/theme/dark.css'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/darcula.css'
 import 'codemirror/theme/vibrant-ink.css'
