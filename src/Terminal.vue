@@ -473,7 +473,8 @@ onUnmounted(() => {
   _eventOff(window, 'keydown', keydownListener.value)
   _eventOff(window, "click", clickListener.value)
   if (resizeObserver.value && terminalHeaderRef.value) {
-    resizeObserver.value.observe(terminalHeaderRef.value)
+    resizeObserver.value.unobserve(terminalHeaderRef.value)
+    resizeObserver.value = null
   }
   unregister(getName())
 })
@@ -1450,7 +1451,7 @@ defineExpose({
       <div class="t-header-container" ref="terminalHeaderRef" v-if="showHeader"
            :style="draggable ? 'cursor: move;' : ''" @dblclick="_fullscreen">
         <slot name="header">
-          <t-header :title="title" :pinned="isPinned" :draggable="draggable" @on-click="_triggerClick"></t-header>
+          <t-header :title="title" :pinned="isPinned" :draggable="draggable" @on-click="_triggerClick"/>
         </slot>
       </div>
       <div class="t-window"
