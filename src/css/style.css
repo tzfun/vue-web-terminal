@@ -276,6 +276,10 @@
     color: var(--t-cmd-arg-color);
 }
 
+.t-cmd-splitter {
+    color: var(--t-cmd-splitter-color);
+}
+
 .t-help-list {
     margin: 0;
     list-style: none;

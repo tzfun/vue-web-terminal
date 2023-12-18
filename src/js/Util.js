@@ -236,19 +236,50 @@ export function _defaultCommandFormatter(cmd) {
     //  过滤ASCII 160的空白字符串
     let split = cmd.replace(/\xA0/g, " ").split(" ")
     let formatted = ''
+    let isCmdKey = true
+
     for (let i = 0; i < split.length; i++) {
         let char = _html(split[i])
-        if (i === 0) {
+        if (isCmdKey) {
             formatted += `<span class='t-cmd-key'>${char}</span>`
+            isCmdKey = false
         } else if (char.startsWith("-")) {
             formatted += `<span class="t-cmd-arg">${char}</span>`
         } else if (char.length > 0) {
-            formatted += `<span>${char}</span>`
+            if (char === '|') {
+                isCmdKey = true
+                formatted += `<span>${char}</span>`
+            } else {
+                formatted += '<span>'
+                let startNewCmdKey = false
+                for (let j in char) {
+                    if (char[j] === ',') {
+                        formatted += `<span class="t-cmd-splitter">${char[j]}</span>`
+                    } else if (char[j] === '|') {
+                        formatted += char[j]
+
+                        isCmdKey = true
+                        if (j < char.length - 1) {
+                            formatted += `<span class='t-cmd-key'>`
+                            startNewCmdKey = true
+                        }
+                    } else {
+                        formatted += char[j]
+                    }
+                }
+
+                formatted += '</span>'
+                if (startNewCmdKey) {
+                    formatted += '</span>'
+                }
+            }
         }
         if (i < split.length - 1) {
             formatted += "<span>&nbsp;</span>"
         }
     }
+
+    console.log('"' + cmd + '"', split, formatted)
     return formatted
 }
 
