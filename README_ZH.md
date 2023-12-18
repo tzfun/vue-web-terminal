@@ -128,7 +128,6 @@ terminal标签支持的属性参数表
 | title                | 窗口头部显示的标题                                                                 | string   | vue-web-terminal                                 |
 | show-header          | 是否显示窗口头部，此开关会影响[拖拽功能](#拖拽功能)，只有显示头部才能使用默认提供的拖拽功能                          | boolean  | true                                             |
 | init-log             | Terminal初始化时显示的日志，是由[消息对象](#消息对象)组成的数组，设为`null`则不显示                       | array    | 略                                                |
-| warn-log-count-limit | 当前Terminal显示的日志条数超出此限制会发出警告，设一个`<= 0`的值将不发出警告                             | number   | 200                                              |
 | auto-help            | 是否打开命令行自动搜索提示功能                                                           | boolean  | true                                             |
 | enable-example-hint  | 是否显示右上角命令样例提示，前提是开启了`auto-help`                                           | boolean  | true                                             |
 | command-store        | 自定义的命令库，搜索提示功能会扫描此库，见[命令定义格式](#命令定义)                                      | array    | [内置命令](#内置命令)                                    |
