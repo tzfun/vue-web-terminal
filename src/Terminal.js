@@ -411,9 +411,10 @@ export default {
             return textEditorOpen(this.getName(), options);
         },
         clearLog(clearHistory) {
-            this.terminalLog = [];
             if (clearHistory) {
                 historyStore.clearLog(this.getName())
+            } else {
+                this.terminalLog = [];
             }
         },
         getName() {
