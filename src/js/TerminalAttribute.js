@@ -103,7 +103,11 @@ export function terminalProps() {
         commandFormatter: {
             type: Function
         },
-        //  按下Tab键处理函数
+        /**
+         * 按下Tab键处理函数
+         * @param event 键盘事件
+         * @param rewriteCallback 修改当前正在输入的命令回调，需传入一个 string
+         */
         tabKeyHandler: {
             type: Function
         },

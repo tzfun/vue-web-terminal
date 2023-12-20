@@ -175,7 +175,13 @@ export default {
                     if (this.cursorConf.show) {
                         if (key === 'tab') {
                             if (this.tabKeyHandler) {
-                                this.tabKeyHandler(event)
+                                this.tabKeyHandler(event, (cmd) => {
+                                    if (cmd) {
+                                        this.command = cmd.trim()
+                                    } else {
+                                        this.command = ''
+                                    }
+                                })
                             } else {
                                 this._fillCmd()
                             }
