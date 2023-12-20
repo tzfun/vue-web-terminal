@@ -132,15 +132,15 @@ export function _getDifferent(one, two) {
     return diff;
 }
 
-export function _eventOn(dom:Document | Window, eventName: string, handler: EventListenerOrEventListenerObject) {
+export function _eventOn(dom: Document | Window, eventName: string, handler: EventListenerOrEventListenerObject) {
     dom && dom.addEventListener && dom.addEventListener(eventName, handler);
 }
 
-export function _eventOff(dom:Document | Window, eventName: string, handler: EventListenerOrEventListenerObject) {
+export function _eventOff(dom: Document | Window, eventName: string, handler: EventListenerOrEventListenerObject) {
     dom && dom.removeEventListener && dom.removeEventListener(eventName, handler);
 }
 
-export function _getClipboardText():Promise<string> {
+export function _getClipboardText(): Promise<string> {
     if (navigator && navigator.clipboard) {
         return navigator.clipboard.readText();
     } else {
@@ -162,7 +162,7 @@ export function _getClipboardText():Promise<string> {
     }
 }
 
-export function _copyTextToClipboard(text):Promise<any> {
+export function _copyTextToClipboard(text): Promise<any> {
     if (!text) {
         return
     }
@@ -235,26 +235,60 @@ export function _openUrl(url: string, pushMessage: Function) {
  * @return {string}
  * @private
  */
-export function _defaultCommandFormatter(cmd) {
+export function _defaultCommandFormatter(cmd: string): string {
     if (_isEmpty(cmd)) {
         return ""
     }
     //  过滤ASCII 160的空白字符串
     let split = cmd.replace(/\xA0/g, " ").split(" ")
     let formatted = ''
+    let isCmdKey = true
+
     for (let i = 0; i < split.length; i++) {
         let char = _html(split[i])
-        if (i === 0) {
+        if (isCmdKey) {
             formatted += `<span class='t-cmd-key'>${char}</span>`
+            isCmdKey = false
         } else if (char.startsWith("-")) {
             formatted += `<span class="t-cmd-arg">${char}</span>`
         } else if (char.length > 0) {
-            formatted += `<span>${char}</span>`
+            if (char === '|') {
+                isCmdKey = true
+                formatted += `<span>${char}</span>`
+            } else {
+                formatted += '<span>'
+                let startNewCmdKey = false
+                const charArr: string[] = [...char];
+                charArr.forEach((ch, index) => {
+                    if (ch === ',') {
+                        formatted += `<span class="t-cmd-splitter">${ch}</span>`
+                    } else if (ch === '|') {
+                        formatted += ch
+
+                        isCmdKey = true
+                        if (index < char.length - 1) {
+                            formatted += `<span class='t-cmd-key'>`
+                            startNewCmdKey = true
+                        }
+                    } else {
+                        formatted += ch
+                    }
+                    if (index == charArr.length - 1 && ch != '|') {
+                        isCmdKey = false
+                    }
+                });
+
+                formatted += '</span>'
+                if (startNewCmdKey) {
+                    formatted += '</span>'
+                }
+            }
         }
         if (i < split.length - 1) {
             formatted += "<span>&nbsp;</span>"
         }
     }
+
     return formatted
 }
 
