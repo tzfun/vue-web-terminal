@@ -23,6 +23,7 @@
           @on-active="onActive"
           @on-inactive="onInactive"
           :log-size-limit="20"
+          :enable-default-command="false"
           style="position: fixed">
       </terminal>
     </div>

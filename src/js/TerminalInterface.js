@@ -1,6 +1,7 @@
 import historyStore from "./HistoryStore.js";
 
-const pool = {}; let options = {};
+const pool = {};
+let options = {};
 
 function register(name, listener) {
     if (pool[name] != null) {
@@ -74,10 +75,25 @@ const TerminalInterface = {
     textEditorClose(name, options) {
         return TerminalInterface.post(name, 'textEditorClose', options)
     },
+
+    clearLog(name, options) {
+        return TerminalInterface.post(name, 'clearLog', options)
+    }
 }
 
 export default TerminalInterface;
-const { pushMessage, fullscreen, isFullscreen, dragging, execute, focus, elementInfo, textEditorClose, textEditorOpen } = TerminalInterface;
+const {
+    pushMessage,
+    fullscreen,
+    isFullscreen,
+    dragging,
+    execute,
+    focus,
+    elementInfo,
+    textEditorClose,
+    textEditorOpen,
+    clearLog
+} = TerminalInterface;
 export {
     register,
     unregister,
@@ -90,5 +106,6 @@ export {
     focus,
     elementInfo,
     textEditorClose,
-    textEditorOpen
+    textEditorOpen,
+    clearLog
 }

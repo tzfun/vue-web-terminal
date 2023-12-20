@@ -127,13 +127,17 @@ export default {
             this._pushMessage(this.initLog)
         }
 
-        this.allCommandStore = this.allCommandStore.concat(DEFAULT_COMMANDS)
-        if (this.commandStore != null) {
-            if (this.commandStoreSort != null) {
+        let allCommandStore = []
+        if (this.enableDefaultCommand) {
+            allCommandStore = allCommandStore.concat(DEFAULT_COMMANDS)
+        }
+        if (this.commandStore) {
+            if (this.commandStoreSort) {
                 this.commandStore.sort(this.commandStoreSort)
             }
-            this.allCommandStore = this.allCommandStore.concat(this.commandStore)
+            allCommandStore = allCommandStore.concat(this.commandStore)
         }
+        this.allCommandStore = allCommandStore
 
         let el = this.$refs.terminalWindow
         el.scrollTop = el.offsetHeight;
@@ -337,6 +341,8 @@ export default {
                 this._focus()
             } else if (type === 'textEditorClose') {
                 return this._textEditorClose(options)
+            } else if (type === 'clearLog') {
+                return this.clearLog(options)
             } else {
                 console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
             }
@@ -403,6 +409,12 @@ export default {
         },
         textEditorOpen(options) {
             return textEditorOpen(this.getName(), options);
+        },
+        clearLog(clearHistory) {
+            this.terminalLog = [];
+            if (clearHistory) {
+                historyStore.clearLog(this.getName())
+            }
         },
         getName() {
             if (this.name) {
@@ -658,76 +670,85 @@ export default {
                     let split = this.command.split(" ")
                     let cmdKey = split[0];
                     this.$emit("before-exec-cmd", cmdKey, this.command, this.getName())
-                    switch (cmdKey) {
-                        case 'help': {
-                            let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
-                            reg = reg.replace(/\*/g, ".*")
-                            this._printHelp(new RegExp(reg, "i"), split[1])
-                            break;
-                        }
-                        case 'clear':
-                            this._doClear(split);
-                            break;
-                        case 'open':
-                            _openUrl(split[1]);
-                            break;
-                        default: {
-                            this.showInputLine = false
-                            let success = (message) => {
-                                let finish = () => {
-                                    this.showInputLine = true
-                                    this._endExecCallBack()
-                                }
 
-                                if (message != null) {
-                                    //  实时回显处理
-                                    if (message instanceof TerminalFlash) {
-                                        message.onFlush(msg => {
-                                            this.flash.content = msg
-                                        })
-                                        message.onFinish(() => {
-                                            this.flash.open = false
-                                            finish()
-                                        })
-                                        this.flash.open = true
-                                        return
-                                    } else if (message instanceof TerminalAsk) {
-                                        message.onAsk((options) => {
-                                            this.ask.input = ''
-                                            this.ask.isPassword = options.isPassword
-                                            this.ask.question = _html(options.question)
-                                            this.ask.callback = options.callback
-                                            this.ask.autoReview = options.autoReview
-                                            this._focus()
-                                        })
-
-                                        message.onFinish(() => {
-                                            this.ask.open = false
-                                            finish()
-                                            this._focus(true)
-                                        })
-                                        this.ask.open = true
-                                        return
-                                    } else {
-                                        this._pushMessage(message)
-                                    }
-                                }
-                                finish()
-                            }
-
-                            let failed = (message = 'Failed to execute.') => {
-                                if (message != null) {
-                                    this._pushMessage({
-                                        type: MESSAGE_TYPE.NORMAL, class: MESSAGE_CLASS.ERROR, content: message
-                                    })
-                                }
+                    const execute = () => {
+                        this.showInputLine = false
+                        let success = (message) => {
+                            let finish = () => {
                                 this.showInputLine = true
                                 this._endExecCallBack()
                             }
 
-                            this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
-                            return
+                            if (message != null) {
+                                //  实时回显处理
+                                if (message instanceof TerminalFlash) {
+                                    message.onFlush(msg => {
+                                        this.flash.content = msg
+                                    })
+                                    message.onFinish(() => {
+                                        this.flash.open = false
+                                        finish()
+                                    })
+                                    this.flash.open = true
+                                    return
+                                } else if (message instanceof TerminalAsk) {
+                                    message.onAsk((options) => {
+                                        this.ask.input = ''
+                                        this.ask.isPassword = options.isPassword
+                                        this.ask.question = _html(options.question)
+                                        this.ask.callback = options.callback
+                                        this.ask.autoReview = options.autoReview
+                                        this._focus()
+                                    })
+
+                                    message.onFinish(() => {
+                                        this.ask.open = false
+                                        finish()
+                                        this._focus(true)
+                                    })
+                                    this.ask.open = true
+                                    return
+                                } else {
+                                    this._pushMessage(message)
+                                }
+                            }
+                            finish()
                         }
+
+                        let failed = (message = 'Failed to execute.') => {
+                            if (message != null) {
+                                this._pushMessage({
+                                    type: MESSAGE_TYPE.NORMAL, class: MESSAGE_CLASS.ERROR, content: message
+                                })
+                            }
+                            this.showInputLine = true
+                            this._endExecCallBack()
+                        }
+
+                        this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
+                    }
+
+                    if (this.enableDefaultCommand) {
+                        switch (cmdKey) {
+                            case 'help': {
+                                let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
+                                reg = reg.replace(/\*/g, ".*")
+                                this._printHelp(new RegExp(reg, "i"), split[1])
+                                break;
+                            }
+                            case 'clear':
+                                this.clearLog(split.length === 2 && split[1] === 'history');
+                                break;
+                            case 'open':
+                                _openUrl(split[1]);
+                                break;
+                            default:
+                                execute()
+                                return
+                        }
+                    } else {
+                        execute()
+                        return
                     }
                 } catch (e) {
                     console.error(e)
@@ -873,15 +894,6 @@ export default {
                 type: "cmdLine",
                 content: `${_unHtml(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
             });
-        },
-        _doClear(args) {
-            if (args.length === 1) {
-                this.terminalLog = [];
-            } else if (args.length === 2 && args[1] === 'history') {
-                historyStore.clearLog(this.getName())
-            }
-            this.perfWarningRate.size = 0
-            this.perfWarningRate.count = 0
         },
         _resetCursorPos(cmd) {
             this._calculateByteLen()

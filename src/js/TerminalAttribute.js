@@ -152,6 +152,11 @@ export function terminalProps() {
         logSizeLimit: {
             type: Number,
             default: 200
+        },
+        //  是否开启内部默认指令，例如 help、open等
+        enableDefaultCommand: {
+            type: Boolean,
+            default: true
         }
     }
 }
