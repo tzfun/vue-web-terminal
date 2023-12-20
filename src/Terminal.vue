@@ -127,6 +127,11 @@ const props = defineProps({
   logSizeLimit: {
     type: Number,
     default: 200
+  },
+  //  是否开启内部默认指令，例如 help、open等
+  enableDefaultCommand: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -251,13 +256,17 @@ onMounted(() => {
     _pushMessage(props.initLog)
   }
 
-  allCommandStore.value = allCommandStore.value.concat(DEFAULT_COMMANDS)
+  let commandStore = []
+  if (props.enableDefaultCommand) {
+    commandStore = commandStore.concat(DEFAULT_COMMANDS)
+  }
   if (props.commandStore) {
     if (props.commandStoreSort) {
       props.commandStore.sort(props.commandStoreSort)
     }
-    allCommandStore.value = allCommandStore.value.concat(props.commandStore)
+    commandStore = commandStore.concat(props.commandStore)
   }
+  allCommandStore.value = commandStore
 
   if (terminalWindowRef.value) {
     terminalWindowRef.value.scrollTop = terminalWindowRef.value.offsetHeight;
@@ -461,6 +470,8 @@ onMounted(() => {
       _focus()
     } else if (type === 'textEditorClose') {
       return _textEditorClose(options)
+    } else if (type === 'clearLog') {
+      return _clearLog(options)
     } else {
       console.error(`Unsupported event type ${type} in instance ${getName()}`)
     }
@@ -554,6 +565,14 @@ const getName = () => {
     _name.value = generateTerminalName();
   }
   return _name.value;
+}
+
+const _clearLog = (clearHistory: boolean) => {
+  if (clearHistory) {
+    store.clear(getName())
+  } else {
+    terminalLog.value = [];
+  }
 }
 
 const _triggerClick = (key: string) => {
@@ -768,78 +787,87 @@ const _execute = () => {
       let split = command.value.split(" ")
       let cmdKey = split[0];
       emits("before-exec-cmd", cmdKey, command.value, getName())
-      switch (cmdKey) {
-        case 'help': {
-          let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
-          reg = reg.replace(/\*/g, ".*")
-          _printHelp(new RegExp(reg, "i"), split[1])
-          break;
-        }
-        case 'clear':
-          _doClear(split);
-          break;
-        case 'open':
-          _openUrl(split[1], _pushMessage);
-          break;
-        default: {
-          showInputLine.value = false
-          let _success: SuccessFunc = (message) => {
-            let _finish = () => {
-              showInputLine.value = true
-              _endExecCallBack()
-            }
 
-            if (message) {
-              //  实时回显处理
-              if (message instanceof TerminalFlash) {
-                message.onFlush((msg: string) => {
-                  flash.content = msg
-                })
-                message.onFinish(() => {
-                  flash.open = false
-                  _finish()
-                })
-                flash.open = true
-                return
-              } else if (message instanceof TerminalAsk) {
-                message.onAsk((options: AskConfig) => {
-                  ask.input = ''
-                  ask.isPassword = options.isPassword
-                  ask.question = _html(options.question)
-                  ask.callback = options.callback
-                  ask.autoReview = options.autoReview
-                  _focus()
-                })
-
-                message.onFinish(() => {
-                  ask.open = false
-                  _finish()
-                  _focus(true)
-                })
-                ask.open = true
-                return
-              } else {
-                _pushMessage(message)
-              }
-            }
-            _finish()
-          }
-
-          let _failed: FailedFunc = (message) => {
-            if (message) {
-              _pushMessage({
-                type: 'normal',
-                class: 'error',
-                content: message
-              })
-            }
+      const execute = () => {
+        showInputLine.value = false
+        let _success: SuccessFunc = (message) => {
+          let _finish = () => {
             showInputLine.value = true
             _endExecCallBack()
           }
 
-          emits("exec-cmd", cmdKey, command.value, _success, _failed, getName())
-          return
+          if (message) {
+            //  实时回显处理
+            if (message instanceof TerminalFlash) {
+              message.onFlush((msg: string) => {
+                flash.content = msg
+              })
+              message.onFinish(() => {
+                flash.open = false
+                _finish()
+              })
+              flash.open = true
+              return
+            } else if (message instanceof TerminalAsk) {
+              message.onAsk((options: AskConfig) => {
+                ask.input = ''
+                ask.isPassword = options.isPassword
+                ask.question = _html(options.question)
+                ask.callback = options.callback
+                ask.autoReview = options.autoReview
+                _focus()
+              })
+
+              message.onFinish(() => {
+                ask.open = false
+                _finish()
+                _focus(true)
+              })
+              ask.open = true
+              return
+            } else {
+              _pushMessage(message)
+            }
+          }
+          _finish()
         }
+
+        let _failed: FailedFunc = (message) => {
+          if (message) {
+            _pushMessage({
+              type: 'normal',
+              class: 'error',
+              content: message
+            })
+          }
+          showInputLine.value = true
+          _endExecCallBack()
+        }
+
+        emits("exec-cmd", cmdKey, command.value, _success, _failed, getName())
+      }
+      if (props.enableDefaultCommand) {
+        switch (cmdKey) {
+          case 'help': {
+            let reg = `^${split.length > 1 && _nonEmpty(split[1]) ? split[1] : "*"}$`
+            reg = reg.replace(/\*/g, ".*")
+            _printHelp(new RegExp(reg, "i"), split[1])
+            break;
+          }
+          case 'clear':
+            _clearLog(split.length === 2 && split[1] === 'history');
+            break;
+          case 'open':
+            _openUrl(split[1], _pushMessage);
+            break;
+          default: {
+            execute()
+            return
+          }
+        }
+      } else {
+        execute()
+        return;
       }
     } catch (e) {
       console.error(e)
@@ -974,14 +1002,6 @@ const _saveCurCommand = () => {
     type: "cmdLine",
     content: `${_unHtml(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
   });
-}
-
-const _doClear = (args: Array<string>) => {
-  if (args.length === 1) {
-    terminalLog.value = [];
-  } else if (args.length === 2 && args[1] === 'history') {
-    store.clear(getName())
-  }
 }
 
 const _resetCursorPos = (cmd?: string) => {
@@ -1431,7 +1451,8 @@ defineExpose({
   textEditorOpen: (options?: EditorSetting) => {
     return api.textEditorOpen(getName(), options)
   },
-  textEditorClose: _textEditorClose
+  textEditorClose: _textEditorClose,
+  clearLog: _clearLog
 })
 
 </script>
