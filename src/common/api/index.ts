@@ -36,13 +36,18 @@ function getOptions(): Options {
     return data.options as Options
 }
 
+function setOptions(op: Options) {
+    data.options = {...op}
+}
+
 export {
     register,
     unregister,
     rename,
     configHighlight,
     configCodemirror,
-    getOptions
+    getOptions,
+    setOptions
 }
 
 export default new TerminalApi(data)

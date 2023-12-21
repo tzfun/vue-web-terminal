@@ -4,12 +4,17 @@ import './css/style.css'
 import 'vue-json-viewer/style.css'
 import type {App} from 'vue'
 import TerminalStore from "./common/store"
-import TerminalApi from "./common/api"
+import TerminalApi, {setOptions} from "./common/api"
 import {configHighlight, configCodemirror, rename} from "./common/api"
 import Terminal from "./Terminal.vue"
-import {TerminalAsk, TerminalFlash} from "./types"
+import {Options, TerminalAsk, TerminalFlash} from "./types"
 
-Terminal.install = (app: App): void => {
+Terminal.install = (app: App, options: Options): void => {
+    setOptions(options)
+    //  兼容老版本
+    Terminal.$api = TerminalApi
+    Terminal.$Flash = TerminalFlash
+    Terminal.$Ask = TerminalAsk
     app.component(Terminal.__name as string, Terminal)
 }
 
@@ -27,3 +32,8 @@ export {
 }
 
 export default Terminal
+
+//  兼容老版本
+export const api = TerminalApi
+export const Flash = TerminalFlash
+export const Ask = TerminalAsk
