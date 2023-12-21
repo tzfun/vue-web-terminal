@@ -1,4 +1,4 @@
-import {api as TerminalApi, Ask as TerminalAsk, Flash as TerminalFlash, Terminal} from "vue-web-terminal"
+import {TerminalApi, TerminalAsk, TerminalFlash, Terminal} from "vue-web-terminal"
 import {exampleCode} from "@/demo/Demo";
 import {commands} from "@/components/LocalTerminalData";
 
@@ -8,8 +8,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.1.13',
-                vue3: '3.1.8'
+                vue2: '2.2.0',
+                vue3: '3.2.2'
             },
             cmdStore: [],
             initLog: null,
