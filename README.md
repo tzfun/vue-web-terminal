@@ -7,7 +7,7 @@
 # vue-web-terminal
 
 <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2"></a>
-<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3-pioneer"></a>
+<a href="https://github.com/tzfun/vue-web-terminal/tree/vue3"><img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://shields.io/bundlephobia/minzip/vue-web-terminal"></a>
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
@@ -61,19 +61,20 @@ Use Terminal plugin in `main.js`
 
 ```js
 import Terminal from 'vue-web-terminal'
+// This style needs to be introduced in versions after 3.2.0 and 2.1.13. 
+// There is no need to introduce theme styles in previous versions.
+import 'vue-web-terminal/lib/theme/dark.css'
 
 // for vue2
 Vue.use(Terminal)
 
 // for vue3
-const app = createApp(App)
-app.use(Terminal)
+const app = createApp(App).use(Terminal)
 ```
 
 Example:
 
 ```vue
-
 <template>
   <div id="app">
     <terminal name="my-terminal" @exec-cmd="onExecCmd"></terminal>
@@ -82,6 +83,9 @@ Example:
 
 <script>
 import Terminal from "vue-web-terminal"
+// This style needs to be introduced in versions after 3.2.0 and 2.1.13. 
+// There is no need to introduce theme styles in previous versions.
+import 'vue-web-terminal/lib/theme/dark.css'
 
 export default {
   name: 'App',
@@ -118,36 +122,48 @@ body, html, #app {
 
 # Document
 
+## Theme
+
+Starting from `2.1.13` and `3.2.0` versions, the plugin has two built-in themes: `dark` and `lignt`
+
+```js
+//  import dark theme
+import 'vue-web-terminal/lib/theme/dark.css'
+
+//  import light theme
+import 'vue-web-terminal/lib/theme/light.css'
+```
+
+If you need to customize the theme, you can customize the corresponding css variables.
+
+> Note: Versions before `2.1.12` and `3.1.8` (including) do not support the theme function,
+> and there is no need to introduce css files.
+
 ## Attributes
 
 Terminal tag supports attribute parameter table.
 
-| Argument             | Description                                                                                                                                                                                                     | Type     | Default                                          |
-|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
-| name                 | Terminal instance name, the name of the same vue instance must be unique, this value is also used in API.                                                                                                       | string   | terminal                                         |
-| context              | Context text.                                                                                                                                                                                                   | string   | /vue-web-terminal                                |
-| context-suffix       | Context text suffix.                                                                                                                                                                                            | string   | \>                                               |
-| title                | The title displayed in the header.                                                                                                                                                                              | string   | vue-web-terminal                                 |
-| show-header          | Whether to display the header, this switch will affect the drag and [drop](#Drag) function. Only when the header is displayed can the drag and drop function provided by default be used.                       | boolean  | true                                             |
-| init-log             | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array    | /                                                |
-| auto-help            | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean  | true                                             |
-| enable-example-hint  | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean  | true                                             |
-| command-store        | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array    | [Local Commands](#Local)                         |
-| command-store-sort   | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function | function(a,b)                                    |
-| input-filter         | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
-| drag-conf            | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object   | [Drag](#Drag)                                    |
-| command-formatter    | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function | function(cmd)                                    |
-| tab-key-handler      | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                 | function | function(event)                                  |
-| search-handler       | User-defined command search prompt implementation, the callback needs to resolve a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot          | function | function(commandStore, key, callback)            |
-| scroll-mode          | Scroll bar mode.                                                                                                                                                                                                | string   | smooth                                           |
-| push-message-before  | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
-| log-size-limit       | Limit the maximum number of displayed logs                                                                                                                                                                      | number   | 200                                              |
-> Below are the removed properties
->
-> * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
-> * ~~**warn-log-byte-limit**~~: Removed after `2.1.0` and `3.1.0`.
-> * ~~**warn-log-limit-enable**~~: Removed after `2.1.1` and `3.1.1`.
-> * ~~**init-log-delay**~~: Removed after `2.1.1` and `3.1.1` versions.
+| Argument               | Description                                                                                                                                                                                                     | Type     | Default                                          |
+|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|--------------------------------------------------|
+| name                   | Terminal instance name, the name of the same vue instance must be unique, this value is also used in API.                                                                                                       | string   | terminal                                         |
+| context                | Context text.                                                                                                                                                                                                   | string   | /vue-web-terminal                                |
+| context-suffix         | Context text suffix.                                                                                                                                                                                            | string   | \>                                               |
+| title                  | The title displayed in the header.                                                                                                                                                                              | string   | vue-web-terminal                                 |
+| show-header            | Whether to display the header, this switch will affect the drag and [drop](#Drag) function. Only when the header is displayed can the drag and drop function provided by default be used.                       | boolean  | true                                             |
+| init-log               | The log displayed when Terminal is initialized. It is an array composed of [Message](#Message), `null` is not displayed.                                                                                        | array    | /                                                |
+| auto-help              | Whether to enable the command line automatic search prompt function.                                                                                                                                            | boolean  | true                                             |
+| enable-example-hint    | Whether to show sample prompts, provided that `auto-help` is enabled.                                                                                                                                           | boolean  | true                                             |
+| command-store          | Customized command library, the search prompt function will scan this library, see [Command Definition](#Command)                                                                                               | array    | [Local Commands](#Local)                         |
+| command-store-sort     | Command line library sorting function, the display collation of the custom command library.                                                                                                                     | function | function(a,b)                                    |
+| input-filter           | Custom input filter, the return value is the filtered string, must be plain text, no html tags.                                                                                                                 | function | function(当前输入字符char, 输入框内字符串value, input事件event) |
+| drag-conf              | Drag and drop window configuration items. **If you do not configure it, the parent element will be filled with 100%, and the window width and height are equal to the width and height of the parent element.** | object   | [Drag](#Drag)                                    |
+| command-formatter      | Command display formatting function, pass in the current command and return a new command, support html. If not set, the internally defined highlight style will be used.                                       | function | function(cmd)                                    |
+| tab-key-handler        | The logic processing method when the user types the Tab key can be used in conjunction with the `helpCmd` slot.                                                                                                 | function | function(event, rewriteCallback(newCmd))         |
+| search-handler         | User-defined command search prompt implementation, the callback needs to resolve a command object, the specific format see [Command Definition format](#Command), can be used with `helpCmd` this slot          | function | function(commandStore, key, callback)            |
+| scroll-mode            | Scroll bar mode.                                                                                                                                                                                                | string   | smooth                                           |
+| push-message-before    | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
+| log-size-limit         | Limit the maximum number of displayed logs.                                                                                                                                                                     | number   | 200                                              |
+| enable-default-command | Enable default command handler.                                                                                                                                                                                 | boolean  | true                                             |
 
 ## Events
 
@@ -230,17 +246,8 @@ This plugin provides some API that can use javascript to actively initiate event
 
 PS: **Global API interface calls need to use the `name` of Terminal.**
 
-Old version compatibility method (not recommended).
 ```js
-import Terminal from "vue-web-terminal"
-
-//  invoke api
-Terminal.$api.pushMessage('my-terminal', 'hello world!')
-```
-
-New version method (recommended).
-```js
-import {api as TerminalApi} from "vue-web-terminal"
+import {TerminalApi} from "vue-web-terminal"
 
 //  invoke api
 TerminalApi.pushMessage('my-terminal', 'hello world!')
@@ -251,18 +258,17 @@ TerminalApi.pushMessage('my-terminal', 'hello world!')
 This method calls all API interfaces without passing in the name
 ```js
 //  vue template code
-<terminal ref='myTerminal'></terminal>
+<terminal ref='myTerminalRef'></terminal>
 
 //  ......
 
-//  vue js code
-this.$refs.myTerminal.pushMessage('hello world!')
-```
+//  vue2 js code
+this.$refs.myTerminalRef.pushMessage('hello world!')
 
-> Removed api
->
-> * ~~**getPosition()**~~: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`.
-> * ~~**updateContext()**~~: removed after `2.1.3` and `3.1.3`, just modify the bound context variable directly.
+//  vue3 js code
+const myTerminalRef = ref()
+myTerminalRef.pushMessage('hello world!')
+```
 
 ### pushMessage()
 
@@ -406,6 +412,18 @@ This method is used to close the currently opened text editor. After calling, it
 TerminalApi.textEditorClose('my-terminal', true)
 
 TerminalApi.textEditorClose('my-terminal', false)
+```
+
+### clearLog()
+
+Clear the contents of the current screen, or clear history log.
+
+```js
+//  clear screen log
+TerminalApi.clearLog('my-terminal')
+
+//  clear history log
+TerminalApi.clearLog('my-terminal', true)
 ```
 
 ## Message
@@ -647,7 +665,8 @@ help :build
 
 ### Local
 
-Terminal has the following built-in commands by default and cannot be replaced.
+Terminal has the following built-in commands by default.
+If you set `enable-default-command` to false, these commands will not work;
 
 ```json
 [
@@ -708,7 +727,9 @@ Terminal has the following built-in commands by default and cannot be replaced.
 
 ### Drag
 
-To enable drag and drop, you need to set `showHeader` to true and configure `dragConf`. You can configure the window size through `width` and `height` of dragConf, and you can control the window initialization position through `init`, the following is a simple example.
+To enable drag and drop, you need to set `show-header` to true and configure `drag-conf`. 
+You can configure the window size through `width` and `height` of dragConf, 
+and you can control the window initialization position through `init`, the following is a simple example.
 
 ```vue
 <terminal name="my-terminal"
@@ -717,7 +738,7 @@ To enable drag and drop, you need to set `showHeader` to true and configure `dra
 </terminal>
 ```
 
-The complete configuration structure of `dragConf` is as follows:
+The complete configuration structure of `drag-conf` is as follows:
 
 | Prop   | Description                                                                                                                                                      | type          |
 |--------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
@@ -751,7 +772,7 @@ Create a new flash object through `new TerminalFlash()` and pass it into the suc
 * `finish()`: End execution
 
 ```js
-import {Flash as TerminalFlash} from 'vue-web-terminal'
+import {TerminalFlash} from 'vue-web-terminal'
 
 let flash = new TerminalFlash()
 success(flash)
@@ -766,8 +787,6 @@ let flashInterval = setInterval(() => {
   }
 }, 200)
 ```
-
-> The old version of `Terminal.$Flash` is still compatible, but not recommended.
 
 ### User-input
 
@@ -788,7 +807,7 @@ Create a new ask object through `new TerminalAsk()` and pass it into the success
 * `finish()`: End execution
 
 ```js
-import {Ask as TerminalAsk} from 'vue-web-terminal'
+import {TerminalAsk} from 'vue-web-terminal'
 
 let asker = new TerminalAsk()
 success(asker)
@@ -817,7 +836,8 @@ asker.ask({
 
 #### Use API
 
-When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. For details, please refer to the [API](#API) section. The following is a simple example:
+When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. 
+For details, please refer to the [API](#API) section. The following is a simple example:
 
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
@@ -830,7 +850,8 @@ TerminalApi.textEditorOpen('my-terminal', {
 
 #### Slot custom style
 
-If you don't like the default style, you can use Slot to customize the style of the editor (such as changing to Codemirror or VS Code ?), the parameter is `data`, and data has three attributes that you need to care about:
+If you don't like the default style, you can use Slot to customize the style of the editor (such as changing to Codemirror or VS Code ?),
+the parameter is `data`, and data has three attributes that you need to care about:
 
 * `value`: The edited text content, you need to bind it with `v-model` in the editor you implement.
 * `onFoucs`: Get the focus event, you need to bind the `@focus` event in the editor you implement.
@@ -838,7 +859,9 @@ If you don't like the default style, you can use Slot to customize the style of 
 
 **Custom Shortcuts**
 
-The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` to indicate Finish editing and save.
+The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal 
+in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` 
+to indicate Finish editing and save.
 
 ```vue
 <template>
@@ -860,44 +883,47 @@ The plugin provides an `onKeydown` event, which is the best way for you to contr
 </template>
 
 <script>
-import {Terminal, api as TerminalApi} from "vue-web-terminal";
+  import {Terminal, TerminalApi} from "vue-web-terminal";
+  // This style needs to be introduced in versions after 3.1.8 and 2.1.12. 
+  // There is no need to introduce theme styles in previous versions.
+  import 'vue-web-terminal/lib/theme/dark.css'
 
-export default {
-  name: "TerminalOldDemo",
-  components: {Terminal},
-  data() {
-    return {
-      name: "my-terminal",
-      enableTextEditor: false
-    }
-  },
-  method: {
-    onExecCmd(key, command, success, failed, name) {
-      if (key === 'edit') {
-        TerminalApi.textEditorOpen(this.name, {
-          content: 'Please edit this file',
-          onClose: (value) => {
-            this.enableTextEditor = false
-            success({
-              type: "code",
-              content: value
-            })
-          }
-        })
-        this.enableTextEditor = true
+  export default {
+    name: "TerminalOldDemo",
+    components: {Terminal},
+    data() {
+      return {
+        name: "my-terminal",
+        enableTextEditor: false
       }
     },
-    onKeydown(event) {
-      if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-        this._textEditorClose(true)
-        event.preventDefault()
+    method: {
+      onExecCmd(key, command, success, failed, name) {
+        if (key === 'edit') {
+          TerminalApi.textEditorOpen(this.name, {
+            content: 'Please edit this file',
+            onClose: (value) => {
+              this.enableTextEditor = false
+              success({
+                type: "code",
+                content: value
+              })
+            }
+          })
+          this.enableTextEditor = true
+        }
+      },
+      onKeydown(event) {
+        if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
+          this._textEditorClose(true)
+          event.preventDefault()
+        }
+      },
+      _textEditorClose(option) {
+        TerminalApi.textEditorClose(this.name, option)
       }
-    },
-    _textEditorClose(option) {
-      TerminalApi.textEditorClose(this.name, option)
     }
   }
-}
 </script>
 ```
 
