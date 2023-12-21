@@ -23,6 +23,15 @@ function deleteFile(fileOrDirName) {
     }
 }
 
+function deleteFileWithPattern(dir, regexp) {
+    for (let f of fs.readdirSync(dir)) {
+        if (f.match(regexp)) {
+            fs.unlinkSync(path.join(dir, f))
+            console.log(`deleted ==> ${dir}/${f}`)
+        }
+    }
+}
+
 function copyTypes() {
     fs.copyFileSync('./lib/types/index.d.ts', './lib/types.d.ts')
     deleteFile('./lib/types')
@@ -33,4 +42,5 @@ copyDir('./src/css/theme', './lib/theme');
 deleteFile('./lib/ansi')
 deleteFile('./lib/common')
 deleteFile('./lib/components')
+deleteFileWithPattern('./lib', /\.(png|gif|jpg)/)
 // copyTypes()

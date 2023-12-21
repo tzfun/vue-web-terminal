@@ -21,3 +21,6 @@ package.js
 lib/*.html
 lib/*.chunk.*
 lib/*.txt
+lib/*.png
+lib/*.gif
+lib/*.jpg
