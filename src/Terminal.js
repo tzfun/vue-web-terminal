@@ -17,7 +17,7 @@ import {
     _pointInRect,
     _unHtml
 } from "./js/Util.js";
-import historyStore from "@/js/HistoryStore.js";
+import historyStore from "@/js/TerminalStore.js";
 import TerminalFlash from "@/js/TerminalFlash.js";
 import TerminalAsk from "@/js/TerminalAsk";
 import {
@@ -33,7 +33,7 @@ import {
     textEditorClose,
     textEditorOpen,
     unregister
-} from './js/TerminalInterface';
+} from './js/TerminalApi';
 import {terminalProps} from "@/js/TerminalAttribute";
 import THeader from "@/components/THeader.vue";
 import TViewJson from "@/components/TViewJson.vue";

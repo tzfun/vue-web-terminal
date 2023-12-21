@@ -82,41 +82,41 @@ Example:
 </template>
 
 <script>
-import Terminal from "vue-web-terminal"
-// This style needs to be introduced in versions after 3.2.0 and 2.1.13. 
-// There is no need to introduce theme styles in previous versions.
-import 'vue-web-terminal/lib/theme/dark.css'
+  import Terminal from "vue-web-terminal"
+  // This style needs to be introduced in versions after 3.2.0 and 2.1.13. 
+  // There is no need to introduce theme styles in previous versions.
+  import 'vue-web-terminal/lib/theme/dark.css'
 
-export default {
-  name: 'App',
-  components: {Terminal},
-  methods: {
-    onExecCmd(key, command, success, failed) {
-      if (key === 'fail') {
-        failed('Something wrong!!!')
-      } else {
-        let allClass = ['success', 'error', 'system', 'info', 'warning'];
+  export default {
+    name: 'App',
+    components: {Terminal},
+    methods: {
+      onExecCmd(key, command, success, failed) {
+        if (key === 'fail') {
+          failed('Something wrong!!!')
+        } else {
+          let allClass = ['success', 'error', 'system', 'info', 'warning'];
 
-        let clazz = allClass[Math.floor(Math.random() * allClass.length)];
-        success({
-          type: 'normal',
-          class: clazz,
-          tag: '成功',
-          content: command
-        })
+          let clazz = allClass[Math.floor(Math.random() * allClass.length)];
+          success({
+            type: 'normal',
+            class: clazz,
+            tag: '成功',
+            content: command
+          })
+        }
       }
     }
   }
-}
 </script>
 
 <style>
-body, html, #app {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
+  body, html, #app {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
 ```
 
@@ -136,7 +136,7 @@ import 'vue-web-terminal/lib/theme/light.css'
 
 If you need to customize the theme, you can customize the corresponding css variables.
 
-> Note: Versions before `2.1.12` and `3.1.8` (including) do not support the theme function, 
+> Note: Versions before `2.1.12` and `3.1.8` (including) do not support the theme function,
 > and there is no need to introduce css files.
 
 ## Attributes
@@ -164,13 +164,6 @@ Terminal tag supports attribute parameter table.
 | push-message-before    | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
 | log-size-limit         | Limit the maximum number of displayed logs.                                                                                                                                                                     | number   | 200                                              |
 | enable-default-command | Enable default command handler.                                                                                                                                                                                 | boolean  | true                                             |
-
-> Below are the removed properties
->
-> * ~~**show-log-time**~~: Removed after `2.0.14` and `3.0.13` versions.
-> * ~~**warn-log-byte-limit**~~: Removed after `2.1.0` and `3.1.0`.
-> * ~~**warn-log-limit-enable**~~: Removed after `2.1.1` and `3.1.1`.
-> * ~~**init-log-delay**~~: Removed after `2.1.1` and `3.1.1` versions.
 
 ## Events
 
@@ -253,17 +246,8 @@ This plugin provides some API that can use javascript to actively initiate event
 
 PS: **Global API interface calls need to use the `name` of Terminal.**
 
-Old version compatibility method (not recommended).
 ```js
-import Terminal from "vue-web-terminal"
-
-//  invoke api
-Terminal.$api.pushMessage('my-terminal', 'hello world!')
-```
-
-New version method (recommended).
-```js
-import {api as TerminalApi} from "vue-web-terminal"
+import {TerminalApi} from "vue-web-terminal"
 
 //  invoke api
 TerminalApi.pushMessage('my-terminal', 'hello world!')
@@ -274,18 +258,17 @@ TerminalApi.pushMessage('my-terminal', 'hello world!')
 This method calls all API interfaces without passing in the name
 ```js
 //  vue template code
-<terminal ref='myTerminal'></terminal>
+<terminal ref='myTerminalRef'></terminal>
 
 //  ......
 
-//  vue js code
-this.$refs.myTerminal.pushMessage('hello world!')
-```
+//  vue2 js code
+this.$refs.myTerminalRef.pushMessage('hello world!')
 
-> Removed api
->
-> * ~~**getPosition()**~~: removed after `2.0.14` and `3.0.13`, please use `elementInfo()`.
-> * ~~**updateContext()**~~: removed after `2.1.3` and `3.1.3`, just modify the bound context variable directly.
+//  vue3 js code
+const myTerminalRef = ref()
+myTerminalRef.pushMessage('hello world!')
+```
 
 ### pushMessage()
 
@@ -503,7 +486,7 @@ The code type message can display code and multi-line text more friendly, the ty
 First you need to configure **Highlight.js**, install it at the main.js entry, see [https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
 
 ```js
-import Terminal from 'vue-web-terminal'
+import {Terminal, configHighlight} from 'vue-web-terminal'
 import hljs from 'highlight.js'
 import java from 'highlight.js/lib/languages/java'
 import vuePlugin from "@highlightjs/vue-plugin"
@@ -511,7 +494,8 @@ import 'highlight.js/styles/tomorrow-night-bright.css'
 
 hljs.registerLanguage('java', java)
 Vue.use(vuePlugin)
-Vue.use(Terminal, {highlight: true})
+Vue.use(Terminal)
+configHighlight(true)
 ```
 
 vue2 version dependency recommendation, vue3 just use the latest version.
@@ -530,6 +514,7 @@ vue2 version dependency recommendation, vue3 just use the latest version.
 It also only needs to be installed at the main.js entry. Recommended version: `"vue-codemirror": "^4.0.6"`
 
 ```js
+import {Terminal, configCodemirror} from 'vue-web-terminal'
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/darcula.css'
@@ -537,15 +522,14 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
-Vue.use(Terminal, {
-  codemirror: {
-    tabSize: 4,
-    mode: 'text/x-java',
-    theme: "darcula",
-    lineNumbers: true,
-    line: true,
-    smartIndent: true
-  }
+Vue.use(Terminal)
+configCodemirror({
+  tabSize: 4,
+  mode: 'text/x-java',
+  theme: "darcula",
+  lineNumbers: true,
+  line: true,
+  smartIndent: true
 })
 ```
 
@@ -682,7 +666,8 @@ help :build
 
 ### Local
 
-Terminal has the following built-in commands by default and cannot be replaced.
+Terminal has the following built-in commands by default.
+If you set `enable-default-command` to false, these commands will not work;
 
 ```json
 [
@@ -743,7 +728,9 @@ Terminal has the following built-in commands by default and cannot be replaced.
 
 ### Drag
 
-To enable drag and drop, you need to set `showHeader` to true and configure `dragConf`. You can configure the window size through `width` and `height` of dragConf, and you can control the window initialization position through `init`, the following is a simple example.
+To enable drag and drop, you need to set `show-header` to true and configure `drag-conf`.
+You can configure the window size through `width` and `height` of dragConf,
+and you can control the window initialization position through `init`, the following is a simple example.
 
 ```vue
 <terminal name="my-terminal"
@@ -752,7 +739,7 @@ To enable drag and drop, you need to set `showHeader` to true and configure `dra
 </terminal>
 ```
 
-The complete configuration structure of `dragConf` is as follows:
+The complete configuration structure of `drag-conf` is as follows:
 
 | Prop   | Description                                                                                                                                                      | type          |
 |--------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
@@ -786,7 +773,7 @@ Create a new flash object through `new TerminalFlash()` and pass it into the suc
 * `finish()`: End execution
 
 ```js
-import {Flash as TerminalFlash} from 'vue-web-terminal'
+import {TerminalFlash} from 'vue-web-terminal'
 
 let flash = new TerminalFlash()
 success(flash)
@@ -801,8 +788,6 @@ let flashInterval = setInterval(() => {
   }
 }, 200)
 ```
-
-> The old version of `Terminal.$Flash` is still compatible, but not recommended.
 
 ### User-input
 
@@ -823,7 +808,7 @@ Create a new ask object through `new TerminalAsk()` and pass it into the success
 * `finish()`: End execution
 
 ```js
-import {Ask as TerminalAsk} from 'vue-web-terminal'
+import {TerminalAsk} from 'vue-web-terminal'
 
 let asker = new TerminalAsk()
 success(asker)
@@ -852,7 +837,8 @@ asker.ask({
 
 #### Use API
 
-When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. For details, please refer to the [API](#API) section. The following is a simple example:
+When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`.
+For details, please refer to the [API](#API) section. The following is a simple example:
 
 ```js
 TerminalApi.textEditorOpen('my-terminal', {
@@ -865,7 +851,8 @@ TerminalApi.textEditorOpen('my-terminal', {
 
 #### Slot custom style
 
-If you don't like the default style, you can use Slot to customize the style of the editor (such as changing to Codemirror or VS Code ?), the parameter is `data`, and data has three attributes that you need to care about:
+If you don't like the default style, you can use Slot to customize the style of the editor (such as changing to Codemirror or VS Code ?),
+the parameter is `data`, and data has three attributes that you need to care about:
 
 * `value`: The edited text content, you need to bind it with `v-model` in the editor you implement.
 * `onFoucs`: Get the focus event, you need to bind the `@focus` event in the editor you implement.
@@ -873,7 +860,9 @@ If you don't like the default style, you can use Slot to customize the style of 
 
 **Custom Shortcuts**
 
-The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` to indicate Finish editing and save.
+The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal
+in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S`
+to indicate Finish editing and save.
 
 ```vue
 <template>
@@ -895,47 +884,47 @@ The plugin provides an `onKeydown` event, which is the best way for you to contr
 </template>
 
 <script>
-import {Terminal, api as TerminalApi} from "vue-web-terminal";
-// This style needs to be introduced in versions after 3.1.8 and 2.1.12. 
-// There is no need to introduce theme styles in previous versions.
-import 'vue-web-terminal/lib/theme/dark.css'
+  import {Terminal, TerminalApi} from "vue-web-terminal";
+  // This style needs to be introduced in versions after 3.1.8 and 2.1.12. 
+  // There is no need to introduce theme styles in previous versions.
+  import 'vue-web-terminal/lib/theme/dark.css'
 
-export default {
-  name: "TerminalOldDemo",
-  components: {Terminal},
-  data() {
-    return {
-      name: "my-terminal",
-      enableTextEditor: false
-    }
-  },
-  method: {
-    onExecCmd(key, command, success, failed, name) {
-      if (key === 'edit') {
-        TerminalApi.textEditorOpen(this.name, {
-          content: 'Please edit this file',
-          onClose: (value) => {
-            this.enableTextEditor = false
-            success({
-              type: "code",
-              content: value
-            })
-          }
-        })
-        this.enableTextEditor = true
+  export default {
+    name: "TerminalOldDemo",
+    components: {Terminal},
+    data() {
+      return {
+        name: "my-terminal",
+        enableTextEditor: false
       }
     },
-    onKeydown(event) {
-      if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-        this._textEditorClose(true)
-        event.preventDefault()
+    method: {
+      onExecCmd(key, command, success, failed, name) {
+        if (key === 'edit') {
+          TerminalApi.textEditorOpen(this.name, {
+            content: 'Please edit this file',
+            onClose: (value) => {
+              this.enableTextEditor = false
+              success({
+                type: "code",
+                content: value
+              })
+            }
+          })
+          this.enableTextEditor = true
+        }
+      },
+      onKeydown(event) {
+        if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
+          this._textEditorClose(true)
+          event.preventDefault()
+        }
+      },
+      _textEditorClose(option) {
+        TerminalApi.textEditorClose(this.name, option)
       }
-    },
-    _textEditorClose(option) {
-      TerminalApi.textEditorClose(this.name, option)
     }
   }
-}
 </script>
 ```
 

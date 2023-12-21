@@ -266,6 +266,9 @@ export function _defaultCommandFormatter(cmd) {
                     } else {
                         formatted += char[j]
                     }
+                    if (j === char.length - 1 && char[j] !== '|') {
+                        isCmdKey = false
+                    }
                 }
 
                 formatted += '</span>'

@@ -11,24 +11,24 @@
                   :options="codemirrorConf()"/>
     </div>
     <div v-else class="t-code-default">
-      <pre style="padding: 1em;margin: 0"><code style="font-size: 15px">{{item.content}}</code></pre>
+      <pre style="padding: 1em;margin: 0"><code style="font-size: 15px">{{ item.content }}</code></pre>
     </div>
   </div>
 </template>
 
 <script>
 import {terminalViewerProps} from "@/js/TerminalAttribute";
-import TerminalInterface from "@/js/TerminalInterface";
+import {getOptions} from "@/js/TerminalApi";
 
 export default {
   name: "TViewCode",
   props: terminalViewerProps(),
-  methods:{
+  methods: {
     highlightjsConf() {
-      return TerminalInterface.getOptions().highlight
+      return getOptions().highlight
     },
     codemirrorConf() {
-      return TerminalInterface.getOptions().codemirror
+      return getOptions().codemirror
     }
   }
 }

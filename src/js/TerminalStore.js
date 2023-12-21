@@ -1,8 +1,8 @@
-const instance = new HistoryStore()
+const instance = new TerminalStore()
 //  每个terminal实例最多保存100条记录
 const MAX_STORE_SIZE = 100
 
-function HistoryStore() {
+function TerminalStore() {
     const storageKey = 'terminal'
     let dataMap = window.localStorage.getItem(storageKey)
     if (dataMap == null) {

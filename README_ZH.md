@@ -12,8 +12,7 @@
 <a href="https://npmcharts.com/compare/vue-web-terminal?minimal=true"><img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/vue-web-terminal"><img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version"></a>
 
-一个由 Vue
-构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← →
+一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← →
 光标切换和 ↑ ↓ 历史命令切换。
 
 ## 功能支持
@@ -243,19 +242,8 @@ example:
 
 注意：**全局API接口调用都需要用到Terminal的`name`**
 
-旧版本兼容方式（不推荐）
-
 ```js
-import Terminal from "vue-web-terminal"
-
-//  调用API
-Terminal.$api.pushMessage('my-terminal', 'hello world!')
-```
-
-新版本方式（推荐）
-
-```js
-import {api as TerminalApi} from "vue-web-terminal"
+import {TerminalApi} from "vue-web-terminal"
 
 //  调用API
 TerminalApi.pushMessage('my-terminal', 'hello world!')
@@ -267,12 +255,16 @@ TerminalApi.pushMessage('my-terminal', 'hello world!')
 
 ```js
 //  vue template code
-<terminal ref='myTerminal'></terminal>
+<terminal ref='myTerminalRef'></terminal>
 
 //  ......
 
-//  vue js code
-this.$refs.myTerminal.pushMessage('hello world!')
+//  vue2 js code
+this.$refs.myTerminalRef.pushMessage('hello world!')
+
+//  vue3 js code
+const myTerminalRef = ref()
+myTerminalRef.pushMessage('hello world!')
 ```
 
 ### pushMessage()
@@ -494,7 +486,7 @@ code类型消息支持 `highlight.js` 高亮显示。
 ，在main.js入口安装，详细配置见[https://www.npmjs.com/package/highlight.js](https://www.npmjs.com/package/highlight.js)
 
 ```js
-import Terminal from 'vue-web-terminal'
+import {Terminal, configHighlight} from 'vue-web-terminal'
 import hljs from 'highlight.js'
 import java from 'highlight.js/lib/languages/java'
 import vuePlugin from "@highlightjs/vue-plugin"
@@ -502,7 +494,8 @@ import 'highlight.js/styles/tomorrow-night-bright.css'
 
 hljs.registerLanguage('java', java)
 Vue.use(vuePlugin)
-Vue.use(Terminal, {highlight: true})
+Vue.use(Terminal)
+configHighlight(true)
 ```
 
 vue2版本依赖推荐，vue3使用最新的版本即可
@@ -522,6 +515,7 @@ code类型消息也支持 `codemirror`
 同样只需要在main.js入口安装即可，vue2版本推荐：`"vue-codemirror": "^4.0.6"`
 
 ```js
+import {Terminal, configCodemirror} from 'vue-web-terminal'
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/darcula.css'
@@ -529,15 +523,14 @@ import 'codemirror/mode/clike/clike.js'
 import 'codemirror/addon/edit/closebrackets.js'
 
 Vue.use(VueCodemirror)
-Vue.use(Terminal, {
-    codemirror: {
-        tabSize: 4,
-        mode: 'text/x-java',
-        theme: "darcula",
-        lineNumbers: true,
-        line: true,
-        smartIndent: true
-    }
+Vue.use(Terminal)
+configCodemirror({
+  tabSize: 4,
+  mode: 'text/x-java',
+  theme: "darcula",
+  lineNumbers: true,
+  line: true,
+  smartIndent: true
 })
 ```
 
@@ -676,7 +669,7 @@ help :server
 
 ### 内置命令
 
-Terminal默认内置有以下命令，且不可替代
+Terminal默认内置有以下命令，如果你设置了`enable-default-command`为false，这些命令将不会生效，你可以自定义它们的执行逻辑。
 
 ```json
 [
@@ -781,7 +774,7 @@ Terminal默认的消息都是以追加的模式显示，当你只需要显示执
 * `finish()`: 结束执行
 
 ```js
-import {Flash as TerminalFlash} from 'vue-web-terminal'
+import {TerminalFlash} from 'vue-web-terminal'
 
 let flash = new TerminalFlash()
 success(flash)
@@ -796,8 +789,6 @@ let flashInterval = setInterval(() => {
     }
 }, 200)
 ```
-
-> 旧版本的`Terminal.$Flash`调用方式仍然兼容，但不推荐
 
 ### 用户询问输入
 
@@ -817,7 +808,7 @@ let flashInterval = setInterval(() => {
 * `finish()`: 结束执行
 
 ```js
-import {Ask as TerminalAsk} from 'vue-web-terminal'
+import {TerminalAsk} from 'vue-web-terminal'
 
 let asker = new TerminalAsk()
 success(asker)
@@ -890,7 +881,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 </template>
 
 <script>
-import {Terminal, api as TerminalApi} from "vue-web-terminal";
+import {Terminal, TerminalApi} from "vue-web-terminal";
 //  3.2.0 及 2.1.13 以后版本需要引入此样式，之前版本无需引入主题样式
 import 'vue-web-terminal/lib/theme/dark.css'
 

@@ -1,27 +1,36 @@
-import TerminalComponent from './Terminal.vue'
-import TerminalInterface from './js/TerminalInterface.js'
+import Terminal from './Terminal.vue'
+import TerminalApi, {rename, setOptions, configCodemirror, configHighlight} from './js/TerminalApi.js'
 import JsonViewer from 'vue-json-viewer'
 import TerminalFlash from "@/js/TerminalFlash";
 import TerminalAsk from "@/js/TerminalAsk";
-
-export const Terminal = TerminalComponent;
+import TerminalStore from "@/js/TerminalStore";
 
 Terminal.install = function (Vue, options) {
     Vue.use(JsonViewer)
     if (options != null) {
-        TerminalInterface.setOptions(options)
+        setOptions(options)
     }
-    Terminal.$api = TerminalInterface
+    //  兼容老版本
+    Terminal.$api = TerminalApi
     Terminal.$Flash = TerminalFlash
     Terminal.$Ask = TerminalAsk
     Vue.component(this.name, this);
 }
 
-if (typeof window !== 'undefined' && window.Vue) {
-    Terminal.install(window.Vue);
+export {
+    Terminal,
+    TerminalStore,
+    TerminalApi,
+    TerminalAsk,
+    TerminalFlash,
+    configCodemirror,
+    configHighlight,
+    rename
 }
 
 export default Terminal;
-export const api = TerminalInterface;
+
+//  兼容老版本
+export const api = TerminalApi;
 export const Flash = TerminalFlash;
 export const Ask = TerminalAsk;

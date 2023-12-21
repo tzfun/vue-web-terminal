@@ -1,5 +1,3 @@
-import historyStore from "./HistoryStore.js";
-
 const pool = {};
 let options = {};
 
@@ -19,15 +17,23 @@ function rename(newName, oldName, listener) {
     register(newName, listener);
 }
 
-const TerminalInterface = {
+function configHighlight(config) {
+    options.highlight = config
+}
 
-    setOptions(ops) {
-        options = ops
-    },
+function configCodemirror(config) {
+    options.codemirror = config
+}
 
-    getOptions() {
-        return options
-    },
+function getOptions() {
+    return options
+}
+
+function setOptions(op) {
+    options = {...op}
+}
+
+const TerminalApi = {
 
     post(name = 'terminal', event, options) {
         let listener = pool[name]
@@ -37,51 +43,47 @@ const TerminalInterface = {
     },
 
     pushMessage(name, options) {
-        return TerminalInterface.post(name, 'pushMessage', options)
-    },
-
-    getHistory() {
-        return historyStore
+        return TerminalApi.post(name, 'pushMessage', options)
     },
 
     fullscreen(name) {
-        return TerminalInterface.post(name, "fullscreen")
+        return TerminalApi.post(name, "fullscreen")
     },
 
     isFullscreen(name) {
-        return TerminalInterface.post(name, 'isFullscreen')
+        return TerminalApi.post(name, 'isFullscreen')
     },
 
     dragging(name, options) {
-        return TerminalInterface.post(name, 'dragging', options)
+        return TerminalApi.post(name, 'dragging', options)
     },
 
     execute(name, options) {
-        return TerminalInterface.post(name, 'execute', options)
+        return TerminalApi.post(name, 'execute', options)
     },
 
     focus(name, options) {
-        return TerminalInterface.post(name, 'focus', options)
+        return TerminalApi.post(name, 'focus', options)
     },
 
     elementInfo(name, options) {
-        return TerminalInterface.post(name, 'elementInfo', options)
+        return TerminalApi.post(name, 'elementInfo', options)
     },
 
     textEditorOpen(name, options) {
-        return TerminalInterface.post(name, 'textEditorOpen', options)
+        return TerminalApi.post(name, 'textEditorOpen', options)
     },
 
     textEditorClose(name, options) {
-        return TerminalInterface.post(name, 'textEditorClose', options)
+        return TerminalApi.post(name, 'textEditorClose', options)
     },
 
     clearLog(name, options) {
-        return TerminalInterface.post(name, 'clearLog', options)
+        return TerminalApi.post(name, 'clearLog', options)
     }
 }
 
-export default TerminalInterface;
+export default TerminalApi;
 const {
     pushMessage,
     fullscreen,
@@ -93,7 +95,7 @@ const {
     textEditorClose,
     textEditorOpen,
     clearLog
-} = TerminalInterface;
+} = TerminalApi;
 export {
     register,
     unregister,
@@ -107,5 +109,9 @@ export {
     elementInfo,
     textEditorClose,
     textEditorOpen,
-    clearLog
+    clearLog,
+    configHighlight,
+    configCodemirror,
+    getOptions,
+    setOptions
 }
