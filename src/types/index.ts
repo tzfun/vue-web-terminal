@@ -84,7 +84,9 @@ export type InputFilterFunc = (str1: string, str2: string, event: InputEvent) =>
 
 export type CommandFormatterFunc = (cmd: string) => string
 
-export type TabKeyHandlerFunc = (event: Event) => undefined
+export type CommandModifyFunc = (cmd: string) => any
+
+export type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined
 
 export type SearchHandlerCallbackFunc = (cmd: Command) => void
 

@@ -310,7 +310,13 @@ onMounted(() => {
         if (cursorConf.show) {
           if (key === 'tab') {
             if (props.tabKeyHandler) {
-              props.tabKeyHandler(event)
+              props.tabKeyHandler(event, (cmd: string) => {
+                if (cmd) {
+                  command.value = cmd.trim()
+                } else {
+                  command.value = ''
+                }
+              })
             } else {
               _fillCmd()
             }
