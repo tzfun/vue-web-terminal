@@ -154,7 +154,7 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
     TerminalApi.textEditorOpen(name, {
       content: 'Please edit this file',
       onClose: (value: string, option: boolean) => {
-        console.log("text close, value:", value, "option:", option)
+        console.log("text close, value:", value, ". option:", option)
         success({
           type: 'code',
           content: value

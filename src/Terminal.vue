@@ -342,7 +342,6 @@ onMounted(() => {
   })
 
   _eventOn(terminalWindowRef.value, 'contextmenu', (event: MouseEvent) => {
-    console.log(event)
     event.preventDefault();
 
     if (selectContentText) {
@@ -467,7 +466,6 @@ onMounted(() => {
         }
       }
     } else if (type === 'textEditorOpen') {
-      console.error(options)
       let opt: EditorSetting = options || {}
 
       textEditor.value = opt.content
@@ -558,8 +556,6 @@ const updateHeaderHeight = () => {
     } else {
       headerHeight.value = 0
     }
-
-    console.debug("reset header height", headerHeight.value)
   })
 }
 

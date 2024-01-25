@@ -7,18 +7,7 @@ const props = defineProps({
   modelValue: String
 })
 const emits = defineEmits(['update:modelValue', 'close'])
-const content = ref()
 const textEditorRef = ref()
-onMounted(() => {
-  content.value = props.modelValue
-})
-
-watch(
-    () => content,
-    (v) => {
-      emits('update:modelValue', v)
-    }
-)
 
 const _focus = () => {
   textEditorRef.value.focus()
@@ -39,7 +28,8 @@ defineExpose({
               ref="textEditorRef"
               autofocus
               class="t-text-editor"
-              v-model="content"
+              @input="emits('update:modelValue', $event.target.value)"
+              :value="props.modelValue"
               @focus="(config as EditorConfig).onFocus"
               @blur="(config as EditorConfig).onBlur"/>
     <div class="t-text-editor-floor" align="center">

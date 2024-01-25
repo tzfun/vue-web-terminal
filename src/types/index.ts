@@ -239,7 +239,6 @@ export class TerminalApi {
     }
 
     post(name: string = 'terminal', event: string, options?: any) {
-        console.debug(`Api receive event '${event}' from terminal '${name}' and attach options ${options}`)
         let listener: TerminalApiListenerFunc = this.data.pool[name]
         if (listener != null) {
             return listener(event, options)
