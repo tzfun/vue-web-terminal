@@ -13,7 +13,7 @@ const terminals = ref<any>([
   {
     show: true,
     name: 'terminal-test',
-    context: '/vue-web-terminal/test<br/>123',
+    context: '/vue-web-terminal/test<br/>123/线上服/2',
     dragConf: {
       width: "60%",
       height: "50%",
@@ -183,6 +183,9 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
   } else if (key === 'append') {
     let content = command.split(" ")[1]
     TerminalApi.appendMessage(name, content)
+    success()
+  } else if (key === 'doclear') {
+    TerminalApi.clearLog(name)
     success()
   } else {
     failed("Unknown command: " + key)

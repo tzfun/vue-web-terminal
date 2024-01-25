@@ -146,6 +146,7 @@ export class TerminalFlash extends TerminalCallback {
 //  每个terminal实例最多保存100条记录
 const MAX_STORE_SIZE = 100
 const DEFAULT_STORAGE_KEY = 'terminal'
+
 export class TerminalStore {
     storageKey: string = DEFAULT_STORAGE_KEY
     dataMap: Object
@@ -239,7 +240,7 @@ export class TerminalApi {
 
     post(name: string = 'terminal', event: string, options?: any) {
         console.debug(`Api receive event '${event}' from terminal '${name}' and attach options ${options}`)
-        let listener:TerminalApiListenerFunc = this.data.pool[name]
+        let listener: TerminalApiListenerFunc = this.data.pool[name]
         if (listener != null) {
             return listener(event, options)
         }
@@ -284,6 +285,11 @@ export class TerminalApi {
     textEditorClose(name: string, options?: any): string | any {
         return this.post(name, 'textEditorClose', options)
     }
+
+    clearLog(name: string, options?: any): any {
+        return this.post(name, 'clearLog', options)
+    }
+
 }
 
 export interface EditorSetting {
