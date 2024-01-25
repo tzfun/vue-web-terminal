@@ -449,7 +449,6 @@ export default {
             return this.textEditor.open || this.flash.open || this.ask.open
         },
         _triggerClick(key) {
-            console.debug('trigger click', key)
             if (key === 'fullScreen' && !this.fullscreenState) {
                 this._fullscreen()
             } else if (key === 'minScreen' && this.fullscreenState) {
@@ -457,8 +456,6 @@ export default {
             } else if (key === 'pin' && this.showHeader) {
                 let pinned = this.dragConf.pinned || false
                 this.dragConf.pinned = !pinned;
-
-                console.debug("pin ==>", this.isPinned())
             }
 
             this.$emit('on-click', key, this.getName())
@@ -472,7 +469,6 @@ export default {
                 } else {
                     this.headerHeight = 0
                 }
-                console.debug("reset header height", this.headerHeight)
             })
         },
         _calculateByteLen() {

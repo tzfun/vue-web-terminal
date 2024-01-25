@@ -281,8 +281,6 @@ export function _defaultCommandFormatter(cmd) {
             formatted += "<span>&nbsp;</span>"
         }
     }
-
-    console.log('"' + cmd + '"', split, formatted)
     return formatted
 }
 
