@@ -14,7 +14,12 @@ const _focus = () => {
 }
 
 const _close = (flag) => {
+  InputEvent
   emits('close', flag)
+}
+
+const _updateModelValue = (event:InputEvent) => {
+  emits('update:modelValue', (event.target as HTMLInputElement).value)
 }
 
 defineExpose({
@@ -28,7 +33,7 @@ defineExpose({
               ref="textEditorRef"
               autofocus
               class="t-text-editor"
-              @input="emits('update:modelValue', $event.target.value)"
+              @input="_updateModelValue"
               :value="props.modelValue"
               @focus="(config as EditorConfig).onFocus"
               @blur="(config as EditorConfig).onBlur"/>
