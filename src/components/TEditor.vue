@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, PropType, ref, watch} from "vue";
+import {PropType, ref} from "vue";
 import {EditorConfig} from "../types";
 
 const props = defineProps({
@@ -14,7 +14,6 @@ const _focus = () => {
 }
 
 const _close = (flag) => {
-  InputEvent
   emits('close', flag)
 }
 
