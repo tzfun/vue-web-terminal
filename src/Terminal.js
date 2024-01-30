@@ -990,7 +990,7 @@ export default {
                 if (newStr == null) {
                     newStr = value
                 }
-                this.command = newStr.trim()
+                this.command = newStr
             }
 
             if (_isEmpty(this.command)) {
