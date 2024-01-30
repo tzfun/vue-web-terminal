@@ -8443,10 +8443,10 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue-web-terminal@2.2.1:
-  version "2.2.1"
-  resolved "https://registry.npmjs.org/vue-web-terminal/-/vue-web-terminal-2.2.1.tgz#59acbbd730ea3d4b1f5aceaf82512ab2b8f29ef2"
-  integrity sha512-e+lb5I2zRFF6Qh15NMLhd8t5plM+E9iJmFuqXgqvigPhmAWcm/0EfLhWXEhL8ySKtuqHzTKoKELUHM71s5MltA==
+vue-web-terminal@2.2.2:
+  version "2.2.2"
+  resolved "https://registry.npmjs.org/vue-web-terminal/-/vue-web-terminal-2.2.2.tgz#25dffbfefdab92c61a641bc4b9b201f422a7d7cf"
+  integrity sha512-v+2Ozn6VdMBNm6CcBbYcuebXkumnNNNBlvdln9HT2h+gVywrn5HPX7SIZzs46/GRARx2orshQ70n/mFFVcJLhQ==
   dependencies:
     vue-json-viewer "^2.2.22"
 
