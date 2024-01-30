@@ -1111,7 +1111,7 @@ const _onInput = (e: InputEvent) => {
     if (newStr == null) {
       newStr = value
     }
-    command.value = newStr.trim()
+    command.value = newStr
   }
 
   if (_isEmpty(command.value)) {
