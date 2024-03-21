@@ -160,6 +160,7 @@ terminal标签支持的属性参数表
 | push-message-before    | 在推送消息显示之前触发的钩子函数                                                          | function | function(message, name)                          |
 | log-size-limit         | 限制显示日志的最大条数                                                               | number   | 200                                              |
 | enable-default-command | 控制是否生效默认指令                                                                | boolean  | true                                             |
+| line-height            | 行高，单位px                                                                   | number   | 20                                               |
 
 ## Events
 

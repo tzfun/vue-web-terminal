@@ -164,6 +164,7 @@ Terminal tag supports attribute parameter table.
 | push-message-before    | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
 | log-size-limit         | Limit the maximum number of displayed logs.                                                                                                                                                                     | number   | 200                                              |
 | enable-default-command | Enable default command handler.                                                                                                                                                                                 | boolean  | true                                             |
+| line-height            | Line height, unit px.                                                                                                                                                                                           | number   | 20                                               |
 
 ## Events
 

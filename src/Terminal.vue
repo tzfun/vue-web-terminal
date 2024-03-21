@@ -132,6 +132,11 @@ const props = defineProps({
   enableDefaultCommand: {
     type: Boolean,
     default: true
+  },
+  //  行高，单位px
+  lineHeight: {
+    type: Number,
+    default: 20
   }
 })
 
@@ -1044,8 +1049,8 @@ const _calculateCursorPos = (cmdStr?: string) => {
     pos.left += preWidth
     preWidth = charWidth
     if (pos.left > lineWidth) {
-      //  行高是20px
-      pos.top += 20
+      //  行高默认是20px
+      pos.top += props.lineHeight
       pos.left = charWidth
     }
   }
@@ -1478,7 +1483,7 @@ defineExpose({
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'}`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};line-height: ${lineHeight}px;`"
            ref="terminalWindowRef" @click="_focus" @dblclick="_focus(true)">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
