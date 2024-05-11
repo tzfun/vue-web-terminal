@@ -74,9 +74,11 @@
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" class="cursor t-disable-select" ref="terminalCursor"
+            v-show="cursorConf.show" :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`" ref="terminalCursor"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
-          <input type="text" autofocus="autofocus" v-model="command"
+          <input type="text"
+                 autofocus="autofocus"
+                 v-model="command"
                  class="t-cmd-input t-disable-select"
                  ref="terminalCmdInput"
                  autocomplete="off"

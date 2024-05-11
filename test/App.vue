@@ -5,6 +5,8 @@
       <terminal
           name="test"
           show-header
+          cursor-style="bar"
+          :cursor-blink="true"
           @exec-cmd="onExecCmd">
       </terminal>
     </div>

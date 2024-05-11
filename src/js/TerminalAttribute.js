@@ -162,6 +162,22 @@ export function terminalProps() {
         lineHeight: {
             type: Number,
             default: 20
+        },
+        /**
+         * 光标样式，可选值：
+         * - block
+         * - underline
+         * - bar
+         * - none
+         */
+        cursorStyle: {
+            type: String,
+            default: () => "block"
+        },
+        //  光标闪烁开关
+        cursorBlink: {
+            type: Boolean,
+            default: () => true
         }
     }
 }
