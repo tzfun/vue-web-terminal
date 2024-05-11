@@ -20,7 +20,7 @@
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'}`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};line-height: ${lineHeight}px;`"
            ref="terminalWindow" @click="_focus" @dblclick="_focus(true)">
         <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
@@ -106,7 +106,7 @@
     </div>
 
     <div class="t-text-editor-container" v-if="textEditor.open"
-         :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'}`">
+         :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`">
       <slot name="textEditor" :data="textEditor">
         <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>

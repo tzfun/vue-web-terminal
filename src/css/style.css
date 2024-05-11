@@ -108,7 +108,7 @@
     min-height: 140px;
     padding: 0 20px 0 20px;
     font-weight: 400;
-    line-height: 20px;
+    /*line-height: 20px;*/
     cursor: text;
     background-color: var(--t-main-background-color);
     color: var(--t-main-font-color);

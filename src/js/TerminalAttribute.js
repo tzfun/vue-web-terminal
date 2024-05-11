@@ -157,6 +157,11 @@ export function terminalProps() {
         enableDefaultCommand: {
             type: Boolean,
             default: true
+        },
+        //  行高，单位px
+        lineHeight: {
+            type: Number,
+            default: 20
         }
     }
 }

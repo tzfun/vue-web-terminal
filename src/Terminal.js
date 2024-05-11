@@ -929,8 +929,8 @@ export default {
                 pos.left += preWidth
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
-                    //  行高是20px
-                    pos.top += 20
+                    //  行高默认是20px
+                    pos.top += this.lineHeight
                     pos.left = charWidth
                 }
             }
