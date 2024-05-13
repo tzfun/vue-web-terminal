@@ -1,16 +1,5 @@
 <template>
   <div id="app">
-
-    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">
-      <terminal
-          name="test"
-          show-header
-          cursor-style="bar"
-          :cursor-blink="true"
-          @exec-cmd="onExecCmd">
-      </terminal>
-    </div>
-
     <div v-for="(item,i) in terminals" :key="i">
       <terminal
           v-show="item.show"
@@ -24,8 +13,12 @@
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
+          cursor-style="underline"
+          :cursor-blink="true"
           :log-size-limit="20"
-          :enable-default-command="false"
+          :enable-default-command="true"
+          :line-spac="15"
+          @on-keydown="onKeyDown"
           style="position: fixed">
       </terminal>
     </div>
@@ -34,8 +27,9 @@
 </template>
 
 <script>
-import {TerminalApi, TerminalAsk, Terminal} from '../src/index.js'
+import {Terminal, TerminalApi, TerminalAsk} from '../src/index.js'
 import '../src/css/theme/dark.css'
+import {_html} from "@/js/Util";
 
 export default {
   name: "App",
@@ -162,6 +156,25 @@ export default {
           }
         })
         success()
+      } else if (key === 'json') {
+        success({
+          type: "json",
+          content: {
+            show: true,
+            name: 'terminal-test',
+            context: '/vue-web-terminal/test',
+            dragConf: {
+              width: "60%",
+              height: "50%",
+              zIndex: 100,
+              init: {
+                x: 100,
+                y: 70
+              },
+              pinned: false
+            }
+          }
+        })
       } else if (key === 'ask') {
         let asker = new TerminalAsk()
         success(asker)
@@ -174,6 +187,13 @@ export default {
           }
         })
         TerminalApi.focus()
+      } else if (key === 'err') {
+        failed(_html(new Error("Some error").stack))
+      } else if (key === 'info') {
+        success({
+          type: 'json',
+          content: TerminalApi.elementInfo(name)
+        })
       } else {
         failed("Unknown command: " + key)
       }
@@ -194,6 +214,9 @@ export default {
     },
     _pushMessageBefore(message, name) {
       console.log(message, name)
+    },
+    onKeyDown(e) {
+      console.log(e)
     }
   }
 }

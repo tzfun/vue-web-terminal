@@ -20,9 +20,9 @@
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};line-height: ${lineHeight}px;`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`"
            ref="terminalWindow" @click="_focus" @dblclick="_focus(true)">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
+        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" :style="`margin-top:${lineSpace}px;`">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
@@ -54,12 +54,12 @@
             </div>
           </div>
         </div>
-        <div v-if="flash.open && flash.content">
+        <div v-if="flash.open && flash.content" :style="`margin-top:${lineSpace}px;`">
           <slot name="flash" :content="flash.content">
             <div v-html="flash.content"></div>
           </slot>
         </div>
-        <div v-if="ask.open && ask.question">
+        <div v-if="ask.open && ask.question" :style="`margin-top:${lineSpace}px;`">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
                  ref="terminalAskInput"
@@ -69,7 +69,7 @@
                  auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine">
+        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" :style="`margin-top:${lineSpace}px;`">
           <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>

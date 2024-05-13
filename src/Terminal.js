@@ -14,8 +14,7 @@ import {
     _isSafari,
     _nonEmpty,
     _openUrl,
-    _pointInRect,
-    _unHtml
+    _pointInRect
 } from "./js/Util.js";
 import historyStore from "@/js/TerminalStore.js";
 import TerminalFlash from "@/js/TerminalFlash.js";
@@ -619,7 +618,7 @@ export default {
                     detail += `Description: ${command.description}<br>`
                 }
                 if (_nonEmpty(command.usage)) {
-                    detail += `Usage: <code>${_unHtml(command.usage)}</code><br>`
+                    detail += `Usage: <code>${_html(command.usage)}</code><br>`
                 }
                 if (command.example != null) {
                     if (command.example.length > 0) {
@@ -752,7 +751,7 @@ export default {
                     this._pushMessage({
                         type: MESSAGE_TYPE.NORMAL,
                         class: MESSAGE_CLASS.ERROR,
-                        content: _html(_unHtml(e.stack)),
+                        content: _html(e.stack),
                         tag: 'error'
                     })
                 }
@@ -889,7 +888,7 @@ export default {
 
             this.terminalLog.push({
                 type: "cmdLine",
-                content: `${_unHtml(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
+                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
             });
         },
         _resetCursorPos(cmd) {
@@ -929,8 +928,8 @@ export default {
                 pos.left += preWidth
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
-                    //  行高默认是20px
-                    pos.top += this.lineHeight
+                    //  行高
+                    pos.top += 15
                     pos.left = charWidth
                 }
             }

@@ -158,10 +158,10 @@ export function terminalProps() {
             type: Boolean,
             default: true
         },
-        //  行高，单位px
-        lineHeight: {
+        //  行间距，单位px
+        lineSpace: {
             type: Number,
-            default: 20
+            default: 15
         },
         /**
          * 光标样式，可选值：

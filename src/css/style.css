@@ -1,13 +1,17 @@
 :root {
     --t-point-size: 15px;
+    --t-font-size: 13px;
+}
+
+.t-log-box, .t-cmd-line {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
 }
 
 .t-log-box {
     display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
 }
 
 .t-shell-dot {
@@ -93,7 +97,7 @@
 .t-window p,
 .t-window div,
 .t-crude-font {
-    font-size: 13px;
+    font-size: var(--t-font-size);
     font-family: Monaco, Menlo, Consolas, monospace;
 }
 
@@ -108,7 +112,6 @@
     min-height: 140px;
     padding: 0 20px 0 20px;
     font-weight: 400;
-    /*line-height: 20px;*/
     cursor: text;
     background-color: var(--t-main-background-color);
     color: var(--t-main-font-color);
@@ -140,8 +143,6 @@
 
 .t-window .t-cursor {
     position: absolute;
-    margin-top: 1px;
-    height: 16px;
 }
 
 .t-window .t-cursor-blink {
@@ -160,7 +161,7 @@
     position: absolute;
     background-color: var(--t-cursor-color);
     width: 100%;
-    height: 2px;
+    height: 3px;
     z-index: 100;
     bottom: 0;
     left: 0;
@@ -210,6 +211,7 @@
     position: relative;
     border: none;
     width: 1px;
+    height: 0;
     opacity: 0;
     cursor: text;
     padding: 1px 2px;
@@ -276,7 +278,7 @@
 
 .t-help-msg {
     min-height: 20px;
-    margin: -8px 0 10px 0;
+    margin: 5px 0 10px 0;
     color: var(--t-cmd-help-msg-color);
 }
 
@@ -297,7 +299,7 @@
 }
 
 .t-cmd-line-content {
-    font-size: 13px;
+    font-size: var(--t-font-size);
     word-break: break-all;
 }
 
@@ -353,7 +355,7 @@
     float: left;
     width: 30px;
     display: flex;
-    font-size: 13px;
+    font-size: var(--t-font-size);
     line-height: 26px;
 }
 
@@ -364,7 +366,7 @@
 }
 
 .t-cmd-help-des {
-    font-size: 13px;
+    font-size: var(--t-font-size);
 }
 
 .t-pre-numbering {
@@ -382,9 +384,10 @@
     font-size: 1em;
 }
 
-pre {
+.t-window pre {
     position: relative;
     margin: 0;
+    overflow: auto;
 }
 
 .t-example-ul {
@@ -422,7 +425,7 @@ pre {
 
 .t-vue-codemirror div,
 .t-vue-highlight div {
-    font-size: 14px;
+    font-size: var(--t-font-size);
 }
 
 .t-code .t-vue-codemirror .vue-codemirror .CodeMirror {
@@ -447,7 +450,7 @@ pre {
     margin: 0;
     padding: 0 5px;
     border: none;
-    font-size: 15px;
+    font-size: var(--t-font-size);
     color: var(--t-main-font-color);
     background-color: var(--t-main-background-color);
 }
@@ -540,6 +543,7 @@ pre {
 .t-json-container .jv-container .jv-code,
 .t-json-container .jv-container .jv-code.open {
     padding-bottom: 0;
+    overflow: hidden;
 }
 
 .t-json-container .jv-container {
@@ -579,7 +583,7 @@ pre {
     width: 75px;
     position: absolute;
     margin-left: -150px;
-    font-size: 10px;
+    font-size: var(--t-font-size);
     border-radius: 2px;
     cursor: pointer;
     border: 1px solid var(--t-json-deep-selector-border-color);
