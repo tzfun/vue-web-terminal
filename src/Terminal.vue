@@ -6,11 +6,15 @@ import {
   CommandFormatterFunc,
   CommandStoreSortFunc,
   DragConfig,
-  EditorConfig, EditorSetting, FailedFunc,
+  EditorConfig,
+  EditorSetting,
+  FailedFunc,
   InputFilterFunc,
   Message,
-  Position, PushMessageBeforeFunc,
-  SearchHandlerFunc, SuccessFunc,
+  Position,
+  PushMessageBeforeFunc,
+  SearchHandlerFunc,
+  SuccessFunc,
   TabKeyHandlerFunc,
   TerminalAsk,
   TerminalFlash
@@ -33,7 +37,6 @@ import {
   _openUrl,
   _pointInRect,
   _screenType,
-  _unHtml
 } from "~/common/util.ts";
 import api, {register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS} from "~/common/configuration.ts";
@@ -133,10 +136,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  //  行高，单位px
-  lineHeight: {
+  //  行间距，单位px
+  lineSpace: {
     type: Number,
-    default: 20
+    default: 15
   },
   /**
    * 光标样式，可选值：
@@ -761,7 +764,7 @@ const _printHelp = (regExp: RegExp, srcStr: string) => {
       detail += `Description: ${cmd.description}<br>`
     }
     if (_nonEmpty(cmd.usage)) {
-      detail += `Usage: <code>${_unHtml(cmd.usage)}</code><br>`
+      detail += `Usage: <code>${_html(cmd.usage)}</code><br>`
     }
     if (cmd.example != null) {
       if (cmd.example.length > 0) {
@@ -897,7 +900,7 @@ const _execute = () => {
       _pushMessage({
         type: 'normal',
         class: 'error',
-        content: _html(_unHtml(e.stack)),
+        content: _html(e.stack),
         tag: 'error'
       })
     }
@@ -1023,7 +1026,7 @@ const _saveCurCommand = () => {
 
   terminalLog.value.push({
     type: "cmdLine",
-    content: `${_unHtml(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
+    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
   });
 }
 
@@ -1065,8 +1068,8 @@ const _calculateCursorPos = (cmdStr?: string) => {
     pos.left += preWidth
     preWidth = charWidth
     if (pos.left > lineWidth) {
-      //  行高默认是20px
-      pos.top += props.lineHeight
+      //  行高
+      pos.top += 15
       pos.left = charWidth
     }
   }
@@ -1499,9 +1502,9 @@ defineExpose({
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};line-height: ${lineHeight}px;`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`"
            ref="terminalWindowRef" @click="_focus" @dblclick="_focus(true)">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx">
+        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" :style="`margin-top:${lineSpace}px;`">
           <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="t-prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
@@ -1533,12 +1536,12 @@ defineExpose({
             </div>
           </div>
         </div>
-        <div v-if="flash.open && flash.content">
+        <div v-if="flash.open && flash.content" :style="`margin-top:${lineSpace}px;`">
           <slot name="flash" :content="flash.content">
             <div v-html="flash.content"></div>
           </slot>
         </div>
-        <div v-if="ask.open && ask.question">
+        <div v-if="ask.open && ask.question" :style="`margin-top:${lineSpace}px;`">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
                  ref="terminalAskInputRef"
@@ -1549,12 +1552,17 @@ defineExpose({
                  auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBoxRef" v-show="showInputLine">
+        <p class="t-last-line t-crude-font t-cmd-line"
+           ref="terminalInputBoxRef"
+           v-show="showInputLine"
+           :style="`margin-top:${lineSpace}px;`">
           <span class="t-prompt t-cmd-line-content t-disable-select" ref="terminalInputPromptRef">
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`" ref="terminalCursorRef"
+            v-show="cursorConf.show"
+            :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`"
+            ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text"
                  autofocus

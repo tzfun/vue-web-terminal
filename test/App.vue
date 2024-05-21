@@ -240,6 +240,7 @@ const pushMessageBefore = (message: Message, name: string) => {
           :log-size-limit="20"
           cursor-style="bar"
           :cursor-blink="true"
+          :line-space="15"
           style="position: fixed">
 <!--        <template #header>-->
 <!--          <div class="custom-header">This is custom header</div>-->

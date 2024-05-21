@@ -39,24 +39,6 @@ export function _nonEmpty(value) {
     return !_isEmpty(value)
 }
 
-/**
- * 将字符串中的html标签转译
- *
- * @param str
- * @returns {*|string}
- * @private
- */
-export function _unHtml(str) {
-    return str ? str.replace(/[<">']/g, (a) => {
-        return {
-            '<': '&lt;',
-            '"': '&quot;',
-            '>': '&gt;',
-            "'": '&#39;',
-        }[a]
-    }) : '';
-}
-
 export function _sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
