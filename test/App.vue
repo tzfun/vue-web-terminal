@@ -238,6 +238,8 @@ const pushMessageBefore = (message: Message, name: string) => {
           @on-active="onActive"
           @on-inactive="onInactive"
           :log-size-limit="20"
+          cursor-style="bar"
+          :cursor-blink="true"
           style="position: fixed">
 <!--        <template #header>-->
 <!--          <div class="custom-header">This is custom header</div>-->

@@ -137,6 +137,22 @@ const props = defineProps({
   lineHeight: {
     type: Number,
     default: 20
+  },
+  /**
+   * 光标样式，可选值：
+   * - block
+   * - underline
+   * - bar
+   * - none
+   */
+  cursorStyle: {
+    type: String,
+    default: () => "block"
+  },
+  //  光标闪烁开关
+  cursorBlink: {
+    type: Boolean,
+    default: () => true
   }
 })
 
@@ -1538,7 +1554,7 @@ defineExpose({
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" class="cursor t-disable-select" ref="terminalCursorRef"
+            v-show="cursorConf.show" :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`" ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text"
                  autofocus
