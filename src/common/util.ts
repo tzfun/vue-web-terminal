@@ -218,9 +218,6 @@ export function _openUrl(url: string, pushMessage: Function) {
  * @private
  */
 export function _defaultCommandFormatter(cmd: string): string {
-    if (_isEmpty(cmd)) {
-        return ""
-    }
     //  过滤ASCII 160的空白字符串
     let split = cmd.replace(/\xA0/g, " ").split(" ")
     let formatted = ''
