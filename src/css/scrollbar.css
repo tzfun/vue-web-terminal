@@ -40,6 +40,7 @@
 .t-window pre::-webkit-scrollbar-thumb:hover
 {
     background: rgba(157, 165, 183, 0.7);
+    cursor: pointer;
 }
 
 .t-window::-webkit-scrollbar-track,
