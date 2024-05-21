@@ -206,6 +206,7 @@ export default {
             let content = ''
             if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
                 selectContentText = content.length > 0 ? content : selection.toString()
+                selectContentText = selectContentText.replace(new RegExp(String.fromCharCode(160),'g'), ' ')
             }
         });
         _eventOn(el, 'contextmenu', this.contextMenuClick = (event) => {
