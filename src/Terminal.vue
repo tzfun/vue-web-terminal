@@ -40,7 +40,7 @@ import {
 } from "~/common/util.ts";
 import api, {register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS} from "~/common/configuration.ts";
-import {_parseANSI} from "~/ansi";
+import {_parseANSI, ANSI_BEL} from "~/ansi";
 import store from "~/common/store";
 import THeader from "~/components/THeader.vue";
 import TViewerNormal from "~/components/TViewerNormal.vue";
@@ -362,6 +362,7 @@ onMounted(() => {
     let content = ''
     if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
       selectContentText = content.length > 0 ? content : selection.toString()
+      selectContentText = selectContentText.replace(new RegExp(String.fromCharCode(160), "g"), ' ')
     }
   })
 
