@@ -9,6 +9,7 @@
       :warn-log-count-limit="200"
       :drag-conf="dragConf"
       :show-header="showHeader"
+      :enable-hover-stripe="false"
       @exec-cmd="onExecCmd"
       @on-click="onClick"
       @on-keydown="onKeydown"

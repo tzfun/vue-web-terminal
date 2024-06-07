@@ -8,8 +8,8 @@ export default {
     data() {
         return {
             version: {
-                vue2: '2.2.2',
-                vue3: '3.2.5'
+                vue2: '2.2.4',
+                vue3: '3.2.6'
             },
             cmdStore: [],
             initLog: null,
@@ -195,7 +195,7 @@ export default {
                     content: JSON.stringify(info)
                 })
             } else if (key === 'list') {
-                let allClass = ['success', 'error', 'system', 'info', 'warning'];
+                let allClass = ['system', 'info', 'success', 'warning', 'error'];
                 allClass.forEach(clazz => {
                     TerminalApi.pushMessage(this.name, {
                         type: 'normal',
@@ -245,7 +245,7 @@ export default {
                 this.showFlash(success)
                 return;
             } else if (key === 'ansi') {
-                let ansiContent = 'vue-wen-terminal 支持 ANSI 码的着色解码功能，但暂不支持其他的光标、设备、窗口控制等，默认会将不支持的 ANSI 码过滤。\n\n\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m\n'
+                let ansiContent = 'vue-web-terminal 支持 ANSI 码的着色解码功能，但暂不支持其他的光标、设备、窗口控制等，默认会将不支持的 ANSI 码过滤。\n\n\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m\n'
                 ansiContent += '\nThis is xterm-256-color content:\n'
                 for (let i = 0; i < 256; i++) {
                     ansiContent += ('\x1B[38;5;' + i + 'mV\x1B[0m')
@@ -378,7 +378,7 @@ export default {
                 message = `👉 [${this.guide.step}] 本插件支持ANSI着色控制码的解析，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 8) {
                 this.guide.command = 'flash'
-                message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Falsh使用，请输入<span class="t-cmd-key">${this.guide.command}</span>`
+                message = `👉 [${this.guide.step}] 如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Flash使用，请输入<span class="t-cmd-key">${this.guide.command}</span>`
             } else if (this.guide.step === 9) {
                 this.guide.command = 'edit'
                 message = `👉 [${this.guide.step}] 如果你想编辑文本文件，插件也提供了简单的文本编辑器，请输入<span class="t-cmd-key">${this.guide.command}</span>`
