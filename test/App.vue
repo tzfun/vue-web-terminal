@@ -30,8 +30,8 @@
 
 <script>
 import {Terminal, TerminalApi, TerminalAsk} from '../src/index.js'
-// import '../src/css/theme/dark.css'
-import '../src/css/theme/light.css'
+import '../src/css/theme/dark.css'
+// import '../src/css/theme/light.css'
 import {_html} from "@/js/Util";
 
 export default {

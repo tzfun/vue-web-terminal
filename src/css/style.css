@@ -118,12 +118,6 @@
     color: var(--t-main-font-color);
 }
 
-.t-window .prompt:before {
-    content: "$";
-    margin-right: 10px;
-    word-wrap: break-word;
-}
-
 .t-window p {
     overflow-wrap: break-word;
     word-break: break-all;
@@ -577,24 +571,6 @@
     background-color: var(--t-log-fold-line-color);
     left: -12px;
     top: 10px;
-}
-
-.t-log-fold-char {
-    color: var(--t-log-fold-char-color);
-    background-color: var(--t-log-fold-char-background-color);
-    text-align: center;
-    font-size: 13px;
-    line-height: 4px;
-    margin-left: 5px;
-    margin-top: 1.5px;
-    position: absolute;
-    width: 27px;
-    height: 10px;
-    z-index: 100;
-    border: 1px solid var(--t-log-fold-char-border-color);
-    border-radius: 30px;
-    font-weight: 700;
-    cursor: pointer;
 }
 
 /*--------------------------json viewer style------------------------*/

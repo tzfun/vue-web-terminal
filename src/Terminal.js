@@ -916,8 +916,10 @@ export default {
             }
             if (lastMessage) {
                 //  仅对部分格式的消息可追加
-                if (lastMessage.type === 'normal' || lastMessage.type === 'ansi'
-                    || lastMessage.type === 'code' || lastMessage.type === 'html') {
+                if (lastMessage.type === MESSAGE_TYPE.NORMAL
+                    || lastMessage.type === MESSAGE_TYPE.ANSI
+                    || lastMessage.type === MESSAGE_TYPE.CODE
+                    || lastMessage.type === MESSAGE_TYPE.HTML) {
                     lastMessage.content += message
                 } else {
                     console.warn(`The last message type is ${lastMessage.type}, can not append it and then push it.`)
@@ -945,6 +947,7 @@ export default {
                 type: MESSAGE_TYPE.CMD_LINE,
                 content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
             });
+            this._jumpToBottom()
         },
         _resetCursorPos(cmd) {
             this._calculateByteLen()
@@ -983,7 +986,7 @@ export default {
                 pos.left += preWidth
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
-                    //  行高
+                    //  行高 对应css变量 --t-point-size
                     pos.top += 15
                     pos.left = charWidth
                 }

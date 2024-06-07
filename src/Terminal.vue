@@ -20,11 +20,13 @@
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`"
-           ref="terminalWindow" @click="_focus" @dblclick="_focus(true)">
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 0 0 20px;' : 'padding:5px 10px;'}`"
+           ref="terminalWindow"
+           @click="_focus"
+           @dblclick="_focus(true)">
         <div v-for="(group, groupIdx) in terminalLog"
              :key="groupIdx"
-             :class="`t-log-box t-log-fold-container ${enableHoverStripe ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
+             :class="`t-log-box t-log-fold-container ${enableHoverStripe && group.logs.length > 1 ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
              :style="`margin-top:${lineSpace}px;`">
           <span v-if="enableFold && group.tag !== 'init' && group.logs.length > 1">
             <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
@@ -32,11 +34,13 @@
             <span class="t-log-fold-line" v-if="!group.fold"/>
           </span>
 
-          <div class="t-log-group" v-for="(item,idx) in group.logs" v-bind:key="idx" :style="`margin-top:${lineSpace}px;`" @click="_closeGroupFold(group)">
-            <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
-              <span class="prompt t-cmd-line-content"><span v-html="item.content"/></span>
-              <span class="t-log-fold-char" v-if="group.fold">...</span>
-            </span>
+          <div v-for="(item,idx) in group.logs"
+               :key="idx"
+               :style="`margin-top:${lineSpace}px;`"
+               @click="_closeGroupFold(group)">
+            <span v-if="item.type === 'cmdLine'"
+                  class="t-crude-font t-cmd-line t-cmd-line-content"
+                  v-html="item.content"/>
             <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
