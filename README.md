@@ -164,6 +164,11 @@ Terminal tag supports attribute parameter table.
 | push-message-before    | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
 | log-size-limit         | Limit the maximum number of displayed logs.                                                                                                                                                                     | number   | 200                                              |
 | enable-default-command | Enable default command handler.                                                                                                                                                                                 | boolean  | true                                             |
+| line-space             | Log line height, in `px`.                                                                                                                                                                                       | number   | 15                                               |
+| cursor-style           | Cursor style, optional values: `block`, `underline`, `bar`, `none`                                                                                                                                              | string   | block                                            |
+| cursor-blink           | Whether to turn on cursor blinking.                                                                                                                                                                             | boolean  | true                                             |
+| enable-fold            | Whether to enable the log folding function.                                                                                                                                                                     | boolean  | true                                             |
+| enable-hover-stripe    | Whether the logs in the same group are highlighted when the mouse hovers.                                                                                                                                       | boolean  | false                                            |
 
 ## Events
 
@@ -424,6 +429,22 @@ TerminalApi.clearLog('my-terminal')
 
 //  clear history log
 TerminalApi.clearLog('my-terminal', true)
+```
+
+### getCommand()
+
+Get the command currently being entered.
+
+```js
+TerminalApi.getCommand('my-terminal')
+```
+
+### setCommand()
+
+Set the command currently being entered.
+
+```js
+TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
 ## Message
