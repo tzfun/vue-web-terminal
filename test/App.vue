@@ -251,7 +251,7 @@ const setCommand = () => {
           :log-size-limit="20"
           cursor-style="bar"
           :cursor-blink="true"
-          :line-space="0"
+          :line-space="15"
           enable-hover-stripe
           :enable-fold="true"
           style="position: fixed">
