@@ -251,7 +251,9 @@ const setCommand = () => {
           :log-size-limit="20"
           cursor-style="bar"
           :cursor-blink="true"
-          :line-space="15"
+          :line-space="0"
+          enable-hover-stripe
+          :enable-fold="true"
           style="position: fixed">
         <!--        <template #header>-->
         <!--          <div class="custom-header">This is custom header</div>-->

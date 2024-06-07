@@ -10,7 +10,7 @@ import {
   EditorSetting,
   FailedFunc,
   InputFilterFunc,
-  Message,
+  Message, MessageGroup,
   Position,
   PushMessageBeforeFunc,
   SearchHandlerFunc,
@@ -156,7 +156,17 @@ const props = defineProps({
   cursorBlink: {
     type: Boolean,
     default: () => true
-  }
+  },
+  //  命令折叠开关
+  enableFold: {
+    type: Boolean,
+    default: () => true
+  },
+  //  鼠标hover时分组高亮开关
+  enableHoverStripe: {
+    type: Boolean,
+    default: () => false
+  },
 })
 
 const draggable = computed<boolean>(() => {
@@ -204,7 +214,7 @@ const byteLen = reactive({
   cn: 13
 })
 const showInputLine = ref<boolean>(true)
-const terminalLog = ref<Message[]>([])
+const terminalLog = ref<MessageGroup[]>([])
 const searchCmdResult = reactive({
   //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
   show: false,
@@ -277,6 +287,7 @@ onMounted(() => {
   _initContainerStyle()
 
   if (props.initLog) {
+    _newTerminalLogGroup('init')
     _pushMessage(props.initLog)
   }
 
@@ -522,14 +533,6 @@ onUnmounted(() => {
   }
   unregister(getName())
 })
-
-watch(
-    () => terminalLog,
-    () => _jumpToBottom(),
-    {
-      deep: true
-    }
-)
 
 watch(
     () => props.context,
@@ -941,6 +944,18 @@ const _filterMessageType = (message: Message) => {
   return valid
 }
 
+const _newTerminalLogGroup = (tag?: string): MessageGroup => {
+  let newGroup: MessageGroup = {
+    fold: false,
+    logs: []
+  }
+  if (tag) {
+    newGroup.tag = tag
+  }
+  terminalLog.value.push(newGroup)
+  return newGroup
+}
+
 const _pushMessage = (message: Message | Array<Message> | string) => {
   if (!message) return
   if (message instanceof Array) {
@@ -977,13 +992,22 @@ const _pushMessage0 = (message: Message) => {
     props.pushMessageBefore(message, getName())
   }
 
-  terminalLog.value.push(message)
+  let terminalLogLength = terminalLog.value.length
+  if (terminalLogLength === 0) {
+    _newTerminalLogGroup()
+  }
+  terminalLogLength = terminalLog.value.length
+  let logGroup = terminalLog.value[terminalLogLength - 1]
+  logGroup.logs.push(message)
+
   //  留 10% 的缓冲
   let limit = Math.floor(props.logSizeLimit * 1.1)
-  if (limit > 0 && terminalLog.value.length > limit) {
-    let left = terminalLog.value.length - props.logSizeLimit
+  if (limit > 0 && terminalLogLength > limit) {
+    let left = terminalLogLength - props.logSizeLimit
     terminalLog.value.splice(0, left)
   }
+
+  _jumpToBottom()
 }
 
 /**
@@ -994,9 +1018,15 @@ const _pushMessage0 = (message: Message) => {
 const _appendMessage = (message: string) => {
   let lastMessage: Message
   for (let i = terminalLog.value.length - 1; i >= 0; i--) {
-    let message = terminalLog.value[i]
-    if (message.type !== 'cmdLine') {
-      lastMessage = message
+    let group = terminalLog.value[i]
+    for (let j = group.logs.length - 1; j>=0;j--) {
+      let message = group.logs[j]
+      if (message.type !== 'cmdLine') {
+        lastMessage = message
+        break
+      }
+    }
+    if (lastMessage) {
       break
     }
   }
@@ -1029,10 +1059,13 @@ const _saveCurCommand = () => {
     store.push(getName(), command.value)
   }
 
-  terminalLog.value.push({
+  let group = _newTerminalLogGroup()
+
+  group.logs.push({
     type: "cmdLine",
     content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
   });
+  _jumpToBottom()
 }
 
 const _resetCursorPos = (cmd?: string) => {
@@ -1073,7 +1106,7 @@ const _calculateCursorPos = (cmdStr?: string) => {
     pos.left += preWidth
     preWidth = charWidth
     if (pos.left > lineWidth) {
-      //  行高
+      //  行高 对应 css 变量 --t-point-size
       pos.top += 15
       pos.left = charWidth
     }
@@ -1494,6 +1527,12 @@ const _setCommand = (cmd: any) => {
   }
 }
 
+const _closeGroupFold = (group: MessageGroup) => {
+  if (props.enableFold && group.fold) {
+    group.fold = false
+  }
+}
+
 defineExpose({
   pushMessage: _pushMessage,
   fullscreen: _fullscreen,
@@ -1536,37 +1575,54 @@ defineExpose({
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`"
-           ref="terminalWindowRef" @click="_focus" @dblclick="_focus(true)">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" :style="`margin-top:${lineSpace}px;`">
-          <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 0 0 20px;' : 'padding:5px 10px;'}`"
+           ref="terminalWindowRef"
+           @click="_focus"
+           @dblclick="_focus(true)">
+        <div class="t-log-box"
+             v-for="(group,groupIdx) in terminalLog"
+             :key="groupIdx"
+             :class="`t-log-box t-log-fold-container ${enableHoverStripe ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
+             :style="`margin-top:${lineSpace}px;`">
+          <span v-if="enableFold && group.tag !== 'init' && group.logs.length > 1">
+            <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
+            <span class="t-log-fold-icon" v-else @click="group.fold = true">-</span>
+            <span class="t-log-fold-line" v-if="!group.fold"/>
+          </span>
+          <div class="t-log-group"
+               v-for="(item,idx) in group.logs"
+               :key="idx"
+               :style="`margin-top:${lineSpace}px;`"
+               @click="_closeGroupFold(group)">
+            <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
               <span class="t-prompt t-cmd-line-content"><span v-html="item.content"></span></span>
           </span>
-          <div v-else>
+            <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
-                <t-viewer-normal :message="item"></t-viewer-normal>
+                <t-viewer-normal :message="item"/>
               </slot>
             </span>
-            <div v-else-if="item.type === 'json'">
-              <slot name="json" :message="item">
-                <t-viewer-json :message="item" :idx="idx"></t-viewer-json>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'code'">
-              <slot name="code" :message="item">
-                <t-viewer-code :message="item" :idx="idx"></t-viewer-code>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'table'">
-              <slot name="table" :message="item">
-                <t-viewer-table :message="item" :idx="idx"></t-viewer-table>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'html'">
-              <slot name="html" :message="item">
-                <div v-html="item.content"></div>
-              </slot>
+              <div v-else-if="item.type === 'json'">
+                <slot name="json" :message="item">
+                  <t-viewer-json :message="item" :idx="idx"/>
+                </slot>
+              </div>
+              <div v-else-if="item.type === 'code'">
+                <slot name="code" :message="item">
+                  <t-viewer-code :message="item"/>
+                </slot>
+              </div>
+              <div v-else-if="item.type === 'table'">
+                <slot name="table" :message="item">
+                  <t-viewer-table :message="item"/>
+                </slot>
+              </div>
+              <div v-else-if="item.type === 'html'">
+                <slot name="html" :message="item">
+                  <div v-html="item.content"></div>
+                </slot>
+              </div>
             </div>
           </div>
         </div>

@@ -12,6 +12,8 @@
 
 .t-log-box {
     display: block;
+    position: relative;
+    line-height: var(--t-point-size);
 }
 
 .t-shell-dot {
@@ -98,7 +100,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
-    font-family: Monaco, Menlo, Consolas, monospace;
+    /*font-family: Monaco, Menlo, Consolas, monospace;*/
 }
 
 .t-window {
@@ -110,7 +112,6 @@
     z-index: 1;
     max-height: none;
     min-height: 140px;
-    padding: 0 20px 0 20px;
     font-weight: 400;
     cursor: text;
     background-color: var(--t-main-background-color);
@@ -237,7 +238,7 @@
 .t-content-normal .warning,
 .t-content-normal .info,
 .t-content-normal .system {
-    padding: 2px 3px;
+    padding: 0 3px;
     color: var(--t-tag-font-color);
 }
 
@@ -274,6 +275,7 @@
     word-spacing: 0;
     letter-spacing: 0;
     position: relative;
+    line-height: var(--t-point-size);
 }
 
 .t-help-msg {
@@ -285,7 +287,7 @@
 /*手机*/
 @media screen and (max-width: 768px ) {
     .t-window {
-        padding: 0 15px 0 15px;
+        padding: 0 0 0 15px;
     }
 }
 
@@ -500,7 +502,7 @@
 .t-point {
     width: var(--t-point-size);
     height: var(--t-point-size);
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0, 0, 0, 0);
     position: absolute;
     z-index: 100;
 }
@@ -531,6 +533,69 @@
 
 .t-code-default {
     background-color: var(--t-code-default-background-color);
+}
+
+.t-log-box-hover-script:hover {
+    background-color: var(--t-log-box-hover-script-background-color);
+}
+
+.t-log-box-folded:hover {
+    background-color:var(--t-log-box-folded-hover-background-color);
+}
+
+.t-log-box-folded {
+    height: var(--t-point-size);
+    overflow-y: clip;
+    background-color: var(--t-log-box-folded-background-color);
+    cursor: pointer;
+}
+
+.t-log-fold-icon {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: -17px;
+    top: 2px;
+    border: 1px solid var(--t-log-fold-icon-border-color);
+    text-align: center;
+    line-height: 10px;
+    background-color: var(--t-log-fold-icon-background-color);
+    color: var(--t-log-fold-icon-color);
+    cursor: pointer;
+    user-select: none;
+    z-index: 100;
+}
+
+.t-log-fold-icon-active {
+    background-color: var(--t-log-fold-icon-active-background-color);
+    color: var(--t-log-fold-icon-active-color);
+}
+
+.t-log-fold-line {
+    position: absolute;
+    height: calc(100% - 10px);
+    width: 1px;
+    background-color: var(--t-log-fold-line-color);
+    left: -12px;
+    top: 10px;
+}
+
+.t-log-fold-char {
+    color: var(--t-log-fold-char-color);
+    background-color: var(--t-log-fold-char-background-color);
+    text-align: center;
+    font-size: 13px;
+    line-height: 4px;
+    margin-left: 5px;
+    margin-top: 1.5px;
+    position: absolute;
+    width: 27px;
+    height: 10px;
+    z-index: 100;
+    border: 1px solid var(--t-log-fold-char-border-color);
+    border-radius: 30px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
 /*--------------------------json viewer style------------------------*/

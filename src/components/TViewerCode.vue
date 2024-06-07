@@ -4,8 +4,7 @@ import {Message} from "~/types";
 import {getOptions} from "~/common/api";
 
 defineProps({
-  message: Object as PropType<Message>,
-  idx: [Number, String]
+  message: Object as PropType<Message>
 })
 
 const getHighlight = computed(() => {

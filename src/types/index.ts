@@ -63,6 +63,12 @@ export type MessageContentTable = {
     rows: string[][]
 }
 
+export type MessageGroup = {
+    fold: boolean,
+    logs: Message[],
+    tag?: string
+}
+
 export type Message = {
     type?: 'normal' | 'json' | 'code' | 'table' | 'html' | 'ansi' | 'cmdLine'
     content: string | number | object | MessageContentTable | Array<any>
