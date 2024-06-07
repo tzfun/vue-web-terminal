@@ -211,9 +211,20 @@ const pushMessageBefore = (message: Message, name: string) => {
   console.log(message, name)
 }
 
+const getCommand = () => {
+  console.log("The current command is[", TerminalApi.getCommand(terminals.value[0].name), "]")
+}
+
+const setCommand = () => {
+  TerminalApi.setCommand(terminals.value[0].name, "The custom command -a xxx")
+}
+
 </script>
 <template>
   <div id="app">
+
+    <button @click="getCommand">get command</button>
+    <button @click="setCommand">set command</button>
 
     <!--    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">-->
     <!--      <terminal-->
@@ -242,9 +253,9 @@ const pushMessageBefore = (message: Message, name: string) => {
           :cursor-blink="true"
           :line-space="15"
           style="position: fixed">
-<!--        <template #header>-->
-<!--          <div class="custom-header">This is custom header</div>-->
-<!--        </template>-->
+        <!--        <template #header>-->
+        <!--          <div class="custom-header">This is custom header</div>-->
+        <!--        </template>-->
       </terminal>
     </div>
   </div>
@@ -260,7 +271,8 @@ body, html, #app {
   font-family: Menlo, Consolas, monospace;
   overflow: auto;
 }
-.custom-header{
+
+.custom-header {
   background-color: #0eb4b4;
   color: white;
   text-align: center;

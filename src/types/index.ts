@@ -289,6 +289,13 @@ export class TerminalApi {
         return this.post(name, 'clearLog', options)
     }
 
+    getCommand(name: string, options?: any): string {
+        return this.post(name, 'getCommand', options)
+    }
+
+    setCommand(name: string, options?: any): string | any {
+        return this.post(name, 'setCommand', options)
+    }
 }
 
 export interface EditorSetting {

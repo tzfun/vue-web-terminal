@@ -501,6 +501,10 @@ onMounted(() => {
       return _textEditorClose(options)
     } else if (type === 'clearLog') {
       return _clearLog(options)
+    } else if (type === 'getCommand') {
+      return _getCommand()
+    } else if (type === 'setCommand') {
+      return _setCommand(options)
     } else {
       console.error(`Unsupported event type ${type} in instance ${getName()}`)
     }
@@ -1459,6 +1463,35 @@ const _onActive = () => {
 
 const _onInactive = () => {
   emits('on-inactive', getName())
+}
+
+const _getCommand = () => {
+  return command.value
+}
+
+const _setCommand = (cmd: any) => {
+  if(ask.open) {
+    console.error("Cannot call 'setCommand' api in ask mode")
+    return
+  } else if(textEditor.open) {
+    console.error("Cannot call 'setCommand' api in editor mode")
+    return
+  } else if(flash.open) {
+    console.error("Cannot call 'setCommand' api in flash mode")
+    return
+  }
+  if (cmd) {
+    command.value = cmd.toString()
+    nextTick(() => {
+      _resetCursorPos()
+      let input = terminalCmdInputRef.value
+      input.focus()
+      let cursorPos = command.value.length
+      input.setSelectionRange(cursorPos,cursorPos)
+    })
+  } else {
+    console.warn("The parameter received by the 'setCommand' api is undefined")
+  }
 }
 
 defineExpose({
