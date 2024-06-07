@@ -160,7 +160,11 @@ terminal标签支持的属性参数表
 | push-message-before    | 在推送消息显示之前触发的钩子函数                                                          | function | function(message, name)                          |
 | log-size-limit         | 限制显示日志的最大条数                                                               | number   | 200                                              |
 | enable-default-command | 控制是否生效默认指令                                                                | boolean  | true                                             |
-| line-height            | 行高，单位px                                                                   | number   | 20                                               |
+| line-space             | 日志行高，单位px                                                                 | number   | 15                                               |
+| cursor-style           | 光标样式，可选值：`block`, `underline`, `bar`, `none`                              | string   | block                                            |
+| cursor-blink           | 是否打开光标闪烁                                                                  | boolean  | true                                             |
+| enable-fold            | 是否打开日志折叠功能                                                                | boolean  | true                                             |
+| enable-hover-stripe    | 同一组的日志在鼠标hover时是否高亮显示                                                     | boolean  | false                                            |
 
 ## Events
 
@@ -421,6 +425,22 @@ TerminalApi.clearLog('my-terminal')
 
 //  clear history log
 TerminalApi.clearLog('my-terminal', true)
+```
+
+### getCommand()
+
+获取当前正在输入的指令
+
+```js
+TerminalApi.getCommand('my-terminal')
+```
+
+### setCommand()
+
+修改当前正在输入的指令
+
+```js
+TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
 ## 消息对象

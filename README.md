@@ -82,41 +82,41 @@ Example:
 </template>
 
 <script>
-import Terminal from "vue-web-terminal"
-// This style needs to be introduced in versions after 3.2.0 and 2.1.13. 
-// There is no need to introduce theme styles in previous versions.
-import 'vue-web-terminal/lib/theme/dark.css'
+  import Terminal from "vue-web-terminal"
+  // This style needs to be introduced in versions after 3.2.0 and 2.1.13. 
+  // There is no need to introduce theme styles in previous versions.
+  import 'vue-web-terminal/lib/theme/dark.css'
 
-export default {
-  name: 'App',
-  components: {Terminal},
-  methods: {
-    onExecCmd(key, command, success, failed) {
-      if (key === 'fail') {
-        failed('Something wrong!!!')
-      } else {
-        let allClass = ['success', 'error', 'system', 'info', 'warning'];
+  export default {
+    name: 'App',
+    components: {Terminal},
+    methods: {
+      onExecCmd(key, command, success, failed) {
+        if (key === 'fail') {
+          failed('Something wrong!!!')
+        } else {
+          let allClass = ['success', 'error', 'system', 'info', 'warning'];
 
-        let clazz = allClass[Math.floor(Math.random() * allClass.length)];
-        success({
-          type: 'normal',
-          class: clazz,
-          tag: '成功',
-          content: command
-        })
+          let clazz = allClass[Math.floor(Math.random() * allClass.length)];
+          success({
+            type: 'normal',
+            class: clazz,
+            tag: '成功',
+            content: command
+          })
+        }
       }
     }
   }
-}
 </script>
 
 <style>
-body, html, #app {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-}
+  body, html, #app {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
 ```
 
@@ -164,7 +164,11 @@ Terminal tag supports attribute parameter table.
 | push-message-before    | A hook function that fires before the push message is displayed.                                                                                                                                                | function | function(message, name)                          |
 | log-size-limit         | Limit the maximum number of displayed logs.                                                                                                                                                                     | number   | 200                                              |
 | enable-default-command | Enable default command handler.                                                                                                                                                                                 | boolean  | true                                             |
-| line-height            | Line height, unit px.                                                                                                                                                                                           | number   | 20                                               |
+| line-space             | Log line height, in `px`.                                                                                                                                                                                       | number   | 15                                               |
+| cursor-style           | Cursor style, optional values: `block`, `underline`, `bar`, `none`                                                                                                                                              | string   | block                                            |
+| cursor-blink           | Whether to turn on cursor blinking.                                                                                                                                                                             | boolean  | true                                             |
+| enable-fold            | Whether to enable the log folding function.                                                                                                                                                                     | boolean  | true                                             |
+| enable-hover-stripe    | Whether the logs in the same group are highlighted when the mouse hovers.                                                                                                                                       | boolean  | false                                            |
 
 ## Events
 
@@ -425,6 +429,22 @@ TerminalApi.clearLog('my-terminal')
 
 //  clear history log
 TerminalApi.clearLog('my-terminal', true)
+```
+
+### getCommand()
+
+Get the command currently being entered.
+
+```js
+TerminalApi.getCommand('my-terminal')
+```
+
+### setCommand()
+
+Set the command currently being entered.
+
+```js
+TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
 ## Message
@@ -729,8 +749,8 @@ If you set `enable-default-command` to false, these commands will not work;
 
 ### Drag
 
-To enable drag and drop, you need to set `show-header` to true and configure `drag-conf`. 
-You can configure the window size through `width` and `height` of dragConf, 
+To enable drag and drop, you need to set `show-header` to true and configure `drag-conf`.
+You can configure the window size through `width` and `height` of dragConf,
 and you can control the window initialization position through `init`, the following is a simple example.
 
 ```vue
@@ -838,7 +858,7 @@ asker.ask({
 
 #### Use API
 
-When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`. 
+When you want to edit multi-line text, you can use the API: `textEditorOpen()`, `textEditorClose()`.
 For details, please refer to the [API](#API) section. The following is a simple example:
 
 ```js
@@ -861,8 +881,8 @@ the parameter is `data`, and data has three attributes that you need to care abo
 
 **Custom Shortcuts**
 
-The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal 
-in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S` 
+The plugin provides an `onKeydown` event, which is the best way for you to control the shortcut keys of the Terminal
+in **active state**, here we take the text editor as an example, set the user to press the shortcut key `Ctrl + S`
 to indicate Finish editing and save.
 
 ```vue
