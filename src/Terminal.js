@@ -206,7 +206,7 @@ export default {
             let content = ''
             if (!selection.isCollapsed || (content = selection.toString()).length > 0) {
                 selectContentText = content.length > 0 ? content : selection.toString()
-                selectContentText = selectContentText.replace(new RegExp(String.fromCharCode(160),'g'), ' ')
+                selectContentText = selectContentText.replace(new RegExp(String.fromCharCode(160), 'g'), ' ')
             }
         });
         _eventOn(el, 'contextmenu', this.contextMenuClick = (event) => {
@@ -343,6 +343,10 @@ export default {
                 return this._textEditorClose(options)
             } else if (type === 'clearLog') {
                 return this.clearLog(options)
+            } else if (type === 'getCommand') {
+                return this.getCommand()
+            } else if (type === 'setCommand') {
+                return this.setCommand(options)
             } else {
                 console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
             }
@@ -416,6 +420,33 @@ export default {
             } else {
                 this.terminalLog = [];
             }
+        },
+        getCommand() {
+            return this.command
+        },
+        setCommand(cmd) {
+            if (this.ask.open) {
+                console.error("Cannot call 'setCommand' api in ask mode")
+                return
+            } else if (this.textEditor.open) {
+                console.error("Cannot call 'setCommand' api in editor mode")
+                return
+            } else if (this.flash.open) {
+                console.error("Cannot call 'setCommand' api in flash mode")
+                return
+            }
+            if (cmd) {
+                this.command = cmd.toString()
+                this.$nextTick(() => {
+                    this._resetCursorPos()
+                    let input = this.$refs.terminalCmdInput
+                    input.focus()
+                    input.setSelectionRange(this.command.length, this.command.length)
+                })
+            } else {
+                console.warn("The parameter received by the 'setCommand' api is undefined")
+            }
+            return this.command
         },
         getName() {
             if (this.name) {

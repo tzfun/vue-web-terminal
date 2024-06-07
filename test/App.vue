@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <button @click="_getCommand">get command</button>
+    <button @click="_setCommand">set command</button>
     <div v-for="(item,i) in terminals" :key="i">
       <terminal
           v-show="item.show"
@@ -215,8 +217,13 @@ export default {
     _pushMessageBefore(message, name) {
       console.log(message, name)
     },
-    onKeyDown(e) {
-      console.log(e)
+    onKeyDown() {
+    },
+    _getCommand() {
+      console.log("Current command is[", TerminalApi.getCommand(this.terminals[0].name), "]")
+    },
+    _setCommand() {
+      TerminalApi.setCommand(this.terminals[0].name, "hello this is a new command -a xxx")
     }
   }
 }

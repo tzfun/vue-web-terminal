@@ -80,6 +80,14 @@ const TerminalApi = {
 
     clearLog(name, options) {
         return TerminalApi.post(name, 'clearLog', options)
+    },
+
+    getCommand(name, options) {
+        return TerminalApi.post(name, 'getCommand', options)
+    },
+
+    setCommand(name, options) {
+        return TerminalApi.post(name, 'setCommand', options)
     }
 }
 
@@ -94,7 +102,9 @@ const {
     elementInfo,
     textEditorClose,
     textEditorOpen,
-    clearLog
+    clearLog,
+    getCommand,
+    setCommand
 } = TerminalApi;
 export {
     register,
@@ -113,5 +123,7 @@ export {
     configHighlight,
     configCodemirror,
     getOptions,
-    setOptions
+    setOptions,
+    getCommand,
+    setCommand
 }
