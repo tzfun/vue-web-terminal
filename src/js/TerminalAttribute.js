@@ -178,6 +178,16 @@ export function terminalProps() {
         cursorBlink: {
             type: Boolean,
             default: () => true
+        },
+        //  命令折叠开关
+        enableFold: {
+            type: Boolean,
+            default: () => true
+        },
+        //  鼠标hover时分组高亮开关
+        enableHoverStripe: {
+            type: Boolean,
+            default: () => false
         }
     }
 }

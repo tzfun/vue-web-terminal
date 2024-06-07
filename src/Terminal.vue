@@ -22,35 +22,47 @@
       <div class="t-window"
            :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`"
            ref="terminalWindow" @click="_focus" @dblclick="_focus(true)">
-        <div class="t-log-box" v-for="(item,idx) in terminalLog" v-bind:key="idx" :style="`margin-top:${lineSpace}px;`">
-          <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
-              <span class="prompt t-cmd-line-content"><span v-html="item.content"></span></span>
+        <div v-for="(group, groupIdx) in terminalLog"
+             :key="groupIdx"
+             :class="`t-log-box t-log-fold-container ${enableHoverStripe ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
+             :style="`margin-top:${lineSpace}px;`">
+          <span v-if="enableFold && group.tag !== 'init' && group.logs.length > 1">
+            <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
+            <span class="t-log-fold-icon" v-else @click="group.fold = true">-</span>
+            <span class="t-log-fold-line" v-if="!group.fold"/>
           </span>
-          <div v-else>
+
+          <div class="t-log-group" v-for="(item,idx) in group.logs" v-bind:key="idx" :style="`margin-top:${lineSpace}px;`" @click="_closeGroupFold(group)">
+            <span v-if="item.type === 'cmdLine'" class="t-crude-font t-cmd-line">
+              <span class="prompt t-cmd-line-content"><span v-html="item.content"/></span>
+              <span class="t-log-fold-char" v-if="group.fold">...</span>
+            </span>
+            <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
-                <t-view-normal :item="item"></t-view-normal>
+                <t-view-normal :item="item"/>
               </slot>
             </span>
-            <div v-else-if="item.type === 'json'">
-              <slot name="json" :message="item">
-                <t-view-json :item="item" :idx="idx"></t-view-json>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'code'">
-              <slot name="code" :message="item">
-                <t-view-code :item="item" :idx="idx"></t-view-code>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'table'">
-              <slot name="table" :message="item">
-                <t-view-table :item="item" :idx="idx"></t-view-table>
-              </slot>
-            </div>
-            <div v-else-if="item.type === 'html'">
-              <slot name="html" :message="item">
-                <div v-html="item.content"></div>
-              </slot>
+              <div v-else-if="item.type === 'json'">
+                <slot name="json" :message="item">
+                  <t-view-json :item="item" :idx="idx"/>
+                </slot>
+              </div>
+              <div v-else-if="item.type === 'code'">
+                <slot name="code" :message="item">
+                  <t-view-code :item="item"/>
+                </slot>
+              </div>
+              <div v-else-if="item.type === 'table'">
+                <slot name="table" :message="item">
+                  <t-view-table :item="item"/>
+                </slot>
+              </div>
+              <div v-else-if="item.type === 'html'">
+                <slot name="html" :message="item">
+                  <div v-html="item.content"/>
+                </slot>
+              </div>
             </div>
           </div>
         </div>

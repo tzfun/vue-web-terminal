@@ -123,6 +123,7 @@ export default {
         this._initContainerStyle()
 
         if (this.initLog) {
+            this._newTerminalLogGroup("init")
             this._pushMessage(this.initLog)
         }
 
@@ -364,9 +365,6 @@ export default {
         unregister(this.getName())
     },
     watch: {
-        terminalLog() {
-            this._jumpToBottom()
-        },
         context: {
             handler() {
                 this.$nextTick(() => {
@@ -752,7 +750,6 @@ export default {
                             this.showInputLine = true
                             this._endExecCallBack()
                         }
-
                         this.$emit("exec-cmd", cmdKey, this.command, success, failed, this.getName())
                     }
 
@@ -816,6 +813,17 @@ export default {
             }
             return valid
         },
+        _newTerminalLogGroup(tag) {
+            let newGroup = {
+                fold: false,
+                logs: []
+            }
+            if (tag) {
+                newGroup.tag = tag
+            }
+            this.terminalLog.push(newGroup)
+            return newGroup
+        },
         /**
          * message内容：
          *
@@ -870,13 +878,21 @@ export default {
             if (message.type !== MESSAGE_TYPE.CMD_LINE && this.pushMessageBefore) {
                 this.pushMessageBefore(message, this.getName())
             }
-            this.terminalLog.push(message)
+            let terminalLogLength = this.terminalLog.length;
+            if (terminalLogLength === 0) {
+                this._newTerminalLogGroup()
+            }
+            terminalLogLength = this.terminalLog.length;
+            let logGroup = this.terminalLog[terminalLogLength - 1]
+            logGroup.logs.push(message)
             //  留10%的缓冲
             let limit = Math.floor(this.logSizeLimit * 1.1)
-            if (limit > 0 && this.terminalLog.length > limit) {
-                let left = this.terminalLog.length - this.logSizeLimit
+            if (limit > 0 && terminalLogLength > limit) {
+                let left = terminalLogLength - this.logSizeLimit
                 this.terminalLog.splice(0, left)
             }
+
+            this._jumpToBottom()
         },
         /**
          * 追加内容到最后一条记录中，仅当最后一条消息存在，且其格式为 normal、ansi、code、html时才会追加，
@@ -886,9 +902,15 @@ export default {
         _appendMessage(message) {
             let lastMessage
             for (let i = this.terminalLog.length - 1; i >= 0; i--) {
-                let message = this.terminalLog[i]
-                if (message.type !== 'cmdLine') {
-                    lastMessage = message
+                let group = this.terminalLog[i]
+                for (let j = group.logs.length - 1; j >= 0; j--) {
+                    let message = group.logs[j]
+                    if (message.type !== MESSAGE_TYPE.CMD_LINE) {
+                        lastMessage = message
+                        break
+                    }
+                }
+                if (lastMessage) {
                     break
                 }
             }
@@ -917,9 +939,10 @@ export default {
             if (_nonEmpty(this.command)) {
                 historyStore.pushCmd(this.getName(), this.command)
             }
+            let group = this._newTerminalLogGroup()
 
-            this.terminalLog.push({
-                type: "cmdLine",
+            group.logs.push({
+                type: MESSAGE_TYPE.CMD_LINE,
                 content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
             });
         },
@@ -1348,5 +1371,10 @@ export default {
         _onInactive() {
             this.$emit('on-inactive', this.getName())
         },
+        _closeGroupFold(group) {
+            if (this.enableFold && group.fold) {
+                group.fold = false
+            }
+        }
     }
 }

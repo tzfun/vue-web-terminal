@@ -19,7 +19,7 @@
           :cursor-blink="true"
           :log-size-limit="20"
           :enable-default-command="true"
-          :line-spac="15"
+          :line-space="0"
           @on-keydown="onKeyDown"
           style="position: fixed">
       </terminal>
@@ -30,7 +30,8 @@
 
 <script>
 import {Terminal, TerminalApi, TerminalAsk} from '../src/index.js'
-import '../src/css/theme/dark.css'
+// import '../src/css/theme/dark.css'
+import '../src/css/theme/light.css'
 import {_html} from "@/js/Util";
 
 export default {
@@ -45,7 +46,7 @@ export default {
           context: '/vue-web-terminal/test',
           dragConf: {
             width: "60%",
-            height: "50%",
+            height: "70%",
             zIndex: 100,
             init: {
               x: 100,
@@ -215,7 +216,7 @@ export default {
       })
     },
     _pushMessageBefore(message, name) {
-      console.log(message, name)
+      console.debug(message, name)
     },
     onKeyDown() {
     },

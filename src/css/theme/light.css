@@ -32,4 +32,16 @@
     --t-json-more-background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 20%, rgb(255 255 255 / 10%) 100%);
     --t-json-deep-selector-border-color: rgb(249 249 249 / 52%);
     --t-code-default-background-color: rgb(227 239 248);
+    --t-log-box-hover-script-background-color: #f5f6f7;
+    --t-log-box-folded-background-color: #e2eaeb;
+    --t-log-box-folded-hover-background-color: #d3d6d7;
+    --t-log-fold-icon-color: #4ca5c1;
+    --t-log-fold-icon-background-color: white;
+    --t-log-fold-icon-border-color: #4ca5c1;
+    --t-log-fold-icon-active-color: white;
+    --t-log-fold-icon-active-background-color: #4ca5c1;
+    --t-log-fold-line-color: #4ca5c1;
+    --t-log-fold-char-color: #5e4b4b;
+    --t-log-fold-char-background-color: #a7bfb1;
+    --t-log-fold-char-border-color: #a7bfb1;
 }
