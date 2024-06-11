@@ -11,6 +11,18 @@ export function getQuery() {
     return query
 }
 
-export function isEmpty(str) {
+export function _isEmpty(str) {
     return str == null || str.length === 0 || str.trim().length === 0
+}
+
+export function _html(str) {
+    return String(str)
+        .replace(/&(?!\w+;)/g, '&amp;')
+        .replace(/ /g, '&nbsp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+        .replace(/\n/g, '<br>')
+        .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 }

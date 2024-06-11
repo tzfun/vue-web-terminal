@@ -31,14 +31,6 @@
 </template>
 
 <script>
-import 'vue-web-terminal/lib/theme/dark.css'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/theme/vibrant-ink.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/mode/vue/vue.js'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/addon/edit/closebrackets.js'
 import LocalTerminalJs from "@/components/LocalTerminal.js";
 
 export default LocalTerminalJs

@@ -94,15 +94,11 @@
 
   </div>
 </template>
-
 <script>
+import DemoJs from "./Demo.js";
 
-import TerminalPageJs from "@/components/TerminalPage.js";
-
-export default TerminalPageJs;
-
+export default DemoJs;
 </script>
-
 <style scoped>
 .terminal-container {
   position: fixed;

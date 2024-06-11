@@ -19,5 +19,6 @@ module.exports = {
                 "maxAssetSize": 30_000_000
             }
         }
-    }
+    },
+    runtimeCompiler: true
 }

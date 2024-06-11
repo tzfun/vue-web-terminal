@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
+import router from './common/router'
 import Terminal from 'vue-web-terminal'
+import '@/style/common.css'
 
 import VueCodemirror from 'vue-codemirror'
 
@@ -18,5 +20,6 @@ Vue.use(Terminal, {
 Vue.config.productionTip = false
 
 new Vue({
+    router: router,
     render: h => h(App),
 }).$mount('#app')

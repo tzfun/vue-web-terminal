@@ -1,3 +1,11 @@
+import 'vue-web-terminal/lib/theme/dark.css'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/darcula.css'
+import 'codemirror/theme/vibrant-ink.css'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/vue/vue.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/addon/edit/closebrackets.js'
 import {TerminalApi, TerminalAsk, TerminalFlash, Terminal} from "vue-web-terminal"
 import {exampleCode} from "@/demo/Demo";
 import {commands} from "@/components/LocalTerminalData";

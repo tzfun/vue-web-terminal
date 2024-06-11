@@ -1,4 +1,5 @@
 import LocalTerminal from "@/components/LocalTerminal.vue";
+import {getQuery} from "@/common/util";
 
 export default {
     name: "TerminalPage",
@@ -37,9 +38,6 @@ export default {
             releaseSeq: []
         }
     },
-    props: {
-        initCmd: String
-    },
     mounted() {
         let defaultTerminal
         if (document.body.clientWidth > 960) {
@@ -51,7 +49,11 @@ export default {
             defaultTerminal.context = '/vue-web-terminal'
             defaultTerminal.style = "position:fixed;"
         }
-        defaultTerminal.localInitCmd = this.initCmd
+        let query = getQuery()
+        if (query.cmd && query.cmd.trim().length > 0) {
+            defaultTerminal.localInitCmd = query.cmd
+        }
+
         defaultTerminal.dragConf = this.initWindowSize()
         defaultTerminal.show = true
     },
