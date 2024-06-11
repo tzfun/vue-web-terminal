@@ -46,7 +46,6 @@ export default {
           alert(`请输入有效的Vue代码${Math.floor(Math.random() * 1000)}`)
           return;
         }
-        // eslint-disable-next-line no-new-func
         const common = new Function(this.js)()
         common.template = this.html
         const Template = Vue.extend(common)
