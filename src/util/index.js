@@ -1,4 +1,4 @@
-export function getQuery() {
+export function _getQuery() {
     let search = location.search.replace('?', '')
     let query = {}
     if (search.length > 0) {
@@ -13,6 +13,10 @@ export function getQuery() {
 
 export function _isEmpty(str) {
     return str == null || str.length === 0 || str.trim().length === 0
+}
+
+export function _nonEmpty(str) {
+    return !_isEmpty(str)
 }
 
 export function _html(str) {

@@ -1,25 +1,12 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
-import router from './common/router'
+import router from "./router/index.js";
 import Terminal from 'vue-web-terminal'
-import '@/style/common.css'
+import './style.css'
 
-import VueCodemirror from 'vue-codemirror'
+const app = createApp(App)
 
-Vue.use(VueCodemirror)
-Vue.use(Terminal, {
-    codemirror: {
-        tabSize: 4,
-        mode: 'javascript',
-        theme: "darcula",
-        lineNumbers: true,
-        line: true,
-        smartIndent: true
-    }
-})
-Vue.config.productionTip = false
+app.use(router)
+app.use(Terminal)
+app.mount('#app')
 
-new Vue({
-    router: router,
-    render: h => h(App),
-}).$mount('#app')

@@ -1,47 +1,31 @@
 {
-  "name": "vue-web-terminal-demo",
-  "version": "0.1.0",
+  "name": "vue-web-terminal-doc",
   "private": true,
+  "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.6.8",
-    "core-js": "^3.6.5",
-    "vue": "^2.6.11",
-    "vue-codemirror": "^4.0.6",
-    "vue-web-terminal": "2.2.4",
-    "vue-router": "^3.5.1"
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/language": "^6.10.2",
+    "@codemirror/view": "^6.28.0",
+    "@codemirror/state": "^6.4.1",
+    "vue": "^3.4.21",
+    "vue-codemirror": "^6.1.1",
+    "vue-web-terminal": "^3.2.6",
+    "codemirror": "^6.x",
+    "thememirror": "^2.0.1",
+    "vue-router": "^4.3.3"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11",
-    "raw-loader": "^4.0.2"
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.0"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "peerDependencies": {
+    "vite": "^5.2.13",
+    "vue": "^3.4.0"
+  }
 }
