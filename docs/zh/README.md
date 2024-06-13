@@ -5,7 +5,7 @@ title: Home
 heroImage: /images/logo.svg
 actions:
   - text: 开始使用
-    link: /getting-started.html
+    link: ./get-started.html
     type: primary
 
   - text: 在线体验

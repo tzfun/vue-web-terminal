@@ -1,6 +1,7 @@
 import {defaultTheme} from '@vuepress/theme-default'
 import {defineUserConfig} from 'vuepress/cli'
 import {viteBundler} from '@vuepress/bundler-vite'
+import {commentPlugin} from "vuepress-plugin-comment2";
 
 export default defineUserConfig({
     lang: 'en-US',
@@ -26,7 +27,7 @@ export default defineUserConfig({
             '/': {
                 selectLanguageText: 'Languages',
                 selectLanguageName: 'English',
-                navbar:[
+                navbar: [
                     {
                         text: 'Home',
                         link: '/'
@@ -44,12 +45,24 @@ export default defineUserConfig({
                             }
                         ]
                     }
-                ]
+                ],
+                sidebar: {
+                    '/get-started': [
+                        {
+                            title: 'xxx',
+                            collapsable: false,
+                            children: [
+                                {title: 'items01', path: '/dev_manage/'},
+                                {title: 'items02', path: '/dev_manage/aaa'}
+                            ]
+                        }
+                    ]
+                }
             },
             '/zh/': {
                 selectLanguageText: '选择语言',
                 selectLanguageName: '中文简体',
-                navbar:[
+                navbar: [
                     {
                         text: '首页',
                         link: '/zh/'
@@ -67,9 +80,20 @@ export default defineUserConfig({
                             }
                         ]
                     }
-                ]
+                ],
+
+                sidebar: {
+                    '/get-started': {
+                        text: 'xxx',
+                        collapsable: false,
+                        children: [
+                            {title: 'items01', path: '/dev_manage/'},
+                            {title: 'items02', path: '/dev_manage/aaa'}
+                        ]
+                    }
+                }
             },
-        }
+        },
     }),
 
     bundler: viteBundler({
@@ -81,6 +105,15 @@ export default defineUserConfig({
             }
         }
     }),
-
-    plugins: []
+    plugins: [
+        //  https://giscus.app/zh-CN
+        commentPlugin({
+            provider: "Giscus",
+            comment: true,
+            repo: "tzfun/vue-web-terminal",
+            repoId: "R_kgDOG2MIVw",
+            category: "Announcements",
+            categoryId: "DIC_kwDOG2MIV84CgDvf",
+        })
+    ]
 })

@@ -44,3 +44,5 @@ You can [add extra style][style] with `.vuepress/styles/index.scss` file.
 [sidebar]: https://vuejs.press/reference/default-theme/config.html#sidebar
 [default-theme]: https://vuejs.press/reference/default-theme/
 [style]: https://vuejs.press/reference/default-theme/styles.html#style-file
+
+<CommentService></CommentService>
