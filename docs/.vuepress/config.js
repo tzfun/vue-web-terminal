@@ -2,6 +2,7 @@ import {defaultTheme} from '@vuepress/theme-default'
 import {defineUserConfig} from 'vuepress/cli'
 import {viteBundler} from '@vuepress/bundler-vite'
 import {commentPlugin} from "vuepress-plugin-comment2";
+import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 
 export default defineUserConfig({
     lang: 'en-US',
@@ -9,6 +10,10 @@ export default defineUserConfig({
     head: [
         ["link", {rel: "icon", href: "/images/logo.svg"}]
     ],
+    pluginVersion: {
+        vue2: "2.2.4",
+        vue3: "3.2.6"
+    },
     locales: {
         '/': {
             lang: 'en-US',
@@ -31,6 +36,10 @@ export default defineUserConfig({
                     {
                         text: 'Home',
                         link: '/'
+                    },
+                    {
+                        text: 'About',
+                        link: '/zh/about'
                     },
                     {
                         text: 'Open Source',
@@ -68,6 +77,10 @@ export default defineUserConfig({
                         link: '/zh/'
                     },
                     {
+                        text: '关于',
+                        link: '/zh/about'
+                    },
+                    {
                         text: '开源',
                         children: [
                             {
@@ -83,14 +96,16 @@ export default defineUserConfig({
                 ],
 
                 sidebar: {
-                    '/get-started': {
-                        text: 'xxx',
-                        collapsable: false,
-                        children: [
-                            {title: 'items01', path: '/dev_manage/'},
-                            {title: 'items02', path: '/dev_manage/aaa'}
-                        ]
-                    }
+                    '/zh/get-started': [
+                        {
+                            text: 'get-started',
+                            prefix: '/zh/get-started',
+                            children: [
+                                {text: 'items01', link: '/dev_manage/'},
+                                {text: 'items02', path: '/dev_manage/aaa'}
+                            ]
+                        }
+                    ]
                 }
             },
         },
@@ -114,6 +129,10 @@ export default defineUserConfig({
             repoId: "R_kgDOG2MIVw",
             category: "Announcements",
             categoryId: "DIC_kwDOG2MIV84CgDvf",
-        })
+        }),
+        mdEnhancePlugin({
+            // 启用代码块分组
+            codetabs: true,
+        }),
     ]
 })

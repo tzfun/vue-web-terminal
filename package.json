@@ -20,7 +20,8 @@
     "vite": "^5.2.13",
     "vue": "^3.4.0",
     "vuepress": "^2.0.0-rc.13",
-    "vuepress-plugin-comment2": "2.0.0-rc.30"
+    "vuepress-plugin-comment2": "2.0.0-rc.30",
+    "vuepress-plugin-md-enhance": "2.0.0-rc.48"
   },
   "peerDependencies": {
     "vite": "^5.2.13",

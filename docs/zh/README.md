@@ -4,8 +4,8 @@ home: true
 title: Home
 heroImage: /images/logo.svg
 actions:
-  - text: 开始使用
-    link: ./get-started.html
+  - text: 快速上手
+    link: ./getting-started
     type: primary
 
   - text: 在线体验
