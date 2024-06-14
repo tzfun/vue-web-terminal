@@ -77,6 +77,7 @@ export default defineUserConfig({
                             {text: '主题', link: '/zh/theme'},
                             {text: '属性', link: '/zh/attributes'},
                             {text: '事件', link: '/zh/events'},
+                            {text: '插槽', link: '/zh/slots'},
                         ]
                     },
                     {
