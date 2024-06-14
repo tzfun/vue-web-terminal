@@ -132,7 +132,7 @@ export default defineUserConfig({
         }),
         mdEnhancePlugin({
             // 启用代码块分组
-            codetabs: true,
+            codetabs: true
         }),
     ]
 })

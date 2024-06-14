@@ -51,6 +51,4 @@ vue-web-terminal 是一个由前端模拟实现的终端，而并不是传统意
 - :pensive: SSH终端，具有复杂控制码显示的场景：vim、htop等（插件只对ANSI控制码提供了**颜色控制**的实现，其余控制码会被自动过滤）
 - :pensive: 服务器远程控制终端
 
-
-
 <CommentService></CommentService>
