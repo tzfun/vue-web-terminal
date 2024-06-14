@@ -76,6 +76,7 @@ export default defineUserConfig({
                             {text: '快速上手', link: '/zh/getting-started'},
                             {text: '主题', link: '/zh/theme'},
                             {text: '属性', link: '/zh/attributes'},
+                            {text: '事件', link: '/zh/events'},
                         ]
                     },
                     {

@@ -24,6 +24,27 @@ type DragConfig = {
 };
 ```
 
+### Message
+
+```ts
+type Message = {
+    type?: 'normal' | 'json' | 'code' | 'table' | 'html' | 'ansi';
+    content: string | number | object | MessageContentTable | Array<any>;
+    class?: 'success' | 'error' | 'info' | 'warning' | 'system';
+    tag?: string;
+    depth?: number;
+};
+```
+
+### MessageContentTable
+
+```ts
+type MessageContentTable = {
+    head: string[];
+    rows: string[][];
+};
+```
+
 ## 内置命令
 ```json
 [
@@ -79,3 +100,6 @@ type DragConfig = {
   }
 ]
 ```
+
+
+<CommentService></CommentService>
