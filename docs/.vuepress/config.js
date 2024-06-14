@@ -44,14 +44,8 @@ export default defineUserConfig({
                     {
                         text: 'Open Source',
                         children: [
-                            {
-                                text: 'Github',
-                                link: 'https://github.com/tzfun/vue-web-terminal'
-                            },
-                            {
-                                text: 'Gitee',
-                                link: 'https://gitee.com/tzfun/vue-web-terminal'
-                            }
+                            {text: 'Github', link: 'https://github.com/tzfun/vue-web-terminal'},
+                            {text: 'Gitee', link: 'https://gitee.com/tzfun/vue-web-terminal'}
                         ]
                     }
                 ],
@@ -77,20 +71,22 @@ export default defineUserConfig({
                         link: '/zh/'
                     },
                     {
+                        text: '开发文档',
+                        children: [
+                            {text: '快速上手', link: '/zh/getting-started'},
+                            {text: '主题', link: '/zh/theme'},
+                            {text: '属性', link: '/zh/attributes'},
+                        ]
+                    },
+                    {
                         text: '关于',
                         link: '/zh/about'
                     },
                     {
                         text: '开源',
                         children: [
-                            {
-                                text: 'Github',
-                                link: 'https://github.com/tzfun/vue-web-terminal'
-                            },
-                            {
-                                text: 'Gitee',
-                                link: 'https://gitee.com/tzfun/vue-web-terminal'
-                            }
+                            {text: 'Github', link: 'https://github.com/tzfun/vue-web-terminal'},
+                            {text: 'Gitee', link: 'https://gitee.com/tzfun/vue-web-terminal'}
                         ]
                     }
                 ],
@@ -131,8 +127,11 @@ export default defineUserConfig({
             categoryId: "DIC_kwDOG2MIV84CgDvf",
         }),
         mdEnhancePlugin({
-            // 启用代码块分组
-            codetabs: true
+            //  启用代码块分组
+            codetabs: true,
+            //  提示容器
+            //  https://theme-hope.vuejs.press/zh/guide/markdown/stylize/hint.html
+            hint:true
         }),
     ]
 })
