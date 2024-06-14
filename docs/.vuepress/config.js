@@ -93,18 +93,14 @@ export default defineUserConfig({
                     }
                 ],
 
-                sidebar: {
-                    '/zh/get-started': [
-                        {
-                            text: 'get-started',
-                            prefix: '/zh/get-started',
-                            children: [
-                                {text: 'items01', link: '/dev_manage/'},
-                                {text: 'items02', path: '/dev_manage/aaa'}
-                            ]
-                        }
-                    ]
-                }
+                sidebar: [
+                    {text: '关于', link: '/zh/about'},
+                    {text: '快速上手', link: '/zh/getting-started'},
+                    {text: '主题', link: '/zh/theme'},
+                    {text: '属性', link: '/zh/attributes'},
+                    {text: '事件', link: '/zh/events'},
+                    {text: '插槽', link: '/zh/slots'},
+                ]
             },
         },
     }),
