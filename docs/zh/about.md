@@ -1,4 +1,6 @@
-# 介绍
+# vue-web-terminal
+## 介绍
+
 vue-web-terminal是一个由 Vue 构建的支持多种内容格式显示的网页端命令行窗口插件，它是一种命令式的仿真终端，由前端控制渲染结果，内置有用户问答、文本编辑、动画等高级功能，具有非常灵活的可自定义性。
 
 ## 功能支持
@@ -53,4 +55,33 @@ vue-web-terminal 是一个由前端模拟实现的终端，而并不是传统意
 - :pensive: SSH终端，具有复杂控制码显示的场景：vim、htop等（插件只对ANSI控制码提供了**颜色控制**的实现，其余控制码会被自动过滤）
 - :pensive: 服务器远程控制终端
 
+## 联系作者
+
+我是一名后端Coder，对前端仅会一点皮毛，因为个人兴趣开发了此插件，业余选手请多指教。
+
+如果对代码优化或功能有好的想法并乐意贡献代码欢迎提交 [Pull Request][Github PR] ，对插件使用存在疑问或发现 bug 请提交 [issue][Github issue]。
+
+这是我的联系方式：
+> :email: [beifengtz@qq.com](mailto:beifengtz@qq.com)
+> 
+> ![](https://open.weixin.qq.com/zh_CN/htmledition/res/assets/res-design-download/icon16_wx_logo.png) **beifeng-tz**
+> （添加请备注vue-web-terminal）
+
+## 捐赠
+
+本插件完全开源免费，创作不易，如果你觉得不错可以捐赠支持本项目。
+
+<div style="display: flex; justify-content: center;margin:30px 15px;">
+    <img src="/images/pay-wechat.png" style="width: 50%"/>
+    <img src="/images/pay-zhifubao.jpg" style="width: 50%"/>
+</div>
+
+感谢大家的支持，你们的支持就是作者的动力！（按捐赠时间顺序排序）
+* [zhangpeng1314](https://gitee.com/zhangpeng1314) - 150元
+* [lilqilie](https://github.com/lilqilie) - 20元
+* [h1xa](https://ctf.show) - 66元
+
 <CommentService></CommentService>
+
+[Github PR]: https://github.com/tzfun/vue-web-terminal/pulls
+[Github issue]: https://github.com/tzfun/vue-web-terminal/issues
