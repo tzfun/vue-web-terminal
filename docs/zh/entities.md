@@ -1,5 +1,4 @@
-
-## 配置类型
+## 类型定义
 
 ### Command
 ```ts
@@ -43,6 +42,46 @@ type MessageContentTable = {
     head: string[];
     rows: string[][];
 };
+```
+
+### TerminalElementInfo
+
+```ts
+type TerminalElementInfo = {
+    pos: Position,
+    screenWidth: number,
+    screenHeight: number,
+    clientWidth: number,
+    clientHeight: number,
+    charWidth: CharWidth
+}
+```
+
+### CharWidth
+
+```ts
+type CharWidth = {
+    en: number,
+    cn: number
+}
+```
+
+### Position
+
+```ts
+type Position = {
+    x: number,
+    y: number
+}
+```
+
+### EditorSetting
+
+```ts
+type EditorSetting = {
+    content: string,
+    onClose: Function,
+}
 ```
 
 ## 内置命令

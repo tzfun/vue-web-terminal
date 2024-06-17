@@ -74,10 +74,11 @@ export default defineUserConfig({
                         text: '开发文档',
                         children: [
                             {text: '快速上手', link: '/zh/getting-started'},
-                            {text: '主题', link: '/zh/theme'},
-                            {text: '属性', link: '/zh/attributes'},
-                            {text: '事件', link: '/zh/events'},
-                            {text: '插槽', link: '/zh/slots'},
+                            {text: '主题 Theme', link: '/zh/theme'},
+                            {text: '属性 Attribute', link: '/zh/attributes'},
+                            {text: '事件 Event', link: '/zh/events'},
+                            {text: '插槽 Slot', link: '/zh/slots'},
+                            {text: '接口 API', link: '/zh/api'},
                         ]
                     },
                     {
@@ -96,10 +97,12 @@ export default defineUserConfig({
                 sidebar: [
                     {text: '关于', link: '/zh/about'},
                     {text: '快速上手', link: '/zh/getting-started'},
-                    {text: '主题', link: '/zh/theme'},
-                    {text: '属性', link: '/zh/attributes'},
-                    {text: '事件', link: '/zh/events'},
-                    {text: '插槽', link: '/zh/slots'},
+                    {text: '主题 Theme', link: '/zh/theme'},
+                    {text: '属性 Attribute', link: '/zh/attributes'},
+                    {text: '事件 Event', link: '/zh/events'},
+                    {text: '插槽 Slot', link: '/zh/slots'},
+                    {text: '接口 API', link: '/zh/api'},
+                    {text: '类型定义', link: '/zh/entities'},
                 ]
             },
         },

@@ -39,12 +39,15 @@
 
     <!--  自定义文本编辑器样式  -->
     <template #textEditor="{data}">
-            <textarea name="editor" class="t-text-editor" v-model="data.value"
-                      @focus="data.onFocus" @blur="data.onBlur"></textarea>
-      <div class="t-text-editor-floor" align="center">
-        <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
-        <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)</button>
-      </div>
+        <textarea name="editor" 
+                  class="t-text-editor" 
+                  v-model="data.value" 
+                  @focus="data.onFocus" 
+                  @blur="data.onBlur"></textarea>
+        <div class="t-text-editor-floor" align="center">
+            <button class="t-text-editor-floor-btn" @click="_textEditorClose(false)">Cancel</button>
+            <button class="t-text-editor-floor-btn" @click="_textEditorClose(true)">Save & Close(Ctrl + S)</button>
+        </div>
     </template>
 </terminal>
 ```
