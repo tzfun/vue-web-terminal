@@ -42,8 +42,21 @@ export default defineUserConfig({
                         link: '/'
                     },
                     {
+                        text: 'Document',
+                        children: [
+                            {text: 'Get Started', link: '/getting-started'},
+                            {text: 'Theme', link: '/theme'},
+                            {text: 'Attribute', link: '/attributes'},
+                            {text: 'Event', link: '/events'},
+                            {text: 'Slot', link: '/slots'},
+                            {text: 'API', link: '/api'},
+                            {text: 'Advanced Features', link: '/functions'},
+                            {text: 'More', link: '/others'},
+                        ]
+                    },
+                    {
                         text: 'About',
-                        link: '/zh/about'
+                        link: '/about'
                     },
                     {
                         text: 'Open Source',
@@ -53,18 +66,17 @@ export default defineUserConfig({
                         ]
                     }
                 ],
-                sidebar: {
-                    '/get-started': [
-                        {
-                            title: 'xxx',
-                            collapsable: false,
-                            children: [
-                                {title: 'items01', path: '/dev_manage/'},
-                                {title: 'items02', path: '/dev_manage/aaa'}
-                            ]
-                        }
-                    ]
-                }
+                sidebar: [
+                    {text: 'About', link: '/about'},
+                    {text: 'Get Started', link: '/getting-started'},
+                    {text: 'Theme', link: '/theme'},
+                    {text: 'Attribute', link: '/attributes'},
+                    {text: 'Event', link: '/events'},
+                    {text: 'Slot', link: '/slots'},
+                    {text: 'API', link: '/api'},
+                    {text: 'Advanced Features', link: '/functions'},
+                    {text: 'More', link: '/others'},
+                ]
             },
             '/zh/': {
                 selectLanguageText: '选择语言',
@@ -99,7 +111,6 @@ export default defineUserConfig({
                         ]
                     }
                 ],
-
                 sidebar: [
                     {text: '关于', link: '/zh/about'},
                     {text: '快速上手', link: '/zh/getting-started'},

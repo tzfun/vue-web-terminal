@@ -5,18 +5,22 @@ title: Home
 heroImage: /images/logo.svg
 actions:
   - text: Get Started
-    link: /getting-started.html
+    link: ./getting-started
     type: primary
 
-  - text: Demo
+  - text: Learn More
+    link: ./about
+    type: primary
+
+  - text: Online Demo
     link: https://vuejs.press/guide/introduction.html
     type: secondary
-
+    
 features:
-  - title: Command Terminal
-    details: The command simulation terminal has common terminal functions such as dragging, zooming, cursor switching, and historical command switching. It is very suitable for making client tools such as Redis, MySQL, and ETCD.
+  - title: Command Base
+    details: The command-based simulation terminal has common terminal functions such as dragging, zooming, cursor switching, and historical command switching. It is very suitable for making client tools such as Redis, MySQL, and ETCD.
   - title: Powerful
-    details: The plugin provides display functions in formats such as text, HTML, json, tables, codes, ansi color control codes, etc. by default. It also supports advanced functions such as user Q&A, animation rendering, and editor.
+    details: The plugin provides display functions in formats such as normal text, HTML rendering, json, table, code, ANSI color control code, etc. by default. It also supports advanced functions such as user Q&A, animation rendering, and online editing.
   - title: Theme
     details: The plugin provides two themes by default dark and light. You can also customize the theme according to your preferences. The background, cursor, font, etc. can be modified to the color you want.
   - title: API

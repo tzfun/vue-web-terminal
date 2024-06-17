@@ -17,6 +17,7 @@ vue-web-terminal是一个由 Vue 构建的支持多种内容格式显示的网�
 - 支持多种样式 Slot 插槽，可自定义样式
 - 支持主题，默认内置暗色和亮色主题，也可自定义主题
 - 提供丰富的JS API，几乎所有功能均可由API来模拟非人为操作
+- 支持Vue2/Vue3
 
 ![vue-web-terminal.gif](/images/vue-web-terminal.gif)
 
