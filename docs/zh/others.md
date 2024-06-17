@@ -1,6 +1,6 @@
-# 类型定义
+## 类型定义
 
-## Message
+### Message
 
 ```ts
 type Message = {
@@ -22,7 +22,7 @@ type Message = {
 | tag     | 标签，仅类型为`normal`有效              | string                   | /                                 |
 
 
-### normal 普通文本
+#### normal 普通文本
 
 普通文本字符串格式，type为`normal`，支持html标签。它支持slot重写样式，详情见[Slots](./slots)
 
@@ -39,7 +39,7 @@ type Message = {
 }
 ```
 
-### json
+#### json
 json类型的消息会被显示为json编辑窗口，type为`json`，content需传一个json对象。
 
 ```json
@@ -52,7 +52,7 @@ json类型的消息会被显示为json编辑窗口，type为`json`，content需�
 }
 ```
 
-### code
+#### code
 
 code类型消息可以更友好的显示代码和多行文本，type为`code`，content类型为字符串。它支持 **highlight** 和 **codemirror** 的高亮显示。
 
@@ -63,7 +63,7 @@ code类型消息可以更友好的显示代码和多行文本，type为`code`，
 }
 ```
 
-#### highlight代码高亮
+##### highlight代码高亮
 code类型消息支持`highlight.js`高亮显示，需要你在自己的工程中引入依赖并接入
 
 首先你需要在 main.js 入口配置 Highlight.js，详细配置见[highlight.js in npm][highlight.js in npm]
@@ -114,7 +114,7 @@ vue2版本需要找对应的依赖版本，最新的适用于vue3不一定适用
 ```
 :::
 
-#### codemirror代码高亮
+##### codemirror代码高亮
 
 code类型消息也支持 codemirror 高亮显示，详细配置见[codemirror.js in npm][codemirror.js in npm]
 
@@ -170,11 +170,11 @@ configCodemirror({
 和 highlight.js 一样，codemirror在选择时也需要注意版本问题，vue2和vue3版本不一定兼容，作者在测试时使用的vue2版本：`"vue-codemirror": "^4.0.6"`
 :::
 
-#### 自定义高亮
+##### 自定义高亮
 
 如果你有自己的代码高亮显示实现，或者认为插件默认实现的 highlight 和 codemirror 不够灵活，可以选择使用 [插槽 Slots](./slots) 去重写它。
 
-### table
+#### table
 
 表格类型显示，type为`table`，content此时为表格配置，其中`head`为表头，`rows`为每行的数据，支持html标签
 
@@ -206,7 +206,7 @@ configCodemirror({
 }
 ```
 
-### html
+#### html
 
 type为`html`时可自定义内容格式，content为html标签构成
 ```js
@@ -229,7 +229,7 @@ function execCmd(key, command, success) {
 }
 ```
 
-### ansi
+#### ansi
 
 type为`ansi`时可以显示ANSI控制码样式，**目前仅支持着色控制，包含 *xterm-256color* 色系，其余控制码会被过滤**
 
@@ -244,7 +244,7 @@ function execCmd(key, command, success) {
 }
 ```
 
-## Command
+### Command
 
 ```ts
 type Command = {
@@ -270,7 +270,7 @@ type Command = {
 | description | 详细描述                                     | string           |
 | example     | 使用示例，见[CommandExample](#CommandExample)  | CommandExample[] |
 
-## CommandExample
+### CommandExample
 
 ```ts
 type CommandExample = {
@@ -287,7 +287,7 @@ type CommandExample = {
   }
 ```
 
-## DragConfig
+### DragConfig
 ```ts
 type DragConfig = {
     width: string | number;
@@ -299,7 +299,7 @@ type DragConfig = {
 ```
 
 
-## MessageContentTable
+### MessageContentTable
 
 ```ts
 type MessageContentTable = {
@@ -308,7 +308,7 @@ type MessageContentTable = {
 };
 ```
 
-## TerminalElementInfo
+### TerminalElementInfo
 
 ```ts
 type TerminalElementInfo = {
@@ -321,7 +321,7 @@ type TerminalElementInfo = {
 }
 ```
 
-## CharWidth
+### CharWidth
 
 ```ts
 type CharWidth = {
@@ -330,7 +330,7 @@ type CharWidth = {
 }
 ```
 
-## Position
+### Position
 
 ```ts
 type Position = {
@@ -339,7 +339,7 @@ type Position = {
 }
 ```
 
-## EditorSetting
+### EditorSetting
 
 ```ts
 type EditorSetting = {
@@ -348,7 +348,7 @@ type EditorSetting = {
 }
 ```
 
-# 内置命令
+## 内置命令
 
 插件内置了几个命令，这些命令提供了一些基础的功能，如果它们和你的命令冲突了，可以使用 [enable-default-command](./attributes#enable-default-command) 
 属性来关闭默认命令功能，然后在 [exec-cmd](./events#exec-cmd) 事件中自定义实现你的命令。
@@ -408,7 +408,7 @@ type EditorSetting = {
 ]
 ```
 
-## help
+### help
 
 插件内置的`help`命令可以方便使用者查看命令的使用方法，前提是这些命令已经提前定义好了，通过help命令可以查看命令的key、分组、解释样例信息。
 
@@ -426,7 +426,7 @@ help *event*
 help :server
 ```
 
-## clear
+### clear
 
 插件内置的`clear`命令可以实现清除当前屏幕记录和清除历史命令记录
 
@@ -438,7 +438,7 @@ clear
 clear history
 ```
 
-## open
+### open
 
 插件内置的`open`命令可以在浏览器中打开一个网页地址
 

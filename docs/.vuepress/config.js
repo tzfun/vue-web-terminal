@@ -4,6 +4,10 @@ import {viteBundler} from '@vuepress/bundler-vite'
 import {commentPlugin} from "vuepress-plugin-comment2";
 import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 
+//  注意！default-theme有一个锚点 bug，每次打包时需要修改这个文件里面的第20行代码:
+//  node_modules/.pnpm/@vuepress+theme-default@2.0.0-rc.35_vuepress@2.0.0-rc.13/node_modules/@vuepress/theme-default/lib/client/components/VPSidebarItems.vue
+//  修改：.vp=sidebar 改为 .vp-sidebar
+
 export default defineUserConfig({
     lang: 'en-US',
     title: 'vue-web-terminal',
