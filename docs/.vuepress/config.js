@@ -79,6 +79,8 @@ export default defineUserConfig({
                             {text: '事件 Event', link: '/zh/events'},
                             {text: '插槽 Slot', link: '/zh/slots'},
                             {text: '接口 API', link: '/zh/api'},
+                            {text: '高级功能', link: '/zh/functions'},
+                            {text: '更多', link: '/zh/others'},
                         ]
                     },
                     {
@@ -102,7 +104,8 @@ export default defineUserConfig({
                     {text: '事件 Event', link: '/zh/events'},
                     {text: '插槽 Slot', link: '/zh/slots'},
                     {text: '接口 API', link: '/zh/api'},
-                    {text: '类型定义', link: '/zh/entities'},
+                    {text: '高级功能', link: '/zh/functions'},
+                    {text: '更多', link: '/zh/others'},
                 ]
             },
         },

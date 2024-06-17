@@ -39,7 +39,7 @@
 
 这种调用方式依赖于Vue中的 Ref 引用，获取到指定Dom的Ref即可调用插件的API，且无需传递Terminal的name值
 
-::: code-tabs#shell
+::: code-tabs#vue
 @tab Vue2
 
 ```vue
@@ -105,7 +105,7 @@ TerminalApi.pushMessage('my-terminal', [
 ])
 ```
 - **引用**：
-  - [Message](./entities#Message)
+  - [Message](./others#Message)
 
 ### appendMessage
 
@@ -185,8 +185,12 @@ TerminalApi.focus('my-terminal', true)
 
 ### elementInfo
 
-
 - **说明**：获取Terminal窗口DOM信息，你可以通过此 API 获取Terminal的窗口宽度高度、显示内容的宽度高度、所在位置、单字符宽度等，单位为px
+
+::: tip 注意
+如果你的窗口已创建但未显示在页面（比如用了v-show控制显示），可能会出现部分信息失效的问题。
+:::
+
 - **定义**：
 ```ts
 type elementInfo = () => TerminalElementInfo;
@@ -214,9 +218,10 @@ console.log(info)
 }
 ```
 - **引用**：
-  - [Position](./entities#Position)
-  - [CharWidth](./entities#CharWidth)
-  - [TerminalElementInfo](./entities#TerminalElementInfo)
+  - [Position](./others#Position)
+  - [CharWidth](./others#CharWidth)
+  - [TerminalElementInfo](./others#TerminalElementInfo)
+
 
 下面这张图清晰地描述了这些值的含义：
 ![terminal-ele-info](/images/ele-info.png)
@@ -238,7 +243,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 })
 ```
 - **引用**：
-  - [EditorSetting](./entities#EditorSetting)
+  - [EditorSetting](./others#EditorSetting)
 
 ### textEditorClose
 
