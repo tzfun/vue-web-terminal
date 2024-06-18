@@ -65,7 +65,7 @@ export default defineUserConfig({
                         link: '/about'
                     },
                     {
-                        text: 'Q & A',
+                        text: 'Q&A',
                         link: '/questions'
                     },
                     {
@@ -86,7 +86,7 @@ export default defineUserConfig({
                     {text: 'API', link: '/api'},
                     {text: 'Advanced Features', link: '/functions'},
                     {text: 'More', link: '/others'},
-                    {text: 'Q & A', link: '/questions'},
+                    {text: 'Q&A', link: '/questions'},
                 ]
             },
             '/zh/': {

@@ -6,7 +6,7 @@
   text-decoration: none;
 }
 
-.theme-default-content  a:hover {
+.theme-default-content  a:not(.header-anchor):hover {
   text-decoration: underline;
 }
 
