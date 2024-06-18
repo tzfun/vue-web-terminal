@@ -105,7 +105,7 @@ and the window width and height are equal to the parent element width and height
 * **Default**: block
 * **Description**: Cursor style, optional values: `block` | `underline` | `bar` | `none`
 
-## enable-cursor-blink
+## cursor-blink
 
 * **Type**: `boolean`
 * **Default**: true

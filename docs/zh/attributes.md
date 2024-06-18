@@ -103,7 +103,7 @@
 * **默认值**：block
 * **说明**：光标样式，可选值：`block` | `underline` | `bar` | `none`
 
-## enable-cursor-blink
+## cursor-blink
 
 * **类型**：`boolean`
 * **默认值**：true
