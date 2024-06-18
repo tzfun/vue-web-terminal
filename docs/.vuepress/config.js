@@ -32,10 +32,16 @@ export default defineUserConfig({
     },
     theme: defaultTheme({
         logo: '/images/logo.svg',
+        docsRepo: "https://github.com/tzfun/vue-web-terminal",
+        docsBranch: "doc",
+        docsDir: "docs",
+        editLink: true,
+        editLinkPattern: ":repo/edit/:branch/:path",
         locales: {
             '/': {
                 selectLanguageText: 'Languages',
                 selectLanguageName: 'English',
+                editLinkText: "Edit this page on GitHub",
                 navbar: [
                     {
                         text: 'Home',
@@ -61,8 +67,8 @@ export default defineUserConfig({
                     {
                         text: 'Open Source',
                         children: [
-                            {text: 'Github', link: 'https://github.com/tzfun/vue-web-terminal'},
-                            {text: 'Gitee', link: 'https://gitee.com/tzfun/vue-web-terminal'}
+                            {text: 'GitHub', link: 'https://github.com/tzfun/vue-web-terminal'},
+                            {text: 'Gitee 码云', link: 'https://gitee.com/tzfun/vue-web-terminal'}
                         ]
                     }
                 ],
@@ -81,6 +87,7 @@ export default defineUserConfig({
             '/zh/': {
                 selectLanguageText: '选择语言',
                 selectLanguageName: '中文简体',
+                editLinkText: "在GitHub编辑此页",
                 navbar: [
                     {
                         text: '首页',
@@ -106,8 +113,8 @@ export default defineUserConfig({
                     {
                         text: '开源',
                         children: [
-                            {text: 'Github', link: 'https://github.com/tzfun/vue-web-terminal'},
-                            {text: 'Gitee', link: 'https://gitee.com/tzfun/vue-web-terminal'}
+                            {text: 'GitHub', link: 'https://github.com/tzfun/vue-web-terminal'},
+                            {text: 'Gitee 码云', link: 'https://gitee.com/tzfun/vue-web-terminal'}
                         ]
                     }
                 ],

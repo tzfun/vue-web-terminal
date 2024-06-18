@@ -70,7 +70,7 @@ This is my contact information:
 
 ## Donate
 
-This plugin is completely open source and free. It is not easy to create. If you think it is good, you can donate to support this project.
+This plugin is completely open source and free. It is not easy to create. If you think it is good, you can donate to support this project. :wink:
 
 <div style="display: flex; justify-content: center;margin:30px 15px;">
     <img src="/images/pay-wechat.png" style="width: 50%"/>

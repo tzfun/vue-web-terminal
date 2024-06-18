@@ -70,7 +70,7 @@ vue-web-terminal 是一个由前端模拟实现的终端，而并不是传统意
 
 ## 捐赠
 
-本插件完全开源免费，创作不易，如果你觉得不错可以捐赠支持本项目。
+本插件完全开源免费，创作不易，如果你觉得不错可以捐赠支持一下 :wink:
 
 <div style="display: flex; justify-content: center;margin:30px 15px;">
     <img src="/images/pay-wechat.png" style="width: 50%"/>
