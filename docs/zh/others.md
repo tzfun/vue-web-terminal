@@ -12,7 +12,7 @@ type Message = {
 };
 ```
 
-本插件定义了一个通用的消息结构，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，[exec-cmd](./events#exec-cmd)事件的 `success()` 回调和[pushMessage](./api#pushMessage) api都会用到它。
+本插件定义了一个通用的消息结构，任何一个需要被以记录的形式显示在Terminal上的信息都是一个消息对象，[exec-cmd](./events#exec-cmd)事件的 `success()` 回调和[pushMessage](./api#pushmessage) api都会用到它。
 
 | 属性      | 说明                             | 类型                       | 可选值                               |
 |---------|--------------------------------|--------------------------|-----------------------------------|

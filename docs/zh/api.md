@@ -105,7 +105,7 @@ TerminalApi.pushMessage('my-terminal', [
 ])
 ```
 - **引用**：
-  - [Message](./others#Message)
+  - [Message](./others#message)
 
 ### appendMessage
 
@@ -149,12 +149,14 @@ console.log(isFullscreen)
 - **说明**：当开启拖拽功能时可以使用这种方式来改变窗口位置，其中参数`x`是terminal左边框到浏览器可视范围左边框的距离，`y`是terminal上边框到浏览器可视范围上边框的距离，单位px。
 - **定义**：
 ```ts
-type dragging = (x: number, y: number) => void;
+type dragging = (pos: Position) => void;
 ```
 - **示例**：
 ```js
 TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 ```
+- **引用**：
+  - [Position](./others.md#position)
 
 ### execute
 
@@ -218,9 +220,9 @@ console.log(info)
 }
 ```
 - **引用**：
-  - [Position](./others#Position)
-  - [CharWidth](./others#CharWidth)
-  - [TerminalElementInfo](./others#TerminalElementInfo)
+  - [Position](./others#position)
+  - [CharWidth](./others#charwidth)
+  - [TerminalElementInfo](./others#terminalelementinfo)
 
 
 下面这张图清晰地描述了这些值的含义：
@@ -243,7 +245,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 })
 ```
 - **引用**：
-  - [EditorSetting](./others#EditorSetting)
+  - [EditorSetting](./others#editorsetting)
 
 ### textEditorClose
 

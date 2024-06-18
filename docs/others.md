@@ -13,7 +13,7 @@ type Message = {
 ```
 
 This plugin defines a common message structure. Any information that needs to be displayed on the Terminal in the form of a record is a message object.
-The `success()` callback of the [exec-cmd](./events#exec-cmd) event and the [pushMessage](./api#pushMessage) api will use it.
+The `success()` callback of the [exec-cmd](./events#exec-cmd) event and the [pushMessage](./api#pushmessage) api will use it.
 
 | Prop    | Description                                                                                                                    | Type                          | Options                           |
 |---------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------|-----------------------------------|

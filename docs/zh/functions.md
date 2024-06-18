@@ -5,7 +5,7 @@
 插件提供了拖拽功能，开启后Terminal窗口将是一个 `fixed` 定位的容器，它的拖拽范围在整个浏览器窗口之内，同时还提供了窗口大小缩放和固定的功能，缩放触控区域在窗口的四个角上。
 
 开启拖拽功能需要将 [show-header](./attributes#show-header) 设置为`true`并配置 [drag-conf](./attributes#drag-conf)，
-你可以通过 [DragConfig](./others#DragConfig) 的 `width` 和 `height` 来配置窗口初始化大小，可以通过 `init` 控制窗口初始化位置，下面是一个简单的示例。
+你可以通过 [DragConfig](./others#dragconfig) 的 `width` 和 `height` 来配置窗口初始化大小，可以通过 `init` 控制窗口初始化位置，下面是一个简单的示例。
 
 ```vue
 <terminal name="my-terminal"
@@ -14,15 +14,15 @@
 </terminal>
 ```
 
-[DragConfig](./others#DragConfig)的配置说明如下：
+[DragConfig](./others#dragconfig)的配置说明如下：
 
-| 参数     | 说明                                            | 类型                                                |
-|--------|-----------------------------------------------|---------------------------------------------------|
-| width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）           | number                        \| string           |
-| height | 拖拽窗口高度，同宽度                                    | number                                  \| string |
-| zIndex | 窗口层级，此值可以修改并被terminal监听，可用于多窗口层级的控制，默认100     | number                                            |
-| init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px         | [Position](./others#Position)                     |
-| pinned | 固定窗口，固定后将无法拖拽，当点击按钮修改此值时会在`on-click`事件中触发 pin | boolean                                           |
+| 参数     | 说明                                            | 类型                            |
+|--------|-----------------------------------------------|-------------------------------|
+| width  | 拖拽窗口宽度，可以是数字（单位px）也可以是百分比（相对于浏览器窗口）           | number/string                 |
+| height | 拖拽窗口高度，同宽度                                    | number/string                 |
+| zIndex | 窗口层级，此值可以修改并被terminal监听，可用于多窗口层级的控制，默认100     | number                        |
+| init   | 窗口初始化位置，如果不填则默认位置在浏览器窗口中央，其中x和y的单位为px         | [Position](./others#Position) |
+| pinned | 固定窗口，固定后将无法拖拽，当点击按钮修改此值时会在`on-click`事件中触发 pin | boolean                       |
 
 除了鼠标控制之外你还可以调用 [dragging](./api#dragging) API移动窗口位置
 
@@ -68,7 +68,7 @@ const onExecCmd = (key, command, success, failed) => {
 
 通过 `new TerminalAsk()` 创建一个ask对象，传入success回调中，ask对象提供两个方法：
 
-- `ask(options)`: 发起一个用户询问输入，options是一个对象，其属性解释如下（*号表示必填）：
+- `ask(options)`: 发起一个用户询问输入，options是一个对象，其属性解释如下：
   - `question`: string，询问的问题，或者可以理解为用户输入的前缀字串
   - `callback`: function，用户键入回车时的回调，参数值为用户输入的内容
   - `autoReview`: boolean，用户键入回车时是否自动追加当前的显示内容
@@ -104,7 +104,7 @@ const onExecCmd = (key, command, success, failed) => {
 ## 文本编辑器
 
 ### 使用
-当你需要在 Terminal 内编辑文本时，可以考虑使用内置的文本编辑器，它需要借助到两个 API：[textEditorOpen](./api.md#textEditorOpen)、[textEditorClose](./api.md#textEditorClose) 
+当你需要在 Terminal 内编辑文本时，可以考虑使用内置的文本编辑器，它需要借助到两个 API：[textEditorOpen](./api.md#texteditoropen)、[textEditorClose](./api.md#texteditorclose) 
 
 一个简单示例：
 

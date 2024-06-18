@@ -44,7 +44,7 @@
 
 * **类型**：`DragConfig`
 * **默认值**：null
-* **说明**：拖拽窗口配置项 [DragConfig](./others#DragConfig)。
+* **说明**：拖拽窗口配置项 [DragConfig](./others#dragconfig)。
 
 ::: tip
 此项配置需要在 [show-header](#show-header) 开启的情况下才有效。
@@ -74,7 +74,7 @@
 
 * **类型**：`Command[]`
 * **默认值**：[内置命令](./others#内置命令)
-* **说明**：一个[Command](./others#Command)数组，自定义的命令库，搜索提示功能会扫描此库
+* **说明**：一个[Command](./others#command)数组，自定义的命令库，搜索提示功能会扫描此库
 
 
 ## log-size-limit
@@ -151,7 +151,7 @@ type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined
 
 * **类型**：`SearchHandlerFunc`
 * **默认值**：null
-* **说明**：用户自定义命令搜索提示实现，搜索结果是一个[Command](./others#Command)，通过callback回传给插件，可配合 `helpCmd` 这个slot来定义用户显示
+* **说明**：用户自定义命令搜索提示实现，搜索结果是一个[Command](./others#command)，通过callback回传给插件，可配合 `helpCmd` 这个slot来定义用户显示
 
 ```ts
 type SearchHandlerCallbackFunc = (cmd: Command) => void;

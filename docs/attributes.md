@@ -44,7 +44,7 @@ This switch will affect the drag function. The default drag function can only be
 
 * **Type**: `DragConfig`
 * **Default**: null
-* **Description**: Drag window configuration [DragConfig](./others#DragConfig)。
+* **Description**: Drag window configuration [DragConfig](./others#dragconfig)。
 
 ::: tip
 This configuration is only effective when [show-header](#show-header) is turned on.
@@ -74,8 +74,8 @@ and the window width and height are equal to the parent element width and height
 ## command-store
 
 * **Type**: `Command[]`
-* **Default**: [Internal Commands](./others#Internal-Commands)
-* **Description**: A [Command](./others#Command) array, a custom command library, the search prompt function will scan this library
+* **Default**: [Internal Commands](./others#internal-commands)
+* **Description**: A [Command](./others#command) array, a custom command library, the search prompt function will scan this library
 
 
 ## log-size-limit
@@ -88,7 +88,7 @@ and the window width and height are equal to the parent element width and height
 
 * **Type**: `boolean`
 * **Default**: true
-* **Description**: Whether to enable the default [Internal Commands](./others#Internal-Commands) switch
+* **Description**: Whether to enable the default [Internal Commands](./others#internal-commands) switch
 
 ## line-space
 
@@ -152,7 +152,7 @@ type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined
 
 * **Type**: `SearchHandlerFunc`
 * **Default**: null
-* **Description**: User-defined command search prompt is implemented. The search result is a [Command](./others#Command), which is passed back to the plugin through callback. It can be used with the `helpCmd` slot to define the user display
+* **Description**: User-defined command search prompt is implemented. The search result is a [Command](./others#command), which is passed back to the plugin through callback. It can be used with the `helpCmd` slot to define the user display
 
 ```ts
 type SearchHandlerCallbackFunc = (cmd: Command) => void;
