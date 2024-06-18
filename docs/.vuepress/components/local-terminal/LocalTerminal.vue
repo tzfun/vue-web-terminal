@@ -1,11 +1,21 @@
 <script setup>
 import 'vue-web-terminal/lib/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from "vue-web-terminal"
-import {nextTick, onMounted, reactive, ref} from "vue";
+import {reactive, ref} from "vue";
 import {commands} from "./commands.js";
 import {exampleCode} from "./example.js";
 import CodeEditor from "../editor/CodeEditor.vue";
+import {usePageLang} from "@vuepress/client";
+import languages from '../../languages.json'
 
+const languageText = reactive(languages[usePageLang().value])
+
+const getText = (key) => {
+  if (languageText) {
+    return languageText[key] || ''
+  }
+  return ''
+}
 const props = defineProps({
   name: String,
   context: {
@@ -39,7 +49,7 @@ const version = reactive({
   vue3: '3.2.6'
 })
 
-const cmdStore = ref([])
+const cmdStore = ref(commands[usePageLang().value])
 const initLog = reactive([
   {
     content: 'Terminal initializing...'
@@ -65,10 +75,6 @@ const guide = reactive({
 })
 const enableTextEditor = ref(false)
 
-onMounted(() => {
-  cmdStore.value = cmdStore.value.concat(commands)
-})
-
 const emits = defineEmits(['on-active', 'update:context', 'close'])
 
 const onActive = (name) => {
@@ -85,7 +91,11 @@ const onActive = (name) => {
  */
 const onExecCmd = (key, command, success, failed) => {
   if (guide.step > 0 && guide.command && key !== 'exit' && key !== guide.command) {
-    failed(`请按照引导输入命令 <span class="t-cmd-key">${guide.command}</span> 或输入 <span class="t-cmd-key">exit</span> 退出引导`)
+    let tip = getText('TERM_GUIDE_RETRY').format({
+      guideCommand: `<span class="t-cmd-key">${guide.command}</span>`,
+      exitCommand: `<span class="t-cmd-key">exit</span>`
+    })
+    failed(tip)
     return
   }
   if (key === 'fail') {
@@ -152,12 +162,12 @@ const onExecCmd = (key, command, success, failed) => {
       type: 'html',
       content: `
                               <ul class="custom-content">
-                                <li class="t-dir">目录1</li>
-                                <li class="t-dir">目录2</li>
-                                <li class="t-dir">目录3</li>
-                                <li class="t-file">文件1</li>
-                                <li class="t-file">文件2</li>
-                                <li class="t-file">文件3</li>
+                                <li class="t-dir">dir 1</li>
+                                <li class="t-dir">dir 2</li>
+                                <li class="t-dir">dir 3</li>
+                                <li class="t-file">file 1</li>
+                                <li class="t-file">file 2</li>
+                                <li class="t-file">file 3</li>
                               </ul>
                               <br>
                               `
@@ -194,7 +204,7 @@ const onExecCmd = (key, command, success, failed) => {
         type: 'normal',
         class: clazz,
         tag: clazz,
-        content: `这是 ${clazz} 级别的消息`
+        content: `This is a ${clazz} level message`
       })
     })
     success()
@@ -206,11 +216,11 @@ const onExecCmd = (key, command, success, failed) => {
       let asker = new TerminalAsk()
       success(asker)
       asker.ask({
-        question: '请输入用户名：',
+        question: getText('TERM_GUIDE_ASK_INPUT_USERNAME'),
         autoReview: true,
         callback: username => {
           asker.ask({
-            question: '请输入密码：',
+            question: getText('TERM_GUIDE_ASK_INPUT_PASSWORD'),
             autoReview: true,
             isPassword: true,
             callback: password => {
@@ -218,7 +228,7 @@ const onExecCmd = (key, command, success, failed) => {
               TerminalApi.pushMessage(props.name, [
                 {
                   class: "system",
-                  content: `用户输入的内容：`
+                  content: getText('TERM_GUIDE_ASK_RESULT')
                 }, {
                   content: `username: ${username}`
                 }, {
@@ -255,7 +265,7 @@ const onExecCmd = (key, command, success, failed) => {
     if (guide.step !== 0) {
       guide.step = 0
       guide.command = null
-      success({content: '你已退出引导'})
+      success({content: getText('TERM_GUIDE_EXIT')})
     } else {
       success()
     }
@@ -286,9 +296,6 @@ const onExecCmd = (key, command, success, failed) => {
       }
     })
     enableTextEditor.value = true
-    nextTick(() => {
-
-    })
     return;
   } else {
     failed("Unknown command")
@@ -333,9 +340,8 @@ const initComplete = () => {
 const askGuide = (key, command, success) => {
   let asker = new TerminalAsk()
   success(asker)
-
   asker.ask({
-    question: '为了帮助你对插件功能有个大概的了解，你是否需要引导？(y/n)：',
+    question: getText('TERM_GUIDE_ASK'),
     autoReview: true,
     callback: value => {
       if (value === 'y') {
@@ -353,40 +359,50 @@ const nextGuide = () => {
     return;
   }
   let message = null
+  const guideStepArg = { guideStep: guide.step }
   if (guide.step === 1) {
     guide.command = 'list'
-    message = `👉 [${guide.step}] 首先带你认识一下支持的消息格式，默认的消息是普通文本格式，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_LIST').format(guideCommandArg)
   } else if (guide.step === 2) {
     guide.command = 'json'
-    message = `👉 [${guide.step}] 接下来是json格式数据，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_JSON').format(guideCommandArg)
   } else if (guide.step === 3) {
     guide.command = 'code'
-    message = `👉 [${guide.step}] 接下来是code格式数据，拓展可支持 highlight 和 codemirror 高亮显示，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_CODE').format(guideCommandArg)
   } else if (guide.step === 4) {
     guide.command = 'table'
-    message = `👉 [${guide.step}] 接下来是表格数据，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_TABLE').format(guideCommandArg)
   } else if (guide.step === 5) {
     guide.command = 'loop'
-    message = `👉 [${guide.step}] Terminal支持批量插入多条消息，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_LOOP').format(guideCommandArg)
   } else if (guide.step === 6) {
     guide.command = 'html'
-    message = `👉 [${guide.step}] 接下来是自定义html消息，你可以在此基础上构建任意你需要的消息样式，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_HTML').format(guideCommandArg)
   } else if (guide.step === 7) {
     guide.command = 'ansi'
-    message = `👉 [${guide.step}] 本插件支持ANSI着色控制码的解析，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_ANSI').format(guideCommandArg)
   } else if (guide.step === 8) {
     guide.command = 'flash'
-    message = `👉 [${guide.step}] 如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Flash使用，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_FLASH').format(guideCommandArg)
   } else if (guide.step === 9) {
     guide.command = 'edit'
-    message = `👉 [${guide.step}] 如果你想编辑文本文件，插件也提供了简单的文本编辑器，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_EDIT').format(guideCommandArg)
   } else if (guide.step === 10) {
     guide.command = 'ask'
-    message = `👉 [${guide.step}] 如果你想获取到用户输入可以使用插件Ask功能，请输入<span class="t-cmd-key">${guide.command}</span>`
+    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_ASK').format(guideCommandArg)
   } else if (guide.step === 11) {
     guide.command = null
-    message = `🎉 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。
-                        <br>🤗 更多关于插件的内容请前往 <a class='t-a' target='_blank' href="https://github.com/tzfun/vue-web-terminal">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐️支持一下吧~`
+    message = getText('TERM_GUIDE_FINISH')
     TerminalApi.execute(props.name, 'help')
     TerminalApi.pushMessage(props.name, {
       content: message
@@ -488,6 +504,7 @@ const mockLoading = (flash, fileName, terminalInfo) => {
     <template #textEditor="{data}">
       <code-editor ref="customTextEditorRef"
                    class="my-text-editor"
+                   autofocus
                    v-model="data.value"
                    language="js"
                    @focus="data.onFocus"

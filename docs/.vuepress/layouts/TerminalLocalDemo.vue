@@ -1,6 +1,28 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import LocalTerminal from "../components/local-terminal/LocalTerminal.vue";
+import {usePageLang} from "@vuepress/client";
+import languages from '../languages.json'
+const languageText = reactive(languages[usePageLang().value])
+
+String.prototype.format = function () {
+  if (arguments.length === 0) {
+    return this;
+  }
+  const arg0 = arguments[0]
+  let s = this;
+  for (const i in arg0) {
+    s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arg0[i]);
+  }
+  return s;
+};
+
+const getText = (key) => {
+  if (languageText) {
+    return languageText[key] || ''
+  }
+  return ''
+}
 
 const showEditor = ref(false)
 const terminals = reactive({
@@ -244,35 +266,35 @@ const onActive = (key, name) => {
 
         <div class="demo-btn" style="margin-top: 30px">
           <button :class="'btn ' + (terminals.default.show ? 'active' :'btn-default')"
-                  @click="showDemo('default')">可拖拽示例
+                  @click="showDemo('default')">{{ getText('DEMO_BTN_1') }}
           </button>
         </div>
         <div class="demo-btn">
           <button :class="'btn ' + (terminals.bottom.show ? 'active' :'btn-default')"
-                  @click="showDemo('bottom')">固定位置示例
+                  @click="showDemo('bottom')">{{ getText('DEMO_BTN_2') }}
           </button>
         </div>
         <div class="demo-btn">
           <button :class="'btn ' + (terminals.fullscreen.show ? 'active' :'btn-default')"
-                  @click="showDemo('fullscreen')">全屏示例
+                  @click="showDemo('fullscreen')">{{ getText('DEMO_BTN_3') }}
           </button>
         </div>
         <div class="demo-btn">
           <button :class="'btn ' + (terminals.list.length > 0 ? 'active' :'btn-default')"
-                  @click="showDemo('list')">多窗口示例（多次戳我）
+                  @click="showDemo('list')">{{ getText('DEMO_BTN_4') }}
           </button>
         </div>
 
         <div class="help-container">
-          <h2 class="help-title">使用小技巧</h2>
+          <h2 class="help-title">{{ getText('DEMO_USAGE_TIPS') }}</h2>
           <ul class="help-list">
-            <li>拖动窗口Header可以拖拽</li>
-            <li>双击窗口Header可以全屏</li>
-            <li>选中内容右键可以复制到剪切板</li>
-            <li>输入时右键可以粘贴剪切板内容</li>
-            <li>双击窗口可以强制获取焦点</li>
-            <li>拖拽窗口四个角可以缩放大小</li>
-            <li>引入不同的主题css可以应用不同主题</li>
+            <li>{{ getText('DEMO_USAGE_1') }}</li>
+            <li>{{ getText('DEMO_USAGE_2') }}</li>
+            <li>{{ getText('DEMO_USAGE_3') }}</li>
+            <li>{{ getText('DEMO_USAGE_4') }}</li>
+            <li>{{ getText('DEMO_USAGE_5') }}</li>
+            <li>{{ getText('DEMO_USAGE_6') }}</li>
+            <li>{{ getText('DEMO_USAGE_7') }}</li>
           </ul>
         </div>
       </div>
@@ -295,6 +317,7 @@ const onActive = (key, name) => {
   cursor: pointer;
   font-weight: bold;
 }
+
 .terminal-container {
   position: fixed;
   z-index: 100;
@@ -362,6 +385,7 @@ const onActive = (key, name) => {
 
 .help-title {
   text-align: center;
+  border-bottom: none;
 }
 
 .help-title, .help-list {

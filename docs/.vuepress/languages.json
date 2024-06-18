@@ -1,0 +1,37 @@
+{
+  "zh-CN": {
+    "DEMO_BTN_1": "可拖拽示例",
+    "DEMO_BTN_2": "固定位置示例",
+    "DEMO_BTN_3": "全屏示例",
+    "DEMO_BTN_4": "多窗口示例（多次戳我）",
+    "DEMO_USAGE_TIPS": "使用小技巧",
+    "DEMO_USAGE_1": "拖动窗口Header可以拖拽",
+    "DEMO_USAGE_2": "双击窗口Header可以全屏",
+    "DEMO_USAGE_3": "选中内容右键可以复制到剪切板",
+    "DEMO_USAGE_4": "输入时右键可以粘贴剪切板内容",
+    "DEMO_USAGE_5": "双击窗口可以强制获取焦点",
+    "DEMO_USAGE_6": "拖拽窗口四个角可以缩放大小",
+    "DEMO_USAGE_7": "引入不同的主题css可以应用不同主题",
+    "TERM_GUIDE_ASK": "为了帮助你对插件功能有个大概的了解，你是否需要引导？(y/n)：",
+    "TERM_GUIDE_RETRY": "请按照引导输入命令 {guideCommand} 或输入 {exitCommand} 退出引导",
+    "TERM_GUIDE_PREFIX": "\uD83D\uDC49 [{guideStep}] ",
+    "TERM_GUIDE_COMMAND_LIST": "首先带你认识一下支持的消息格式，默认的消息是普通文本格式，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_JSON": "接下来是json格式数据，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_CODE": "接下来是code格式数据，拓展可支持 highlight 和 codemirror 高亮显示，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_TABLE": "接下来是表格数据，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_LOOP": "Terminal支持批量插入多条消息，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_HTML": "接下来是自定义html消息，你可以在此基础上构建任意你需要的消息样式，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_ANSI": "本插件支持ANSI着色控制码的解析，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_FLASH": "如果你想展示执行过程动画可以使用插件实时回显功能，你可以把它当做Flash使用，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_EDIT": "如果你想编辑文本文件，插件也提供了简单的文本编辑器，你可以把它当做Flash使用，请输入{guideCommand}",
+    "TERM_GUIDE_COMMAND_ASK": "如果你想获取到用户输入可以使用插件Ask功能，你可以把它当做Flash使用，请输入{guideCommand}",
+    "TERM_GUIDE_FINISH": "\uD83C\uDF89 恭喜你完成了所有的引导，上面已为你展示本Demo支持的所以命令，另外插件还支持拖拽、全屏等功能也可在Demo中体验。<br>\uD83E\uDD17 更多关于插件的内容请前往 <a class='t-a' target='_blank' href=\"https://github.com/tzfun/vue-web-terminal\">https://github.com/tzfun/vue-web-terminal</a> 查看，如果你觉得做的不错给个⭐\uFE0F支持一下吧~",
+    "TERM_GUIDE_EXIT": "你已退出引导",
+    "TERM_GUIDE_ASK_INPUT_USERNAME": "请输入用户名：",
+    "TERM_GUIDE_ASK_INPUT_PASSWORD": "请输入密码：",
+    "TERM_GUIDE_ASK_RESULT": "用户输入的内容："
+  },
+  "en-US": {
+
+  }
+}

@@ -10,11 +10,15 @@ const props = defineProps({
   language: {
     type: String,
     required: true
+  },
+  autofocus: {
+    type: Boolean
   }
 })
 const emits = defineEmits(["input", 'focus', 'blur'])
 
 const code = ref(props.value)
+const codeEditorRef = ref(null)
 
 const extensions = computed(() => {
   const result = []
@@ -40,13 +44,17 @@ const onFocus = (event) => {
 const onBlur = (event) => {
   emits('blur', event)
 }
+
+defineExpose({
+  focus
+})
 </script>
 <template>
-  <codemirror ref="codeEditor"
+  <codemirror ref="codeEditorRef"
               v-model="code"
               class="code-editor"
               :extensions="extensions"
-              autofocus
+              :autofocus="autofocus"
               indent-with-tab
               :tab-size="4"
               @update="valueChange"
