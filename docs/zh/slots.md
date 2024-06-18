@@ -1,4 +1,6 @@
 # 插件插槽
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
 插件提供了一些插槽，如果你对默认样式不满意，或者是默认实现无法满足你的需求，你可以使用这些插槽自定义这部分显示。
 

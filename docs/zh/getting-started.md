@@ -1,4 +1,6 @@
 # 快速上手
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
 你可以在 [Online Demo][Online Demo] 体验一部分作者写好的示例功能
 

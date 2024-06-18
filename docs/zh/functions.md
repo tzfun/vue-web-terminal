@@ -1,4 +1,6 @@
 # 高级功能
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
 ## 拖拽功能
 

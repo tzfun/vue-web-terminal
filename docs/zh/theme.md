@@ -1,4 +1,6 @@
 # 主题
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
 从 `2.1.13` 和 `3.2.0` 版本开始，插件内置有两个主题：`dark` 和 `light`，并抽出一部分css变量，提供自定义主题的能力。
 

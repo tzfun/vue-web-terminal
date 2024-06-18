@@ -65,6 +65,10 @@ export default defineUserConfig({
                         link: '/about'
                     },
                     {
+                        text: 'Q & A',
+                        link: '/questions'
+                    },
+                    {
                         text: 'Open Source',
                         children: [
                             {text: 'GitHub', link: 'https://github.com/tzfun/vue-web-terminal'},
@@ -82,6 +86,7 @@ export default defineUserConfig({
                     {text: 'API', link: '/api'},
                     {text: 'Advanced Features', link: '/functions'},
                     {text: 'More', link: '/others'},
+                    {text: 'Q & A', link: '/questions'},
                 ]
             },
             '/zh/': {
@@ -111,6 +116,10 @@ export default defineUserConfig({
                         link: '/zh/about'
                     },
                     {
+                        text: '常见问题',
+                        link: '/zh/questions'
+                    },
+                    {
                         text: '开源',
                         children: [
                             {text: 'GitHub', link: 'https://github.com/tzfun/vue-web-terminal'},
@@ -128,6 +137,7 @@ export default defineUserConfig({
                     {text: '接口 API', link: '/zh/api'},
                     {text: '高级功能', link: '/zh/functions'},
                     {text: '更多', link: '/zh/others'},
+                    {text: '常见问题', link: '/zh/questions'},
                 ]
             },
         },

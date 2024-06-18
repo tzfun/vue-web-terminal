@@ -1,4 +1,10 @@
 # vue-web-terminal
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
+<img src="https://shields.io/bundlephobia/minzip/vue-web-terminal" style="margin-right: 8px;">
+<img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads" style="margin-right: 8px;">
+<img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version" style="margin-right: 8px;">
+
 ## 介绍
 
 vue-web-terminal是一个由 Vue 构建的支持多种内容格式显示的网页端命令行窗口插件，它是一种命令式的仿真终端，由前端控制渲染结果，内置有用户问答、文本编辑、动画等高级功能，具有非常灵活的可自定义性。
@@ -82,7 +88,12 @@ vue-web-terminal 是一个由前端模拟实现的终端，而并不是传统意
 * [lilqilie](https://github.com/lilqilie) - 20元
 * [h1xa](https://ctf.show) - 66元
 
+## License
+
+本插件遵循 [Apache License 2.0][LICENSE] 开源协议
+
 <CommentService></CommentService>
 
 [Github PR]: https://github.com/tzfun/vue-web-terminal/pulls
 [Github issue]: https://github.com/tzfun/vue-web-terminal/issues
+[LICENSE]: https://github.com/tzfun/vue-web-terminal/blob/vue3/LICENSE

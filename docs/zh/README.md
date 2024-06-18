@@ -10,14 +10,12 @@ actions:
 
   - text: 了解更多
     link: ./about
-    type: primary
-
-  - text: 在线体验
-    link: https://vuejs.press/guide/introduction.html
     type: secondary
+
+#  - text: 在线体验
+#    link: https://vuejs.press/guide/introduction.html
+#    type: secondary
     
-
-
 features:
   - title: 命令式终端
     details: 命令式仿真终端，拥有终端的拖拽、缩放、光标切换、历史命令切换等常规功能，非常适合用于制作 Redis、MySQL、ETCD 等客户端工具。

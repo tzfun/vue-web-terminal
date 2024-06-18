@@ -1,4 +1,6 @@
 # API
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
 This plugin provides some JS APIs that can actively trigger or capture the behavior of the plug-in, and can also simulate some user behaviors through these APIs.
 

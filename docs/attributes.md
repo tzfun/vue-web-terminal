@@ -1,5 +1,8 @@
 # Attributes
 
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
+
 This plugin provides rich properties to make it more flexible.
 
 ## name

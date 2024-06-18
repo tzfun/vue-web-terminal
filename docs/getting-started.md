@@ -1,5 +1,8 @@
 # Quick Start
 
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
+
 You can experience some of the sample functions written by the author in [Online Demo][Online Demo].
 
 You can also edit the code and run the experience online in [CodeSandbox][Online Demo CodeSandbox].

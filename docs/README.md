@@ -10,11 +10,11 @@ actions:
 
   - text: Learn More
     link: ./about
-    type: primary
-
-  - text: Online Demo
-    link: https://vuejs.press/guide/introduction.html
     type: secondary
+
+#  - text: Online Demo
+#    link: https://vuejs.press/guide/introduction.html
+#    type: secondary
     
 features:
   - title: Command Base

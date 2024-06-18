@@ -1,5 +1,8 @@
 # Theme
 
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
+
 Starting from `2.1.13` and `3.2.0` versions, the plugin has two built-in themes: `dark` and `light`, 
 and extracts some css variables to provide the ability to customize the theme.
 

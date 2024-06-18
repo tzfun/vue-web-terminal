@@ -1,4 +1,6 @@
 # 插件属性
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
 本插件提供了丰富的属性，让它变得更加灵活。
 

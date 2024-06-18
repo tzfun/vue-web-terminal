@@ -1,0 +1,15 @@
+:root {
+  scroll-behavior: smooth;
+}
+
+.theme-default-content a:not(.header-anchor) {
+  text-decoration: none;
+}
+
+.theme-default-content  a:hover {
+  text-decoration: underline;
+}
+
+.vp-sidebar-item.vp-sidebar-heading {
+  font-weight: 500;
+}

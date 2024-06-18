@@ -1,9 +1,12 @@
 # Slots
 
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
+
 The plugin provides some slots. If you are not satisfied with the default style or the default implementation does 
 not meet your needs, you can use these slots to customize this part of the display.
 
-## Slots
+## Slots Details
 
 | Slot name    | Arguments            | Description                                                         |
 |--------------|----------------------|---------------------------------------------------------------------|
@@ -17,7 +20,6 @@ not meet your needs, you can use these slots to customize this part of the displ
 | flash        | { content }          | Custom flash style.                                                 |
 | helpCmd      | { item }             | Custom command search prompt style.                                 |
 | textEditor   | { data }             | Custom text editor style.                                           |
-
 
 ## Example
 

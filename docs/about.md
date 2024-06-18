@@ -1,4 +1,10 @@
 # vue-web-terminal
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
+<img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
+<img src="https://shields.io/bundlephobia/minzip/vue-web-terminal" style="margin-right: 8px;">
+<img src="https://img.shields.io/npm/dt/vue-web-terminal.svg" alt="Downloads" style="margin-right: 8px;">
+<img src="https://img.shields.io/npm/l/vue-web-terminal.svg" alt="Version" style="margin-right: 8px;">
+
 ## Introduce
 
 vue-web-terminal is a web-based command line window plugin built by Vue that supports displaying multiple content formats. It is an imperative simulation terminal that controls the rendering results by the front end. It has built-in advanced functions such as user Q&A, text editing, animation, etc., and is very flexible and customizable.
@@ -82,7 +88,12 @@ Thank you for your support, your support is the author's motivation! (Sort by do
 * [lilqilie](https://github.com/lilqilie) - ￥20
 * [h1xa](https://ctf.show) - ￥66
 
+## License
+
+This plugin complies with the [Apache License 2.0][LICENSE] open source agreement
+
 <CommentService></CommentService>
 
 [Github PR]: https://github.com/tzfun/vue-web-terminal/pulls
 [Github issue]: https://github.com/tzfun/vue-web-terminal/issues
+[LICENSE]: https://github.com/tzfun/vue-web-terminal/blob/vue3/LICENSE
