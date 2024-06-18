@@ -13,3 +13,18 @@
 .vp-sidebar-item.vp-sidebar-heading {
   font-weight: 500;
 }
+
+.t-window code {
+  background-color: unset !important;
+  color: unset;
+  font-family: unset;
+  transition: unset;
+}
+
+.t-window tr {
+  background-color: unset;
+}
+
+.t-window table {
+  display: table;
+}

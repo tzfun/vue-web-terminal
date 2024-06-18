@@ -11,7 +11,6 @@
     "docs:update-package": "pnpm dlx vp-update"
   },
   "devDependencies": {
-    "@codemirror/lang-xml": "^6.1.0",
     "@vuepress/bundler-vite": "^2.0.0-rc.13",
     "@vuepress/client": "^2.0.0-rc.13",
     "@vuepress/plugin-comment": "2.0.0-rc.34",
@@ -19,12 +18,19 @@
     "@vuepress/plugin-theme-data": "^2.0.0-rc.34",
     "@vuepress/theme-default": "^2.0.0-rc.35",
     "@vuepress/utils": "^2.0.0-rc.13",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/language": "^6.10.2",
+    "@codemirror/view": "^6.28.0",
+    "@codemirror/state": "^6.4.1",
     "markdown-it": "^14.1.0",
     "vite": "^5.2.13",
     "vue": "^3.4.0",
+    "vue-web-terminal": "^3.2.6",
     "vuepress": "^2.0.0-rc.13",
-    "vuepress-plugin-comment2": "2.0.0-rc.30",
-    "vuepress-plugin-md-enhance": "2.0.0-rc.48"
+    "vuepress-plugin-md-enhance": "2.0.0-rc.48",
+    "vue-codemirror": "^6.1.1",
+    "codemirror": "^6.x",
+    "thememirror": "^2.0.1"
   },
   "peerDependencies": {
     "vite": "^5.2.13",

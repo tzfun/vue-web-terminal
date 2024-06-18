@@ -1,7 +1,7 @@
 import {defaultTheme} from '@vuepress/theme-default'
 import {defineUserConfig} from 'vuepress/cli'
 import {viteBundler} from '@vuepress/bundler-vite'
-import {commentPlugin} from "vuepress-plugin-comment2";
+import {commentPlugin} from "@vuepress/plugin-comment";
 import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 import {searchPlugin} from "@vuepress/plugin-search";
 
