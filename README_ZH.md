@@ -15,7 +15,7 @@
 一个由 Vue 构建的支持多内容格式显示的网页端命令行窗口插件，支持表格、json、代码等多种消息格式，支持自定义消息样式、命令行库、键入搜索提示等，模拟原生终端窗口支持 ← →
 光标切换和 ↑ ↓ 历史命令切换。
 
-> 新版文档（预览版）已开放访问，文档更详细界面更友好，欢迎体验：[vue-web-terminal.beifengtz.com](http://vue-web-terminal.beifengtz.com)
+> :tada: 新版文档（预览版）已开放访问，文档更详细界面更友好，欢迎体验：[vue-web-terminal.beifengtz.com](http://vue-web-terminal.beifengtz.com)
 
 ## 功能支持
 

@@ -14,8 +14,8 @@
 
 A web-side command line plugin built by `Vue`, supports multiple message formats such as tables, json, and codes, supports custom message styles, command line libraries, typing search prompts, etc., and simulates native terminal support ← → cursor toggle and ↑ ↓ history command toggle.
 
-> The new document (preview version) is now available. The document is more detailed and the page 
-> is more friendly. Welcome to experience it:[vue-web-terminal.beifengtz.com](http://vue-web-terminal.beifengtz.com)
+> :tada: The new document (preview version) is now available. The document is more detailed and the page 
+> is more friendly. Welcome to experience it: [vue-web-terminal.beifengtz.com](http://vue-web-terminal.beifengtz.com)
 
 ## Feature Support
 
