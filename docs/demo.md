@@ -1,3 +1,4 @@
 ---
+navbar: true
 layout: TerminalLocalDemo
 ---

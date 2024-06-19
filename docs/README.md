@@ -8,13 +8,9 @@ actions:
     link: ./getting-started
     type: primary
 
-  - text: Learn More
-    link: ./about
+  - text: Try Now
+    link: /demo
     type: secondary
-
-#  - text: Online Demo
-#    link: https://vuejs.press/guide/introduction.html
-#    type: secondary
     
 features:
   - title: Command Base

@@ -202,6 +202,10 @@ const onActive = (key, name) => {
   }
 }
 
+const goHome = () => {
+  document.location.href = '/'
+}
+
 </script>
 
 <template>
@@ -263,25 +267,28 @@ const onActive = (key, name) => {
                 src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" alt="vue3"></a>
           </div>
         </div>
-
-        <div class="demo-btn" style="margin-top: 30px">
-          <button :class="'btn ' + (terminals.default.show ? 'active' :'btn-default')"
+        <div class="editor-navbar">
+          <button class="btn" @click="goHome">{{ getText('DEMO_NAVBAR_GO_HOME') }}</button>
+        </div>
+        <div class="demo-btn">
+          <button :class="'btn ' + (terminals.default.show ? 't-btn-active' :'btn-default')"
                   @click="showDemo('default')">{{ getText('DEMO_BTN_1') }}
           </button>
         </div>
         <div class="demo-btn">
-          <button :class="'btn ' + (terminals.bottom.show ? 'active' :'btn-default')"
+          <button :class="'btn ' + (terminals.bottom.show ? 't-btn-active' :'btn-default')"
                   @click="showDemo('bottom')">{{ getText('DEMO_BTN_2') }}
           </button>
         </div>
         <div class="demo-btn">
-          <button :class="'btn ' + (terminals.fullscreen.show ? 'active' :'btn-default')"
+          <button :class="'btn ' + (terminals.fullscreen.show ? 't-btn-active' :'btn-default')"
                   @click="showDemo('fullscreen')">{{ getText('DEMO_BTN_3') }}
           </button>
         </div>
         <div class="demo-btn">
-          <button :class="'btn ' + (terminals.list.length > 0 ? 'active' :'btn-default')"
-                  @click="showDemo('list')">{{ getText('DEMO_BTN_4') }}
+          <button :class="'btn ' + (terminals.list.length > 0 ? 't-btn-active' :'btn-default')"
+                  @click="showDemo('list')"
+                  v-html="getText('DEMO_BTN_4')">
           </button>
         </div>
 
@@ -316,6 +323,16 @@ const onActive = (key, name) => {
   box-sizing: border-box;
   cursor: pointer;
   font-weight: bold;
+}
+
+.btn:hover {
+  background: #63e5aa;
+  color: white;
+}
+
+.editor-navbar {
+  display: flex;
+  justify-content: center;
 }
 
 .terminal-container {
@@ -394,7 +411,7 @@ const onActive = (key, name) => {
 }
 
 .help-list {
-  margin-left: 74px;
+  margin-left: 40px;
   list-style: decimal;
   font-size: 17px;
   padding-top: 0;
@@ -419,7 +436,7 @@ const onActive = (key, name) => {
   background-color: #ffffff;
 }
 
-.active {
+.t-btn-active {
   background-color: #70d095;
   color: white;
 }

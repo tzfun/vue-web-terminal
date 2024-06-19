@@ -8,13 +8,9 @@ actions:
     link: ./getting-started
     type: primary
 
-  - text: 了解更多
-    link: ./about
+  - text: 在线体验
+    link: /demo
     type: secondary
-
-#  - text: 在线体验
-#    link: https://vuejs.press/guide/introduction.html
-#    type: secondary
     
 features:
   - title: 命令式终端

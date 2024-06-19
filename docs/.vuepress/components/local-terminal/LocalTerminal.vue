@@ -248,7 +248,8 @@ const onExecCmd = (key, command, success, failed) => {
     showFlash(success)
     return;
   } else if (key === 'ansi') {
-    let ansiContent = 'vue-web-terminal 支持 ANSI 码的着色解码功能，但暂不支持其他的光标、设备、窗口控制等，默认会将不支持的 ANSI 码过滤。\n\n\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m\n'
+
+    let ansiContent = getText('TERM_GUIDE_ANSI_PRODUCE') + '\n\n\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m\n'
     ansiContent += '\nThis is xterm-256-color content:\n'
     for (let i = 0; i < 256; i++) {
       ansiContent += ('\x1B[38;5;' + i + 'mV\x1B[0m')
