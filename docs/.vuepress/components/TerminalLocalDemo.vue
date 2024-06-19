@@ -105,7 +105,7 @@ const initWindowSize = () => {
     dragConf.width = 800
     dragConf.height = 600
   } else if (width >= 1264) {
-    dragConf.width = 900
+    dragConf.width = 950
     dragConf.height = 700
   }
   if (showEditor.value && dragConf) {
@@ -299,7 +299,7 @@ const goHome = () => {
         </div>
 
         <div class="help-container">
-          <h2 class="help-title">{{ getText('DEMO_USAGE_TIPS') }}</h2>
+          <h2 class="help-title" style="margin: 5px;">{{ getText('DEMO_USAGE_TIPS') }}</h2>
           <ul class="help-list">
             <li>{{ getText('DEMO_USAGE_1') }}</li>
             <li>{{ getText('DEMO_USAGE_2') }}</li>
@@ -319,7 +319,7 @@ const goHome = () => {
 .btn {
   margin: 15px;
   padding: 0.5em 1.5em;
-  font-size: 1.2em;
+  font-size: 1em;
   border-radius: 5px;
   border: none;
   box-shadow: 1px 1px 15px rgb(0 0 0 / 20%);
@@ -417,13 +417,13 @@ const goHome = () => {
 .help-list {
   margin-left: 40px;
   list-style: decimal;
-  font-size: 17px;
+  font-size: 1em;
   padding-top: 0;
   margin-top: 0;
 }
 
 .help-list li {
-  margin: 12px 15px;
+  margin: 10px 15px;
 }
 
 .editor-icon {
