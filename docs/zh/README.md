@@ -26,5 +26,5 @@ features:
   - title: Vue2 & Vue3
     details: 为了兼容更多的应用场景，插件同时支持了Vue2 和 Vue3！
 
-footer: Apache 2.0 Licensed | Copyright © 2018-present VuePress Community
+footer: Apache 2.0 Licensed | Copyright © 2022-present beifengtz | Powered by VuePress
 ---

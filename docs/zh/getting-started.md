@@ -2,9 +2,9 @@
 <img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" style="margin-right: 8px;">
 <img src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue3" style="margin-right: 8px;">
 
-你可以在 [Online Demo][Online Demo] 体验一部分作者写好的示例功能
+你可以 [在线体验](./demo.md) 一部分作者写好的示例功能，也可以在 [CodeSandbox][Online Demo CodeSandbox] 编辑代码并运行体验。
 
-你也可以在 [CodeSandbox][Online Demo CodeSandbox] 在线编辑代码并运行体验
+在你打算正式使用此插件之前希望你已经阅读 [关于插件](./about.md) 并充分了解此插件支持的功能以及它的局限性。
 
 ## 安装
 
@@ -128,7 +128,6 @@ createApp(App).use(Terminal)
 启动你的工程之后，如果在页面中出现一个可拖拽的终端窗口，那么恭喜你的第一个terminal应用实现了！
 你可以在窗口中输入*任意命令*然后回车，会随机提示不同的级别的内容。
 
-[Online Demo]: https://tzfun.github.io/vue-web-terminal/
 [Online Demo CodeSandbox]: https://codesandbox.io/s/silly-scooby-l8wk9b
 [Github Releases]: https://github.com/tzfun/vue-web-terminal/releases
 

@@ -8,7 +8,7 @@ actions:
     link: ./getting-started
     type: primary
 
-  - text: Try Now
+  - text: Online Experience
     link: ./demo
     type: secondary
     
@@ -26,5 +26,5 @@ features:
   - title: Vue2 & Vue3
     details: In order to be compatible with more application scenarios, the plug-in supports both Vue2 and Vue3!
 
-footer: Apache 2.0 Licensed | Copyright © 2018-present VuePress Community
+footer: Apache 2.0 Licensed | Copyright © 2022-present beifengtz | Powered by VuePress
 ---
