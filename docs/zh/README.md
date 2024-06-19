@@ -9,7 +9,7 @@ actions:
     type: primary
 
   - text: 在线体验
-    link: /demo
+    link: ./demo
     type: secondary
     
 features:

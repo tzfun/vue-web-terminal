@@ -1,9 +1,8 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
-import LocalTerminal from "../components/local-terminal/LocalTerminal.vue";
+import LocalTerminal from "./local-terminal/LocalTerminal.vue";
 import {usePageLang} from "@vuepress/client";
 import languages from '../languages.json'
-const languageText = reactive(languages[usePageLang().value])
 
 String.prototype.format = function () {
   if (arguments.length === 0) {
@@ -17,11 +16,16 @@ String.prototype.format = function () {
   return s;
 };
 
+const languageText = ref({})
+const language = ref('en-US')
+
+onMounted(() => {
+  language.value = usePageLang().value
+  languageText.value = languages[language.value]
+})
+
 const getText = (key) => {
-  if (languageText) {
-    return languageText[key] || ''
-  }
-  return ''
+  return languageText.value[key] || ''
 }
 
 const showEditor = ref(false)
@@ -203,7 +207,7 @@ const onActive = (key, name) => {
 }
 
 const goHome = () => {
-  document.location.href = '/'
+  document.location.href = language.value === 'en-US' ? '/' : '/zh/'
 }
 
 </script>
@@ -258,8 +262,10 @@ const goHome = () => {
     </div>
     <div class="editor-container" v-if="showEditor">
       <div class="editor-body">
+        <div style="display: flex;justify-content: center;">
+          <img style="width: 200px" src="/images/logo.svg" alt="vue-web-terminal">
+        </div>
         <div class="editor-icon">
-          <img style="width: 250px" src="/images/logo.svg" alt="vue-web-terminal">
           <div>
             <a href="https://github.com/tzfun/vue-web-terminal/tree/vue2"><img
                 src="https://shields.io/github/package-json/v/tzfun/vue-web-terminal/vue2" alt="vue2"></a>
@@ -305,9 +311,7 @@ const goHome = () => {
           </ul>
         </div>
       </div>
-
     </div>
-
   </div>
 </template>
 

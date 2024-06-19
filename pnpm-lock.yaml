@@ -8,6 +8,7 @@ specifiers:
   '@vuepress/bundler-vite': ^2.0.0-rc.13
   '@vuepress/client': ^2.0.0-rc.13
   '@vuepress/plugin-comment': 2.0.0-rc.34
+  '@vuepress/plugin-register-components': 2.0.0-rc.34
   '@vuepress/plugin-search': 2.0.0-rc.34
   '@vuepress/plugin-theme-data': ^2.0.0-rc.34
   '@vuepress/theme-default': ^2.0.0-rc.35
@@ -30,6 +31,7 @@ devDependencies:
   '@vuepress/bundler-vite': 2.0.0-rc.13
   '@vuepress/client': 2.0.0-rc.13
   '@vuepress/plugin-comment': 2.0.0-rc.34_vuepress@2.0.0-rc.13
+  '@vuepress/plugin-register-components': 2.0.0-rc.34_vuepress@2.0.0-rc.13
   '@vuepress/plugin-search': 2.0.0-rc.34_vuepress@2.0.0-rc.13
   '@vuepress/plugin-theme-data': 2.0.0-rc.34_vuepress@2.0.0-rc.13
   '@vuepress/theme-default': 2.0.0-rc.35_vuepress@2.0.0-rc.13
@@ -1339,6 +1341,15 @@ packages:
     dependencies:
       '@vuepress/highlighter-helper': 2.0.0-rc.34_vuepress@2.0.0-rc.13
       prismjs: 1.29.0
+      vuepress: 2.0.0-rc.13_ox5s2xryeh6lscbdwahszlpjx4
+    dev: true
+
+  /@vuepress/plugin-register-components/2.0.0-rc.34_vuepress@2.0.0-rc.13:
+    resolution: {integrity: sha512-e1GN+DHUxYGiP7U1WSFfe8WD6e3OOFgnrpb+3FMNBQdS0Y0lL4KVTvOJALfSSINdISbY5AiVimyV7gYcTvMNIQ==}
+    peerDependencies:
+      vuepress: 2.0.0-rc.13
+    dependencies:
+      chokidar: 3.6.0
       vuepress: 2.0.0-rc.13_ox5s2xryeh6lscbdwahszlpjx4
     dev: true
 

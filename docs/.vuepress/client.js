@@ -1,6 +1,6 @@
 import {defineClientConfig} from '@vuepress/client';
 import NotFound from './layouts/404.vue'
-import TerminalLocalDemo from "./layouts/TerminalLocalDemo.vue";
+// import TerminalLocalDemo from "./components/TerminalLocalDemo.vue";
 
 export default defineClientConfig({
     async enhance({app, router, siteData}) {
@@ -10,10 +10,11 @@ export default defineClientConfig({
 
             const Terminal = await import('vue-web-terminal')
             app.use(Terminal)
+
+            // app.component('TerminalLocalDemo', TerminalLocalDemo)
         }
     },
     layouts: {
-        NotFound,
-        TerminalLocalDemo
+        NotFound
     }
 });

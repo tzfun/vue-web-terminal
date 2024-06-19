@@ -46,7 +46,7 @@
     "DEMO_USAGE_5": "Double-clicking the window can force focus",
     "DEMO_USAGE_6": "Drag the four corners of the window to resize",
     "DEMO_USAGE_7": "Introducing different theme css can apply different themes",
-    "TERM_GUIDE_ASK": "To help you get a general understanding of the plugin's functionality, do you need a guide? (y/n):",
+    "TERM_GUIDE_ASK": "To help you get a general understanding of the plugin's functionality, do you need a guide? (y/n): ",
     "TERM_GUIDE_RETRY": "Please follow the guide and enter command {guideCommand} or enter {exitCommand} to exit the guide",
     "TERM_GUIDE_PREFIX": "\uD83D\uDC49 [{guideStep}] ",
     "TERM_GUIDE_COMMAND_LIST": "First, let me introduce you to the supported message formats. Please enter {guideCommand}",

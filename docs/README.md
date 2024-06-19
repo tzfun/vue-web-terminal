@@ -9,7 +9,7 @@ actions:
     type: primary
 
   - text: Try Now
-    link: /demo
+    link: ./demo
     type: secondary
     
 features:

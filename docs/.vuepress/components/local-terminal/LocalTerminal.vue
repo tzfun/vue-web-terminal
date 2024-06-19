@@ -1,12 +1,12 @@
 <script setup>
 import 'vue-web-terminal/lib/theme/dark.css'
-import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from "vue-web-terminal"
 import {reactive, ref} from "vue";
 import {commands} from "./commands.js";
 import {exampleCode} from "./example.js";
 import CodeEditor from "../editor/CodeEditor.vue";
 import {usePageLang} from "@vuepress/client";
 import languages from '../../languages.json'
+import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from 'vue-web-terminal'
 
 const languageText = reactive(languages[usePageLang().value])
 
@@ -523,6 +523,9 @@ const mockLoading = (flash, fileName, terminalInfo) => {
 </template>
 
 <style>
+.t-header h4 {
+  margin: 5px !important;
+}
 .custom-content {
   list-style: none;
   margin: 0;

@@ -4,6 +4,10 @@ import {viteBundler} from '@vuepress/bundler-vite'
 import {commentPlugin} from "@vuepress/plugin-comment";
 import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 import {searchPlugin} from "@vuepress/plugin-search";
+import {registerComponentsPlugin} from "@vuepress/plugin-register-components";
+import {getDirname, path} from "@vuepress/utils";
+
+const __dirname = getDirname(import.meta.url)
 
 //  注意！default-theme有一个锚点 bug，每次打包时需要修改这个文件里面的第20行代码:
 //  node_modules/.pnpm/@vuepress+theme-default@2.0.0-rc.35_vuepress@2.0.0-rc.13/node_modules/@vuepress/theme-default/lib/client/components/VPSidebarItems.vue
@@ -169,7 +173,7 @@ export default defineUserConfig({
             codetabs: true,
             //  提示容器
             //  https://theme-hope.vuejs.press/zh/guide/markdown/stylize/hint.html
-            hint:true
+            hint: true
         }),
         searchPlugin({
             locales: {
@@ -180,6 +184,11 @@ export default defineUserConfig({
                     placeholder: '搜索',
                 },
             },
+        }),
+        registerComponentsPlugin({
+            components: {
+                TerminalLocalDemo: path.resolve(__dirname, './components/TerminalLocalDemo.vue')
+            }
         })
     ]
 })
