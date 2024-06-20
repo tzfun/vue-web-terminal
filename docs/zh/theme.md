@@ -12,7 +12,7 @@
 
 黑暗主题是插件的默认主题，也更符合大多数用户的使用习惯，要使用它只需在`main.js`入口处引入相应的css样式即可
 
-```js title="main.js"
+```js:no-line-numbers title="main.js"
 import 'vue-web-terminal/lib/theme/dark.css'
 ```
 
@@ -23,7 +23,7 @@ import 'vue-web-terminal/lib/theme/dark.css'
 
 插件内置了亮色主题，需要使用它只需引入 light 的css样式即可
 
-```js title="main.js"
+```js:no-line-numbers title="main.js"
 import 'vue-web-terminal/lib/theme/light.css'
 ```
 
@@ -84,7 +84,7 @@ import 'vue-web-terminal/lib/theme/light.css'
 如果你需要实现自己的主题样式，你**无需引入上面任何一个css文件**，在你的工程中创建一个新的css文件，比如就叫`terminal-custom-theme.css`，
 然后在此文件中重写上面的css变量，最后在项目中 import 即可。
 
-```js title="main.js"
+```js:no-line-numbers title="main.js"
 import '~/your-style-dir/terminal-custom-theme.css'
 ```
 

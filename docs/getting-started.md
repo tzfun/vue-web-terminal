@@ -15,37 +15,37 @@ You need to understand the plugin version number rules：
 - `2.x.x` corresponds to Vue2 version
 - `3.x.x` corresponds to Vue3 version
 
-It is recommended to go to [releases][Github Releases] to find the latest version of the corresponding vue version, and then replace 2.x.x or 3.x.x in the example command below to install it.
+It is recommended to go to [releases][Github Releases] to find the latest version of the corresponding vue version.
 
 ::: code-tabs#shell
 @tab npm
 
-```shell
+```shell:no-line-numbers
 # for vue2
-npm install vue-web-terminal@2.x.x
+npm install vue-web-terminal@2
 
 # for vue3
-npm install vue-web-terminal@3.x.x
+npm install vue-web-terminal@3
 ```
 
 @tab yarn
 
-```shell
+```shell:no-line-numbers
 # for vue2
-yarn add vue-web-terminal@2.x.x
+yarn add vue-web-terminal@2
 
 # for vue3
-yarn add vue-web-terminal@3.x.x
+yarn add vue-web-terminal@3
 ```
 
 @tab pnpm
 
-```shell
+```shell:no-line-numbers
 # for vue2
-pnpm install vue-web-terminal@2.x.x
+pnpm install vue-web-terminal@2
 
 # for vue3
-pnpm install vue-web-terminal@3.x.x
+pnpm install vue-web-terminal@3
 ```
 
 :::

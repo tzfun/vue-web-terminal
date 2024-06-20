@@ -414,7 +414,7 @@ type EditorSetting = {
 
 插件内置的`help`命令可以方便使用者查看命令的使用方法，前提是这些命令已经提前定义好了，通过help命令可以查看命令的key、分组、解释样例信息。
 
-```shell
+```shell:no-line-numbers
 # 显示全部命令信息
 help
 
@@ -432,7 +432,7 @@ help :server
 
 插件内置的`clear`命令可以实现清除当前屏幕记录和清除历史命令记录
 
-```shell
+```shell:no-line-numbers
 # 清除当前屏幕记录
 clear
 
@@ -444,7 +444,7 @@ clear history
 
 插件内置的`open`命令可以在浏览器中打开一个网页地址
 
-```shell
+```shell:no-line-numbers
 # 打开谷歌
 open www.google.com
 

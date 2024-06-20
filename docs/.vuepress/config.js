@@ -84,14 +84,19 @@ export default defineUserConfig({
                 ],
                 sidebar: [
                     {text: 'About', link: '/about'},
-                    {text: 'Get Started', link: '/getting-started'},
-                    {text: 'Theme', link: '/theme'},
-                    {text: 'Attribute', link: '/attributes'},
-                    {text: 'Event', link: '/events'},
-                    {text: 'Slot', link: '/slots'},
-                    {text: 'API', link: '/api'},
-                    {text: 'Advanced Features', link: '/functions'},
-                    {text: 'More', link: '/others'},
+                    {
+                      text: 'Document',
+                      children: [
+                          {text: 'Get Started', link: '/getting-started'},
+                          {text: 'Theme', link: '/theme'},
+                          {text: 'Attribute', link: '/attributes'},
+                          {text: 'Event', link: '/events'},
+                          {text: 'Slot', link: '/slots'},
+                          {text: 'API', link: '/api'},
+                          {text: 'Advanced Features', link: '/functions'},
+                          {text: 'More', link: '/others'}
+                      ]
+                    },
                     {text: 'Q&A', link: '/questions'},
                 ]
             },
@@ -135,14 +140,19 @@ export default defineUserConfig({
                 ],
                 sidebar: [
                     {text: '关于', link: '/zh/about'},
-                    {text: '快速上手', link: '/zh/getting-started'},
-                    {text: '主题 Theme', link: '/zh/theme'},
-                    {text: '属性 Attribute', link: '/zh/attributes'},
-                    {text: '事件 Event', link: '/zh/events'},
-                    {text: '插槽 Slot', link: '/zh/slots'},
-                    {text: '接口 API', link: '/zh/api'},
-                    {text: '高级功能', link: '/zh/functions'},
-                    {text: '更多', link: '/zh/others'},
+                    {
+                        text: '开发文档',
+                        children: [
+                            {text: '快速上手', link: '/zh/getting-started'},
+                            {text: '主题 Theme', link: '/zh/theme'},
+                            {text: '属性 Attribute', link: '/zh/attributes'},
+                            {text: '事件 Event', link: '/zh/events'},
+                            {text: '插槽 Slot', link: '/zh/slots'},
+                            {text: '接口 API', link: '/zh/api'},
+                            {text: '高级功能', link: '/zh/functions'},
+                            {text: '更多', link: '/zh/others'}
+                        ]
+                    },
                     {text: '常见问题', link: '/zh/questions'},
                 ]
             },

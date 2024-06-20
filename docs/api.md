@@ -86,7 +86,7 @@ const invokeApi = () => {
 
 - **Description**: Push one or more messages to terminal.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type pushMessage = (message: string | Message | Message[]) => void;
 ```
 - **Example**: 
@@ -116,7 +116,7 @@ TerminalApi.pushMessage('my-terminal', [
 
 - **Description**: Append content to the last message. This will only be done if the last message exists and its message type is one of `normal`, `ansi`, `code`, `html`, otherwise a new message will be pushed.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type appendMessage = (msg: string) => void;
 ```
 - **Example**: 
@@ -128,7 +128,7 @@ TerminalApi.appendMessage('my-terminal', "This is additional content")
 
 - **Description**: Toggle full screen mode
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type fullscreen = () => void;
 ```
 - **Example**: 
@@ -140,7 +140,7 @@ TerminalApi.fullscreen('my-terminal')
 
 - **Description**: Determine whether the current window is in full screen mode.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type isFullscreen = () => boolean;
 ```
 - **Example**: 
@@ -153,7 +153,7 @@ console.log(isFullscreen)
 
 - **Description**: When the drag function is turned on, you can use this method to change the window position, where the parameter `x` is the distance from the left border of the terminal to the left border of the browser's visible range, and `y` is the distance from the top border of the terminal to the top border of the browser's visible range, in px.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type dragging = (pos: Position) => void;
 ```
 - **Example**: 
@@ -167,7 +167,7 @@ TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 
 - **Description**: Execute a command to the terminal, and the execution process will be echoed in the Terminal window. This is a way to use JS to simulate the user's execution of commands.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type execute = (cmd: string) => void;
 ```
 - **Example**: 
@@ -199,7 +199,7 @@ If your window has been created but not displayed on the page (for example, if v
 :::
 
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type elementInfo = () => TerminalElementInfo;
 ```
 - **Example**: 
@@ -237,7 +237,7 @@ The following diagram clearly describes what these values mean:
 
 - **Description**: Open the text editor. When opening, you can pass in the initial text content and define the close event callback. `content` is the preset content when opening the editor. If you don't want to preset any content, you can leave this parameter blank. When the user clicks Close or actively calls the `textEditorClose()` method, the `onClose` callback will be triggered. The parameter value is the text content in the current editor and the passed parameter options.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type textEditorOpen = (setting: EditorSetting) => any;
 ```
 - **Example**: 
@@ -256,7 +256,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 
 - **Description**: Close the currently opened text editor. This call will trigger the onClose callback when it is opened, and the options value will be passed to the callback function as a parameter.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type textEditorClose = (options: any) => string;
 ```
 - **Example**: 
@@ -270,7 +270,7 @@ TerminalApi.textEditorClose('my-terminal', 'hello! this is close options')
 
 - **Description**: Clear the current screen log. If the passed parameter is true, the historical command record will also be cleared.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type clearLog = (clearCommandHistory?: boolean) => void;
 ```
 - **Example**: 
@@ -286,7 +286,7 @@ TerminalApi.clearLog('my-terminal', true)
 
 - **Description**: Get the command currently being entered.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type getCommand = () => string;
 ```
 - **Example**: 
@@ -298,7 +298,7 @@ TerminalApi.getCommand('my-terminal')
 
 - **Description**: Modify the command currently being entered.
 - **Definition**: 
-```ts
+```ts:no-line-numbers
 type setCommand = (command: string) => void;
 ```
 - **Example**: 

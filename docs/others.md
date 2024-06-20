@@ -430,7 +430,7 @@ The built-in `help` command of the plugin can help users view the usage of comma
 provided that these commands have been defined in advance. Through the help command, users can view the command key, grouping, 
 and explanation sample information.
 
-```shell
+```shell:no-line-numbers
 # Show all command information
 help
 
@@ -448,7 +448,7 @@ help :server
 
 The internal `clear` command of the plugin can clear the current screen record and clear the historical command record.
 
-```shell
+```shell:no-line-numbers
 # Clear current screen record
 clear
 
@@ -460,7 +460,7 @@ clear history
 
 The plugin's built-in `open` command can open a web address in the browser.
 
-```shell
+```shell:no-line-numbers
 # Open Google
 open www.google.com
 

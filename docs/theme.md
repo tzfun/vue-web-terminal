@@ -15,7 +15,7 @@ Before `2.1.13` and `3.2.0` versions, the theme function is not supported, and t
 The dark theme is the default theme of the plugin, which is more in line with the usage habits of most users. To use it, 
 just introduce the corresponding css style at the entrance of `main.js`.
 
-```js title="main.js"
+```js:no-line-numbers title="main.js"
 import 'vue-web-terminal/lib/theme/dark.css'
 ```
 
@@ -26,7 +26,7 @@ Example:
 
 The plugin has a built-in light theme. To use it, just import the light css style.
 
-```js title="main.js"
+```js:no-line-numbers title="main.js"
 import 'vue-web-terminal/lib/theme/light.css'
 ```
 
@@ -90,7 +90,7 @@ If you need to implement your own theme style, you don't need to import any of t
 Create a new css file in your project, such as `terminal-custom-theme.css`, 
 and then rewrite the above css variables in this file, and finally import it in the project.
 
-```js title="main.js"
+```js:no-line-numbers title="main.js"
 import '~/your-style-dir/terminal-custom-theme.css'
 ```
 

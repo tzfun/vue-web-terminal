@@ -12,38 +12,37 @@
 - `2.x.x`对应Vue2版本
 - `3.x.x`对应Vue3版本
 
-建议前往 [releases][Github Releases] 寻找对应Vue版本最新的版本，
-然后替换掉下面示例命令中的 2.x.x 或 3.x.x 进行安装。
+建议前往 [releases][Github Releases] 寻找对应Vue版本最新的版本。
 
 ::: code-tabs#shell
 @tab npm
 
-```shell
+```shell:no-line-numbers
 # for vue2
-npm install vue-web-terminal@2.x.x
+npm install vue-web-terminal@2
 
 # for vue3
-npm install vue-web-terminal@3.x.x
+npm install vue-web-terminal@3
 ```
 
 @tab yarn
 
-```shell
+```shell:no-line-numbers
 # for vue2
-yarn add vue-web-terminal@2.x.x
+yarn add vue-web-terminal@2
 
 # for vue3
-yarn add vue-web-terminal@3.x.x
+yarn add vue-web-terminal@3
 ```
 
 @tab pnpm
 
-```shell
+```shell:no-line-numbers
 # for vue2
-pnpm install vue-web-terminal@2.x.x
+pnpm install vue-web-terminal@2
 
 # for vue3
-pnpm install vue-web-terminal@3.x.x
+pnpm install vue-web-terminal@3
 ```
 
 :::
