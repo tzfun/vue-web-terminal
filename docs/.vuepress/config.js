@@ -18,7 +18,7 @@ export default defineUserConfig({
     title: 'vue-web-terminal',
     dest: "dist",
     head: [
-        ["link", {rel: "icon", href: "/images/logo.svg"}]
+        ["link", {rel: "icon", href: "/images/vue-web-terminal-mini.png"}]
     ],
     pluginVersion: {
         vue2: "2.2.4",
@@ -37,7 +37,7 @@ export default defineUserConfig({
         }
     },
     theme: defaultTheme({
-        logo: '/images/logo.svg',
+        logo: '/images/vue-web-terminal.png',
         docsRepo: "https://github.com/tzfun/vue-web-terminal",
         docsBranch: "doc",
         docsDir: "docs",

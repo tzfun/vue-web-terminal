@@ -263,7 +263,7 @@ const goHome = () => {
     <div class="editor-container" v-if="showEditor">
       <div class="editor-body">
         <div style="display: flex;justify-content: center;">
-          <img style="width: 200px" src="/images/logo.svg" alt="vue-web-terminal">
+          <img style="width: 200px" src="/images/vue-web-terminal.png" alt="vue-web-terminal">
         </div>
         <div class="editor-icon">
           <div>

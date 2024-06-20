@@ -2,7 +2,7 @@
 lang: zh-CN
 home: true
 title: Home
-heroImage: /images/logo.svg
+heroImage: /images/vue-web-terminal-large.png
 actions:
   - text: 快速上手
     link: ./getting-started
