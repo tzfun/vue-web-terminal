@@ -79,51 +79,7 @@ createApp(App).use(Terminal)
 
 ## 你的第一个vue-web-terminal
 
-```vue
-<template>
-  <terminal name="my-terminal"
-            @exec-cmd="onExecCmd"
-            :drag-conf="dragConf" />
-</template>
-<script>
-  export default {
-    name: 'App',
-    data(){
-      return {
-        dragConf: {
-          width: "50%",
-          height: "70%",
-          zIndex: 100,
-          init: {
-            x: 200,
-            y: 200
-          },
-          pinned: false
-        }
-      }
-    },
-    methods: {
-      onExecCmd(key, command, success, failed) {
-        if (key === 'fail') {
-          failed('Something wrong!!!')
-        } else {
-          let allClass = ['success', 'error', 'system', 'info', 'warning'];
-
-          let clazz = allClass[Math.floor(Math.random() * allClass.length)];
-          success({
-            type: 'normal',
-            class: clazz,
-            tag: clazz,
-            content: `Your command is '${command}'` 
-          })
-        }
-      }
-    }
-  }
-</script>
-<style scoped>
-</style>
-```
+@[code vue](@src/examples/First.vue)
 
 启动你的工程之后，如果在页面中出现一个可拖拽的终端窗口，那么恭喜你的第一个terminal应用实现了！
 你可以在窗口中输入*任意命令*然后回车，会随机提示不同的级别的内容。

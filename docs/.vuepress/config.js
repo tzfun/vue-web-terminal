@@ -158,6 +158,11 @@ export default defineUserConfig({
             }
         }
     }),
+    markdown: {
+        importCode: {
+            handleImportPath: (str) => str.replace(/@src/, __dirname)
+        }
+    },
     plugins: [
         //  https://giscus.app/zh-CN
         commentPlugin({
