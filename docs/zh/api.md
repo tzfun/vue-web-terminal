@@ -83,7 +83,7 @@ const invokeApi = () => {
 
 - **说明**：向Terminal推送一条或多条消息
 - **定义**：
-```ts
+```ts:no-line-numbers
 type pushMessage = (message: string | Message | Message[]) => void;
 ```
 - **示例**：
@@ -113,7 +113,7 @@ TerminalApi.pushMessage('my-terminal', [
 
 - **说明**：向最后一条消息追加内容。仅当最后一条消息存在，且其消息类型为 `normal`、`ansi`、`code`、`html`其中一个时才会追加，否则推送一条新消息。
 - **定义**：
-```ts
+```ts:no-line-numbers
 type appendMessage = (msg: string) => void;
 ```
 - **示例**：
@@ -125,7 +125,7 @@ TerminalApi.appendMessage('my-terminal', "This is additional content")
 
 - **说明**：切换全屏状态
 - **定义**：
-```ts
+```ts:no-line-numbers
 type fullscreen = () => void;
 ```
 - **示例**：
@@ -137,7 +137,7 @@ TerminalApi.fullscreen('my-terminal')
 
 - **说明**：判断当前窗口是否处于全屏状态
 - **定义**：
-```ts
+```ts:no-line-numbers
 type isFullscreen = () => boolean;
 ```
 - **示例**：
@@ -150,7 +150,7 @@ console.log(isFullscreen)
 
 - **说明**：当开启拖拽功能时可以使用这种方式来改变窗口位置，其中参数`x`是terminal左边框到浏览器可视范围左边框的距离，`y`是terminal上边框到浏览器可视范围上边框的距离，单位px。
 - **定义**：
-```ts
+```ts:no-line-numbers
 type dragging = (pos: Position) => void;
 ```
 - **示例**：
@@ -164,7 +164,7 @@ TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 
 - **说明**：向Terminal执行一个命令，执行过程会回显在Terminal窗口中，这是一种用JS模拟用户执行命令的方式
 - **定义**：
-```ts
+```ts:no-line-numbers
 type execute = (cmd: string) => void;
 ```
 - **示例**：
@@ -179,7 +179,7 @@ TerminalApi.execute('my-terminal', 'help :local')
   - Ask用户输入，当处于ask模式下获取相应的输入焦点
   - 文本编辑器输入，当处于文本编辑模式下获取相应的输入框焦点，如果你用了slot来自定义实现，需要在slot中提供focus事件的入口
 - **定义**：
-```ts
+```ts:no-line-numbers
 type focus = (enforceFocus?: boolean | MouseEvent) => void;
 ```
 - **示例**：
@@ -196,7 +196,7 @@ TerminalApi.focus('my-terminal', true)
 :::
 
 - **定义**：
-```ts
+```ts:no-line-numbers
 type elementInfo = () => TerminalElementInfo;
 ```
 - **示例**：
@@ -234,7 +234,7 @@ console.log(info)
 
 - **说明**：打开文本编辑器，打开时可以传入初始文本内容，并定义关闭事件回调。`content`是打开编辑器时预置的内容，如果你不想预置任何内容可以不填此参数，当用户点击Close或主动调用 `textEditorClose()` 方法时会触发`onClose`回调，参数value为当前编辑器内的文本内容和传入参数选项。
 - **定义**：
-```ts
+```ts:no-line-numbers
 type textEditorOpen = (setting: EditorSetting) => any;
 ```
 - **示例**：
@@ -253,7 +253,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 
 - **说明**：关闭当前打开的文本编辑器，调用后会触发打开时的onClose回调，options值会作为参数传给回调函数。
 - **定义**：
-```ts
+```ts:no-line-numbers
 type textEditorClose = (options: any) => string;
 ```
 - **示例**：
@@ -267,7 +267,7 @@ TerminalApi.textEditorClose('my-terminal', 'hello! this is close options')
 
 - **说明**：清除当前屏幕日志，如果传入参数为 true 则同时清除历史指令记录
 - **定义**：
-```ts
+```ts:no-line-numbers
 type clearLog = (clearCommandHistory?: boolean) => void;
 ```
 - **示例**：
@@ -283,7 +283,7 @@ TerminalApi.clearLog('my-terminal', true)
 
 - **说明**：获取当前正在输入的指令
 - **定义**：
-```ts
+```ts:no-line-numbers
 type getCommand = () => string;
 ```
 - **示例**：
@@ -295,7 +295,7 @@ TerminalApi.getCommand('my-terminal')
 
 - **说明**：修改当前正在输入的指令
 - **定义**：
-```ts
+```ts:no-line-numbers
 type setCommand = (command: string) => void;
 ```
 - **示例**：

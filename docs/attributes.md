@@ -135,7 +135,7 @@ and the window width and height are equal to the parent element width and height
 * **Default**: null
 * **Description**: Command display formatting function, generally used to highlight input commands, pass in the current command and return a new command, supports HTML. If not set, the internally defined highlight style will be used
 
-```ts
+```ts:no-line-numbers
 type CommandFormatterFunc = (cmd: string) => string;
 ```
 
@@ -145,7 +145,7 @@ type CommandFormatterFunc = (cmd: string) => string;
 * **Default**: null
 * **Description**: The logical processing method when the user presses the Tab key can be used with the `helpCmd` slot to define the user display
 
-```ts
+```ts:no-line-numbers
 type CommandModifyFunc = (cmd: string) => any;
 
 type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined;
@@ -157,7 +157,7 @@ type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined
 * **Default**: null
 * **Description**: User-defined command search prompt is implemented. The search result is a [Command](./others#command), which is passed back to the plugin through callback. It can be used with the `helpCmd` slot to define the user display
 
-```ts
+```ts:no-line-numbers
 type SearchHandlerCallbackFunc = (cmd: Command) => void;
 
 type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHandlerCallbackFunc) => void;
@@ -169,7 +169,7 @@ type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHand
 * **Default**: null
 * **Description**: Hook function triggered before the push message is displayed.
 
-```ts
+```ts:no-line-numbers
 type PushMessageBeforeFunc = (message: Message, name: String) => void;
 ```
 
@@ -179,7 +179,7 @@ type PushMessageBeforeFunc = (message: Message, name: String) => void;
 * **Default**: null
 * **Description**: Command line library sorting, custom command library display sorting rules.
 
-```ts
+```ts:no-line-numbers
 type CommandStoreSortFunc = (a: any, b: any) => number;
 ```
 
@@ -189,7 +189,7 @@ type CommandStoreSortFunc = (a: any, b: any) => number;
 * **Default**: null
 * **Description**: Custom input filtering, the return value is the filtered string, must be plain text, no html tags.
 
-```ts
+```ts:no-line-numbers
 type InputFilterFunc = (str1: string, str2: string, event: InputEvent) => string | null;
 ```
 

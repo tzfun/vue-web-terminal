@@ -133,7 +133,7 @@
 * **默认值**：null
 * **说明**：命令显示格式化函数，一般用于输入命令高亮显示，传入当前命令返回新的命令，支持html。如果不设置将使用内部定义的高亮样式
 
-```ts
+```ts:no-line-numbers
 type CommandFormatterFunc = (cmd: string) => string;
 ```
 
@@ -143,7 +143,7 @@ type CommandFormatterFunc = (cmd: string) => string;
 * **默认值**：null
 * **说明**：用户键入Tab键时的逻辑处理方法，可配合 `helpCmd` 这个slot来定义用户显示
 
-```ts
+```ts:no-line-numbers
 type CommandModifyFunc = (cmd: string) => any;
 
 type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined;
@@ -155,7 +155,7 @@ type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined
 * **默认值**：null
 * **说明**：用户自定义命令搜索提示实现，搜索结果是一个[Command](./others#command)，通过callback回传给插件，可配合 `helpCmd` 这个slot来定义用户显示
 
-```ts
+```ts:no-line-numbers
 type SearchHandlerCallbackFunc = (cmd: Command) => void;
 
 type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHandlerCallbackFunc) => void;
@@ -167,7 +167,7 @@ type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHand
 * **默认值**：null
 * **说明**：在推送消息显示之前触发的钩子函数
 
-```ts
+```ts:no-line-numbers
 type PushMessageBeforeFunc = (message: Message, name: String) => void;
 ```
 
@@ -177,7 +177,7 @@ type PushMessageBeforeFunc = (message: Message, name: String) => void;
 * **默认值**：null
 * **说明**：命令行库排序，自定义命令库的显示排序规则
 
-```ts
+```ts:no-line-numbers
 type CommandStoreSortFunc = (a: any, b: any) => number;
 ```
 
@@ -187,7 +187,7 @@ type CommandStoreSortFunc = (a: any, b: any) => number;
 * **默认值**：null
 * **说明**：自定义输入过滤，返回值为过滤后的字符串，必须是纯文本，不能带html标签
 
-```ts
+```ts:no-line-numbers
 type InputFilterFunc = (str1: string, str2: string, event: InputEvent) => string | null;
 ```
 

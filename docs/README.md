@@ -21,7 +21,7 @@ features:
     details: The plugin provides two themes by default dark and light. You can also customize the theme according to your preferences. The background, cursor, font, etc. can be modified to the color you want.
   - title: API
     details: The plugin provides a rich JS API to provide you with solutions for simulating non-user behaviors.
-  - title: Highly customizable
+  - title: Highly Customizable
     details: The terminal display style is controlled by the front-end, which provides a rich display style and multiple slots, allowing you to customize any content you want to display.
   - title: Vue2 & Vue3
     details: In order to be compatible with more application scenarios, the plug-in supports both Vue2 and Vue3!
