@@ -16,6 +16,7 @@
           <t-header :title="title"
                     :pinned="isPinned()"
                     :draggable="isDraggable()"
+                    :fullscreen-state="fullscreenState"
                     @on-click="_triggerClick"/>
         </slot>
       </div>

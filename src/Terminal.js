@@ -490,9 +490,7 @@ export default {
             return this.textEditor.open || this.flash.open || this.ask.open
         },
         _triggerClick(key) {
-            if (key === 'fullScreen' && !this.fullscreenState) {
-                this._fullscreen()
-            } else if (key === 'minScreen' && this.fullscreenState) {
+            if (key === 'fullscreen') {
                 this._fullscreen()
             } else if (key === 'pin' && this.showHeader) {
                 let pinned = this.dragConf.pinned || false
