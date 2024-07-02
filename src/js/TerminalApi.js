@@ -88,6 +88,14 @@ const TerminalApi = {
 
     setCommand(name, options) {
         return TerminalApi.post(name, 'setCommand', options)
+    },
+
+    foldAll(name, options) {
+        return TerminalApi.post(name, 'foldAll', options)
+    },
+
+    unfoldAll(name, options) {
+        return TerminalApi.post(name, 'unfoldAll', options)
     }
 }
 
@@ -104,7 +112,9 @@ const {
     textEditorOpen,
     clearLog,
     getCommand,
-    setCommand
+    setCommand,
+    foldAll,
+    unfoldAll
 } = TerminalApi;
 export {
     register,
@@ -125,5 +135,7 @@ export {
     getOptions,
     setOptions,
     getCommand,
-    setCommand
+    setCommand,
+    foldAll,
+    unfoldAll
 }

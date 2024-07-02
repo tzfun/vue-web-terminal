@@ -199,7 +199,7 @@ export default {
             asker.finish()
           }
         })
-        TerminalApi.focus()
+        TerminalApi.focus(name)
       } else if (key === 'err') {
         failed(_html(new Error("Some error").stack))
       } else if (key === 'info') {
@@ -207,6 +207,10 @@ export default {
           type: 'json',
           content: TerminalApi.elementInfo(name)
         })
+      } else if (key === 'fold') {
+        success(TerminalApi.foldAll(name).toString())
+      } else if (key === 'unfold') {
+        success(TerminalApi.unfoldAll(name).toString())
       } else {
         failed("Unknown command: " + key)
       }

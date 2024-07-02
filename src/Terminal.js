@@ -349,8 +349,12 @@ export default {
                 return this.getCommand()
             } else if (type === 'setCommand') {
                 return this.setCommand(options)
+            } else if (type === 'foldAll') {
+                return this._foldAll()
+            } else if (type === 'unfoldAll') {
+                return this._unfoldAll()
             } else {
-                console.error(`Unsupported event type ${type} in instance ${this.getName()}`)
+                console.error(`Unsupported event type '${type}' in instance ${this.getName()}`)
             }
         })
         this.$emit('init-complete', this.getName())
@@ -447,6 +451,12 @@ export default {
                 console.warn("The parameter received by the 'setCommand' api is undefined")
             }
             return this.command
+        },
+        foldAll() {
+            return this._foldAll()
+        },
+        unfoldAll() {
+            return this._unfoldAll()
         },
         getName() {
             if (this.name) {
@@ -1405,6 +1415,29 @@ export default {
             if (this.enableFold && group.fold) {
                 group.fold = false
             }
+        },
+        _enableFold(group) {
+            return this.enableFold && group.tag !== 'init' && group.logs.length > 1 && group.logs[0].type === MESSAGE_TYPE.CMD_LINE
+        },
+        _foldAll() {
+            return this._switchFoldAll(true)
+        },
+        _unfoldAll() {
+            return this._switchFoldAll(false)
+        },
+        _switchFoldAll(fold) {
+            let count = 0;
+            if (this.enableFold) {
+                for (let group of this.terminalLog) {
+                    if (this._enableFold(group) && group.fold !== fold) {
+                        group.fold = fold
+                        count++;
+                    }
+                }
+            } else {
+                console.warn("Before using folding related functions, please set enable-fold to enable the folding function.")
+            }
+            return count
         }
     }
 }
