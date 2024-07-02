@@ -20,7 +20,7 @@
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 0 0 20px;' : 'padding:5px 10px;'}`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 10px 0 20px;' : 'padding:5px 10px;'}`"
            ref="terminalWindow"
            @click="_focus"
            @dblclick="_focus(true)">

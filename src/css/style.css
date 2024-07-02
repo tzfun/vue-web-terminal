@@ -99,7 +99,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
-    font-family: Monaco, Menlo, Consolas, monospace;
+    /*font-family: Monaco, Menlo, Consolas, monospace;*/
 }
 
 .t-window {
