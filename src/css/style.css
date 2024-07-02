@@ -551,7 +551,7 @@
     top: 2px;
     border: 1px solid var(--t-log-fold-icon-border-color);
     text-align: center;
-    line-height: 10px;
+    line-height: 9px;
     background-color: var(--t-log-fold-icon-background-color);
     color: var(--t-log-fold-icon-color);
     cursor: pointer;
