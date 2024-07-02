@@ -214,12 +214,12 @@
 }
 
 .t-ansi-line {
-    min-height: 20px;
+    min-height: var(--t-point-size);
 }
 
 .t-ansi-char {
     min-width: 7px;
-    min-height: 20px;
+    min-height: var(--t-point-size);
     font-size: inherit;
     display: inline-block;
     height: 100%;
