@@ -73,6 +73,7 @@ export default {
             },
             showInputLine: true,
             terminalLog: [],
+            logSize: 0,
             searchCmdResult: {
                 //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
                 show: false,
@@ -113,7 +114,7 @@ export default {
             },
             containerStyleStore: null,
             headerHeight: 0,
-            resizeObserver: null
+            resizeObserver: null,
         }
     },
     props: terminalProps(),
@@ -417,6 +418,7 @@ export default {
                 historyStore.clearLog(this.getName())
             } else {
                 this.terminalLog = [];
+                this.logSize = 0;
             }
         },
         getCommand() {
@@ -848,8 +850,10 @@ export default {
             if (!message) return
             if (message instanceof Array) {
                 for (let m of message) {
-                    this._pushMessage0(m)
+                    this._pushMessage0(m, false)
                 }
+                this._checkLogSize()
+                this._jumpToBottom()
                 return;
             }
 
@@ -866,6 +870,7 @@ export default {
             }
 
             this._pushMessage0(message)
+            this._jumpToBottom()
 
             if (message.type === MESSAGE_TYPE.JSON) {
                 setTimeout(() => {
@@ -873,7 +878,7 @@ export default {
                 }, 80)
             }
         },
-        _pushMessage0(message) {
+        _pushMessage0(message, checkSize = true) {
             this._filterMessageType(message)
             if (message.type !== MESSAGE_TYPE.CMD_LINE && this.pushMessageBefore) {
                 this.pushMessageBefore(message, this.getName())
@@ -885,14 +890,36 @@ export default {
             terminalLogLength = this.terminalLog.length;
             let logGroup = this.terminalLog[terminalLogLength - 1]
             logGroup.logs.push(message)
-            //  留10%的缓冲
-            let limit = Math.floor(this.logSizeLimit * 1.1)
-            if (limit > 0 && terminalLogLength > limit) {
-                let left = terminalLogLength - this.logSizeLimit
-                this.terminalLog.splice(0, left)
+            this.logSize++
+
+            if (checkSize) {
+                this._checkLogSize()
+            }
+        },
+        _checkLogSize() {
+            if (this.logSizeLimit <= 0) {
+                console.warn("Invalid attribute 'log-size-limit':", this.logSizeLimit)
+                return;
             }
 
-            this._jumpToBottom()
+            //  留10%的缓冲
+            let limit = Math.floor(this.logSizeLimit * 1.1)
+
+            let count = this.logSize - limit;
+            while (count > 0) {
+                let group = this.terminalLog[0]
+                let leftCount  = count - group.logs.length
+                if (leftCount >= 0) {
+                    this.terminalLog.splice(0, 1)
+                    this.logSize -= group.logs.length
+                } else {
+                    group.logs.splice(0, count);
+                    group.fold = false
+                    this.logSize -= count
+                }
+                count = leftCount;
+            }
+
         },
         /**
          * 追加内容到最后一条记录中，仅当最后一条消息存在，且其格式为 normal、ansi、code、html时才会追加，
