@@ -130,9 +130,9 @@
         <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>
     </div>
-    <span class="t-flag t-crude-font t-cmd-line t-disable-select">
-      <span class="t-cmd-line-content" ref="terminalEnFlag">a</span>
-      <span class="t-cmd-line-content" ref="terminalCnFlag">你</span>
+    <span class="t-flag t-crude-font t-disable-select">
+      <span class="t-cmd-line-content" ref="terminalEnFlag">aaaaaaaaaa</span>
+      <span class="t-cmd-line-content" ref="terminalCnFlag">你你你你你你你你你你</span>
     </span>
   </div>
 </template>

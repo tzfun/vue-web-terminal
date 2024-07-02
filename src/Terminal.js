@@ -520,13 +520,15 @@ export default {
                 if (rect && rect.width > 0) {
                     this.byteLen = {
                         init: true,
-                        en: rect.width,
-                        cn: this.$refs.terminalCnFlag.getBoundingClientRect().width
+                        en: rect.width / 10,
+                        cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 10
                     }
 
                     this.cursorConf.defaultWidth = this.byteLen.en
+                    this.byteLen.init = true
                 }
             }
+            console.debug("byte len ==> ",this.byteLen.en, this.byteLen.cn)
         },
         _calculatePromptLen() {
             let prompt = this.$refs.terminalInputPrompt
@@ -1007,6 +1009,8 @@ export default {
                 this._calculatePromptLen()
             }
 
+            console.debug("prompt ==> ", this.inputBoxParam.promptWidth, this.inputBoxParam.promptHeight)
+
             let lineWidth = this.$refs.terminalInputBox.getBoundingClientRect().width
 
             let pos = {left: 0, top: 0}
@@ -1021,8 +1025,8 @@ export default {
                 pos.left += preWidth
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
-                    //  行高 对应css变量 --t-point-size
-                    pos.top += 15
+                    //  行高 对应css变量 --t-font-height
+                    pos.top += 19
                     pos.left = charWidth
                 }
             }

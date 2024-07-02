@@ -1,6 +1,8 @@
 :root {
-    --t-point-size: 15px;
-    --t-font-size: 13px;
+    /*限定字体高度*/
+    --t-font-height: 19px;
+    /*限定字体大小*/
+    --t-font-size: 16px;
 }
 
 .t-log-box, .t-cmd-line {
@@ -45,7 +47,8 @@
     font-size: calc(var(--t-font-size) + 2px);
     font-weight: bold;
     margin: 5px;
-    height: var(--t-point-size);
+    height: var(--t-font-height);
+    line-height: var(--t-font-height);
     letter-spacing: 1px;
     color: var(--t-header-font-color);
     display: inline-block;
@@ -54,7 +57,7 @@
 
 .t-header ul.t-shell-dots {
     position: absolute;
-    top: 3px;
+    top: 5px;
     left: 8px;
     padding-left: 0;
     margin: 0;
@@ -315,6 +318,7 @@
 .t-cmd-line-content {
     font-size: var(--t-font-size);
     word-break: break-all;
+    white-space: break-spaces;
 }
 
 .t-cmd-key {
@@ -512,34 +516,34 @@
 }
 
 .t-point {
-    width: var(--t-point-size);
-    height: var(--t-point-size);
+    width: var(--t-font-height);
+    height: var(--t-font-height);
     background-color: rgba(0, 0, 0, 0);
     position: absolute;
     z-index: 100;
 }
 
 .t-point-lt {
-    left: calc(0px - var(--t-point-size) / 2);
-    top: calc(0px - var(--t-point-size) / 2);
+    left: calc(0px - var(--t-font-height) / 2);
+    top: calc(0px - var(--t-font-height) / 2);
     cursor: nwse-resize;
 }
 
 .t-point-rt {
-    left: calc(100% - var(--t-point-size) / 2);
-    top: calc(0px - var(--t-point-size) / 2);
+    left: calc(100% - var(--t-font-height) / 2);
+    top: calc(0px - var(--t-font-height) / 2);
     cursor: nesw-resize;
 }
 
 .t-point-lb {
-    left: calc(0px - var(--t-point-size) / 2);
-    top: calc(100% - var(--t-point-size) / 2);
+    left: calc(0px - var(--t-font-height) / 2);
+    top: calc(100% - var(--t-font-height) / 2);
     cursor: nesw-resize;
 }
 
 .t-point-rb {
-    left: calc(100% - var(--t-point-size) / 2);
-    top: calc(100% - var(--t-point-size) / 2);
+    left: calc(100% - var(--t-font-height) / 2);
+    top: calc(100% - var(--t-font-height) / 2);
     cursor: nwse-resize;
 }
 
@@ -556,7 +560,7 @@
 }
 
 .t-log-box-folded {
-    height: var(--t-point-size);
+    height: var(--t-font-height);
     overflow-y: clip;
     background-color: var(--t-log-box-folded-background-color);
     cursor: pointer;
@@ -567,7 +571,7 @@
     width: 10px;
     height: 10px;
     left: -17px;
-    top: 2px;
+    top: 4px;
     border: 1px solid var(--t-log-fold-icon-border-color);
     text-align: center;
     line-height: 9px;
