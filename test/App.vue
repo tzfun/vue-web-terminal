@@ -12,15 +12,16 @@
           :drag-conf="item.dragConf"
           show-header
           :push-message-before="_pushMessageBefore"
-          @exec-cmd="onExecCmd"
-          @on-active="onActive"
-          @on-inactive="onInactive"
           cursor-style="underline"
           :cursor-blink="true"
           :log-size-limit="20"
           :enable-default-command="true"
-          :line-space="0"
+          :line-space="20"
+          :init-log="initLog"
           @on-keydown="onKeyDown"
+          @exec-cmd="onExecCmd"
+          @on-active="onActive"
+          @on-inactive="onInactive"
           style="position: fixed">
       </terminal>
     </div>
@@ -55,7 +56,17 @@ export default {
             pinned: false
           }
         }
-      ]
+      ],
+      initLog: [{
+        type: 'normal',
+        content: "Terminal Initializing ..."
+      }, {
+        type: 'normal',
+        content: "Current login time: " + new Date().toLocaleString()
+      }, {
+        type: 'normal',
+        content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
+      }]
     }
   },
   methods: {
