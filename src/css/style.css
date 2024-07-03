@@ -53,6 +53,7 @@
     color: var(--t-header-font-color);
     display: inline-block;
     cursor: pointer;
+    text-shadow: 0 0 20px #41454a;
 }
 
 .t-header ul.t-shell-dots {
@@ -313,6 +314,7 @@
 
 .t-cmd-line {
     font-size: 0;
+    line-height: var(--t-font-height);
 }
 
 .t-cmd-line-content {

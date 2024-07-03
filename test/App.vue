@@ -15,7 +15,7 @@
           :cursor-blink="true"
           :log-size-limit="20"
           :enable-default-command="true"
-          :line-space="20"
+          :line-space="15"
           :init-log="initLog"
           @on-keydown="onKeyDown"
           @exec-cmd="onExecCmd"
@@ -64,7 +64,7 @@ export default {
         content: "Current login time: " + new Date().toLocaleString()
       }, {
         type: 'normal',
-        content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
+        content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn. Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
       }]
     }
   },

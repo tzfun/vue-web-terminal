@@ -1,6 +1,7 @@
 import {
     _copyTextToClipboard,
-    _defaultCommandFormatter,
+    _defaultMergedCommandFormatter,
+    _defaultSplittableCommandFormatter,
     _eventOff,
     _eventOn,
     _getByteLen,
@@ -528,7 +529,7 @@ export default {
                     this.byteLen.init = true
                 }
             }
-            console.debug("byte len ==> ",this.byteLen.en, this.byteLen.cn)
+            console.debug("byte len ==> ", this.byteLen.en, this.byteLen.cn)
         },
         _calculatePromptLen() {
             let prompt = this.$refs.terminalInputPrompt
@@ -918,7 +919,7 @@ export default {
             let count = this.logSize - limit;
             while (count > 0) {
                 let group = this.terminalLog[0]
-                let leftCount  = count - group.logs.length
+                let leftCount = count - group.logs.length
                 if (leftCount >= 0) {
                     this.terminalLog.splice(0, 1)
                     this.logSize -= group.logs.length
@@ -982,7 +983,7 @@ export default {
 
             group.logs.push({
                 type: MESSAGE_TYPE.CMD_LINE,
-                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
+                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command, false)}`
             });
             this._jumpToBottom()
         },
@@ -1366,14 +1367,11 @@ export default {
             this.containerStyleStore.left = xVal + "px";
             this.containerStyleStore.top = yVal + "px";
         },
-        _nonEmpty(obj) {
-            return _nonEmpty(obj)
-        },
-        _commandFormatter(cmd) {
-            if (this.commandFormatter != null) {
-                return this.commandFormatter(cmd)
+        _commandFormatter(cmd, splittable = false) {
+            if (this.commandFormatter) {
+                return this.commandFormatter(cmd, splittable)
             }
-            return _defaultCommandFormatter(cmd)
+            return splittable ? _defaultSplittableCommandFormatter(cmd) : _defaultMergedCommandFormatter(cmd)
         },
         _getPosition() {
             if (this.isDraggable()) {
