@@ -21,7 +21,7 @@
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 10px 0 20px;' : 'padding:5px 10px;'}`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 10px 15px 20px;' : 'padding:0 10px 15px 10px;'}`"
            ref="terminalWindow"
            @click="_focus"
            @dblclick="_focus(true)">
@@ -91,7 +91,7 @@
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`" ref="terminalCursor"
+            v-show="cursorConf.show" :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`" ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text"
                  autofocus="autofocus"
@@ -104,23 +104,18 @@
                  @keyup="_onInputKeyup"
                  @input="_onInput"
                  @focusin="cursorConf.show = true"
-                 @keyup.up.exact="_switchPreCmd"
-                 @keyup.down.exact="_switchNextCmd"
+                 @keyup.up.exact="_inputKeyUp"
+                 @keyup.down.exact="_inputKeyDown"
                  @keyup.enter="_execute">
         </p>
-        <slot name="helpCmd" :item="searchCmdResult.item">
-          <p class="t-help-msg">
-            {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
-          </p>
-        </slot>
       </div>
     </div>
-    <div v-if="enableExampleHint">
-      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
+    <div v-if="enableHelpBox">
+      <slot name="helpBox" :showHeader="showHeader" :item="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null">
         <t-help-box ref="terminalHelpBox"
                     :top="headerHeight + 10"
-                    :result="searchCmdResult"
-                    v-show="searchCmdResult.show"></t-help-box>
+                    :content="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null"
+                    v-show="tips.helpBox.open"/>
       </slot>
     </div>
 
@@ -129,6 +124,19 @@
       <slot name="textEditor" :data="textEditor">
         <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
       </slot>
+    </div>
+    <div class="t-cmd-tips"
+         v-if="tips.open"
+         :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
+         ref="terminalCmdTipsRef">
+      <div v-for="(item,idx) in tips.items"
+           :key="idx"
+           @click="_clickTips(idx)"
+           :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ') + (idx === tips.items.length - 1 ? 't-cmd-tips-item-last ' : ' ')"
+      >
+        <span class="t-cmd-tips-content" v-html="item.content"></span>
+        <span class="t-cmd-tips-des" v-html="item.description"></span>
+      </div>
     </div>
     <span class="t-flag t-crude-font t-disable-select">
       <span class="t-cmd-line-content" ref="terminalEnFlag">aaaaaaaaaa</span>

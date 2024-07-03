@@ -3,6 +3,7 @@
     --t-font-height: 19px;
     /*限定字体大小*/
     --t-font-size: 16px;
+    --t-cmd-tips-border-radius: 5px;
 }
 
 .t-log-box, .t-cmd-line {
@@ -294,12 +295,6 @@
     position: relative;
 }
 
-.t-help-msg {
-    min-height: 20px;
-    margin: 5px 0 10px 0;
-    color: var(--t-cmd-help-msg-color);
-}
-
 /*手机*/
 @media screen and (max-width: 768px ) {
     .t-window {
@@ -364,10 +359,9 @@
 }
 
 .t-cmd-help code {
+    font-size: var(--t-font-size);
     border: none;
     padding: 2px 5px 2px 5px;
-    border-radius: 3px;
-    color: var(--t-cmd-help-code-font-color);
     background-color: var(--t-cmd-help-code-background-color) !important;
 }
 
@@ -376,7 +370,7 @@
     width: 30px;
     display: flex;
     font-size: var(--t-font-size);
-    line-height: 26px;
+    line-height: var(--t-font-height);
 }
 
 .t-cmd-help-example {
@@ -386,6 +380,10 @@
 }
 
 .t-cmd-help-des {
+    margin: 10px 0;
+}
+
+.t-cmd-help-des-item {
     font-size: var(--t-font-size);
 }
 
@@ -435,6 +433,11 @@
 .t-table, .t-table tr, .t-table td, .t-table tbody, .t-table thead {
     margin: 0;
     padding: 15px;
+}
+
+.t-code-inline {
+    color: var(--t-code-inline-font-color);
+    font-weight: 600;
 }
 
 .t-code {
@@ -596,6 +599,60 @@
     background-color: var(--t-log-fold-line-color);
     left: -12px;
     top: 10px;
+}
+
+.t-cmd-tips {
+    min-width: 5px;
+    max-width: 500px;
+    max-height: 200px;
+    position: absolute;
+    z-index: 100;
+    background-color: var(--t-cmd-tips-background-color);
+    border-radius: var(--t-cmd-tips-border-radius);
+    color: var(--t-cmd-tips-font-color);
+    overflow-y: auto;
+    -ms-overflow-y: auto;
+    cursor: context-menu;
+}
+
+.t-cmd-tips-item {
+    padding: 5px 8px;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    text-wrap: nowrap;
+    color: var(--t-cmd-tips-des-font-color);
+}
+
+.t-cmd-tips-item-first {
+    border-top-left-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-top-left-radius: var(--t-cmd-tips-border-radius);
+    border-top-right-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-top-right-radius: var(--t-cmd-tips-border-radius);
+}
+
+.t-cmd-tips-item-last {
+    border-bottom-left-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-bottom-left-radius: var(--t-cmd-tips-border-radius);
+    border-bottom-right-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-bottom-right-radius: var(--t-cmd-tips-border-radius);
+}
+
+.t-cmd-tips-item-active {
+    background-color: var(--t-cmd-tips-active-background-color);
+}
+
+.t-cmd-tips-content {
+    font-weight: bold;
+    color: var(--t-cmd-tips-content-font-color);
+    cursor: context-menu;
+    user-select: none;
+}
+
+.t-cmd-tips-des {
+    color: var(--t-cmd-tips-des-font-color);
+    margin-left: 8px;
+    cursor: context-menu;
+    user-select: none;
 }
 
 /*--------------------------json viewer style------------------------*/

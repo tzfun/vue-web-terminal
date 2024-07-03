@@ -75,12 +75,6 @@ export default {
             showInputLine: true,
             terminalLog: [],
             logSize: 0,
-            searchCmdResult: {
-                //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
-                show: false,
-                defaultBoxRect: null,
-                item: null
-            },
             allCommandStore: [],
             fullscreenState: false,
             inputBoxParam: {
@@ -116,6 +110,21 @@ export default {
             containerStyleStore: null,
             headerHeight: 0,
             resizeObserver: null,
+            tips: {
+                open: false,
+                style: {
+                    opacity: 100,
+                    top: 0,
+                    left: 0
+                },
+                items: [],
+                helpBox: {
+                    //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
+                    open: false,
+                    defaultBoxRect: null,
+                },
+                selectedIndex: 0
+            }
         }
     },
     props: terminalProps(),
@@ -162,6 +171,7 @@ export default {
             if (activeCursor) {
                 this._onActive()
             } else {
+                this._closeTips()
                 this._onInactive()
             }
         })
@@ -178,19 +188,14 @@ export default {
                             return
                         }
                     }
+                    if (key === 'escape' && this.tips.open) {
+                        this._closeTips()
+                        return;
+                    }
+
                     if (this.cursorConf.show) {
                         if (key === 'tab') {
-                            if (this.tabKeyHandler) {
-                                this.tabKeyHandler(event, (cmd) => {
-                                    if (cmd) {
-                                        this.command = cmd.trim()
-                                    } else {
-                                        this.command = ''
-                                    }
-                                })
-                            } else {
-                                this._fillCmd()
-                            }
+                            this._selectTips()
                             event.preventDefault()
                         } else if (document.activeElement !== this.$refs.terminalCmdInput) {
                             this.$refs.terminalCmdInput.focus()
@@ -541,71 +546,66 @@ export default {
                 }
             }
         },
-        _resetSearchKey() {
-            this.searchCmdResult.item = null
-        },
-        _searchCmd(key) {
-            if (!this.autoHelp) {
+        _searchCmd() {
+            if (!this.enableCmdTips) {
                 return;
             }
 
             //  用户自定义搜索实现
-            if (this.searchHandler) {
-                this.searchHandler(this.allCommandStore, key, item => {
-                    this.searchCmdResult.item = item
-                    this._jumpToBottom()
+            if (this.tipsSearchHandler) {
+                this.tipsSearchHandler(this.command, this.cursorConf.idx, this.allCommandStore, items => {
+                    this._openTips(items)
                 })
                 return;
             }
-
-            let cmd = key
-            if (cmd == null) {
-                cmd = this.command.split(' ')[0]
+            let firstSpaceIdx = this.command.indexOf(' ')
+            if (firstSpaceIdx > 0 && this.cursorConf.idx > firstSpaceIdx) {
+                this._closeTips()
+                return;
             }
-            if (_isEmpty(cmd)) {
-                this._resetSearchKey()
-            } else if (cmd.trim().indexOf(" ") < 0) {
-                let reg = new RegExp(cmd.trim().replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')
-                let matchSet = []
 
-                let target = null
+            let cmd = this.command.trim().split(' ')[0]
+            if (cmd.length === 0) {
+                this._closeTips()
+            } else {
+                let reg = new RegExp(cmd.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig')
+                let matchArray = []
+
                 for (let i in this.allCommandStore) {
                     let o = this.allCommandStore[i]
                     if (_nonEmpty(o.key)) {
                         let res = o.key.match(reg)
-                        if (res != null) {
+                        if (res) {
+                            //  计算出匹配分数，之后根据分数进行排序
+                            //  分数为 0 表示完全匹配
                             let score = res.index * 1000 + (cmd.length - res[0].length) + (o.key.length - res[0].length)
-                            if (score === 0) {
-                                //  完全匹配，直接返回
-                                target = o
-                                break
-                            } else {
-                                matchSet.push({
-                                    item: o,
-                                    score: score
-                                })
-                            }
+                            matchArray.push({
+                                item: o,
+                                keyword: o.key.split(res[0]).join(`<span class="t-cmd-key">${res[0]}</span>`),
+                                score: score
+                            })
                         }
                     }
                 }
-                if (target == null) {
-                    if (matchSet.length > 0) {
-                        matchSet.sort((a, b) => {
-                            return a.score - b.score
+
+                if (matchArray.length > 0) {
+                    matchArray.sort((a, b) => {
+                        return a.score - b.score
+                    })
+
+                    let items = []
+
+                    for (let o of matchArray) {
+                        items.push({
+                            content: o.keyword,
+                            description: o.item.description,
+                            attach: o.item
                         })
-                        target = matchSet[0].item
-                    } else {
-                        this.searchCmdResult.item = null
-                        return
                     }
+                    this._openTips(items)
+                } else {
+                    this._closeTips()
                 }
-                this.searchCmdResult.item = target
-                this._jumpToBottom()
-            }
-        },
-        _fillCmd() {
-            if (this.searchCmdResult.item) {
-                this.command = this.searchCmdResult.item.key
             }
         },
         _focus(enforceFocus = false) {
@@ -661,7 +661,7 @@ export default {
                     detail += `Description: ${command.description}<br>`
                 }
                 if (_nonEmpty(command.usage)) {
-                    detail += `Usage: <code>${_html(command.usage)}</code><br>`
+                    detail += `Usage: <code class="t-code-inline">${_html(command.usage)}</code><br>`
                 }
                 if (command.example != null) {
                     if (command.example.length > 0) {
@@ -677,7 +677,7 @@ export default {
                             </div>
                             <div class="t-cmd-help-example">
                               <ul class="t-example-ul">
-                                <li class="t-example-li"><code>${eg.cmd}</code></li>
+                                <li class="t-example-li"><code class="t-code-inline">${eg.cmd}</code></li>
                                 <li class="t-example-li"><span></span></li>
                         `
 
@@ -702,7 +702,7 @@ export default {
             })
         },
         _execute() {
-            this._resetSearchKey()
+            this._closeTips()
             this._saveCurCommand();
             if (_nonEmpty(this.command)) {
                 try {
@@ -809,8 +809,7 @@ export default {
             } else {
                 this.cursorConf.show = false
             }
-            this.searchCmdResult.show = true
-            this.searchCmdResult.defaultBoxRect = null
+            this._closeTips()
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
@@ -993,6 +992,7 @@ export default {
             this.cursorConf.left = 'unset'
             this.cursorConf.top = 'unset'
             this.cursorConf.width = this.cursorConf.defaultWidth
+            this._calculateTipsPos()
         },
         _calculateCursorPos(cmd) {
             //  idx可以认为是需要光标覆盖字符的索引
@@ -1035,6 +1035,8 @@ export default {
             this.cursorConf.left = pos.left + 'px'
             this.cursorConf.top = pos.top + 'px'
             this.cursorConf.width = charWidth
+
+            this._calculateTipsPos()
         },
         _cursorGoLeft() {
             if (this.cursorConf.idx > 0) {
@@ -1048,6 +1050,40 @@ export default {
             }
             this._calculateCursorPos()
         },
+        _inputKeyUp() {
+            if (this.tips.open) {
+                let idx = this.tips.selectedIndex
+                if (idx > 0) {
+                    idx--
+                } else {
+                    idx = this.tips.items.length - 1
+                }
+                let viewItem = this.$refs.terminalCmdTipsRef.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
+                if (viewItem) {
+                    viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+                }
+                this.tips.selectedIndex = idx
+            } else {
+                this._switchPreCmd()
+            }
+        },
+        _inputKeyDown() {
+            if (this.tips.open) {
+                let idx = this.tips.selectedIndex
+                if (idx < this.tips.items.length - 1) {
+                    idx++
+                } else {
+                    idx = 0
+                }
+                let viewItem = this.$refs.terminalCmdTipsRef.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
+                if (viewItem) {
+                    viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+                }
+                this.tips.selectedIndex = idx
+            } else {
+                this._switchNextCmd()
+            }
+        },
         _switchPreCmd() {
             let cmdLog = historyStore.getLog(this.getName())
             let cmdIdx = historyStore.getIdx(this.getName())
@@ -1057,7 +1093,7 @@ export default {
             }
             this._resetCursorPos()
             historyStore.setIdx(this.getName(), cmdIdx)
-            this._searchCmd(this.command.trim().split(" ")[0])
+            this._searchCmd()
         },
         _switchNextCmd() {
             let cmdLog = historyStore.getLog(this.getName())
@@ -1071,7 +1107,7 @@ export default {
             }
             this._resetCursorPos()
             historyStore.setIdx(this.getName(), cmdIdx)
-            this._searchCmd(this.command.trim().split(" ")[0])
+            this._searchCmd()
         },
         _calculateStringWidth(str) {
             let width = 0
@@ -1091,23 +1127,25 @@ export default {
             }
 
             if (_isEmpty(this.command)) {
-                this._resetSearchKey();
+                this._closeTips();
             } else {
                 this._searchCmd()
             }
+
+            this._calculateTipsPos()
 
             this.$nextTick(() => {
                 this._checkInputCursor()
                 this._calculateCursorPos()
 
-                let point = this.$refs.terminalCursor.getBoundingClientRect()
-                let rect = this.searchCmdResult.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
-                if (point && rect && _pointInRect(point, rect)) {
-                    this.searchCmdResult.show = false
-                    this.searchCmdResult.defaultBoxRect = rect
+                let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
+                let helpBoxRect = this.tips.helpBox.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
+                if (cursorRect && helpBoxRect && _pointInRect(cursorRect, helpBoxRect)) {
+                    this.tips.helpBox.open = false
+                    this.tips.helpBox.defaultBoxRect = helpBoxRect
                 } else {
-                    this.searchCmdResult.show = true
-                    this.searchCmdResult.defaultBoxRect = null
+                    this.tips.helpBox.open = true
+                    this.tips.helpBox.defaultBoxRect = null
                 }
             })
         },
@@ -1438,6 +1476,81 @@ export default {
                 console.warn("Before using folding related functions, please set enable-fold to enable the folding function.")
             }
             return count
+        },
+        _calculateTipsPos(autoOpen = false) {
+            if (autoOpen) {
+                this.tips.opacity = 0
+                this.tips.open = true
+            }
+            if (this.tips.open) {
+                this.$nextTick(() => {
+                    let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
+                    let containerRect = this.$refs.terminalContainer.getBoundingClientRect()
+                    let tipsRect = this.$refs.terminalCmdTipsRef.getBoundingClientRect()
+
+                    let cursorRelativeLeft = cursorRect.left - containerRect.left
+                    let cursorRelativeTop = cursorRect.top - containerRect.top
+
+                    const TOP_FLOAT = 25
+
+                    let tipsRelativeTop = cursorRelativeTop + TOP_FLOAT
+                    let tipsRelativeLeft = cursorRelativeLeft
+
+                    //  超右边界
+                    if (cursorRect.left + tipsRect.width > containerRect.left + containerRect.width) {
+                        tipsRelativeLeft -= tipsRect.width
+                    }
+
+                    //  超下边界
+                    if (cursorRect.top + tipsRect.height + TOP_FLOAT > containerRect.top + containerRect.height) {
+                        tipsRelativeTop -= (tipsRect.height + TOP_FLOAT)
+                    }
+
+                    this.tips.style.top = tipsRelativeTop
+                    this.tips.style.left = tipsRelativeLeft
+                    this.tips.opacity = 100
+                })
+            }
+        },
+        _closeTips() {
+            this.tips.open = false
+            this.tips.items = []
+            this.tips.selectedIndex = 0
+            this.tips.helpBox.open = false
+            this.tips.helpBox.defaultBoxRect = null
+        },
+        _openTips(items) {
+            if (this.enableCmdTips && items && items instanceof Array && items.length > 0) {
+                this.tips.items = items
+                this.tips.selectedIndex = 0
+                this._calculateTipsPos(true)
+            } else {
+                this._closeTips()
+            }
+        },
+        _clickTips(idx) {
+            if (idx === this.tips.selectedIndex) {
+                this._selectTips()
+            } else {
+                this.tips.selectedIndex = idx
+            }
+        },
+        _selectTips() {
+            if (!this.tips.open) {
+                return
+            }
+            let selectedItem = this.tips.items[this.tips.selectedIndex]
+            if (this.tipsSelectHandler) {
+                this.tipsSelectHandler(this.command, this.cursorConf.idx, selectedItem, newCommand => {
+                    if (newCommand && typeof newCommand === 'string') {
+                        this.command = newCommand
+                    } else {
+                        console.warn(`'tipsSelectHandler' returns an invalid result, the expected return value is string type, got ${typeof newCommand}.`)
+                    }
+                })
+                return
+            }
+            this.command = selectedItem.attach.key
         }
     }
 }

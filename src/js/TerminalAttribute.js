@@ -64,7 +64,7 @@ export function terminalProps() {
             default: true
         },
         //  是否开启命令提示
-        enableExampleHint: {
+        enableHelpBox: {
             type: Boolean,
             default: true
         },
@@ -85,46 +85,9 @@ export function terminalProps() {
          *                     pinned: false
          *                 }
          */
-        dragConf: {
-            type: Object
-        },
+        dragConf: Object,
         //  命令格式化显示函数
-        commandFormatter: {
-            type: Function
-        },
-        /**
-         * 按下Tab键处理函数
-         * @param event 键盘事件
-         * @param rewriteCallback 修改当前正在输入的命令回调，需传入一个 string
-         */
-        tabKeyHandler: {
-            type: Function
-        },
-        /**
-         * 用户自定义命令搜索提示实现
-         *
-         * @param commandStore 命令集合
-         * @param key   目标key
-         * @param callback 搜索结束回调，回调格式如下：
-         * <pre>
-         *                 {
-         *                     key: 'help',
-         *                     title: 'Help',
-         *                     group: 'local',
-         *                     usage: 'help [pattern]',
-         *                     description: 'Show command document.',
-         *                     example: [
-         *                         {
-         *                             des: "Get all commands.",
-         *                             cmd: 'help'
-         *                         }
-         *                     ]
-         *                 }
-         * </pre>
-         */
-        searchHandler: {
-            type: Function
-        },
+        commandFormatter: Function,
         //  滚动条滚动模式
         scrollMode: {
             type: String,
@@ -177,6 +140,50 @@ export function terminalProps() {
         enableHoverStripe: {
             type: Boolean,
             default: () => false
-        }
+        },
+        //  命令提示开关
+        enableCmdTips: {
+            type: Boolean,
+            default: () => true
+        },
+        /**
+         * 提示选择处理函数
+         *
+         * @param command       当前用户输入的完整命令行
+         * @param cursorIndex   当前光标所处位置
+         * @param item          用户选择提示项
+         * @param callback      填充结束后需调用此函数返回新的命令行
+         */
+        tipsSelectHandler: Function,
+        /**
+         * 用户自定义命令搜索提示实现
+         *
+         * @param command       当前用户输入的完整命令行
+         * @param cursorIndex   当前光标所处位置
+         * @param commandStore  命令集合
+         * @param callback      搜索结束回调，回调格式为一个数组，示例：
+         * <pre>
+         *     [
+         *          {
+         *              content: 'help',
+         *              description: 'Show command document.',
+         *              attach: {
+         *                     key: 'help',
+         *                     title: 'Help',
+         *                     group: 'local',
+         *                     usage: 'help [pattern]',
+         *                     description: 'Show command document.',
+         *                     example: [
+         *                         {
+         *                             des: "Get all commands.",
+         *                             cmd: 'help'
+         *                         }
+         *                     ]
+         *                 }
+         *          }
+         *     ]
+         * </pre>
+         */
+        tipsSearchHandler: Function,
     }
 }

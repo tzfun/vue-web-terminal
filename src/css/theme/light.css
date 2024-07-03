@@ -14,10 +14,9 @@
     --t-table-border: 1px dashed #565151;
     --t-selection-font-color: white;
     --t-selection-background-color: #2a2626;
+    --t-code-inline-font-color: #00b10e;
     --t-cmd-help-background-color: white;
-    --t-cmd-help-code-font-color: rgba(0,0,0,.8);
     --t-cmd-help-code-background-color: #f7f7f9;
-    --t-cmd-help-msg-color: #c5a5a5;
     --t-cmd-help-box-shadow: 0px 0px 0px 4px rgb(0 0 0 / 20%);
     --t-text-editor-floor-background-color: rgba(0,0,0,.1);
     --t-text-editor-floor-close-btn-color: #9a7070;
