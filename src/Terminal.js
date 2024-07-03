@@ -344,10 +344,8 @@ export default {
                 return this.getCommand()
             } else if (type === 'setCommand') {
                 return this.setCommand(options)
-            } else if (type === 'foldAll') {
-                return this._foldAll()
-            } else if (type === 'unfoldAll') {
-                return this._unfoldAll()
+            } else if (type === 'switchAllFoldState') {
+                return this._switchAllFoldState(options)
             } else {
                 console.error(`Unsupported event type '${type}' in instance ${this.getName()}`)
             }
@@ -438,20 +436,14 @@ export default {
                 this.command = cmd.toString()
                 this.$nextTick(() => {
                     this._resetCursorPos()
-                    let input = this.$refs.terminalCmdInput
-                    input.focus()
-                    input.setSelectionRange(this.command.length, this.command.length)
                 })
             } else {
                 console.warn("The parameter received by the 'setCommand' api is undefined")
             }
             return this.command
         },
-        foldAll() {
-            return this._foldAll()
-        },
-        unfoldAll() {
-            return this._unfoldAll()
+        switchAllFoldState(state) {
+            return this._switchAllFoldState(state)
         },
         getName() {
             if (this.name) {
@@ -975,6 +967,13 @@ export default {
         },
         _resetCursorPos(cmd) {
             this._calculateByteLen()
+
+            let input = this.$refs.terminalCmdInput
+            if (input) {
+                input.focus()
+                input.setSelectionRange(this.command.length, this.command.length)
+            }
+
             this.cursorConf.idx = (cmd == null ? this.command : cmd).length
             this.cursorConf.left = 'unset'
             this.cursorConf.top = 'unset'
@@ -1448,13 +1447,7 @@ export default {
         _enableFold(group) {
             return this.enableFold && group.tag !== 'init' && group.logs.length > 1 && group.logs[0].type === MESSAGE_TYPE.CMD_LINE
         },
-        _foldAll() {
-            return this._switchFoldAll(true)
-        },
-        _unfoldAll() {
-            return this._switchFoldAll(false)
-        },
-        _switchFoldAll(fold) {
+        _switchAllFoldState(fold) {
             let count = 0;
             if (this.enableFold) {
                 for (let group of this.terminalLog) {
@@ -1541,6 +1534,7 @@ export default {
                 this.tipsSelectHandler(this.command, this.cursorConf.idx, selectedItem, newCommand => {
                     if (newCommand && typeof newCommand === 'string') {
                         this.command = newCommand
+                        this._resetCursorPos()
                         this._jumpToBottom()
                     } else {
                         console.warn(`'tipsSelectHandler' returns an invalid result, the expected return value is string type, got ${typeof newCommand}.`)
@@ -1549,6 +1543,7 @@ export default {
                 return
             }
             this.command = selectedItem.attach.key
+            this._resetCursorPos()
             this._jumpToBottom()
         },
         _getElementInfo() {

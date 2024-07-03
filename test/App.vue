@@ -219,9 +219,9 @@ export default {
           content: TerminalApi.elementInfo(name)
         })
       } else if (key === 'fold') {
-        success(TerminalApi.foldAll(name).toString())
+        success(TerminalApi.switchAllFoldState(name, true).toString())
       } else if (key === 'unfold') {
-        success(TerminalApi.unfoldAll(name).toString())
+        success(TerminalApi.switchAllFoldState(name, false).toString())
       } else {
         failed("Unknown command: " + key)
       }

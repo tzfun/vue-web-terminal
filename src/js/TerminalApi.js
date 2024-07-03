@@ -90,12 +90,8 @@ const TerminalApi = {
         return TerminalApi.post(name, 'setCommand', options)
     },
 
-    foldAll(name, options) {
-        return TerminalApi.post(name, 'foldAll', options)
-    },
-
-    unfoldAll(name, options) {
-        return TerminalApi.post(name, 'unfoldAll', options)
+    switchAllFoldState(name, options) {
+        return TerminalApi.post(name, 'switchAllFoldState', options)
     }
 }
 
@@ -113,8 +109,7 @@ const {
     clearLog,
     getCommand,
     setCommand,
-    foldAll,
-    unfoldAll
+    switchAllFoldState
 } = TerminalApi;
 export {
     register,
@@ -136,6 +131,5 @@ export {
     setOptions,
     getCommand,
     setCommand,
-    foldAll,
-    unfoldAll
+    switchAllFoldState
 }
