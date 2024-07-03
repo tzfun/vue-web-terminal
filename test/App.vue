@@ -12,7 +12,7 @@
           show-header
           :push-message-before="_pushMessageBefore"
           cursor-style="underline"
-          :cursor-blink="true"
+          :enable-cursor-blink="true"
           :log-size-limit="20"
           :enable-default-command="true"
           :line-space="15"

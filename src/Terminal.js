@@ -146,8 +146,8 @@ export default {
             allCommandStore = allCommandStore.concat(DEFAULT_COMMANDS)
         }
         if (this.commandStore) {
-            if (this.commandStoreSort) {
-                this.commandStore.sort(this.commandStoreSort)
+            if (this.commandSortHandler) {
+                this.commandStore.sort(this.commandSortHandler)
             }
             allCommandStore = allCommandStore.concat(this.commandStore)
         }
@@ -528,13 +528,13 @@ export default {
             }
         },
         _searchCmd() {
-            if (!this.enableCmdTips) {
+            if (!this.enableInputTips) {
                 return;
             }
 
             //  用户自定义搜索实现
-            if (this.tipsSearchHandler) {
-                this.tipsSearchHandler(this.command, this.cursorConf.idx, this.allCommandStore, (items, openTips) => {
+            if (this.inputTipsSearchHandler) {
+                this.inputTipsSearchHandler(this.command, this.cursorConf.idx, this.allCommandStore, (items, openTips) => {
                     this._updateTipsItems(items, openTips)
                 })
                 return;
@@ -1506,7 +1506,7 @@ export default {
             this.tips.helpBox.defaultBoxRect = null
         },
         _updateTipsItems(items, openTips = true) {
-            if (this.enableCmdTips && items && items instanceof Array && items.length > 0) {
+            if (this.enableInputTips && items && items instanceof Array && items.length > 0) {
                 this.tips.items = items
                 this.tips.selectedIndex = 0
                 if (openTips) {
@@ -1530,8 +1530,8 @@ export default {
                 return
             }
             let selectedItem = this.tips.items[this.tips.selectedIndex]
-            if (this.tipsSelectHandler) {
-                this.tipsSelectHandler(this.command, this.cursorConf.idx, selectedItem, newCommand => {
+            if (this.inputTipsSelectHandler) {
+                this.inputTipsSelectHandler(this.command, this.cursorConf.idx, selectedItem, newCommand => {
                     if (newCommand && typeof newCommand === 'string') {
                         this.command = newCommand
                         this._resetCursorPos()

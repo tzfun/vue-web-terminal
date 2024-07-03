@@ -46,18 +46,9 @@ export function terminalProps() {
             default: ' > '
         },
         //  命令行搜索以及help指令用
-        commandStore: {
-            type: Array
-        },
+        commandStore: Array,
         //   命令行排序方式
-        commandStoreSort: {
-            type: Function
-        },
-        //  自动搜索帮助
-        autoHelp: {
-            type: Boolean,
-            default: true
-        },
+        commandSortHandler: Function,
         //  显示终端头部
         showHeader: {
             type: Boolean,
@@ -69,9 +60,7 @@ export function terminalProps() {
             default: true
         },
         //  输入过滤器
-        inputFilter: {
-            type: Function
-        },
+        inputFilter: Function,
         /**
          * 拖拽配置
          *                 {
@@ -127,24 +116,24 @@ export function terminalProps() {
             default: () => "block"
         },
         //  光标闪烁开关
-        cursorBlink: {
+        enableCursorBlink: {
             type: Boolean,
-            default: () => true
+            default: true
         },
         //  命令折叠开关
         enableFold: {
             type: Boolean,
-            default: () => true
+            default: true
         },
         //  鼠标hover时分组高亮开关
         enableHoverStripe: {
             type: Boolean,
-            default: () => false
+            default: false
         },
         //  命令提示开关
-        enableCmdTips: {
+        enableInputTips: {
             type: Boolean,
-            default: () => true
+            default: true
         },
         /**
          * 提示选择处理函数
@@ -154,7 +143,7 @@ export function terminalProps() {
          * @param item          用户选择提示项
          * @param callback      填充结束后需调用此函数返回新的命令行
          */
-        tipsSelectHandler: Function,
+        inputTipsSelectHandler: Function,
         /**
          * 用户自定义命令搜索提示实现
          *
@@ -184,6 +173,6 @@ export function terminalProps() {
          *     ]
          * </pre>
          */
-        tipsSearchHandler: Function,
+        inputTipsSearchHandler: Function,
     }
 }
