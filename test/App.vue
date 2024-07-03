@@ -21,6 +21,7 @@
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
+          @on-resize="onResize"
           style="position: fixed">
       </terminal>
     </div>
@@ -249,6 +250,9 @@ export default {
     },
     _setCommand() {
       TerminalApi.setCommand(this.terminals[0].name, "hello this is a new command -a xxx")
+    },
+    onResize(info, name) {
+      console.log(name, info)
     }
   }
 }

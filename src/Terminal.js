@@ -1,5 +1,6 @@
 import {
     _copyTextToClipboard,
+    _debounce,
     _defaultMergedCommandFormatter,
     _defaultSplittableCommandFormatter,
     _eventOff,
@@ -22,7 +23,6 @@ import TerminalFlash from "@/js/TerminalFlash.js";
 import TerminalAsk from "@/js/TerminalAsk";
 import {
     dragging,
-    elementInfo,
     execute,
     focus,
     fullscreen,
@@ -329,21 +329,7 @@ export default {
             } else if (type === 'focus') {
                 this._focus(options)
             } else if (type === 'elementInfo') {
-                let windowEle = this.$refs.terminalWindow
-                let windowRect = windowEle.getBoundingClientRect()
-                let containerRect = this.$refs.terminalContainer.getBoundingClientRect()
-                let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
-                return {
-                    pos: this._getPosition(),           //  窗口所在位置
-                    screenWidth: containerRect.width,   //  窗口整体宽度
-                    screenHeight: containerRect.height, //  窗口整体高度
-                    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-                    clientHeight: windowRect.height,    //  可显示内容范围高度
-                    charWidth: {
-                        en: this.byteLen.en,            //  单个英文字符宽度
-                        cn: this.byteLen.cn             //  单个中文字符宽度
-                    }
-                }
+                return this._getElementInfo()
             } else if (type === 'textEditorOpen') {
                 let opt = options || {}
                 this.textEditor.value = opt.content
@@ -418,7 +404,7 @@ export default {
             return focus(this.getName());
         },
         elementInfo() {
-            return elementInfo(this.getName());
+            return this._getElementInfo();
         },
         textEditorClose(options) {
             return textEditorClose(this.getName(), options);
@@ -1141,7 +1127,10 @@ export default {
 
                 let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
                 let helpBoxRect = this.tips.helpBox.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
-                if (cursorRect && helpBoxRect && _pointInRect({x: cursorRect.x + this.byteLen.en*2, y: cursorRect.y + FONT_HEIGHT}, helpBoxRect)) {
+                if (cursorRect && helpBoxRect && _pointInRect({
+                    x: cursorRect.x + this.byteLen.en * 2,
+                    y: cursorRect.y + FONT_HEIGHT
+                }, helpBoxRect)) {
                     this.tips.helpBox.open = false
                     this.tips.helpBox.defaultBoxRect = helpBoxRect
                 } else {
@@ -1363,6 +1352,7 @@ export default {
                         this.containerStyleStore.left = Math.max(0, resizeData.boxX + cx) + 'px'
                         this.containerStyleStore.top = Math.max(0, resizeData.boxY + cy) + 'px'
                     }
+                    this._onResize()
                 }
             })
 
@@ -1560,6 +1550,26 @@ export default {
             }
             this.command = selectedItem.attach.key
             this._jumpToBottom()
-        }
+        },
+        _getElementInfo() {
+            let windowEle = this.$refs.terminalWindow
+            let windowRect = windowEle.getBoundingClientRect()
+            let containerRect = this.$refs.terminalContainer.getBoundingClientRect()
+            let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
+            return {
+                pos: this._getPosition(),           //  窗口所在位置
+                screenWidth: containerRect.width,   //  窗口整体宽度
+                screenHeight: containerRect.height, //  窗口整体高度
+                clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+                clientHeight: windowRect.height,    //  可显示内容范围高度
+                charWidth: {
+                    en: this.byteLen.en,            //  单个英文字符宽度
+                    cn: this.byteLen.cn             //  单个中文字符宽度
+                }
+            }
+        },
+        _onResize: _debounce(function () {
+            this.$emit('on-resize', this._getElementInfo(), this.getName())
+        }, 50)
     }
 }

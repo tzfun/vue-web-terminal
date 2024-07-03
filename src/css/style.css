@@ -542,13 +542,13 @@
 
 .t-point-lb {
     left: calc(0px - var(--t-font-height) / 2);
-    top: calc(100% - var(--t-font-height) / 2);
+    top: calc(100% - var(--t-font-height) / 2 + 15px);
     cursor: nesw-resize;
 }
 
 .t-point-rb {
     left: calc(100% - var(--t-font-height) / 2);
-    top: calc(100% - var(--t-font-height) / 2);
+    top: calc(100% - var(--t-font-height) / 2 + 15px);
     cursor: nwse-resize;
 }
 
