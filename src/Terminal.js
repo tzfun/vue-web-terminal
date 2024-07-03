@@ -52,6 +52,9 @@ function generateTerminalName() {
     return `terminal_${idx}`;
 }
 
+//  对应css变量 --t-font-height
+const FONT_HEIGHT = 19;
+
 export default {
     name: 'Terminal',
     components: {THelpBox, TViewNormal, THeader, TViewJson, TViewCode, TViewTable, TEditor},
@@ -171,7 +174,7 @@ export default {
             if (activeCursor) {
                 this._onActive()
             } else {
-                this._closeTips()
+                this._closeTips(false)
                 this._onInactive()
             }
         })
@@ -189,7 +192,7 @@ export default {
                         }
                     }
                     if (key === 'escape' && this.tips.open) {
-                        this._closeTips()
+                        this._closeTips(false)
                         return;
                     }
 
@@ -553,20 +556,18 @@ export default {
 
             //  用户自定义搜索实现
             if (this.tipsSearchHandler) {
-                this.tipsSearchHandler(this.command, this.cursorConf.idx, this.allCommandStore, items => {
-                    this._openTips(items)
+                this.tipsSearchHandler(this.command, this.cursorConf.idx, this.allCommandStore, (items, openTips) => {
+                    this._updateTipsItems(items, openTips)
                 })
                 return;
             }
+
             let firstSpaceIdx = this.command.indexOf(' ')
-            if (firstSpaceIdx > 0 && this.cursorConf.idx > firstSpaceIdx) {
-                this._closeTips()
-                return;
-            }
+            let cursorInKey = firstSpaceIdx <= 0 || this.cursorConf.idx <= firstSpaceIdx
 
             let cmd = this.command.trim().split(' ')[0]
             if (cmd.length === 0) {
-                this._closeTips()
+                this._closeTips(true)
             } else {
                 let reg = new RegExp(cmd.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig')
                 let matchArray = []
@@ -602,9 +603,9 @@ export default {
                             attach: o.item
                         })
                     }
-                    this._openTips(items)
+                    this._updateTipsItems(items, cursorInKey)
                 } else {
-                    this._closeTips()
+                    this._closeTips(true)
                 }
             }
         },
@@ -672,7 +673,7 @@ export default {
                         let eg = command.example[idx]
                         detail += `
                         <div>
-                            <div style="float:left;width: 30px;display:flex;font-size: 12px;line-height: 18px;">
+                            <div class="t-cmd-help-eg">
                               eg${parseInt(idx) + 1}:
                             </div>
                             <div class="t-cmd-help-example">
@@ -702,7 +703,7 @@ export default {
             })
         },
         _execute() {
-            this._closeTips()
+            this._closeTips(true)
             this._saveCurCommand();
             if (_nonEmpty(this.command)) {
                 try {
@@ -809,7 +810,7 @@ export default {
             } else {
                 this.cursorConf.show = false
             }
-            this._closeTips()
+            this._closeTips(true)
         },
         _filterMessageType(message) {
             let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
@@ -1027,7 +1028,7 @@ export default {
                 preWidth = charWidth
                 if (pos.left > lineWidth) {
                     //  行高 对应css变量 --t-font-height
-                    pos.top += 19
+                    pos.top += FONT_HEIGHT
                     pos.left = charWidth
                 }
             }
@@ -1127,7 +1128,7 @@ export default {
             }
 
             if (_isEmpty(this.command)) {
-                this._closeTips();
+                this._closeTips(true);
             } else {
                 this._searchCmd()
             }
@@ -1140,7 +1141,7 @@ export default {
 
                 let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
                 let helpBoxRect = this.tips.helpBox.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
-                if (cursorRect && helpBoxRect && _pointInRect(cursorRect, helpBoxRect)) {
+                if (cursorRect && helpBoxRect && _pointInRect({x: cursorRect.x + this.byteLen.en*2, y: cursorRect.y + FONT_HEIGHT}, helpBoxRect)) {
                     this.tips.helpBox.open = false
                     this.tips.helpBox.defaultBoxRect = helpBoxRect
                 } else {
@@ -1512,20 +1513,26 @@ export default {
                 })
             }
         },
-        _closeTips() {
+        _closeTips(clearItems = true) {
             this.tips.open = false
-            this.tips.items = []
-            this.tips.selectedIndex = 0
+            if (clearItems) {
+                this.tips.items = []
+                this.tips.selectedIndex = 0
+            }
             this.tips.helpBox.open = false
             this.tips.helpBox.defaultBoxRect = null
         },
-        _openTips(items) {
+        _updateTipsItems(items, openTips = true) {
             if (this.enableCmdTips && items && items instanceof Array && items.length > 0) {
                 this.tips.items = items
                 this.tips.selectedIndex = 0
-                this._calculateTipsPos(true)
+                if (openTips) {
+                    this._calculateTipsPos(true)
+                } else {
+                    this.tips.open = false
+                }
             } else {
-                this._closeTips()
+                this._closeTips(true)
             }
         },
         _clickTips(idx) {
@@ -1544,6 +1551,7 @@ export default {
                 this.tipsSelectHandler(this.command, this.cursorConf.idx, selectedItem, newCommand => {
                     if (newCommand && typeof newCommand === 'string') {
                         this.command = newCommand
+                        this._jumpToBottom()
                     } else {
                         console.warn(`'tipsSelectHandler' returns an invalid result, the expected return value is string type, got ${typeof newCommand}.`)
                     }
@@ -1551,6 +1559,7 @@ export default {
                 return
             }
             this.command = selectedItem.attach.key
+            this._jumpToBottom()
         }
     }
 }

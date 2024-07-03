@@ -3,7 +3,7 @@
        ref="terminalHelpBox"
        :style="`top: ${top}px;max-height: calc(100% - ${top}px);`"
        v-if="content && !_screenType().xs">
-    <p class="t-cmd-help-des"
+    <div class="t-cmd-help-des"
        v-if="content.description"
        v-html="content.description"/>
     <div v-if="content.example != null && content.example.length > 0">

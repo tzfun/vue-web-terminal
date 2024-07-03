@@ -347,7 +347,7 @@
 .t-cmd-help {
     position: absolute;
     top: 15px;
-    right: 15px;
+    right: 12px;
     z-index: 99;
     max-width: 50%;
     padding: 5px;
@@ -380,7 +380,7 @@
 }
 
 .t-cmd-help-des {
-    margin: 10px 0;
+    margin-bottom: 10px;
 }
 
 .t-cmd-help-des-item {
@@ -602,6 +602,9 @@
 }
 
 .t-cmd-tips {
+    --t-cmd-tips-box-shadow: 5px 5px 15px 0 rgb(116 129 153 / 30%);
+
+
     min-width: 5px;
     max-width: 500px;
     max-height: 200px;
@@ -613,6 +616,10 @@
     overflow-y: auto;
     -ms-overflow-y: auto;
     cursor: context-menu;
+    box-shadow: var(--t-cmd-tips-box-shadow);
+    -moz-box-shadow: var(--t-cmd-tips-box-shadow);
+    -webkit-box-shadow: var(--t-cmd-tips-box-shadow);
+    -o-box-shadow: var(--t-cmd-tips-box-shadow);
 }
 
 .t-cmd-tips-item {

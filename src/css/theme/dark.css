@@ -46,17 +46,3 @@
     --t-cmd-tips-content-font-color: #fff;
     --t-cmd-tips-des-font-color: #c5a5a5;
 }
-
-.t-header-pin:hover {
-    color: #030a0a;
-}
-
-/*--------------------------help style------------------------*/
-.t-pre-numbering {
-    border-right: 1px solid #C3CCD0;
-    background-color: #1C1D21;
-}
-
-.t-pre-numbering li {
-    color: #AAA;
-}

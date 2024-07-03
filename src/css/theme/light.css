@@ -40,4 +40,9 @@
     --t-log-fold-icon-active-color: white;
     --t-log-fold-icon-active-background-color: #4ca5c1;
     --t-log-fold-line-color: #4ca5c1;
+    --t-cmd-tips-background-color: #dddddd;
+    --t-cmd-tips-font-color: #000;
+    --t-cmd-tips-active-background-color: #dbc9d6;
+    --t-cmd-tips-content-font-color: #644c4c;
+    --t-cmd-tips-des-font-color: #644c4c;
 }
