@@ -54,7 +54,42 @@ export function _parseANSI(str: string, os: 'windows' | 'mac' | 'linux' | 'unix'
         styleFlag: <Array<string | number>>[]
     }
 
-    function newLine() {
+    let lastChar = {
+        dom: <HTMLElement>null,
+        attachStyle: ''
+    };
+
+    function getLastCharDomStr(): string {
+        if (!lastChar.dom) {
+            return ''
+        }
+        let container = document.createElement("div");
+        container.appendChild(lastChar.dom)
+        let domStr = container.innerHTML
+        container = null
+        return domStr
+    }
+
+    function updateLastChar(clazz: string | null, style: string, innerText: string): void {
+        let dom = document.createElement('span')
+        dom.className = clazz
+        dom.setAttribute('style', style)
+        dom.innerText = innerText
+
+        lastChar.dom = dom
+        lastChar.attachStyle = style
+    }
+
+    function checkDirtyChar(): void {
+        if (lastChar.dom) {
+            lines[lines.length - 1] = lines[lines.length - 1] + getLastCharDomStr()
+            lastChar.dom = null
+            lastChar.attachStyle = ''
+        }
+    }
+
+    function newLine():void {
+        checkDirtyChar()
         lines[lines.length - 1] = '<div class="t-ansi-line">' + lines[lines.length - 1] + '</div>'
         lines.push('')
     }
@@ -63,15 +98,27 @@ export function _parseANSI(str: string, os: 'windows' | 'mac' | 'linux' | 'unix'
         try {
             let arr = char.split('')
             for (let c of arr) {
-                let charStr
                 let clazz = "t-ansi-char"
                 if (data.styleFlag.length > 0) {
                     data.styleFlag.forEach(o => clazz += (' t-ansi-' + parseInt(String(o))))
-                    charStr = `<span class="${clazz}" style="${data.attachStyle}">${c}</span>`
-                } else {
-                    charStr = `<span class="${clazz}" style="${data.attachStyle}">${c}</span>`
                 }
-                lines[lines.length - 1] = lines[lines.length - 1] + charStr
+
+                let charStr = null
+                if (lastChar.dom) {
+                    //  相同样式进行标签合并
+                    if (clazz === lastChar.dom.className && data.attachStyle === lastChar.attachStyle) {
+                        lastChar.dom.innerText += c
+                    } else {
+                        //  保存上一个dom并替换
+                        charStr = getLastCharDomStr()
+                        updateLastChar(clazz, data.attachStyle, c)
+                    }
+                } else {
+                    updateLastChar(clazz, data.attachStyle, c)
+                }
+                if (charStr) {
+                    lines[lines.length - 1] = lines[lines.length - 1] + charStr
+                }
             }
         } catch (e) {
             console.error('Can not fill char: ' + char.toString(), e)
@@ -235,6 +282,8 @@ export function _parseANSI(str: string, os: 'windows' | 'mac' | 'linux' | 'unix'
 
         fillChar(c)
     }
+
+    checkDirtyChar()
 
     return lines.join('');
 }
