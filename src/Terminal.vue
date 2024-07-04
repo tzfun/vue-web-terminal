@@ -603,9 +603,7 @@ const _clearLog = (clearHistory: boolean) => {
 }
 
 const _triggerClick = (key: string) => {
-  if (key === 'fullScreen' && !fullscreenState.value) {
-    _fullscreen()
-  } else if (key === 'minScreen' && fullscreenState.value) {
+  if (key === 'fullscreen') {
     _fullscreen()
   } else if (key === 'pin' && props.showHeader) {
     let pinned = props.dragConf.pinned || false
@@ -1610,7 +1608,11 @@ defineExpose({
       <div class="t-header-container" ref="terminalHeaderRef" v-if="showHeader"
            :style="draggable ? 'cursor: move;' : ''" @dblclick="_fullscreen">
         <slot name="header">
-          <t-header :title="title" :pinned="isPinned" :draggable="draggable" @on-click="_triggerClick"/>
+          <t-header :title="title"
+                    :pinned="isPinned"
+                    :draggable="draggable"
+                    :fullscreen-state="fullscreenState"
+                    @on-click="_triggerClick"/>
         </slot>
       </div>
       <div class="t-window"
