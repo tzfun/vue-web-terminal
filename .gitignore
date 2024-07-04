@@ -33,3 +33,4 @@ dist-ssr
 /vue-web-terminal.js
 stats.html
 /docs/
+/docs/.vuepress/

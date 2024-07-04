@@ -7,7 +7,18 @@
 import '~/css/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
-import {ref} from "vue";
+import {reactive, ref} from "vue";
+
+const initLog = reactive([{
+  type: 'normal',
+  content: "Terminal Initializing ..."
+}, {
+  type: 'normal',
+  content: "Current login time: " + new Date().toLocaleString()
+}, {
+  type: 'normal',
+  content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn. Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
+}])
 
 const terminals = ref<any>([
   {
@@ -245,15 +256,16 @@ const setCommand = () => {
           :drag-conf="item.dragConf"
           :show-header="item.showHeader"
           :push-message-before="pushMessageBefore"
-          @exec-cmd="onExecCmd"
-          @on-active="onActive"
-          @on-inactive="onInactive"
           :log-size-limit="20"
           cursor-style="bar"
           :cursor-blink="true"
           :line-space="15"
           enable-hover-stripe
           :enable-fold="true"
+          :init-log="initLog"
+          @exec-cmd="onExecCmd"
+          @on-active="onActive"
+          @on-inactive="onInactive"
           style="position: fixed">
         <!--        <template #header>-->
         <!--          <div class="custom-header">This is custom header</div>-->

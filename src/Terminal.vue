@@ -63,18 +63,7 @@ const props = defineProps({
   //  初始化日志内容
   initLog: {
     type: Array<Message>,
-    default: (): Array<Message> => {
-      return [{
-        type: 'normal',
-        content: "Terminal Initializing ..."
-      }, {
-        type: 'normal',
-        content: "Current login time: " + new Date().toLocaleString()
-      }, {
-        type: 'normal',
-        content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn.Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
-      }]
-    }
+    default: (): Array<Message> => null
   },
   //  上下文
   context: {
