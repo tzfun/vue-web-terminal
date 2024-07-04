@@ -198,6 +198,10 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
   } else if (key === 'doclear') {
     TerminalApi.clearLog(name)
     success()
+  } else if (key === 'fold') {
+    success(TerminalApi.switchAllFoldState(name, true).toString())
+  } else if (key === 'unfold') {
+    success(TerminalApi.switchAllFoldState(name, false).toString())
   } else {
     failed("Unknown command: " + key)
   }

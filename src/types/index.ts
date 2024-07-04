@@ -302,6 +302,10 @@ export class TerminalApi {
     setCommand(name: string, options?: any): string | any {
         return this.post(name, 'setCommand', options)
     }
+
+    switchAllFoldState(name: string, options :boolean): any {
+        return this.post(name, 'switchAllFoldState', options)
+    }
 }
 
 export interface EditorSetting {

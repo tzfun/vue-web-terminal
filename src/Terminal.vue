@@ -506,7 +506,9 @@ onMounted(() => {
       return _getCommand()
     } else if (type === 'setCommand') {
       return _setCommand(options)
-    } else {
+    } else if (type === 'switchAllFoldState') {
+      return _switchAllFoldState(options)
+    }else {
       console.error(`Unsupported event type ${type} in instance ${getName()}`)
     }
   })
@@ -1548,6 +1550,25 @@ const _closeGroupFold = (group: MessageGroup) => {
   }
 }
 
+const _enableFold = (group: MessageGroup) => {
+  return props.enableFold && group.tag !== 'init' && group.logs.length > 1 && group.logs[0].type === 'cmdLine'
+}
+
+const _switchAllFoldState = (fold: boolean) => {
+  let count = 0;
+  if (props.enableFold) {
+    for (let group of terminalLog.value) {
+      if (_enableFold(group) && group.fold !== fold) {
+        group.fold = fold
+        count++;
+      }
+    }
+  } else {
+    console.warn("Before using folding related functions, please set enable-fold to enable the folding function.")
+  }
+  return count
+}
+
 defineExpose({
   pushMessage: _pushMessage,
   fullscreen: _fullscreen,
@@ -1566,7 +1587,10 @@ defineExpose({
     return api.textEditorOpen(getName(), options)
   },
   textEditorClose: _textEditorClose,
-  clearLog: _clearLog
+  clearLog: _clearLog,
+  getCommand: _getCommand,
+  setCommand: _setCommand,
+  switchAllFoldState: _switchAllFoldState
 })
 
 </script>
@@ -1598,7 +1622,7 @@ defineExpose({
              :key="groupIdx"
              :class="`t-log-box t-log-fold-container ${enableHoverStripe && group.logs.length > 1 ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
              :style="`margin-top:${lineSpace}px;`">
-          <span v-if="enableFold && group.tag !== 'init' && group.logs.length > 1">
+          <span v-if="_enableFold(group)">
             <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
             <span class="t-log-fold-icon" v-else @click="group.fold = true">-</span>
             <span class="t-log-fold-line" v-if="!group.fold"/>
