@@ -50,6 +50,8 @@ import TViewerTable from "~/components/TViewerTable.vue";
 import THelpBox from "~/components/THelpBox.vue";
 import TEditor from "~/components/TEditor.vue";
 
+//  对应css变量 --t-font-height
+const FONT_HEIGHT = 19;
 const emits = defineEmits(["on-keydown", "on-click", "before-exec-cmd", "exec-cmd", "destroyed", "init-before", "init-complete", 'on-active', 'on-inactive'])
 const props = defineProps({
   title: {
@@ -622,10 +624,11 @@ const _calculateByteLen = () => {
     let rect = enGhost.getBoundingClientRect()
     if (rect && rect.width > 0) {
       byteLen.init = true
-      byteLen.en = rect.width
-      byteLen.cn = terminalCnFlagRef.value.getBoundingClientRect().width
+      byteLen.en = rect.width / 10
+      byteLen.cn = terminalCnFlagRef.value.getBoundingClientRect().width / 10
 
       cursorConf.defaultWidth = byteLen.en
+      byteLen.init = true
     }
   }
 }
@@ -1121,8 +1124,8 @@ const _calculateCursorPos = (cmdStr?: string) => {
     pos.left += preWidth
     preWidth = charWidth
     if (pos.left > lineWidth) {
-      //  行高 对应 css 变量 --t-point-size
-      pos.top += 15
+      //  行高 对应 css 变量 --t-font-height
+      pos.top += FONT_HEIGHT
       pos.left = charWidth
     }
   }
@@ -1733,9 +1736,9 @@ defineExpose({
                   ref="terminalTextEditorRef"></t-editor>
       </slot>
     </div>
-    <span class="t-flag t-crude-font t-cmd-line t-disable-select">
-      <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">a</span>
-      <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你</span>
+    <span class="t-flag t-crude-font t-disable-select">
+      <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">aaaaaaaaaa</span>
+      <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你你你你你你你你你你</span>
     </span>
   </div>
 </template>
