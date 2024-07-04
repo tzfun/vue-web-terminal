@@ -1,6 +1,9 @@
 :root {
-    --t-point-size: 15px;
-    --t-font-size: 13px;
+    /*限定字体高度*/
+    --t-font-height: 19px;
+    /*限定字体大小*/
+    --t-font-size: 16px;
+    --t-cmd-tips-border-radius: 5px;
 }
 
 .t-log-box, .t-cmd-line {
@@ -13,21 +16,6 @@
 .t-log-box {
     display: block;
     position: relative;
-    line-height: var(--t-point-size);
-}
-
-.t-shell-dot {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    -moz-transition: opacity 0.2s ease;
-    -ms-transition: opacity 0.2s ease;
-    -webkit-transition: opacity 0.2s ease;
-    -o-transition: opacity 0.2s ease;
-    margin-bottom: 0;
-}
-
-.t-shell-dots:hover .t-shell-dot {
-    opacity: 1;
 }
 
 .t-container {
@@ -56,16 +44,22 @@
     background-color: var(--t-header-background-color);
 }
 
-.t-header h4 {
-    font-size: 14px;
+.t-header-title {
+    font-size: calc(var(--t-font-size) + 2px);
+    font-weight: bold;
     margin: 5px;
+    height: var(--t-font-height);
+    line-height: var(--t-font-height);
     letter-spacing: 1px;
     color: var(--t-header-font-color);
+    display: inline-block;
+    cursor: pointer;
+    text-shadow: 0 0 20px #41454a;
 }
 
 .t-header ul.t-shell-dots {
     position: absolute;
-    top: 3px;
+    top: 5px;
     left: 8px;
     padding-left: 0;
     margin: 0;
@@ -82,8 +76,12 @@
     cursor: pointer;
 }
 
+.shell-dot-item {
+    position: relative;
+}
+
 .t-header ul .t-shell-dots-red {
-    background-color: #c83030;
+    background-color: #f14444;
 }
 
 .t-header ul .t-shell-dots-yellow {
@@ -91,7 +89,32 @@
 }
 
 .t-header ul .t-shell-dots-green {
-    background-color: #2ec971;
+    background-color: #23bd65;
+}
+
+.t-shell-dot {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    -moz-transition: opacity 0.2s ease;
+    -ms-transition: opacity 0.2s ease;
+    -webkit-transition: opacity 0.2s ease;
+    -o-transition: opacity 0.2s ease;
+    margin-bottom: 0;
+    position: absolute;
+    left: 50%;
+    margin-left: -5px;
+    top: 50%;
+    margin-top: -5px;
+}
+
+.t-shell-dots:hover .t-shell-dot {
+    opacity: 1;
+}
+
+.t-shell-pin-icon {
+    filter: drop-shadow(5px 30px 5px rgba(26, 58, 70, 0.8));
+    -ms-filter: drop-shadow(5px 30px 5px rgba(26, 58, 70, 0.8));
+    -webkit-filter: drop-shadow(5px 30px 5px rgba(26, 58, 70, 0.8));
 }
 
 .t-window,
@@ -100,7 +123,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
-    font-family: Monaco, Menlo, Consolas, monospace;
+    /*font-family: Monaco, Menlo, Consolas, monospace;*/
 }
 
 .t-window {
@@ -112,6 +135,7 @@
     z-index: 1;
     max-height: none;
     min-height: 140px;
+    padding: 0 0 0 20px;
     font-weight: 400;
     cursor: text;
     background-color: var(--t-main-background-color);
@@ -269,13 +293,6 @@
     word-spacing: 0;
     letter-spacing: 0;
     position: relative;
-    line-height: var(--t-point-size);
-}
-
-.t-help-msg {
-    min-height: 20px;
-    margin: 5px 0 10px 0;
-    color: var(--t-cmd-help-msg-color);
 }
 
 /*手机*/
@@ -292,11 +309,13 @@
 
 .t-cmd-line {
     font-size: 0;
+    line-height: var(--t-font-height);
 }
 
 .t-cmd-line-content {
     font-size: var(--t-font-size);
     word-break: break-all;
+    white-space: break-spaces;
 }
 
 .t-cmd-key {
@@ -328,7 +347,7 @@
 .t-cmd-help {
     position: absolute;
     top: 15px;
-    right: 15px;
+    right: 12px;
     z-index: 99;
     max-width: 50%;
     padding: 5px;
@@ -340,10 +359,9 @@
 }
 
 .t-cmd-help code {
+    font-size: var(--t-font-size);
     border: none;
     padding: 2px 5px 2px 5px;
-    border-radius: 3px;
-    color: var(--t-cmd-help-code-font-color);
     background-color: var(--t-cmd-help-code-background-color) !important;
 }
 
@@ -352,7 +370,7 @@
     width: 30px;
     display: flex;
     font-size: var(--t-font-size);
-    line-height: 26px;
+    line-height: var(--t-font-height);
 }
 
 .t-cmd-help-example {
@@ -362,6 +380,10 @@
 }
 
 .t-cmd-help-des {
+    margin-bottom: 10px;
+}
+
+.t-cmd-help-des-item {
     font-size: var(--t-font-size);
 }
 
@@ -411,6 +433,11 @@
 .t-table, .t-table tr, .t-table td, .t-table tbody, .t-table thead {
     margin: 0;
     padding: 15px;
+}
+
+.t-code-inline {
+    color: var(--t-code-inline-font-color);
+    font-weight: 600;
 }
 
 .t-code {
@@ -494,34 +521,34 @@
 }
 
 .t-point {
-    width: var(--t-point-size);
-    height: var(--t-point-size);
+    width: var(--t-font-height);
+    height: var(--t-font-height);
     background-color: rgba(0, 0, 0, 0);
     position: absolute;
     z-index: 100;
 }
 
 .t-point-lt {
-    left: calc(0px - var(--t-point-size) / 2);
-    top: calc(0px - var(--t-point-size) / 2);
+    left: calc(0px - var(--t-font-height) / 2);
+    top: calc(0px - var(--t-font-height) / 2);
     cursor: nwse-resize;
 }
 
 .t-point-rt {
-    left: calc(100% - var(--t-point-size) / 2);
-    top: calc(0px - var(--t-point-size) / 2);
+    left: calc(100% - var(--t-font-height) / 2);
+    top: calc(0px - var(--t-font-height) / 2);
     cursor: nesw-resize;
 }
 
 .t-point-lb {
-    left: calc(0px - var(--t-point-size) / 2);
-    top: calc(100% - var(--t-point-size) / 2);
+    left: calc(0px - var(--t-font-height) / 2);
+    top: calc(100% - var(--t-font-height) / 2 + 15px);
     cursor: nesw-resize;
 }
 
 .t-point-rb {
-    left: calc(100% - var(--t-point-size) / 2);
-    top: calc(100% - var(--t-point-size) / 2);
+    left: calc(100% - var(--t-font-height) / 2);
+    top: calc(100% - var(--t-font-height) / 2 + 15px);
     cursor: nwse-resize;
 }
 
@@ -538,7 +565,7 @@
 }
 
 .t-log-box-folded {
-    height: var(--t-point-size);
+    height: var(--t-font-height);
     overflow-y: clip;
     background-color: var(--t-log-box-folded-background-color);
     cursor: pointer;
@@ -549,10 +576,10 @@
     width: 10px;
     height: 10px;
     left: -17px;
-    top: 2px;
+    top: 4px;
     border: 1px solid var(--t-log-fold-icon-border-color);
     text-align: center;
-    line-height: 10px;
+    line-height: 9px;
     background-color: var(--t-log-fold-icon-background-color);
     color: var(--t-log-fold-icon-color);
     cursor: pointer;
@@ -572,6 +599,67 @@
     background-color: var(--t-log-fold-line-color);
     left: -12px;
     top: 10px;
+}
+
+.t-cmd-tips {
+    --t-cmd-tips-box-shadow: 5px 5px 15px 0 rgb(116 129 153 / 30%);
+
+
+    min-width: 5px;
+    max-width: 500px;
+    max-height: 200px;
+    position: absolute;
+    z-index: 100;
+    background-color: var(--t-cmd-tips-background-color);
+    border-radius: var(--t-cmd-tips-border-radius);
+    color: var(--t-cmd-tips-font-color);
+    overflow-y: auto;
+    -ms-overflow-y: auto;
+    cursor: context-menu;
+    box-shadow: var(--t-cmd-tips-box-shadow);
+    -moz-box-shadow: var(--t-cmd-tips-box-shadow);
+    -webkit-box-shadow: var(--t-cmd-tips-box-shadow);
+    -o-box-shadow: var(--t-cmd-tips-box-shadow);
+}
+
+.t-cmd-tips-item {
+    padding: 5px 8px;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    text-wrap: nowrap;
+    color: var(--t-cmd-tips-des-font-color);
+}
+
+.t-cmd-tips-item-first {
+    border-top-left-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-top-left-radius: var(--t-cmd-tips-border-radius);
+    border-top-right-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-top-right-radius: var(--t-cmd-tips-border-radius);
+}
+
+.t-cmd-tips-item-last {
+    border-bottom-left-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-bottom-left-radius: var(--t-cmd-tips-border-radius);
+    border-bottom-right-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-bottom-right-radius: var(--t-cmd-tips-border-radius);
+}
+
+.t-cmd-tips-item-active {
+    background-color: var(--t-cmd-tips-active-background-color);
+}
+
+.t-cmd-tips-content {
+    font-weight: bold;
+    color: var(--t-cmd-tips-content-font-color);
+    cursor: context-menu;
+    user-select: none;
+}
+
+.t-cmd-tips-des {
+    color: var(--t-cmd-tips-des-font-color);
+    margin-left: 8px;
+    cursor: context-menu;
+    user-select: none;
 }
 
 /*--------------------------json viewer style------------------------*/
