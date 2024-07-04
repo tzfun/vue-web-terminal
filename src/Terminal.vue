@@ -2,6 +2,7 @@
 import {computed, nextTick, onMounted, onUnmounted, PropType, reactive, ref, watch} from "vue";
 import {
   AskConfig,
+  InputTipItem,
   Command,
   CommandFormatterFunc,
   CommandStoreSortFunc,
@@ -10,18 +11,20 @@ import {
   EditorSetting,
   FailedFunc,
   InputFilterFunc,
-  Message, MessageGroup,
+  Message,
+  MessageGroup,
   Position,
   PushMessageBeforeFunc,
-  SearchHandlerFunc,
   SuccessFunc,
-  TabKeyHandlerFunc,
   TerminalAsk,
-  TerminalFlash
+  TerminalFlash,
+  TipsSearchHandlerFunc,
+  TipsSelectHandlerFunc
 } from "./types";
 import {
   _copyTextToClipboard,
-  _defaultMergedCommandFormatter, _defaultSplittableCommandFormatter,
+  _defaultMergedCommandFormatter,
+  _defaultSplittableCommandFormatter,
   _eventOff,
   _eventOn,
   _getByteLen,
@@ -36,11 +39,10 @@ import {
   _nonEmpty,
   _openUrl,
   _pointInRect,
-  _screenType,
 } from "~/common/util.ts";
 import api, {register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS} from "~/common/configuration.ts";
-import {_parseANSI, ANSI_BEL} from "~/ansi";
+import {_parseANSI} from "~/ansi";
 import store from "~/common/store";
 import THeader from "~/components/THeader.vue";
 import TViewerNormal from "~/components/TViewerNormal.vue";
@@ -80,18 +82,13 @@ const props = defineProps({
   commandStore: Array<Command>,
   //   命令行排序方式
   commandStoreSort: Function as PropType<CommandStoreSortFunc>,
-  //  自动搜索帮助
-  autoHelp: {
-    type: Boolean,
-    default: true
-  },
   //  显示终端头部
   showHeader: {
     type: Boolean,
     default: true
   },
   //  是否开启命令提示
-  enableExampleHint: {
+  enableHelpBox: {
     type: Boolean,
     default: true
   },
@@ -101,10 +98,6 @@ const props = defineProps({
   dragConf: Object as PropType<DragConfig>,
   //  命令格式化显示函数
   commandFormatter: Function as PropType<CommandFormatterFunc>,
-  //  按下Tab键处理函数
-  tabKeyHandler: Function as PropType<TabKeyHandlerFunc>,
-  //  用户自定义命令搜索提示实现
-  searchHandler: Function as PropType<SearchHandlerFunc>,
   //  滚动条滚动模式
   scrollMode: {
     type: String,
@@ -158,6 +151,15 @@ const props = defineProps({
     type: Boolean,
     default: () => false
   },
+  //  命令提示开关
+  enableInputTips: {
+    type: Boolean,
+    default: () => true
+  },
+  //  提示选择处理函数
+  tipsSelectHandler: Function as PropType<TipsSelectHandlerFunc>,
+  //  用户自定义命令搜索提示实现
+  tipsSearchHandler: Function as PropType<TipsSearchHandlerFunc>,
 })
 
 const draggable = computed<boolean>(() => {
@@ -207,12 +209,6 @@ const byteLen = reactive({
 const showInputLine = ref<boolean>(true)
 const terminalLog = ref<MessageGroup[]>([])
 const logSize = ref<number>(0)
-const searchCmdResult = reactive({
-  //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
-  show: false,
-  defaultBoxRect: null,
-  item: <Command>null
-})
 const allCommandStore = ref<Command[]>([])
 const fullscreenState = ref<boolean>(false)
 const inputBoxParam = reactive({
@@ -247,6 +243,21 @@ textEditor.onBlur = () => {
 }
 const containerStyleStore = ref<{ [prop: string]: string | number }>()
 const headerHeight = ref(0)
+const tips = reactive({
+  open: false,
+  style: {
+    opacity: 100,
+    top:0,
+    left:0
+  },
+  items: <InputTipItem[]>[],
+  helpBox: {
+    //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
+    open: false,
+    defaultBoxRect: null,
+  },
+  selectedIndex: 0
+})
 
 //  references
 const terminalContainerRef = ref(null)
@@ -265,6 +276,7 @@ const resizeLTRef = ref(null)
 const resizeRTRef = ref(null)
 const resizeLBRef = ref(null)
 const resizeRBRef = ref(null)
+const terminalCmdTipsRef = ref(null)
 
 //  listeners
 const clickListener = ref()
@@ -318,6 +330,7 @@ onMounted(() => {
     if (activeCursor) {
       _onActive()
     } else {
+      _closeTips(false)
       _onInactive()
     }
   })
@@ -334,19 +347,15 @@ onMounted(() => {
             return
           }
         }
+
+        if (key === 'escape' && tips.open) {
+          _closeTips(false)
+          return;
+        }
+
         if (cursorConf.show) {
           if (key === 'tab') {
-            if (props.tabKeyHandler) {
-              props.tabKeyHandler(event, (cmd: string) => {
-                if (cmd) {
-                  command.value = cmd.trim()
-                } else {
-                  command.value = ''
-                }
-              })
-            } else {
-              _fillCmd()
-            }
+            _selectTips()
             event.preventDefault()
           } else if (document.activeElement !== terminalCmdInputRef.value) {
             terminalCmdInputRef.value.focus()
@@ -644,72 +653,64 @@ const _calculatePromptLen = () => {
   }
 }
 
-const _resetSearchKey = () => {
-  searchCmdResult.item = null
-}
-
-const _searchCmd = (key?: string) => {
-  if (!props.autoHelp) {
+const _searchCmd = () => {
+  if (!props.enableInputTips) {
     return
   }
 
   //  用户自定义搜索实现
-  if (props.searchHandler) {
-    props.searchHandler(allCommandStore.value, key, (cmd: Command) => {
-      searchCmdResult.item = cmd
-      _jumpToBottom()
+  if (props.tipsSearchHandler) {
+    props.tipsSearchHandler(command.value, cursorConf.idx, allCommandStore.value, (items: InputTipItem[], openTips?: boolean) => {
+      _updateTipsItems(items, openTips)
     })
     return
   }
 
-  let cmd = key
-  if (cmd == null) {
-    cmd = command.value.split(' ')[0]
-  }
-  if (_isEmpty(cmd)) {
-    _resetSearchKey()
-  } else if (cmd.trim().indexOf(" ") < 0) {
-    let reg = new RegExp(cmd.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')
-    let matchSet = []
+  let firstSpaceIdx = command.value.indexOf(' ')
+  let cursorInKey = firstSpaceIdx <= 0 || cursorConf.idx <= firstSpaceIdx
 
-    let target = null
+  let cmd = command.value.trim().split(' ')[0]
+
+  if (cmd.length === 0) {
+    _closeTips(true)
+  } else {
+    let reg = new RegExp(cmd.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig')
+    let matchArray = []
+
     for (const o of allCommandStore.value) {
       if (_nonEmpty(o.key)) {
         let res = o.key.match(reg)
         if (res != null) {
+          //  计算出匹配分数，之后根据分数进行排序
+          //  分数为 0 表示完全匹配
           let score = res.index * 1000 + (cmd.length - res[0].length) + (o.key.length - res[0].length)
-          if (score === 0) {
-            //  完全匹配，直接返回
-            target = o
-            break
-          } else {
-            matchSet.push({
-              item: o,
-              score: score
-            })
-          }
+          matchArray.push({
+            item: o,
+            keyword: o.key.split(res[0]).join(`<span class="t-cmd-key">${res[0]}</span>`),
+            score: score
+          })
         }
       }
     }
-    if (target == null) {
-      if (matchSet.length > 0) {
-        matchSet.sort((a, b) => {
-          return a.score - b.score
-        })
-        target = matchSet[0].item
-      } else {
-        searchCmdResult.item = null
-        return
-      }
-    }
-    searchCmdResult.item = target
-    _jumpToBottom()
-  }
-}
 
-const _fillCmd = () => {
-  if (searchCmdResult.item) {
-    command.value = searchCmdResult.item.key
+    if (matchArray.length > 0) {
+      matchArray.sort((a, b) => {
+        return a.score - b.score
+      })
+
+      let items = []
+
+      for (let o of matchArray) {
+        items.push({
+          content: o.keyword,
+          description: o.item.description,
+          attach: o.item
+        })
+      }
+      _updateTipsItems(items, cursorInKey)
+    } else {
+      _closeTips(true)
+    }
   }
 }
 
@@ -766,7 +767,7 @@ const _printHelp = (regExp: RegExp, srcStr: string) => {
       detail += `Description: ${cmd.description}<br>`
     }
     if (_nonEmpty(cmd.usage)) {
-      detail += `Usage: <code>${_html(cmd.usage)}</code><br>`
+      detail += `Usage: <code class="t-code-inline">${_html(cmd.usage)}</code><br>`
     }
     if (cmd.example != null) {
       if (cmd.example.length > 0) {
@@ -776,24 +777,24 @@ const _printHelp = (regExp: RegExp, srcStr: string) => {
       for (let idx in cmd.example) {
         let eg = cmd.example[idx]
         detail += `
-                        <div>
-                            <div style="float:left;width: 30px;display:flex;font-size: 12px;line-height: 18px;">
-                              eg${parseInt(idx) + 1}:
-                            </div>
-                            <div class="t-cmd-help-example">
-                              <ul class="t-example-ul">
-                                <li class="t-example-li"><code>${eg.cmd}</code></li>
-                                <li class="t-example-li"><span></span></li>
-                        `
+        <div>
+          <div class="t-cmd-help-eg">
+            eg${parseInt(idx) + 1}:
+          </div>
+          <div class="t-cmd-help-example">
+            <ul class="t-example-ul">
+              <li class="t-example-li"><code class="t-code-inline">${eg.cmd}</code></li>
+              <li class="t-example-li"><span></span></li>
+        `
 
         if (_nonEmpty(eg.des)) {
           detail += `<li class="t-example-li"><span>${eg.des}</span></li>`
         }
         detail += `
-                            </ul>
-                        </div>
-                    </div>
-                    `
+            </ul>
+          </div>
+        </div>
+        `
       }
     }
 
@@ -808,7 +809,7 @@ const _printHelp = (regExp: RegExp, srcStr: string) => {
 }
 
 const _execute = () => {
-  _resetSearchKey()
+  _closeTips(true)
   _saveCurCommand();
   if (_nonEmpty(command.value)) {
     try {
@@ -919,8 +920,7 @@ const _endExecCallBack = () => {
   } else {
     cursorConf.show = false
   }
-  searchCmdResult.show = true
-  searchCmdResult.defaultBoxRect = null
+  _closeTips(true)
 }
 
 const _filterMessageType = (message: Message) => {
@@ -1092,6 +1092,7 @@ const _resetCursorPos = (cmd?: string) => {
   cursorConf.left = 'unset'
   cursorConf.top = 'unset'
   cursorConf.width = cursorConf.defaultWidth
+  _calculateTipsPos()
 }
 
 const _calculateCursorPos = (cmdStr?: string) => {
@@ -1133,6 +1134,8 @@ const _calculateCursorPos = (cmdStr?: string) => {
   cursorConf.left = pos.left + 'px'
   cursorConf.top = pos.top + 'px'
   cursorConf.width = charWidth
+
+  _calculateTipsPos()
 }
 
 const _cursorGoLeft = () => {
@@ -1149,6 +1152,42 @@ const _cursorGoRight = () => {
   _calculateCursorPos()
 }
 
+const _inputKeyUp = () => {
+  if (tips.open) {
+    let idx = tips.selectedIndex
+    if (idx > 0) {
+      idx--
+    } else {
+      idx = tips.items.length - 1
+    }
+    let viewItem = terminalCmdTipsRef.value.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
+    if (viewItem) {
+      viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+    }
+    tips.selectedIndex = idx
+  } else {
+    _switchPreCmd()
+  }
+}
+
+const _inputKeyDown = () => {
+  if (tips.open) {
+    let idx = tips.selectedIndex
+    if (idx < tips.items.length - 1) {
+      idx++
+    } else {
+      idx = 0
+    }
+    let viewItem = terminalCmdTipsRef.value.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
+    if (viewItem) {
+      viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+    }
+    tips.selectedIndex = idx
+  } else {
+    _switchNextCmd()
+  }
+}
+
 const _switchPreCmd = () => {
   let cmdLog = store.getLog(getName())
   let cmdIdx = store.getIdx(getName())
@@ -1158,7 +1197,7 @@ const _switchPreCmd = () => {
   }
   _resetCursorPos()
   store.setIdx(getName(), cmdIdx)
-  _searchCmd(command.value.trim().split(" ")[0])
+  _searchCmd()
 }
 
 const _switchNextCmd = () => {
@@ -1173,7 +1212,7 @@ const _switchNextCmd = () => {
   }
   _resetCursorPos()
   store.setIdx(getName(), cmdIdx)
-  _searchCmd(command.value.trim().split(" ")[0])
+  _searchCmd()
 }
 
 const _calculateStringWidth = (str: string): number => {
@@ -1195,22 +1234,27 @@ const _onInput = (e: InputEvent) => {
   }
 
   if (_isEmpty(command.value)) {
-    _resetSearchKey();
+    _closeTips(true);
   } else {
     _searchCmd()
   }
 
+  _calculateTipsPos()
+
   _checkInputCursor()
   _calculateCursorPos()
 
-  let point = terminalCursorRef.value.getBoundingClientRect()
-  let rect = searchCmdResult.defaultBoxRect || (terminalHelpBoxRef.value ? terminalHelpBoxRef.value.getClientRect() : null)
-  if (point && rect && _pointInRect(point, rect)) {
-    searchCmdResult.show = false
-    searchCmdResult.defaultBoxRect = rect
+  let cursorRect = terminalCursorRef.value.getBoundingClientRect()
+  let helpBoxRect = tips.helpBox.defaultBoxRect || terminalHelpBoxRef.value.getBoundingClientRect()
+  if (cursorRect && helpBoxRect && _pointInRect({
+    x: cursorRect.x + byteLen.en * 2,
+    y: cursorRect.y + FONT_HEIGHT
+  }, helpBoxRect)) {
+    tips.helpBox.open = false
+    tips.helpBox.defaultBoxRect = helpBoxRect
   } else {
-    searchCmdResult.show = true
-    searchCmdResult.defaultBoxRect = null
+    tips.helpBox.open = true
+    tips.helpBox.defaultBoxRect = null
   }
 }
 
@@ -1570,6 +1614,95 @@ const _switchAllFoldState = (fold: boolean) => {
   return count
 }
 
+const _calculateTipsPos = (autoOpen: boolean = false) => {
+  if (autoOpen) {
+    tips.style.opacity = 0
+    tips.open = true
+  }
+  if (tips.open) {
+    nextTick(() => {
+      let cursorRect = terminalCursorRef.value.getBoundingClientRect()
+      let containerRect = terminalContainerRef.value.getBoundingClientRect()
+      let tipsRect = terminalCmdTipsRef.value.getBoundingClientRect()
+
+      let cursorRelativeLeft = cursorRect.left - containerRect.left
+      let cursorRelativeTop = cursorRect.top - containerRect.top
+
+      const TOP_FLOAT = 25
+
+      let tipsRelativeTop = cursorRelativeTop + TOP_FLOAT
+      let tipsRelativeLeft = cursorRelativeLeft
+
+      //  超右边界
+      if (cursorRect.left + tipsRect.width > containerRect.left + containerRect.width) {
+        tipsRelativeLeft -= tipsRect.width
+      }
+
+      //  超下边界
+      if (cursorRect.top + tipsRect.height + TOP_FLOAT > containerRect.top + containerRect.height) {
+        tipsRelativeTop -= (tipsRect.height + TOP_FLOAT)
+      }
+
+      tips.style.top = tipsRelativeTop
+      tips.style.left = tipsRelativeLeft
+      tips.style.opacity = 100
+    })
+  }
+}
+
+const _closeTips = (clearItems:boolean = true) => {
+  tips.open = false
+  if (clearItems) {
+    tips.items = []
+    tips.selectedIndex = 0
+  }
+  tips.helpBox.open = false
+  tips.helpBox.defaultBoxRect = null
+}
+
+const _updateTipsItems = (items: InputTipItem[], openTips:boolean = true) => {
+  if (props.enableInputTips && items && items instanceof Array && items.length > 0) {
+    tips.items = items
+    tips.selectedIndex = 0
+    if (openTips) {
+      _calculateTipsPos(true)
+    } else {
+      tips.open = false
+    }
+  } else {
+    _closeTips(true)
+  }
+}
+
+const _clickTips = (idx: number) => {
+  if (idx === tips.selectedIndex) {
+    _selectTips()
+  } else {
+    tips.selectedIndex = idx
+  }
+}
+
+const _selectTips = () => {
+  if (!tips.open) {
+    return
+  }
+  let selectedItem = tips.items[tips.selectedIndex]
+  if (props.tipsSelectHandler) {
+    props.tipsSelectHandler(command.value, cursorConf.idx, selectedItem, (newCommand:string) => {
+      if (newCommand && typeof newCommand === 'string') {
+        command.value = newCommand
+        _jumpToBottom()
+      } else {
+        console.warn(`'tipsSelectHandler' returns an invalid result, the expected return value is string type, got ${typeof newCommand}.`)
+      }
+    })
+    return
+  }
+  command.value = selectedItem.attach.key
+  _resetCursorPos()
+  _jumpToBottom()
+}
+
 defineExpose({
   pushMessage: _pushMessage,
   fullscreen: _fullscreen,
@@ -1707,23 +1840,18 @@ defineExpose({
                  @keyup="_onInputKeyup"
                  @input="_onInput"
                  @focusin="cursorConf.show = true"
-                 @keyup.up.exact="_switchPreCmd"
-                 @keyup.down.exact="_switchNextCmd"
+                 @keyup.up.exact="_inputKeyUp"
+                 @keyup.down.exact="_inputKeyDown"
                  @keyup.enter="_execute">
         </p>
-        <slot name="helpCmd" :item="searchCmdResult.item">
-          <p class="t-help-msg">
-            {{ searchCmdResult.item ? searchCmdResult.item.usage : '' }}
-          </p>
-        </slot>
       </div>
     </div>
-    <div v-if="enableExampleHint">
-      <slot name="helpBox" :showHeader="showHeader" :item="searchCmdResult.item">
-        <t-help-box ref="terminalHelpBoxRef"
+    <div v-if="enableHelpBox">
+      <slot name="helpBox" :showHeader="showHeader" :item="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null">
+        <t-help-box ref="terminalHelpBox"
                     :top="headerHeight + 10"
-                    :result="searchCmdResult"
-                    v-if="searchCmdResult.show && searchCmdResult.item && !_screenType().xs"/>
+                    :content="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null"
+                    v-show="tips.helpBox.open"/>
       </slot>
     </div>
 
@@ -1735,6 +1863,19 @@ defineExpose({
                   @close="_textEditorClose"
                   ref="terminalTextEditorRef"></t-editor>
       </slot>
+    </div>
+    <div class="t-cmd-tips"
+         v-if="tips.open"
+         :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
+         ref="terminalCmdTipsRef">
+      <div v-for="(item,idx) in tips.items"
+           :key="idx"
+           @click="_clickTips(idx)"
+           :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ') + (idx === tips.items.length - 1 ? 't-cmd-tips-item-last ' : ' ')"
+      >
+        <span class="t-cmd-tips-content" v-html="item.content"></span>
+        <span class="t-cmd-tips-des" v-html="item.description"></span>
+      </div>
     </div>
     <span class="t-flag t-crude-font t-disable-select">
       <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">aaaaaaaaaa</span>

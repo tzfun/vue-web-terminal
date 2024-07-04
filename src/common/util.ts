@@ -378,3 +378,32 @@ export function _isPad() {
     }
     return _screenType().sm
 }
+
+/**
+ *
+ * <pre>
+ *     methods: {
+ *          _someMethod: _debounce(function () {
+ *              //  ...
+ *          }, 100)
+ *     }
+ * </pre>
+ *
+ * @param fn
+ * @param delay
+ * @return {(function(): void)|*}
+ * @private
+ */
+export function _debounce(fn:Function, delay:number = 200) {
+    let timer = null;
+    return function () {
+        let _this = this
+        let args = arguments
+        if (timer) {
+            clearTimeout(timer)
+        }
+        timer = setTimeout(function () {
+            fn.apply(_this, args);
+        }, delay);
+    };
+}
