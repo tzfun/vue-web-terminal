@@ -204,6 +204,7 @@ const byteLen = reactive({
 })
 const showInputLine = ref<boolean>(true)
 const terminalLog = ref<MessageGroup[]>([])
+const logSize = ref<number>(0)
 const searchCmdResult = reactive({
   //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
   show: false,
@@ -595,6 +596,7 @@ const _clearLog = (clearHistory: boolean) => {
     store.clear(getName())
   } else {
     terminalLog.value = [];
+    logSize.value = 0;
   }
 }
 
@@ -949,8 +951,10 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
   if (!message) return
   if (message instanceof Array) {
     for (let m of message) {
-      _pushMessage0(m)
+      _pushMessage0(m, false)
     }
+    _checkLogSize()
+    _jumpToBottom()
     return;
   }
 
@@ -967,6 +971,7 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
   }
 
   _pushMessage0(message)
+  _jumpToBottom()
 
   if (message.type === 'json') {
     setTimeout(() => {
@@ -975,7 +980,7 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
   }
 }
 
-const _pushMessage0 = (message: Message) => {
+const _pushMessage0 = (message: Message, checkSize:boolean = false) => {
   _filterMessageType(message)
   if (message.type !== 'cmdLine' && props.pushMessageBefore) {
     props.pushMessageBefore(message, getName())
@@ -988,15 +993,36 @@ const _pushMessage0 = (message: Message) => {
   terminalLogLength = terminalLog.value.length
   let logGroup = terminalLog.value[terminalLogLength - 1]
   logGroup.logs.push(message)
+  logSize.value++
 
-  //  留 10% 的缓冲
-  let limit = Math.floor(props.logSizeLimit * 1.1)
-  if (limit > 0 && terminalLogLength > limit) {
-    let left = terminalLogLength - props.logSizeLimit
-    terminalLog.value.splice(0, left)
+  if (checkSize) {
+    _checkLogSize()
+  }
+}
+
+const _checkLogSize = () => {
+  if (props.logSizeLimit <= 0) {
+    console.warn("Invalid attribute 'log-size-limit':", props.logSizeLimit)
+    return;
   }
 
-  _jumpToBottom()
+  //  留10%的缓冲
+  let limit = Math.floor(props.logSizeLimit * 1.1)
+
+  let count = logSize.value - limit;
+  while (count > 0) {
+    let group = terminalLog.value[0]
+    let leftCount  = count - group.logs.length
+    if (leftCount >= 0) {
+      terminalLog.value.splice(0, 1)
+      logSize.value -= group.logs.length
+    } else {
+      group.logs.splice(0, count);
+      group.fold = false
+      logSize.value -= count
+    }
+    count = leftCount;
+  }
 }
 
 /**
