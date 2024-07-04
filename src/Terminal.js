@@ -515,7 +515,6 @@ export default {
                     this.byteLen.init = true
                 }
             }
-            console.debug("byte len ==> ", this.byteLen.en, this.byteLen.cn)
         },
         _calculatePromptLen() {
             let prompt = this.$refs.terminalInputPrompt
@@ -995,8 +994,6 @@ export default {
             if (this.inputBoxParam.promptWidth === 0) {
                 this._calculatePromptLen()
             }
-
-            console.debug("prompt ==> ", this.inputBoxParam.promptWidth, this.inputBoxParam.promptHeight)
 
             let lineWidth = this.$refs.terminalInputBox.getBoundingClientRect().width
 
