@@ -88,7 +88,7 @@ export type CommandStoreSortFunc = (a: any, b: any) => number
 
 export type InputFilterFunc = (str1: string, str2: string, event: InputEvent) => string | null
 
-export type CommandFormatterFunc = (cmd: string) => string
+export type CommandFormatterFunc = (cmd: string, splittable: boolean) => string
 
 export type CommandModifyFunc = (cmd: string) => any
 
@@ -303,7 +303,7 @@ export class TerminalApi {
         return this.post(name, 'setCommand', options)
     }
 
-    switchAllFoldState(name: string, options :boolean): any {
+    switchAllFoldState(name: string, options: boolean): any {
         return this.post(name, 'switchAllFoldState', options)
     }
 }

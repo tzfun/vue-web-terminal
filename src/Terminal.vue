@@ -21,7 +21,7 @@ import {
 } from "./types";
 import {
   _copyTextToClipboard,
-  _defaultCommandFormatter,
+  _defaultMergedCommandFormatter, _defaultSplittableCommandFormatter,
   _eventOff,
   _eventOn,
   _getByteLen,
@@ -1081,7 +1081,7 @@ const _saveCurCommand = () => {
 
   group.logs.push({
     type: "cmdLine",
-    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
+    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value, false)}`
   });
   _jumpToBottom()
 }
@@ -1468,11 +1468,11 @@ const _dragging = (x: number, y: number) => {
   containerStyleStore.value.top = yVal + "px";
 }
 
-const _commandFormatter = (cmd: string): string => {
-  if (props.commandFormatter != null) {
-    return props.commandFormatter(cmd)
+const _commandFormatter = (cmd: string, splittable:boolean = false): string => {
+  if (props.commandFormatter) {
+    return props.commandFormatter(cmd, splittable)
   }
-  return _defaultCommandFormatter(cmd)
+  return splittable ? _defaultSplittableCommandFormatter(cmd) : _defaultMergedCommandFormatter(cmd)
 }
 
 const _getPosition = (): Position => {

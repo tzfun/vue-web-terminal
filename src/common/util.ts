@@ -144,7 +144,7 @@ export function _getClipboardText(): Promise<string> {
     }
 }
 
-export function _copyTextToClipboard(text): Promise<any> {
+export function _copyTextToClipboard(text: string | null): Promise<any> {
     if (!text) {
         return
     }
@@ -211,13 +211,15 @@ export function _openUrl(url: string, pushMessage: Function) {
 }
 
 /**
- * 默认命令行样式格式化实现
+ * 默认命令行样式格式化实现，对部分关键符号高亮处理。
+ *
+ * 此方法会对高亮字符进行合并，适用于记录命令行
  *
  * @param cmd
  * @return {string}
  * @private
  */
-export function _defaultCommandFormatter(cmd: string): string {
+export function _defaultMergedCommandFormatter(cmd: string): string {
     //  过滤ASCII 160的空白字符串
     let split = cmd.replace(/\xA0/g, " ").split(" ")
     let formatted = ''
@@ -268,6 +270,72 @@ export function _defaultCommandFormatter(cmd: string): string {
         }
     }
 
+    return formatted
+}
+
+
+/**
+ * 默认命令行样式格式化实现，对部分关键符号高亮出路。
+ *
+ * 此方法会对每个字符进行分割，由单独的span约束，适用于编辑命令行
+ *
+ * @param cmd
+ * @private
+ */
+export function _defaultSplittableCommandFormatter(cmd: string): string {
+    //  过滤ASCII 160的空白字符串
+    let split = cmd.replace(/\xA0/g, " ").split(" ")
+    let formatted = ''
+    let isCmdKey = true
+
+    function splitFill(clazz: string | null, char: string) {
+        for (let c of char) {
+            formatted += `<span class='${clazz ? clazz : ""}'>${_html(c)}</span>`
+        }
+    }
+
+    for (let i = 0; i < split.length; i++) {
+        let srcChar:string = split[i]
+        if (isCmdKey) {
+
+            splitFill('t-cmd-key', srcChar)
+
+            isCmdKey = false
+        } else if (srcChar.startsWith("-")) {
+            splitFill('t-cmd-arg', srcChar)
+        } else if (srcChar.length > 0) {
+            if (srcChar === '|') {
+                isCmdKey = true
+                splitFill(null, srcChar)
+            } else {
+                let startNewCmdKey = false
+                for (let j in srcChar) {
+                    if (srcChar[j] === ',') {
+                        splitFill('t-cmd-splitter', srcChar[j])
+                    } else if (srcChar[j] === '|') {
+                        splitFill(null, srcChar[j])
+
+                        isCmdKey = true
+                        if (j < srcChar.length - 1) {
+                            startNewCmdKey = true
+                        }
+                    } else {
+                        if (startNewCmdKey) {
+                            splitFill('t-cmd-key', srcChar[j])
+                        } else {
+                            splitFill(null, srcChar[j])
+                        }
+                    }
+                    if (j === srcChar.length - 1 && srcChar[j] !== '|') {
+                        isCmdKey = false
+                    }
+                }
+            }
+        }
+        if (i < split.length - 1) {
+            splitFill(null, ' ')
+        }
+    }
     return formatted
 }
 
