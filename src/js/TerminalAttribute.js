@@ -54,7 +54,7 @@ export function terminalProps() {
             type: Boolean,
             default: true
         },
-        //  是否开启命令提示
+        //  是否开启命令帮助提示
         enableHelpBox: {
             type: Boolean,
             default: true

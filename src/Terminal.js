@@ -2,7 +2,6 @@ import {
     _copyTextToClipboard,
     _debounce,
     _defaultMergedCommandFormatter,
-    _defaultSplittableCommandFormatter,
     _eventOff,
     _eventOn,
     _getByteLen,
@@ -390,7 +389,7 @@ export default {
         isEnableHelpBox: function () {
             return this.enableHelpBox && this.tips.items[this.tips.selectedIndex] && this.tips.items[this.tips.selectedIndex].command
         },
-        selectedTipCommand: function() {
+        selectedTipCommand: function () {
             let selectedTip = this.tips.items[this.tips.selectedIndex]
             return selectedTip ? selectedTip.command : null
         }
@@ -973,7 +972,7 @@ export default {
 
             group.logs.push({
                 type: MESSAGE_TYPE.CMD_LINE,
-                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command, false)}`
+                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
             });
             this._jumpToBottom()
         },
@@ -1406,19 +1405,11 @@ export default {
             this.containerStyleStore.left = xVal + "px";
             this.containerStyleStore.top = yVal + "px";
         },
-        _commandFormatter(cmd, splittable = false) {
+        _commandFormatter(cmd) {
             if (this.commandFormatter) {
-                return this.commandFormatter(cmd, splittable)
+                return this.commandFormatter(cmd)
             }
-            return splittable ? _defaultSplittableCommandFormatter(cmd) : _defaultMergedCommandFormatter(cmd)
-        },
-        _getPosition() {
-            if (this.isDraggable()) {
-                let box = this.$refs.terminalContainerRef
-                return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
-            } else {
-                return {x: 0, y: 0}
-            }
+            return _defaultMergedCommandFormatter(cmd)
         },
         _onAskInput() {
             if (this.ask.autoReview) {
@@ -1575,7 +1566,11 @@ export default {
             let clientHeight = windowRect.height - WINDOW_STYLE.PADDING_TOP - WINDOW_STYLE.PADDING_BOTTOM - this.headerHeight
 
             return {
-                pos: this._getPosition(),           //  窗口所在位置
+                //  窗口所在位置
+                pos: {
+                    x: containerRect.x,
+                    y: containerRect.y
+                },
                 screenWidth: containerRect.width,   //  窗口整体宽度
                 screenHeight: containerRect.height, //  窗口整体高度
                 clientWidth: clientWidth, //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
