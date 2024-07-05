@@ -2,7 +2,6 @@
 import {computed, nextTick, onMounted, onUnmounted, PropType, reactive, ref, watch} from "vue";
 import {
   AskConfig,
-  InputTipItem,
   Command,
   CommandFormatterFunc,
   CommandSortHandlerFunc,
@@ -11,20 +10,22 @@ import {
   EditorSetting,
   FailedFunc,
   InputFilterFunc,
+  InputTipItem,
+  InputTipsSearchHandlerFunc,
+  InputTipsSelectHandlerFunc,
   Message,
   MessageGroup,
-  Position,
   PushMessageBeforeFunc,
   SuccessFunc,
   TerminalAsk,
-  TerminalFlash,
-  InputTipsSearchHandlerFunc,
-  InputTipsSelectHandlerFunc, TerminalElementInfo, TerminalCursorStyle
+  TerminalCursorStyle,
+  TerminalElementInfo,
+  TerminalFlash
 } from "./types";
 import {
-  _copyTextToClipboard, _debounce,
+  _copyTextToClipboard,
+  _debounce,
   _defaultMergedCommandFormatter,
-  _defaultSplittableCommandFormatter,
   _eventOff,
   _eventOn,
   _getByteLen,
@@ -38,7 +39,8 @@ import {
   _isSafari,
   _nonEmpty,
   _openUrl,
-  _pointInRect, _screenType,
+  _pointInRect,
+  _screenType,
 } from "~/common/util.ts";
 import api, {register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS, WINDOW_STYLE} from "~/common/configuration.ts";
@@ -192,7 +194,12 @@ const containerStyle = computed(() => {
 })
 
 const isEnableHelpBox = computed<boolean>(() => {
-  return props.enableHelpBox && tips.items[tips.selectedIndex] && tips.items[tips.selectedIndex].command
+  let enable:boolean =  props.enableHelpBox
+  if(enable) {
+    let tipItem = tips.items[tips.selectedIndex]
+    enable = !!(tipItem && tipItem.command);
+  }
+  return enable
 })
 
 const selectedTipCommand = computed<Command | null>(() => {
@@ -1075,7 +1082,7 @@ const _saveCurCommand = () => {
 
   group.logs.push({
     type: "cmdLine",
-    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value, false)}`
+    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
   });
   _jumpToBottom()
 }
@@ -1518,20 +1525,11 @@ const _dragging = (x: number, y: number) => {
   containerStyleStore.value.top = yVal + "px";
 }
 
-const _commandFormatter = (cmd: string, splittable:boolean = false): string => {
+const _commandFormatter = (cmd: string): string => {
   if (props.commandFormatter) {
-    return props.commandFormatter(cmd, splittable)
+    return props.commandFormatter(cmd)
   }
-  return splittable ? _defaultSplittableCommandFormatter(cmd) : _defaultMergedCommandFormatter(cmd)
-}
-
-const _getPosition = (): Position => {
-  if (draggable.value) {
-    let box = terminalContainerRef.value
-    return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
-  } else {
-    return {x: 0, y: 0}
-  }
+  return _defaultMergedCommandFormatter(cmd)
 }
 
 const _onAskInput = () => {
@@ -1724,7 +1722,11 @@ const _getElementInfo = (): TerminalElementInfo => {
 
   let clientHeight = windowRect.height - WINDOW_STYLE.PADDING_TOP - WINDOW_STYLE.PADDING_BOTTOM - headerHeight.value
   return {
-    pos: _getPosition(),           //  窗口所在位置
+    //  窗口所在位置
+    pos: {
+      x: containerRect.x,
+      y: containerRect.y
+    },
     screenWidth: containerRect.width,   //  窗口整体宽度
     screenHeight: containerRect.height, //  窗口整体高度
     clientWidth: clientWidth,           //  可显示内容范围高度

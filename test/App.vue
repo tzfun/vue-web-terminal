@@ -114,18 +114,7 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
       }
     })
   } else if (key === 'close') {
-    let activeNext: string
-    terminals.value.forEach((o: any) => {
-      if (o.name === name) {
-        o.show = false
-      }
-      if (o.show) {
-        activeNext = o.name
-      }
-    })
-    if (activeNext) {
-      TerminalApi.focus(activeNext, true)
-    }
+    closeWindow(name)
     success()
   } else if (key === 'new') {
     let seq = terminals.value.length
@@ -254,6 +243,27 @@ const setCommand = () => {
   TerminalApi.setCommand(terminals.value[0].name, "The custom command -a xxx")
 }
 
+const closeWindow = (name:string) => {
+  let activeNext: string
+  terminals.value.forEach((o: any) => {
+    if (o.name === name) {
+      o.show = false
+    }
+    if (o.show) {
+      activeNext = o.name
+    }
+  })
+  if (activeNext) {
+    TerminalApi.focus(activeNext, true)
+  }
+}
+
+const onClick = (key: string, name: string) => {
+  if (key === 'close') {
+    closeWindow(name)
+  }
+}
+
 </script>
 <template>
   <div id="app">
@@ -290,6 +300,7 @@ const setCommand = () => {
           @on-active="onActive"
           @on-inactive="onInactive"
           @on-resize="onResize"
+          @on-click="onClick"
           style="position: fixed">
         <!--        <template #header>-->
         <!--          <div class="custom-header">This is custom header</div>-->

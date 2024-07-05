@@ -108,7 +108,7 @@ export type CommandSortHandlerFunc = (a: any, b: any) => number
 
 export type InputFilterFunc = (str1: string, str2: string, event: InputEvent) => string | null
 
-export type CommandFormatterFunc = (cmd: string, splittable: boolean) => string
+export type CommandFormatterFunc = (cmd: string) => string
 
 export type TerminalApiListenerFunc = (type: string, options?: any) => any | void
 

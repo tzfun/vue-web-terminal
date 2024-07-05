@@ -63,7 +63,7 @@ export function _isSafari() {
     return /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
 }
 
-export function _getByteLen(val) {
+export function _getByteLen(val: string) {
     let len = 0;
     for (let i = 0; i < val.length; i++) {
         // eslint-disable-next-line no-control-regex
@@ -81,7 +81,7 @@ export function _getByteLen(val) {
  * @param two
  * @returns {string}
  */
-export function _getDifferent(one, two) {
+export function _getDifferent(one: string, two: string) {
     if (one === two) {
         return '';
     }
@@ -181,7 +181,7 @@ export function _getSelection() {
     }
 }
 
-export function _parseToJson(obj) {
+export function _parseToJson(obj: any) {
     if (typeof obj === 'object' && obj) {
         return obj;
     } else if (typeof obj === 'string') {
@@ -295,7 +295,7 @@ export function _defaultSplittableCommandFormatter(cmd: string): string {
     }
 
     for (let i = 0; i < split.length; i++) {
-        let srcChar:string = split[i]
+        let srcChar: string = split[i]
         if (isCmdKey) {
 
             splitFill('t-cmd-key', srcChar)
@@ -394,7 +394,7 @@ export function _isPad() {
  * @return {(function(): void)|*}
  * @private
  */
-export function _debounce(fn:Function, delay:number = 200) {
+export function _debounce(fn: Function, delay: number = 200) {
     let timer = null;
     return function () {
         let _this = this
