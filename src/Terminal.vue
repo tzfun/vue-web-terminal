@@ -5,7 +5,7 @@ import {
   InputTipItem,
   Command,
   CommandFormatterFunc,
-  CommandStoreSortFunc,
+  CommandSortHandlerFunc,
   DragConfig,
   EditorConfig,
   EditorSetting,
@@ -18,8 +18,8 @@ import {
   SuccessFunc,
   TerminalAsk,
   TerminalFlash,
-  TipsSearchHandlerFunc,
-  TipsSelectHandlerFunc, TerminalElementInfo
+  InputTipsSearchHandlerFunc,
+  InputTipsSelectHandlerFunc, TerminalElementInfo
 } from "./types";
 import {
   _copyTextToClipboard, _debounce,
@@ -92,7 +92,7 @@ const props = defineProps({
   //  命令行搜索以及help指令用
   commandStore: Array<Command>,
   //   命令行排序方式
-  commandStoreSort: Function as PropType<CommandStoreSortFunc>,
+  commandSortHandler: Function as PropType<CommandSortHandlerFunc>,
   //  显示终端头部
   showHeader: {
     type: Boolean,
@@ -114,12 +114,7 @@ const props = defineProps({
     type: String,
     default: 'smooth'
   },
-  /**
-   * 在 push 消息之前触发的钩子函数，只能对message对象的属性进行修改
-   *
-   * @param message 命令对象
-   * @param name terminal name
-   */
+  //  在 push 消息之前触发的钩子函数，只能对message对象的属性进行修改
   pushMessageBefore: Function as PropType<PushMessageBeforeFunc>,
   //  日志条数限制，命令行也算一条日志
   logSizeLimit: {
@@ -148,7 +143,7 @@ const props = defineProps({
     default: () => "block"
   },
   //  光标闪烁开关
-  cursorBlink: {
+  enableCursorBlink: {
     type: Boolean,
     default: () => true
   },
@@ -168,9 +163,9 @@ const props = defineProps({
     default: () => true
   },
   //  提示选择处理函数
-  tipsSelectHandler: Function as PropType<TipsSelectHandlerFunc>,
+  inputTipsSelectHandler: Function as PropType<InputTipsSelectHandlerFunc>,
   //  用户自定义命令搜索提示实现
-  tipsSearchHandler: Function as PropType<TipsSearchHandlerFunc>,
+  inputTipsSearchHandler: Function as PropType<InputTipsSearchHandlerFunc>,
 })
 
 const draggable = computed<boolean>(() => {
@@ -311,8 +306,8 @@ onMounted(() => {
     commandStore = commandStore.concat(DEFAULT_COMMANDS)
   }
   if (props.commandStore) {
-    if (props.commandStoreSort) {
-      props.commandStore.sort(props.commandStoreSort)
+    if (props.commandSortHandler) {
+      props.commandStore.sort(props.commandSortHandler)
     }
     commandStore = commandStore.concat(props.commandStore)
   }
@@ -656,8 +651,8 @@ const _searchCmd = () => {
   }
 
   //  用户自定义搜索实现
-  if (props.tipsSearchHandler) {
-    props.tipsSearchHandler(command.value, cursorConf.idx, allCommandStore.value, (items: InputTipItem[], openTips?: boolean) => {
+  if (props.inputTipsSearchHandler) {
+    props.inputTipsSearchHandler(command.value, cursorConf.idx, allCommandStore.value, (items: InputTipItem[], openTips?: boolean) => {
       _updateTipsItems(items, openTips)
     })
     return
@@ -1085,6 +1080,14 @@ const _saveCurCommand = () => {
 
 const _resetCursorPos = (cmd?: string) => {
   _calculateByteLen()
+
+  let input = terminalCmdInputRef.value
+  if(input) {
+    input.focus()
+    let cursorPos = command.value.length
+    input.setSelectionRange(cursorPos, cursorPos)
+  }
+
   cursorConf.idx = (cmd ? cmd : command.value).length
   cursorConf.left = 'unset'
   cursorConf.top = 'unset'
@@ -1577,10 +1580,6 @@ const _setCommand = (cmd: any) => {
     command.value = cmd.toString()
     nextTick(() => {
       _resetCursorPos()
-      let input = terminalCmdInputRef.value
-      input.focus()
-      let cursorPos = command.value.length
-      input.setSelectionRange(cursorPos,cursorPos)
     })
   } else {
     console.warn("The parameter received by the 'setCommand' api is undefined")
@@ -1685,10 +1684,11 @@ const _selectTips = () => {
     return
   }
   let selectedItem = tips.items[tips.selectedIndex]
-  if (props.tipsSelectHandler) {
-    props.tipsSelectHandler(command.value, cursorConf.idx, selectedItem, (newCommand:string) => {
+  if (props.inputTipsSelectHandler) {
+    props.inputTipsSelectHandler(command.value, cursorConf.idx, selectedItem, (newCommand:string) => {
       if (newCommand && typeof newCommand === 'string') {
         command.value = newCommand
+        _resetCursorPos()
         _jumpToBottom()
       } else {
         console.warn(`'tipsSelectHandler' returns an invalid result, the expected return value is string type, got ${typeof newCommand}.`)
@@ -1844,7 +1844,7 @@ defineExpose({
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
             v-show="cursorConf.show"
-            :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${cursorBlink ? 't-cursor-blink' : ''}`"
+            :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${enableCursorBlink ? 't-cursor-blink' : ''}`"
             ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text"

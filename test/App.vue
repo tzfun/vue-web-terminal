@@ -276,7 +276,7 @@ const setCommand = () => {
           :push-message-before="pushMessageBefore"
           :log-size-limit="20"
           cursor-style="bar"
-          :cursor-blink="true"
+          :enable-cursor-blink="true"
           :line-space="15"
           enable-hover-stripe
           :enable-fold="true"

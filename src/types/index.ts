@@ -104,7 +104,7 @@ export type TerminalElementInfo = {
     charWidth: CharWidth
 }
 
-export type CommandStoreSortFunc = (a: any, b: any) => number
+export type CommandSortHandlerFunc = (a: any, b: any) => number
 
 export type InputFilterFunc = (str1: string, str2: string, event: InputEvent) => string | null
 
@@ -126,7 +126,7 @@ export type PushMessageBeforeFunc = (message: Message, name: String) => void
  * @param item          用户选择提示项
  * @param callback      填充结束后需调用此函数返回新的命令行
  */
-export type TipsSelectHandlerFunc = (command: string, cursorIndex: number, item: InputTipItem, callback: (cmd: string) => void) => void
+export type InputTipsSelectHandlerFunc = (command: string, cursorIndex: number, item: InputTipItem, callback: (cmd: string) => void) => void
 
 /**
  * 用户自定义命令搜索提示实现
@@ -136,7 +136,7 @@ export type TipsSelectHandlerFunc = (command: string, cursorIndex: number, item:
  * @param commandStore  命令集合
  * @param callback      搜索结束回调，回调格式为一个数组
  */
-export type TipsSearchHandlerFunc = (command: string, cursorIndex: number, commandStore: Command[], callback: (tips: InputTipItem[], openTips?: boolean) => void) => void
+export type InputTipsSearchHandlerFunc = (command: string, cursorIndex: number, commandStore: Command[], callback: (tips: InputTipItem[], openTips?: boolean) => void) => void
 
 class TerminalCallback {
 
