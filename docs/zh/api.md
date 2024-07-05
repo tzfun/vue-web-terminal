@@ -303,5 +303,20 @@ type setCommand = (command: string) => void;
 TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
+### switchAllFoldState
+
+- **说明**：折叠或展开所有命令分组
+- **定义**：
+```ts:no-line-numbers
+type switchAllFoldState = (name: string, state: boolean) => number;
+```
+- **示例**：
+```js
+// 折叠所有命令分组
+TerminalApi.switchAllFoldState('my-terminal', true)
+
+// 展开所有命令分组
+TerminalApi.switchAllFoldState('my-terminal', false)
+```
 
 <CommentService></CommentService>

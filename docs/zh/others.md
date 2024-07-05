@@ -350,6 +350,16 @@ type EditorSetting = {
 }
 ```
 
+### InputTipsItem
+
+```ts
+type InputTipItem = {
+    content: string,
+    description?: string,
+    command?: Command
+}
+```
+
 ## 内置命令
 
 插件内置了几个命令，这些命令提供了一些基础的功能，如果它们和你的命令冲突了，可以使用 [enable-default-command](./attributes#enable-default-command) 

@@ -32,6 +32,16 @@ The success callback parameter supports multiple data types, and the execution l
   - name: `string`, the name of the Terminal instance.
 - **Description**: Triggered after the user presses Enter, before the command is actually executed.
 
+## init-before
+
+- **Parameters**: `(name)`
+- **Description**: Lifecycle function, triggered before the plugin is initialized.
+
+## init-complete
+
+- **Parameters**: `(name)`
+- **Description**: Lifecycle function, triggered after the plugin is initialized.
+
 ## on-keydown
 
 - **Parameters**: `(event, name)`
@@ -46,16 +56,6 @@ The success callback parameter supports multiple data types, and the execution l
   - name: `string`, the name of the Terminal instance.
 - **Description**: Triggered when the user clicks a button. The parameter key is the unique identifier of the button. Here are some existing buttons: `close | minScreen | fullScreen | title | pin`
 
-## init-before
-
-- **Parameters**: `(name)`
-- **Description**: Lifecycle function, triggered before the plugin is initialized.
-
-## init-complete
-
-- **Parameters**: `(name)`
-- **Description**: Lifecycle function, triggered after the plugin is initialized.
-
 ## on-active
 
 - **Parameters**: `(name)`
@@ -65,5 +65,12 @@ The success callback parameter supports multiple data types, and the execution l
 
 - **Parameters**: `(name)`
 - **Description**: Triggered when the window changes from active to inactive.
+
+## on-resize
+
+- **Parameters**：`(elementInfo, name)`
+  - elementInfo: [TerminalElementInfo](./others.md#terminalelementinfo), window info
+  - name: `string`, the name of the Terminal instance.
+- **Description**：Triggered when the window size changes.
 
 <CommentService></CommentService>

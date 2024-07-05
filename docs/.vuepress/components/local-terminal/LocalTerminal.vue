@@ -8,6 +8,12 @@ import {usePageLang} from "@vuepress/client";
 import languages from '../../languages.json'
 import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from 'vue-web-terminal'
 
+//  当前最新版本
+const version = reactive({
+  vue2: '2.3.0',
+  vue3: '3.3.0'
+})
+
 const languageText = reactive(languages[usePageLang().value])
 
 const getText = (key) => {
@@ -44,10 +50,6 @@ const props = defineProps({
   }
 })
 const customTextEditorRef = ref(null)
-const version = reactive({
-  vue2: '2.2.4',
-  vue3: '3.2.6'
-})
 
 const cmdStore = ref(commands[usePageLang().value])
 const initLog = reactive([
@@ -139,38 +141,31 @@ const onExecCmd = (key, command, success, failed) => {
         ]
       }
     })
-  } else if (key === 'context') {
-    emits('update:context', command.split(" ")[1])
-    success({
-      type: 'normal',
-      class: 'success',
-      content: "ok"
-    })
   } else if (key === 'html') {
     success({
       type: 'html',
       content: `
-                            <div class='demo-init-box'>
-                                <p>Hello vue-web-terminal! ✋</p>
-                                <p>Demo version: vue2(<span class="t-cmd-key">${version.vue2}</span>), vue3(<span class="t-cmd-key">${version.vue3}</span>)</p>
-                                <p>⭐️Github: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a></p>
-                            </div>
-                            `
+      <div class='demo-init-box'>
+          <p>Hello vue-web-terminal! ✋</p>
+          <p>Demo version: vue2(<span class="t-cmd-key">${version.vue2}</span>), vue3(<span class="t-cmd-key">${version.vue3}</span>)</p>
+          <p>⭐️Github: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a></p>
+      </div>
+      `
     })
   } else if (key === 'ls') {
     success({
       type: 'html',
       content: `
-                              <ul class="custom-content">
-                                <li class="t-dir">dir 1</li>
-                                <li class="t-dir">dir 2</li>
-                                <li class="t-dir">dir 3</li>
-                                <li class="t-file">file 1</li>
-                                <li class="t-file">file 2</li>
-                                <li class="t-file">file 3</li>
-                              </ul>
-                              <br>
-                              `
+        <ul class="custom-content">
+          <li class="t-dir">dir 1</li>
+          <li class="t-dir">dir 2</li>
+          <li class="t-dir">dir 3</li>
+          <li class="t-file">file 1</li>
+          <li class="t-file">file 2</li>
+          <li class="t-file">file 3</li>
+        </ul>
+        <br>
+        `
     })
   } else if (key === 'fullscreen') {
     TerminalApi.fullscreen(props.name)
@@ -452,8 +447,8 @@ const showFlash = async (success) => {
 }
 
 const mockLoading = (flash, fileName, terminalInfo) => {
-  // 固定宽度 = 加载动画宽度15 + fileName宽度 + '[]100%'百分比宽度
-  let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en
+  // 固定宽度 = 加载动画宽度15 + fileName宽度 + '[]100%'百分比宽度 + 容错宽度
+  let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en + 20
   //  计算出进度条的 '-' 个数
   let processDots = parseInt(String((terminalInfo.clientWidth - fixedWidth) / terminalInfo.charWidth.en))
   console.log(fileName, terminalInfo.charWidth.en, terminalInfo.clientWidth, fixedWidth, processDots)

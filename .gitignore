@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 /docs/.vuepress/.temp/
 /docs/.vuepress/.cache/
+/lib/
+/stats.html

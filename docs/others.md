@@ -363,6 +363,16 @@ type EditorSetting = {
 }
 ```
 
+### InputTipsItem
+
+```ts
+type InputTipItem = {
+    content: string,
+    description?: string,
+    command?: Command
+}
+```
+
 ## Internal Commands
 
 The plugin has several built-in commands that provide some basic functions. 

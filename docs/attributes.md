@@ -59,27 +59,14 @@ and the window width and height are equal to the parent element width and height
 ## init-log
 
 * **Type**: `Message[] | null`
-* **Default**: Omit
-* **Description**: The log displayed when the Terminal is initialized is an array of message objects `Message`. If it is set to `null`, it will not be displayed.
-
-## auto-help
-
-* **Type**: `boolean`
-* **Default**: true
-* **Description**: Whether to enable the command line automatic search prompt function.
-
-## enable-example-hint
-
-* **Type**: `boolean`
-* **Default**: true
-* **Description**: Whether to display the command sample prompt in the upper right corner, provided that [auto-help](#auto-help) is turned on.
+* **Default**: null
+* **Description**: The log displayed when the Terminal is initialized is an array of message objects [Message](./others.md#message). If it is set to `null`, it will not be displayed.
 
 ## command-store
 
 * **Type**: `Command[]`
 * **Default**: [Internal Commands](./others#internal-commands)
 * **Description**: A [Command](./others#command) array, a custom command library, the search prompt function will scan this library
-
 
 ## log-size-limit
 
@@ -91,21 +78,25 @@ and the window width and height are equal to the parent element width and height
 
 * **Type**: `boolean`
 * **Default**: true
-* **Description**: Whether to enable the default [Internal Commands](./others#internal-commands) switch
+* **Description**: Whether to enable the default [Internal Commands](./others#internal-commands) switch. If you need to customize the logic of these commands, you can turn this switch off. The functions of the default commands can also be implemented through the [API](./api.md).
 
 ## line-space
 
 * **Type**: `number`
 * **Default**: 15
-* **Description**: Log line height, in px
+* **Description**: Log line space, in px
 
 ## cursor-style
 
-* **Type**: `string`
+* **Type**: `string | TerminalCursorStyle`
 * **Default**: block
 * **Description**: Cursor style, optional values: `block` | `underline` | `bar` | `none`
 
-## cursor-blink
+```ts:no-line-numbers
+type TerminalCursorStyle = 'block' | 'underline' | 'bar' | 'none'
+```
+
+## enable-cursor-blink
 
 * **Type**: `boolean`
 * **Default**: true
@@ -139,48 +130,71 @@ and the window width and height are equal to the parent element width and height
 type CommandFormatterFunc = (cmd: string) => string;
 ```
 
-## tab-key-handler
+## enable-input-tips
 
-* **Type**: `TabKeyHandlerFunc`
-* **Default**: null
-* **Description**: The logical processing method when the user presses the Tab key can be used with the `helpCmd` slot to define the user display
+* **Type**：`boolean`
+* **Default**：true
+* **Description**：Whether to enable the command input prompt function.
+
+## enable-help-box
+
+* **Type**：`boolean`
+* **Default**：true
+* **Description**：Whether to open the command sample prompt panel in the upper right corner of the window.
+## input-tips-select-handler
+
+* **Type**：`InputTipsSelectHandlerFunc`
+* **Default**：null
+* **Description**：Customize the logic processing function when the user selects an output prompt item.
 
 ```ts:no-line-numbers
-type CommandModifyFunc = (cmd: string) => any;
-
-type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined;
+/**
+ * Input prompt selection processing function
+ *
+ * @param command       The complete command line entered by the current user
+ * @param cursorIndex   Current cursor position
+ * @param item          User selection prompt
+ * @param callback      After filling, this function needs to be called to return a new command line
+ */
+type InputTipsSelectHandlerFunc = (command: string, cursorIndex: number, item: InputTipItem, callback: (cmd: string) => void) => void
 ```
 
-## search-handler
+## input-tips-search-handler
 
-* **Type**: `SearchHandlerFunc`
-* **Default**: null
-* **Description**: User-defined command search prompt is implemented. The search result is a [Command](./others#command), which is passed back to the plugin through callback. It can be used with the `helpCmd` slot to define the user display
+* **Type**：`InputTipsSearchHandlerFunc`
+* **Default**：null
+* **Description**：Customize the processing function of the search prompt content when the user enters.
 
 ```ts:no-line-numbers
-type SearchHandlerCallbackFunc = (cmd: Command) => void;
-
-type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHandlerCallbackFunc) => void;
+/**
+ * Implementation of user-defined command search prompt
+ *
+ * @param command       The complete command line entered by the current user
+ * @param cursorIndex   Current cursor position
+ * @param commandStore  Command collection
+ * @param callback      Search end callback, the callback format is an array
+ */
+type InputTipsSearchHandlerFunc = (command: string, cursorIndex: number, commandStore: Command[], callback: (tips: InputTipItem[], openTips?: boolean) => void) => void
 ```
 
 ## push-message-before
 
 * **Type**: `PushMessageBeforeFunc`
 * **Default**: null
-* **Description**: Hook function triggered before the push message is displayed.
+* **Description**: Hook function triggered before the push message is displayed. In this function, you can modify the properties of the message object.
 
 ```ts:no-line-numbers
 type PushMessageBeforeFunc = (message: Message, name: String) => void;
 ```
 
-## command-store-sort
+## command-sort-handler
 
-* **Type**: `CommandStoreSortFunc`
+* **Type**: `CommandSortHandlerFunc`
 * **Default**: null
 * **Description**: Command line library sorting, custom command library display sorting rules.
 
 ```ts:no-line-numbers
-type CommandStoreSortFunc = (a: any, b: any) => number;
+type CommandSortHandlerFunc = (a: any, b: any) => number;
 ```
 
 ## input-filter

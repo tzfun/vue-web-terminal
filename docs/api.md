@@ -306,4 +306,20 @@ type setCommand = (command: string) => void;
 TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
+### switchAllFoldState
+
+- **Description**：Collapse or expand all command groups.
+- **Definition**：
+```ts:no-line-numbers
+type switchAllFoldState = (name: string, state: boolean) => number;
+```
+- **Example**：
+```js
+// Collapse all command groups
+TerminalApi.switchAllFoldState('my-terminal', true)
+
+// Expand all command groups
+TerminalApi.switchAllFoldState('my-terminal', false)
+```
+
 <CommentService></CommentService>

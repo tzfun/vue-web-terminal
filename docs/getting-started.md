@@ -60,7 +60,6 @@ Register the plugin in main.js
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  This style needs to be introduced in versions 3.2.0 and 2.1.13 later, and no theme style is needed in previous versions
 //  Light theme: vue-web-terminal/lib/theme/light.css
 import 'vue-web-terminal/lib/theme/dark.css'
 
@@ -71,7 +70,6 @@ Vue.use(Terminal)
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  This style needs to be introduced in versions 3.2.0 and 2.1.13 later, and no theme style is needed in previous versions
 //  Light theme: vue-web-terminal/lib/theme/light.css
 import 'vue-web-terminal/lib/theme/dark.css'
 

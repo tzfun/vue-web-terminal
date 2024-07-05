@@ -21,8 +21,8 @@ export default defineUserConfig({
         ["link", {rel: "icon", href: "/images/vue-web-terminal-mini.png"}]
     ],
     pluginVersion: {
-        vue2: "2.2.4",
-        vue3: "3.2.6"
+        vue2: "2.3.0",
+        vue3: "3.3.0"
     },
     locales: {
         '/': {
@@ -64,6 +64,7 @@ export default defineUserConfig({
                             {text: 'API', link: '/api'},
                             {text: 'Advanced Features', link: '/functions'},
                             {text: 'More', link: '/others'},
+                            {text: 'Logs', link: '/logs'},
                         ]
                     },
                     {
@@ -94,7 +95,8 @@ export default defineUserConfig({
                           {text: 'Slot', link: '/slots'},
                           {text: 'API', link: '/api'},
                           {text: 'Advanced Features', link: '/functions'},
-                          {text: 'More', link: '/others'}
+                          {text: 'More', link: '/others'},
+                          {text: 'Logs', link: '/logs'}
                       ]
                     },
                     {text: 'Q&A', link: '/questions'},
@@ -120,6 +122,7 @@ export default defineUserConfig({
                             {text: '接口 API', link: '/zh/api'},
                             {text: '高级功能', link: '/zh/functions'},
                             {text: '更多', link: '/zh/others'},
+                            {text: '更新日志', link: '/zh/logs'},
                         ]
                     },
                     {
@@ -150,7 +153,8 @@ export default defineUserConfig({
                             {text: '插槽 Slot', link: '/zh/slots'},
                             {text: '接口 API', link: '/zh/api'},
                             {text: '高级功能', link: '/zh/functions'},
-                            {text: '更多', link: '/zh/others'}
+                            {text: '更多', link: '/zh/others'},
+                            {text: '更新日志', link: '/zh/logs'},
                         ]
                     },
                     {text: '常见问题', link: '/zh/questions'},

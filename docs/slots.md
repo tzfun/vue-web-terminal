@@ -18,7 +18,6 @@ not meet your needs, you can use these slots to customize this part of the displ
 | code         | { message }          | Custom `code` type message.                                         |
 | html         | { message }          | Custom `html` type message.                                         |
 | flash        | { content }          | Custom flash style.                                                 |
-| helpCmd      | { item }             | Custom command search prompt style.                                 |
 | textEditor   | { data }             | Custom text editor style.                                           |
 
 ## Example

@@ -57,27 +57,14 @@
 ## init-log
 
 * **类型**：`Message[] | null`
-* **默认值**：略
-* **说明**：Terminal初始化时显示的日志，是由消息对象 `Message` 组成的数组，设为 `null` 则不显示
-
-## auto-help
-
-* **类型**：`boolean`
-* **默认值**：true
-* **说明**：是否打开命令行自动搜索提示功能
-
-## enable-example-hint
-
-* **类型**：`boolean`
-* **默认值**：true
-* **说明**：是否显示右上角命令样例提示，前提是开启了 [auto-help](#auto-help)
+* **默认值**：null
+* **说明**：Terminal初始化时显示的日志，是由消息对象 [Message](./others.md#message) 组成的数组，设为 `null` 则不显示
 
 ## command-store
 
 * **类型**：`Command[]`
 * **默认值**：[内置命令](./others#内置命令)
 * **说明**：一个[Command](./others#command)数组，自定义的命令库，搜索提示功能会扫描此库
-
 
 ## log-size-limit
 
@@ -89,21 +76,25 @@
 
 * **类型**：`boolean`
 * **默认值**：true
-* **说明**：是否生效默认[内置命令](./others#内置命令)开关
+* **说明**：是否生效默认[内置命令](./others#内置命令)，如果你需要自定义这些命令的逻辑，可以关闭此开关，默认命令的功能也可通过 [API](./api.md) 实现
 
 ## line-space
 
 * **类型**：`number`
 * **默认值**：15
-* **说明**：日志行高，单位px
+* **说明**：日志行间距，单位px
 
 ## cursor-style
 
-* **类型**：`string`
+* **类型**：`string | TerminalCursorStyle`
 * **默认值**：block
 * **说明**：光标样式，可选值：`block` | `underline` | `bar` | `none`
 
-## cursor-blink
+```ts:no-line-numbers
+type TerminalCursorStyle = 'block' | 'underline' | 'bar' | 'none'
+```
+
+## enable-cursor-blink
 
 * **类型**：`boolean`
 * **默认值**：true
@@ -137,48 +128,72 @@
 type CommandFormatterFunc = (cmd: string) => string;
 ```
 
-## tab-key-handler
+## enable-input-tips
 
-* **类型**：`TabKeyHandlerFunc`
-* **默认值**：null
-* **说明**：用户键入Tab键时的逻辑处理方法，可配合 `helpCmd` 这个slot来定义用户显示
+* **类型**：`boolean`
+* **默认值**：true
+* **说明**：是否打开命令输入提示功能
+
+## enable-help-box
+
+* **类型**：`boolean`
+* **默认值**：true
+* **说明**：是否打开窗口右上角命令样例提示面板
+
+## input-tips-select-handler
+
+* **类型**：`InputTipsSelectHandlerFunc`
+* **默认值**：略
+* **说明**：自定义用户选择某一个输出提示项时的逻辑处理函数
 
 ```ts:no-line-numbers
-type CommandModifyFunc = (cmd: string) => any;
-
-type TabKeyHandlerFunc = (event: Event, rewrite: CommandModifyFunc) => undefined;
+/**
+ * 输入提示选择处理函数
+ *
+ * @param command       当前用户输入的完整命令行
+ * @param cursorIndex   当前光标所处位置
+ * @param item          用户选择提示项
+ * @param callback      填充结束后需调用此函数返回新的命令行
+ */
+type InputTipsSelectHandlerFunc = (command: string, cursorIndex: number, item: InputTipItem, callback: (cmd: string) => void) => void
 ```
 
-## search-handler
+## input-tips-search-handler
 
-* **类型**：`SearchHandlerFunc`
-* **默认值**：null
-* **说明**：用户自定义命令搜索提示实现，搜索结果是一个[Command](./others#command)，通过callback回传给插件，可配合 `helpCmd` 这个slot来定义用户显示
+* **类型**：`InputTipsSearchHandlerFunc`
+* **默认值**：略
+* **说明**：自定义用户输入时搜索提示内容的处理函数
 
 ```ts:no-line-numbers
-type SearchHandlerCallbackFunc = (cmd: Command) => void;
-
-type SearchHandlerFunc = (commands: Command[], key: string, callback: SearchHandlerCallbackFunc) => void;
+/**
+ * 用户自定义命令搜索提示实现
+ *
+ * @param command       当前用户输入的完整命令行
+ * @param cursorIndex   当前光标所处位置
+ * @param commandStore  命令集合
+ * @param callback      搜索结束回调，回调格式为一个数组
+ */
+type InputTipsSearchHandlerFunc = (command: string, cursorIndex: number, commandStore: Command[], callback: (tips: InputTipItem[], openTips?: boolean) => void) => void
 ```
 
 ## push-message-before
 
 * **类型**：`PushMessageBeforeFunc`
 * **默认值**：null
-* **说明**：在推送消息显示之前触发的钩子函数
+* **说明**：在推送消息显示之前触发的钩子函数，在此函数中可以对message对象的属性进行修改
 
 ```ts:no-line-numbers
 type PushMessageBeforeFunc = (message: Message, name: String) => void;
 ```
 
-## command-store-sort
+## command-sort-handler
 
-* **类型**：`CommandStoreSortFunc`
+* **类型**：`CommandSortHandlerFunc`
 * **默认值**：null
 * **说明**：命令行库排序，自定义命令库的显示排序规则
 
 ```ts:no-line-numbers
-type CommandStoreSortFunc = (a: any, b: any) => number;
+type CommandSortHandlerFunc = (a: any, b: any) => number;
 ```
 
 ## input-filter

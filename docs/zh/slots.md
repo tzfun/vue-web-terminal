@@ -16,7 +16,6 @@
 | code       | { message }          | 自定义`code`类型消息          |
 | html       | { message }          | 自定义`html`类型消息          |
 | flash      | { content }          | 自定义实时回显样式              |
-| helpCmd    | { item }             | 自定义命令搜索提示样式            |
 | textEditor | { data }             | 自定义文本编辑器样式             |
 
 

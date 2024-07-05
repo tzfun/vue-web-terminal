@@ -56,10 +56,9 @@ The following is the color definition of the dark theme.
     --t-table-border: 1px dashed #fff;
     --t-selection-font-color: black;
     --t-selection-background-color: white;
+    --t-code-inline-font-color: #00b10e;
     --t-cmd-help-background-color: black;
-    --t-cmd-help-code-font-color: #fff;
     --t-cmd-help-code-background-color: rgba(0, 0, 0, 0);
-    --t-cmd-help-msg-color: #ffffff87;
     --t-cmd-help-box-shadow: 0px 0px 0px 4px rgb(255 255 255 / 20%);
     --t-text-editor-floor-background-color: rgb(72 69 69);
     --t-text-editor-floor-close-btn-color: #bba9a9;
@@ -83,6 +82,13 @@ The following is the color definition of the dark theme.
     --t-log-fold-icon-active-color: #191b24;
     --t-log-fold-icon-active-background-color: #4ca5c1;
     --t-log-fold-line-color: #4ca5c1;
+    --t-cmd-tips-background-color: #544a4a;
+    --t-cmd-tips-font-color: #fff;
+    --t-cmd-tips-active-background-color: #5c6ec9;
+    --t-cmd-tips-content-font-color: #fff;
+    --t-cmd-tips-des-font-color: #cbb0b0;
+    --t-cmd-tips-footer-font-color: #e3c2c2;
+    --t-cmd-tips-footer-background-color: #546456;
 }
 ```
 

@@ -57,7 +57,6 @@ pnpm install vue-web-terminal@3
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  3.2.0 及 2.1.13 以后版本需要引入此样式，之前版本无需引入主题样式
 //  亮色主题：vue-web-terminal/lib/theme/light.css
 import 'vue-web-terminal/lib/theme/dark.css'
 
@@ -68,7 +67,6 @@ Vue.use(Terminal)
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  3.2.0 及 2.1.13 以后版本需要引入此样式，之前版本无需引入主题样式
 //  亮色主题：vue-web-terminal/lib/theme/light.css
 import 'vue-web-terminal/lib/theme/dark.css'
 

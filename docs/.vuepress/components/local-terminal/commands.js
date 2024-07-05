@@ -38,18 +38,6 @@ export const commands = {
             "description": "模拟批量结果显示"
         },
         {
-            "key": "context",
-            "group": "demo",
-            "usage": 'context <ctx>',
-            "description": "修改上下文",
-            "example": [
-                {
-                    "cmd": "context /vue/terminal/dev",
-                    "des": "修改上下文为'/vue/terminal/dev'"
-                }
-            ]
-        },
-        {
             "key": "fullscreen",
             "group": "demo",
             "usage": 'fullscreen',
@@ -152,18 +140,6 @@ export const commands = {
             "group": "demo",
             "usage": 'loop',
             "description": "Simulate batch result display"
-        },
-        {
-            "key": "context",
-            "group": "demo",
-            "usage": 'context <ctx>',
-            "description": "Modify context",
-            "example": [
-                {
-                    "cmd": "context /vue/terminal/dev",
-                    "des": "Modify the context to '/vue/terminal/dev'"
-                }
-            ]
         },
         {
             "key": "fullscreen",

@@ -31,6 +31,16 @@ success回调参数支持多种数据类型，不同数据类型执行逻辑也�
   - name: `string`，Terminal实例的名称
 - **说明**：用户敲下回车之后，在真正执行命令之前触发
 
+## init-before
+
+- **回调参数**：`(name)`
+- **说明**：生命周期函数，插件初始化之前触发
+
+## init-complete
+
+- **回调参数**：`(name)`
+- **说明**：生命周期函数，插件初始化完成之后触发
+
 ## on-keydown
 
 - **回调参数**：`(event, name)`
@@ -45,16 +55,6 @@ success回调参数支持多种数据类型，不同数据类型执行逻辑也�
   - name: `string`，Terminal实例的名称
 - **说明**：用户点击按钮时触发，参数key为按钮唯一识别，已有按钮：`close | minScreen | fullScreen | title | pin`
 
-## init-before
-
-- **回调参数**：`(name)`
-- **说明**：生命周期函数，插件初始化之前触发
-
-## init-complete
-
-- **回调参数**：`(name)`
-- **说明**：生命周期函数，插件初始化完成之后触发
-
 ## on-active
 
 - **回调参数**：`(name)`
@@ -64,5 +64,12 @@ success回调参数支持多种数据类型，不同数据类型执行逻辑也�
 
 - **回调参数**：`(name)`
 - **说明**：窗口由活跃状态变为不活跃状态时触发
+
+## on-resize
+
+- **回调参数**：`(elementInfo, name)`
+  - elementInfo: [TerminalElementInfo](./others.md#terminalelementinfo)，窗口信息
+  - name: `string`，Terminal实例的名称
+- **说明**：窗口大小变化时触发
 
 <CommentService></CommentService>
