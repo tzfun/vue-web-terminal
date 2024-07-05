@@ -16,6 +16,7 @@
 .t-log-box {
     display: block;
     position: relative;
+    line-height: var(--t-font-height);
 }
 
 .t-container {
@@ -123,6 +124,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
+    font-family: none;
     /*font-family: Monaco, Menlo, Consolas, monospace;*/
 }
 
@@ -294,6 +296,7 @@
     letter-spacing: 0;
     position: relative;
     margin-bottom: 15px;
+    line-height: var(--t-font-height);
 }
 
 /*手机*/

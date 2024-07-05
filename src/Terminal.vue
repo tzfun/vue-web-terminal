@@ -265,6 +265,7 @@ const tips = reactive({
     top:0,
     left:0
   },
+  cursorIdx: 0,
   items: <InputTipItem[]>[],
   helpBox: {
     //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
@@ -822,6 +823,7 @@ const _execute = () => {
         showInputLine.value = false
         let _success: SuccessFunc = (message) => {
           let _finish = () => {
+            _jumpToBottom()
             showInputLine.value = true
             _endExecCallBack()
           }
@@ -831,6 +833,7 @@ const _execute = () => {
             if (message instanceof TerminalFlash) {
               message.onFlush((msg: string) => {
                 flash.content = msg
+                _jumpToBottom()
               })
               message.onFinish(() => {
                 flash.open = false
@@ -846,6 +849,7 @@ const _execute = () => {
                 ask.callback = options.callback
                 ask.autoReview = options.autoReview
                 _focus()
+                _jumpToBottom()
               })
 
               message.onFinish(() => {
@@ -1169,11 +1173,7 @@ const _inputKeyUp = () => {
     } else {
       idx = tips.items.length - 1
     }
-    let viewItem = terminalCmdTipsRef.value.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
-    if (viewItem) {
-      viewItem.scrollIntoView({block: "start", behavior: "smooth"})
-    }
-    tips.selectedIndex = idx
+    _switchTipsSelectedIdx(idx)
   } else {
     _switchPreCmd()
   }
@@ -1187,13 +1187,22 @@ const _inputKeyDown = () => {
     } else {
       idx = 0
     }
-    let viewItem = terminalCmdTipsRef.value.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
-    if (viewItem) {
-      viewItem.scrollIntoView({block: "start", behavior: "smooth"})
-    }
-    tips.selectedIndex = idx
+    _switchTipsSelectedIdx(idx)
   } else {
     _switchNextCmd()
+  }
+}
+
+const _switchTipsSelectedIdx = (idx:number) => {
+  let viewItem = terminalCmdTipsRef.value.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
+  if (viewItem) {
+    viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+  }
+  tips.selectedIndex = idx
+
+  let input = terminalCmdInputRef.value
+  if (input) {
+    input.setSelectionRange(tips.cursorIdx, tips.cursorIdx)
   }
 }
 
@@ -1617,6 +1626,7 @@ const _switchAllFoldState = (fold: boolean) => {
 const _calculateTipsPos = (autoOpen: boolean = false) => {
   if (autoOpen) {
     tips.style.opacity = 0
+    tips.cursorIdx = terminalCmdInputRef.value.selectionStart
     tips.open = true
   }
   if (tips.open) {
