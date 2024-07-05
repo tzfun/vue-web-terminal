@@ -212,6 +212,11 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
     success(TerminalApi.switchAllFoldState(name, true).toString())
   } else if (key === 'unfold') {
     success(TerminalApi.switchAllFoldState(name, false).toString())
+  } else if (key === 'info') {
+    success({
+      type: 'json',
+      content: TerminalApi.elementInfo(name)
+    })
   } else {
     failed("Unknown command: " + key)
   }

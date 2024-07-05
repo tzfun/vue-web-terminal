@@ -41,7 +41,7 @@ import {
   _pointInRect, _screenType,
 } from "~/common/util.ts";
 import api, {register, rename, unregister} from "~/common/api";
-import {DEFAULT_COMMANDS} from "~/common/configuration.ts";
+import {DEFAULT_COMMANDS, WINDOW_STYLE} from "~/common/configuration.ts";
 import {_parseANSI} from "~/ansi";
 import store from "~/common/store";
 import THeader from "~/components/THeader.vue";
@@ -262,7 +262,7 @@ const tips = reactive({
   helpBox: {
     //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
     open: false,
-    defaultBoxRect: null,
+    lastRect: null
   },
   selectedIndex: 0
 })
@@ -1247,20 +1247,17 @@ const _onInput = (e: InputEvent) => {
     _checkInputCursor()
     _calculateCursorPos()
 
-    let helpBoxRef  = terminalHelpBoxRef.value
-    if (helpBoxRef) {
-      let cursorRect = terminalCursorRef.value.getBoundingClientRect()
-      let helpBoxRect = tips.helpBox.defaultBoxRect || helpBoxRef.getBoundingClientRect()
-      if (cursorRect && helpBoxRect && _pointInRect({
-        x: cursorRect.x + byteLen.en * 2,
-        y: cursorRect.y + FONT_HEIGHT
-      }, helpBoxRect)) {
-        tips.helpBox.open = false
-        tips.helpBox.defaultBoxRect = helpBoxRect
-      } else {
-        tips.helpBox.open = true
-        tips.helpBox.defaultBoxRect = null
-      }
+    let cursorRect = terminalCursorRef.value.getBoundingClientRect()
+    let helpBoxRect = tips.helpBox.lastRect || (terminalHelpBoxRef.value ? terminalHelpBoxRef.value.getBoundingClientRect() : null)
+    if (cursorRect && helpBoxRect && _pointInRect({
+      x: cursorRect.x + byteLen.en * 2,
+      y: cursorRect.y + FONT_HEIGHT
+    }, helpBoxRect)) {
+      tips.helpBox.open = false
+      tips.helpBox.lastRect = helpBoxRect
+    } else {
+      tips.helpBox.open = true
+      tips.helpBox.lastRect = null
     }
   })
 
@@ -1661,8 +1658,6 @@ const _closeTips = (clearItems:boolean = true) => {
     tips.items = []
     tips.selectedIndex = 0
   }
-  tips.helpBox.open = false
-  tips.helpBox.defaultBoxRect = null
 }
 
 const _updateTipsItems = (items: InputTipItem[], openTips:boolean = true) => {
@@ -1714,12 +1709,26 @@ const _getElementInfo = (): TerminalElementInfo => {
   let containerRect = terminalContainerRef.value.getBoundingClientRect()
   let hasScroll = terminalWindowRef.value.scrollHeight > terminalWindowRef.value.clientHeight
       || terminalWindowRef.value.offsetHeight > terminalWindowRef.value.clientHeight
+  let clientWidth = windowRect.width - WINDOW_STYLE.PADDING_RIGHT
+  if (hasScroll) {
+    //  滚动条宽度 8px
+    clientWidth -= 8
+  }
+
+  //  减去padding值
+  if (props.enableFold) {
+    clientWidth -= WINDOW_STYLE.PADDING_LEFT_FOLD
+  } else {
+    clientWidth -= WINDOW_STYLE.PADDING_LEFT
+  }
+
+  let clientHeight = windowRect.height - WINDOW_STYLE.PADDING_TOP - WINDOW_STYLE.PADDING_BOTTOM - headerHeight.value
   return {
     pos: _getPosition(),           //  窗口所在位置
     screenWidth: containerRect.width,   //  窗口整体宽度
     screenHeight: containerRect.height, //  窗口整体高度
-    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-    clientHeight: windowRect.height,    //  可显示内容范围高度
+    clientWidth: clientWidth,           //  可显示内容范围高度
+    clientHeight: clientHeight,    //  可显示内容范围高度
     charWidth: {
       en: byteLen.en,            //  单个英文字符宽度
       cn: byteLen.cn             //  单个中文字符宽度
@@ -1778,7 +1787,8 @@ defineExpose({
         </slot>
       </div>
       <div class="t-window"
-           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 10px 15px 20px;' : 'padding:0 10px 15px 10px;'}`"
+           :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};
+           padding:${WINDOW_STYLE.PADDING_TOP}px ${WINDOW_STYLE.PADDING_RIGHT}px ${WINDOW_STYLE.PADDING_BOTTOM}px ${enableFold ? WINDOW_STYLE.PADDING_LEFT_FOLD : WINDOW_STYLE.PADDING_LEFT}px;`"
            ref="terminalWindowRef"
            @click="_focus"
            @dblclick="_focus(true)">

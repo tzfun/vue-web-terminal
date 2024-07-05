@@ -50,3 +50,11 @@ export const DEFAULT_COMMANDS:Command[] = [
         ]
     }
 ]
+
+export const WINDOW_STYLE = {
+    PADDING_LEFT: 10,
+    PADDING_LEFT_FOLD: 20,
+    PADDING_RIGHT: 10,
+    PADDING_TOP: 0,
+    PADDING_BOTTOM: 0
+}
