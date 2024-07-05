@@ -124,8 +124,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
-    font-family: none;
-    /*font-family: Monaco, Menlo, Consolas, monospace;*/
+    font-family: Monaco, "Lucida Console", monospace;
 }
 
 .t-window {
@@ -608,22 +607,35 @@
 .t-cmd-tips {
     --t-cmd-tips-box-shadow: 5px 5px 15px 0 rgb(116 129 153 / 30%);
 
-
-    min-width: 5px;
-    max-width: 500px;
-    max-height: 200px;
     position: absolute;
     z-index: 100;
     background-color: var(--t-cmd-tips-background-color);
     border-radius: var(--t-cmd-tips-border-radius);
     color: var(--t-cmd-tips-font-color);
-    overflow-y: auto;
     -ms-overflow-y: auto;
     cursor: context-menu;
     box-shadow: var(--t-cmd-tips-box-shadow);
     -moz-box-shadow: var(--t-cmd-tips-box-shadow);
     -webkit-box-shadow: var(--t-cmd-tips-box-shadow);
     -o-box-shadow: var(--t-cmd-tips-box-shadow);
+    font-family: system-ui;
+}
+
+.t-cmd-tips-items {
+    min-width: 360px;
+    max-width: 500px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.t-cmd-tips-footer {
+    width: 100%;
+    padding: 5px 0;
+    text-indent: 6px;
+    line-height: var(--t-font-height);
+    background-color: var(--t-cmd-tips-footer-background-color);
+    color: var(--t-cmd-tips-footer-font-color);
+    font-size: 12px;
 }
 
 .t-cmd-tips-item {
