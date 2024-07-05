@@ -298,6 +298,12 @@ const onExecCmd = (key, command, success, failed) => {
     })
     enableTextEditor.value = true
     return;
+  } else if (key === 'fold') {
+    let count = TerminalApi.switchAllFoldState(props.name, true)
+    success(`Successfully collapsed ${count} groups`)
+  } else if (key === 'unfold') {
+    let count = TerminalApi.switchAllFoldState(props.name, false)
+    success(`Successfully expanded ${count} groups`)
   } else {
     failed("Unknown command")
   }
@@ -446,12 +452,13 @@ const showFlash = async (success) => {
 }
 
 const mockLoading = (flash, fileName, terminalInfo) => {
-  // 固定宽度 = 加载动画 + fileName + '[' + ']' + '100%' + 进度条宽度
-  let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en + 20
+  // 固定宽度 = 加载动画宽度15 + fileName宽度 + '[]100%'百分比宽度
+  let fixedWidth = 15 + (6 + fileName.length) * terminalInfo.charWidth.en
   //  计算出进度条的 '-' 个数
-  let processDots = (terminalInfo.clientWidth - fixedWidth) / terminalInfo.charWidth.en
+  let processDots = parseInt(String((terminalInfo.clientWidth - fixedWidth) / terminalInfo.charWidth.en))
+  console.log(fileName, terminalInfo.charWidth.en, terminalInfo.clientWidth, fixedWidth, processDots)
   let prefix1 = '<span class="loading-flash" style="transform: rotate('
-  let prefix2 = `deg)"></span><span style="color: aqua">${fileName}</span>[`
+  let prefix2 = `deg)"></span><span style="color: aqua">${fileName}</span>`
 
   return new Promise(resolve => {
     let startTime = new Date().getTime()
@@ -466,7 +473,7 @@ const mockLoading = (flash, fileName, terminalInfo) => {
         percent = ' ' + percent
       }
 
-      let str = prefix1 + (90 * (count % 8)) + prefix2 + "#".repeat(count) + "-".repeat(processDots - count) + ']' + percent + '%';
+      let str = prefix1 + (90 * (count % 8)) + prefix2 + "<span>[" + "#".repeat(count) + "-".repeat(processDots - count) + ']' + percent + '%</span>';
       //  更新显示当前进度
       flash.flush(str)
 

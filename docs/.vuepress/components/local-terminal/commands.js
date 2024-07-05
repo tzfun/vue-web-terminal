@@ -77,13 +77,13 @@ export const commands = {
             "key": "list",
             "group": "demo",
             "usage": 'list',
-            "description": "列出所有级别消息"
+            "description": "列出插件支持的所有级别的消息"
         },
         {
             "key": "flash",
             "group": "demo",
             "usage": 'flash',
-            "description": "即时回显，模拟执行下载命令"
+            "description": "模拟即时回显动画，模拟执行下载命令"
         },
         {
             "key": "ask",
@@ -96,6 +96,24 @@ export const commands = {
             "group": "demo",
             "usage": 'edit',
             "description": "打开文本编辑器"
+        },
+        {
+            "key": "ansi",
+            "group": "demo",
+            "usage": 'ansi',
+            "description": "展示ANSI颜色控制码翻译"
+        },
+        {
+            "key": "fold",
+            "group": "demo",
+            "usage": 'fold',
+            "description": "折叠所有命令组的消息"
+        },
+        {
+            "key": "unfold",
+            "group": "demo",
+            "usage": 'unfold',
+            "description": "展开所有命令组的消息"
         }
     ],
     "en-US": [
@@ -194,6 +212,24 @@ export const commands = {
             "group": "demo",
             "usage": 'edit',
             "description": "Open a text editor"
+        },
+        {
+            "key": "ansi",
+            "group": "demo",
+            "usage": 'ansi',
+            "description": "Support ANSI color control code translation"
+        },
+        {
+            "key": "fold",
+            "group": "demo",
+            "usage": 'fold',
+            "description": "Collapse all grouped messages"
+        },
+        {
+            "key": "unfold",
+            "group": "demo",
+            "usage": 'unfold',
+            "description": "Expand all grouped messages"
         }
     ]
 }
