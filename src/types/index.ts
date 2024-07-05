@@ -83,10 +83,25 @@ export type AskConfig = {
     autoReview: boolean
     callback?: (value: string) => void
 }
+
 export type InputTipItem = {
     content: string,
     description?: string,
     attach?: Command
+}
+
+export type CharWidth = {
+    en?: number,
+    cn?: number
+}
+
+export type TerminalElementInfo = {
+    pos: Position,
+    screenWidth: number,
+    screenHeight: number,
+    clientWidth: number,
+    clientHeight: number,
+    charWidth: CharWidth
 }
 
 export type CommandStoreSortFunc = (a: any, b: any) => number

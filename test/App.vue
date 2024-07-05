@@ -5,7 +5,7 @@
 
 // import '~/css/theme/light.css'
 import '~/css/theme/dark.css'
-import {Terminal, TerminalApi, TerminalAsk} from '~/index'
+import {Terminal, TerminalApi, TerminalAsk, TerminalElementInfo} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {reactive, ref} from "vue";
 
@@ -232,6 +232,11 @@ const onInactive = (name: string) => {
     }
   })
 }
+
+const onResize = (info: TerminalElementInfo, name:string) => {
+  console.log(name,"resize =>",info)
+}
+
 const pushMessageBefore = (message: Message, name: string) => {
   console.log(message, name)
 }
@@ -279,6 +284,7 @@ const setCommand = () => {
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"
+          @on-resize="onResize"
           style="position: fixed">
         <!--        <template #header>-->
         <!--          <div class="custom-header">This is custom header</div>-->

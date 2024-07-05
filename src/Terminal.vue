@@ -19,10 +19,10 @@ import {
   TerminalAsk,
   TerminalFlash,
   TipsSearchHandlerFunc,
-  TipsSelectHandlerFunc
+  TipsSelectHandlerFunc, TerminalElementInfo
 } from "./types";
 import {
-  _copyTextToClipboard,
+  _copyTextToClipboard, _debounce,
   _defaultMergedCommandFormatter,
   _defaultSplittableCommandFormatter,
   _eventOff,
@@ -54,7 +54,18 @@ import TEditor from "~/components/TEditor.vue";
 
 //  对应css变量 --t-font-height
 const FONT_HEIGHT = 19;
-const emits = defineEmits(["on-keydown", "on-click", "before-exec-cmd", "exec-cmd", "destroyed", "init-before", "init-complete", 'on-active', 'on-inactive'])
+const emits = defineEmits([
+  "on-keydown",
+  "on-click",
+  "before-exec-cmd",
+  "exec-cmd",
+  "destroyed",
+  "init-before",
+  "init-complete",
+  'on-active',
+  'on-inactive',
+  'on-resize'
+])
 const props = defineProps({
   title: {
     type: String,
@@ -487,21 +498,7 @@ onMounted(() => {
     } else if (type === 'focus') {
       _focus(options)
     } else if (type === 'elementInfo') {
-      let windowRect = terminalWindowRef.value.getBoundingClientRect()
-      let containerRect = terminalContainerRef.value.getBoundingClientRect()
-      let hasScroll = terminalWindowRef.value.scrollHeight > terminalWindowRef.value.clientHeight
-          || terminalWindowRef.value.offsetHeight > terminalWindowRef.value.clientHeight
-      return {
-        pos: _getPosition(),           //  窗口所在位置
-        screenWidth: containerRect.width,   //  窗口整体宽度
-        screenHeight: containerRect.height, //  窗口整体高度
-        clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-        clientHeight: windowRect.height,    //  可显示内容范围高度
-        charWidth: {
-          en: byteLen.en,            //  单个英文字符宽度
-          cn: byteLen.cn             //  单个中文字符宽度
-        }
-      }
+      return _getElementInfo()
     } else if (type === 'textEditorOpen') {
       let opt: EditorSetting = options || {}
 
@@ -1467,6 +1464,7 @@ const _initDrag = () => {
         containerStyleStore.value.left = Math.max(0, resizeData.boxX + cx) + 'px'
         containerStyleStore.value.top = Math.max(0, resizeData.boxY + cy) + 'px'
       }
+      _onResize()
     }
   })
 
@@ -1703,6 +1701,28 @@ const _selectTips = () => {
   _jumpToBottom()
 }
 
+const _getElementInfo = (): TerminalElementInfo => {
+  let windowRect = terminalWindowRef.value.getBoundingClientRect()
+  let containerRect = terminalContainerRef.value.getBoundingClientRect()
+  let hasScroll = terminalWindowRef.value.scrollHeight > terminalWindowRef.value.clientHeight
+      || terminalWindowRef.value.offsetHeight > terminalWindowRef.value.clientHeight
+  return {
+    pos: _getPosition(),           //  窗口所在位置
+    screenWidth: containerRect.width,   //  窗口整体宽度
+    screenHeight: containerRect.height, //  窗口整体高度
+    clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+    clientHeight: windowRect.height,    //  可显示内容范围高度
+    charWidth: {
+      en: byteLen.en,            //  单个英文字符宽度
+      cn: byteLen.cn             //  单个中文字符宽度
+    }
+  }
+}
+
+const _onResize = _debounce(() => {
+  emits('on-resize', _getElementInfo(), getName())
+})
+
 defineExpose({
   pushMessage: _pushMessage,
   fullscreen: _fullscreen,
@@ -1714,9 +1734,7 @@ defineExpose({
     return api.execute(getName(), cmd)
   },
   focus: _focus,
-  elementInfo: (): any => {
-    return api.elementInfo(getName())
-  },
+  elementInfo: _getElementInfo,
   textEditorOpen: (options?: EditorSetting) => {
     return api.textEditorOpen(getName(), options)
   },
