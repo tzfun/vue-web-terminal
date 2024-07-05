@@ -23,3 +23,5 @@ pnpm-debug.log*
 *.sw?
 /vue-web-terminal.css
 /vue-web-terminal.js
+/docs/
+/stats.html
