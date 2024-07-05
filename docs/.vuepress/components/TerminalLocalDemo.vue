@@ -207,7 +207,7 @@ const onActive = (key, name) => {
 }
 
 const goHome = () => {
-  let base = 'vue-web-terminal'
+  let base = '/vue-web-terminal'
   document.location.href = base + (language.value === 'en-US' ? '/' : '/zh/')
 }
 

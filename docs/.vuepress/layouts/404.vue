@@ -1,6 +1,6 @@
 <script setup>
 const goHome = () => {
-  document.location.href = "/vue-web-terminal/"
+  document.location.href = '/vue-web-terminal/'
 }
 
 const goLastPage = () => {
