@@ -1921,7 +1921,7 @@ defineExpose({
         <div v-for="(item,idx) in tips.items"
              :key="idx"
              @click="_clickTips(idx)"
-             :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ') + (idx === tips.items.length - 1 ? 't-cmd-tips-item-last ' : ' ')"
+             :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ')"
         >
           <span class="t-cmd-tips-content" v-html="item.content"></span>
           <span class="t-cmd-tips-des" v-html="item.description"></span>
