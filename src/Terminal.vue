@@ -19,7 +19,7 @@ import {
   TerminalAsk,
   TerminalFlash,
   InputTipsSearchHandlerFunc,
-  InputTipsSelectHandlerFunc, TerminalElementInfo
+  InputTipsSelectHandlerFunc, TerminalElementInfo, TerminalCursorStyle
 } from "./types";
 import {
   _copyTextToClipboard, _debounce,
@@ -38,7 +38,7 @@ import {
   _isSafari,
   _nonEmpty,
   _openUrl,
-  _pointInRect,
+  _pointInRect, _screenType,
 } from "~/common/util.ts";
 import api, {register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS} from "~/common/configuration.ts";
@@ -131,15 +131,9 @@ const props = defineProps({
     type: Number,
     default: 15
   },
-  /**
-   * 光标样式，可选值：
-   * - block
-   * - underline
-   * - bar
-   * - none
-   */
+  //  光标样式
   cursorStyle: {
-    type: String,
+    type: String as PropType<TerminalCursorStyle>,
     default: () => "block"
   },
   //  光标闪烁开关
@@ -195,6 +189,14 @@ const containerStyle = computed(() => {
     return styles.join(';')
   }
   return ''
+})
+
+const isEnableHelpBox = computed<boolean>(() => {
+  return props.enableHelpBox && tips.items[tips.selectedIndex] && tips.items[tips.selectedIndex].command
+})
+
+const selectedTipCommand = computed<Command | null>(() => {
+  return tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].command : null
 })
 
 const _name = ref<string>()
@@ -696,7 +698,7 @@ const _searchCmd = () => {
         items.push({
           content: o.keyword,
           description: o.item.description,
-          attach: o.item
+          command: o.item
         })
       }
       _updateTipsItems(items, cursorInKey)
@@ -1241,21 +1243,27 @@ const _onInput = (e: InputEvent) => {
 
   _calculateTipsPos()
 
-  _checkInputCursor()
-  _calculateCursorPos()
+  nextTick(() => {
+    _checkInputCursor()
+    _calculateCursorPos()
 
-  let cursorRect = terminalCursorRef.value.getBoundingClientRect()
-  let helpBoxRect = tips.helpBox.defaultBoxRect || terminalHelpBoxRef.value.getBoundingClientRect()
-  if (cursorRect && helpBoxRect && _pointInRect({
-    x: cursorRect.x + byteLen.en * 2,
-    y: cursorRect.y + FONT_HEIGHT
-  }, helpBoxRect)) {
-    tips.helpBox.open = false
-    tips.helpBox.defaultBoxRect = helpBoxRect
-  } else {
-    tips.helpBox.open = true
-    tips.helpBox.defaultBoxRect = null
-  }
+    let helpBoxRef  = terminalHelpBoxRef.value
+    if (helpBoxRef) {
+      let cursorRect = terminalCursorRef.value.getBoundingClientRect()
+      let helpBoxRect = tips.helpBox.defaultBoxRect || helpBoxRef.getBoundingClientRect()
+      if (cursorRect && helpBoxRect && _pointInRect({
+        x: cursorRect.x + byteLen.en * 2,
+        y: cursorRect.y + FONT_HEIGHT
+      }, helpBoxRect)) {
+        tips.helpBox.open = false
+        tips.helpBox.defaultBoxRect = helpBoxRect
+      } else {
+        tips.helpBox.open = true
+        tips.helpBox.defaultBoxRect = null
+      }
+    }
+  })
+
 }
 
 const _checkInputCursor = () => {
@@ -1696,7 +1704,7 @@ const _selectTips = () => {
     })
     return
   }
-  command.value = selectedItem.attach.key
+  command.value = selectedItem.command.key
   _resetCursorPos()
   _jumpToBottom()
 }
@@ -1864,12 +1872,12 @@ defineExpose({
         </p>
       </div>
     </div>
-    <div v-if="enableHelpBox">
-      <slot name="helpBox" :showHeader="showHeader" :item="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null">
-        <t-help-box ref="terminalHelpBox"
+    <div v-if="isEnableHelpBox">
+      <slot name="helpBox" :showHeader="showHeader" :item="selectedTipCommand">
+        <t-help-box ref="terminalHelpBoxRef"
                     :top="headerHeight + 10"
-                    :content="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null"
-                    v-show="tips.helpBox.open"/>
+                    :content="selectedTipCommand"
+                    v-show="tips.helpBox.open && !_screenType().xs"/>
       </slot>
     </div>
 

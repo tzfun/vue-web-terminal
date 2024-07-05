@@ -1,3 +1,9 @@
+export type TerminalMessageClass = 'success' | 'error' | 'info' | 'warning' | 'system'
+
+export type TerminalMessageType = 'cmdLine' | 'normal' | 'json' | 'code' | 'table' | 'html' | 'ansi'
+
+export type TerminalCursorStyle = 'block' | 'underline' | 'bar' | 'none'
+
 export interface EditorConfig {
     open: boolean
     focus: boolean
@@ -18,12 +24,6 @@ export type DragConfig = {
     zIndex?: string
     init?: Position
     pinned?: boolean
-}
-
-export type SearchResult = {
-    show: boolean
-    defaultBoxRect: null
-    item?: Command
 }
 
 export type ScreenType = {
@@ -70,9 +70,9 @@ export type MessageGroup = {
 }
 
 export type Message = {
-    type?: 'normal' | 'json' | 'code' | 'table' | 'html' | 'ansi' | 'cmdLine'
+    type?: TerminalMessageType
     content: string | number | object | MessageContentTable | Array<any>
-    class?: 'success' | 'error' | 'info' | 'warning' | 'system'
+    class?: TerminalMessageClass
     tag?: string,
     depth?: number
 }
@@ -87,7 +87,7 @@ export type AskConfig = {
 export type InputTipItem = {
     content: string,
     description?: string,
-    attach?: Command
+    command?: Command
 }
 
 export type CharWidth = {

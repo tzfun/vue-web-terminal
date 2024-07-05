@@ -275,7 +275,7 @@ const setCommand = () => {
           :show-header="item.showHeader"
           :push-message-before="pushMessageBefore"
           :log-size-limit="20"
-          cursor-style="bar"
+          cursor-style="block"
           :enable-cursor-blink="true"
           :line-space="15"
           enable-hover-stripe
