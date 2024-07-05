@@ -24,3 +24,4 @@ pnpm-debug.log*
 /vue-web-terminal.css
 /vue-web-terminal.js
 /docs/.vuepress/
+/stats.html

@@ -124,7 +124,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
-    font-family: Monaco, "Lucida Console", system-ui;
+    font-family: Monaco, "Lucida Console", monospace;
 }
 
 .t-window {
@@ -622,7 +622,7 @@
 }
 
 .t-cmd-tips-items {
-    min-width: 360px;
+    min-width: 280px;
     max-width: 500px;
     max-height: 200px;
     overflow-y: auto;
@@ -651,13 +651,6 @@
     -webkit-border-top-left-radius: var(--t-cmd-tips-border-radius);
     border-top-right-radius: var(--t-cmd-tips-border-radius);
     -webkit-border-top-right-radius: var(--t-cmd-tips-border-radius);
-}
-
-.t-cmd-tips-item-last {
-    border-bottom-left-radius: var(--t-cmd-tips-border-radius);
-    -webkit-border-bottom-left-radius: var(--t-cmd-tips-border-radius);
-    border-bottom-right-radius: var(--t-cmd-tips-border-radius);
-    -webkit-border-bottom-right-radius: var(--t-cmd-tips-border-radius);
 }
 
 .t-cmd-tips-item-active {
