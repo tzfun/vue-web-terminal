@@ -309,27 +309,28 @@ export function _defaultSplittableCommandFormatter(cmd: string): string {
                 splitFill(null, srcChar)
             } else {
                 let startNewCmdKey = false
-                for (let j in srcChar) {
-                    if (srcChar[j] === ',') {
-                        splitFill('t-cmd-splitter', srcChar[j])
-                    } else if (srcChar[j] === '|') {
-                        splitFill(null, srcChar[j])
+                const charArr: string[] = [...srcChar]
+                charArr.forEach((ch, j) => {
+                    if (ch === ',') {
+                        splitFill('t-cmd-splitter', ch)
+                    } else if (ch === '|') {
+                        splitFill(null, ch)
 
                         isCmdKey = true
-                        if (j < srcChar.length - 1) {
+                        if (j < charArr.length - 1) {
                             startNewCmdKey = true
                         }
                     } else {
                         if (startNewCmdKey) {
-                            splitFill('t-cmd-key', srcChar[j])
+                            splitFill('t-cmd-key', ch)
                         } else {
-                            splitFill(null, srcChar[j])
+                            splitFill(null, ch)
                         }
                     }
-                    if (j === srcChar.length - 1 && srcChar[j] !== '|') {
+                    if (j === charArr.length - 1 && ch !== '|') {
                         isCmdKey = false
                     }
-                }
+                })
             }
         }
         if (i < split.length - 1) {
