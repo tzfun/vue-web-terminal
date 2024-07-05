@@ -64,8 +64,3 @@ export const MESSAGE_CLASS = {
     WARN: 'warning',
     SYSTEM: 'system'
 }
-
-export const TIPS_STYLE = {
-    MAX_WIDTH: 200,
-    MAX_ITEMS: 5
-}

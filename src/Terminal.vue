@@ -1,16 +1,16 @@
 <template>
   <div :class="'t-container ' + (isActive() ? '' : 't-disable-select')"
        :style="_getContainerStyle()"
-       ref="terminalContainer">
+       ref="terminalContainerRef">
     <div v-if="isDraggable()">
-      <div class="t-point t-point-lt" ref="resizeLT"></div>
-      <div class="t-point t-point-rt" ref="resizeRT"></div>
-      <div class="t-point t-point-lb" ref="resizeLB"></div>
-      <div class="t-point t-point-rb" ref="resizeRB"></div>
+      <div class="t-point t-point-lt" ref="resizeLTRef"></div>
+      <div class="t-point t-point-rt" ref="resizeRTRef"></div>
+      <div class="t-point t-point-lb" ref="resizeLBRef"></div>
+      <div class="t-point t-point-rb" ref="resizeRBRef"></div>
     </div>
 
     <div class="terminal">
-      <div class="t-header-container" ref="terminalHeader" v-if="showHeader"
+      <div class="t-header-container" ref="terminalHeaderRef" v-if="showHeader"
            :style="isDraggable() ? 'cursor: move;' : ''" @dblclick="_fullscreen">
         <slot name="header">
           <t-header :title="title"
@@ -22,7 +22,7 @@
       </div>
       <div class="t-window"
            :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};${enableFold ? 'padding:0 10px 15px 20px;' : 'padding:0 10px 15px 10px;'}`"
-           ref="terminalWindow"
+           ref="terminalWindowRef"
            @click="_focus"
            @dblclick="_focus(true)">
         <div v-for="(group, groupIdx) in terminalLog"
@@ -79,25 +79,27 @@
         <div v-if="ask.open && ask.question" :style="`margin-top:${lineSpace}px;`">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
-                 ref="terminalAskInput"
+                 ref="terminalAskInputRef"
                  v-model="ask.input"
                  class="t-ask-input"
                  autocomplete="off"
                  auto-complete="new-password"
                  @keyup.enter="_onAskInput">
         </div>
-        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBox" v-show="showInputLine" :style="`margin-top:${lineSpace}px;`">
-          <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPrompt">
+        <p class="t-last-line t-crude-font t-cmd-line" ref="terminalInputBoxRef" v-show="showInputLine" :style="`margin-top:${lineSpace}px;`">
+          <span class="prompt t-cmd-line-content t-disable-select" ref="terminalInputPromptRef">
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show" :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${enableCursorBlink ? 't-cursor-blink' : ''}`" ref="terminalCursorRef"
+            v-show="cursorConf.show"
+            :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${enableCursorBlink ? 't-cursor-blink' : ''}`"
+            ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <input type="text"
                  autofocus="autofocus"
                  v-model="command"
                  class="t-cmd-input t-disable-select"
-                 ref="terminalCmdInput"
+                 ref="terminalCmdInputRef"
                  autocomplete="off"
                  auto-complete="new-password"
                  @keydown="_onInputKeydown"
@@ -110,19 +112,19 @@
         </p>
       </div>
     </div>
-    <div v-if="enableHelpBox">
-      <slot name="helpBox" :showHeader="showHeader" :item="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null">
-        <t-help-box ref="terminalHelpBox"
+    <div v-if="isEnableHelpBox">
+      <slot name="helpBox" :showHeader="showHeader" :item="selectedTipCommand">
+        <t-help-box ref="terminalHelpBoxRef"
                     :top="headerHeight + 10"
-                    :content="tips.items[tips.selectedIndex] ? tips.items[tips.selectedIndex].attach : null"
-                    v-show="tips.helpBox.open"/>
+                    :content="selectedTipCommand"
+                    v-show="tips.helpBox.open && !_screenType().xs"/>
       </slot>
     </div>
 
     <div class="t-text-editor-container" v-if="textEditor.open"
          :style="`${showHeader ? `height:calc(100% - ${headerHeight}px);margin-top: ${headerHeight}px;` : 'height:100%'};`">
       <slot name="textEditor" :data="textEditor">
-        <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditor"></t-editor>
+        <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditorRef"></t-editor>
       </slot>
     </div>
     <div class="t-cmd-tips"
@@ -139,8 +141,8 @@
       </div>
     </div>
     <span class="t-flag t-crude-font t-disable-select">
-      <span class="t-cmd-line-content" ref="terminalEnFlag">aaaaaaaaaa</span>
-      <span class="t-cmd-line-content" ref="terminalCnFlag">你你你你你你你你你你</span>
+      <span class="t-cmd-line-content" ref="terminalEnFlagRef">aaaaaaaaaa</span>
+      <span class="t-cmd-line-content" ref="terminalCnFlagRef">你你你你你你你你你你</span>
     </span>
   </div>
 </template>

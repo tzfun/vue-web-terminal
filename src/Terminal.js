@@ -44,6 +44,7 @@ import THelpBox from "@/components/THelpBox.vue";
 import TEditor from "@/components/TEditor.vue";
 import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
 import {_parseANSI} from "@/js/ansi/ANSI";
+import {_screenType} from "@/js/Util";
 
 let idx = 0;
 
@@ -153,14 +154,14 @@ export default {
         }
         this.allCommandStore = allCommandStore
 
-        let el = this.$refs.terminalWindow
+        let el = this.$refs.terminalWindowRef
         el.scrollTop = el.offsetHeight;
 
         let selectContentText = null
 
         _eventOn(window, "click", this.clickListener = e => {
             let activeCursor = false
-            let container = this.$refs.terminalContainer
+            let container = this.$refs.terminalContainerRef
             if (container && container.getBoundingClientRect && _pointInRect(e, container.getBoundingClientRect())) {
                 activeCursor = _isParentDom(e.target, container, "t-container")
                     || (e.target && e.target.classList.contains('t-text-editor-floor-btn'))
@@ -200,8 +201,8 @@ export default {
                         if (key === 'tab') {
                             this._selectTips()
                             event.preventDefault()
-                        } else if (document.activeElement !== this.$refs.terminalCmdInput) {
-                            this.$refs.terminalCmdInput.focus()
+                        } else if (document.activeElement !== this.$refs.terminalCmdInputRef) {
+                            this.$refs.terminalCmdInputRef.focus()
                             this._onInputKeydown(event)
                         }
                     }
@@ -295,13 +296,13 @@ export default {
         //  监听header的尺寸变化
         this.resizeObserver = new ResizeObserver(entries => {
             for (const entry of entries) {
-                if (entry.target === this.$refs.terminalHeader) {
+                if (entry.target === this.$refs.terminalHeaderRef) {
                     this._updateHeaderHeight()
                 }
             }
         })
-        if (this.$refs.terminalHeader) {
-            this.resizeObserver.observe(this.$refs.terminalHeader)
+        if (this.$refs.terminalHeaderRef) {
+            this.resizeObserver.observe(this.$refs.terminalHeaderRef)
         }
 
         this._initDrag()
@@ -356,8 +357,8 @@ export default {
         this.$emit('destroyed', this.getName())
         _eventOff(window, 'keydown', this.keydownListener);
         _eventOff(window, "click", this.clickListener);
-        if (this.resizeObserver && this.$refs.terminalHeader) {
-            this.resizeObserver.unobserve(this.$refs.terminalHeader)
+        if (this.resizeObserver && this.$refs.terminalHeaderRef) {
+            this.resizeObserver.unobserve(this.$refs.terminalHeaderRef)
             this.resizeObserver = null
         }
         unregister(this.getName())
@@ -382,7 +383,17 @@ export default {
             this._updateHeaderHeight()
         }
     },
+    computed: {
+        isEnableHelpBox: function () {
+            return this.enableHelpBox && this.tips.items[this.tips.selectedIndex] && this.tips.items[this.tips.selectedIndex].command
+        },
+        selectedTipCommand: function() {
+            let selectedTip = this.tips.items[this.tips.selectedIndex]
+            return selectedTip ? selectedTip.command : null
+        }
+    },
     methods: {
+        _screenType,
         pushMessage(message) {
             pushMessage(this.getName(), message);
         },
@@ -466,7 +477,7 @@ export default {
          */
         isActive() {
             return this.cursorConf.show
-                || (this.ask.open && this.$refs.terminalAskInput === document.activeElement)
+                || (this.ask.open && this.$refs.terminalAskInputRef === document.activeElement)
                 || (this.textEditor.open && this.textEditor.focus)
         },
         /**
@@ -488,7 +499,7 @@ export default {
         },
         _updateHeaderHeight() {
             this.$nextTick(() => {
-                let headerRef = this.$refs.terminalHeader
+                let headerRef = this.$refs.terminalHeaderRef
                 if (headerRef && headerRef.getBoundingClientRect) {
                     let rect = headerRef.getBoundingClientRect()
                     this.headerHeight = rect.height
@@ -501,14 +512,14 @@ export default {
             if (this.byteLen.init) {
                 return
             }
-            let enGhost = this.$refs.terminalEnFlag
+            let enGhost = this.$refs.terminalEnFlagRef
             if (enGhost) {
                 let rect = enGhost.getBoundingClientRect()
                 if (rect && rect.width > 0) {
                     this.byteLen = {
                         init: true,
                         en: rect.width / 10,
-                        cn: this.$refs.terminalCnFlag.getBoundingClientRect().width / 10
+                        cn: this.$refs.terminalCnFlagRef.getBoundingClientRect().width / 10
                     }
 
                     this.cursorConf.defaultWidth = this.byteLen.en
@@ -517,7 +528,7 @@ export default {
             }
         },
         _calculatePromptLen() {
-            let prompt = this.$refs.terminalInputPrompt
+            let prompt = this.$refs.terminalInputPromptRef
             if (prompt) {
                 let rect = prompt.getBoundingClientRect()
                 if (rect.width > 0) {
@@ -549,8 +560,7 @@ export default {
                 let reg = new RegExp(cmd.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig')
                 let matchArray = []
 
-                for (let i in this.allCommandStore) {
-                    let o = this.allCommandStore[i]
+                for (let o of this.allCommandStore) {
                     if (_nonEmpty(o.key)) {
                         let res = o.key.match(reg)
                         if (res) {
@@ -577,7 +587,7 @@ export default {
                         items.push({
                             content: o.keyword,
                             description: o.item.description,
-                            attach: o.item
+                            command: o.item
                         })
                     }
                     this._updateTipsItems(items, cursorInKey)
@@ -590,14 +600,14 @@ export default {
             this.$nextTick(function () {
                 let input
                 if (this.ask.open) {
-                    input = this.$refs.terminalAskInput
+                    input = this.$refs.terminalAskInputRef
                     this.cursorConf.show = false
                 } else if (this.textEditor.open) {
-                    input = this.$refs.terminalTextEditor
+                    input = this.$refs.terminalTextEditorRef
                     this.cursorConf.show = false
                 } else {
                     if (enforceFocus === true) {
-                        input = this.$refs.terminalCmdInput
+                        input = this.$refs.terminalCmdInputRef
                     }
                     this.cursorConf.show = true
                 }
@@ -663,10 +673,10 @@ export default {
                             detail += `<li class="t-example-li"><span>${eg.des}</span></li>`
                         }
                         detail += `
-                            </ul>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    `
+                        `
                     }
                 }
 
@@ -946,7 +956,7 @@ export default {
         },
         _jumpToBottom() {
             this.$nextTick(() => {
-                let box = this.$refs.terminalWindow
+                let box = this.$refs.terminalWindowRef
                 if (box != null) {
                     box.scrollTo({top: box.scrollHeight, behavior: this.scrollMode})
                 }
@@ -967,7 +977,7 @@ export default {
         _resetCursorPos(cmd) {
             this._calculateByteLen()
 
-            let input = this.$refs.terminalCmdInput
+            let input = this.$refs.terminalCmdInputRef
             if (input) {
                 input.focus()
                 input.setSelectionRange(this.command.length, this.command.length)
@@ -995,7 +1005,7 @@ export default {
                 this._calculatePromptLen()
             }
 
-            let lineWidth = this.$refs.terminalInputBox.getBoundingClientRect().width
+            let lineWidth = this.$refs.terminalInputBoxRef.getBoundingClientRect().width
 
             let pos = {left: 0, top: 0}
             //  当前字符长度
@@ -1120,23 +1130,26 @@ export default {
             this.$nextTick(() => {
                 this._checkInputCursor()
                 this._calculateCursorPos()
-
-                let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
-                let helpBoxRect = this.tips.helpBox.defaultBoxRect || this.$refs.terminalHelpBox.getBoundingClientRect()
-                if (cursorRect && helpBoxRect && _pointInRect({
-                    x: cursorRect.x + this.byteLen.en * 2,
-                    y: cursorRect.y + FONT_HEIGHT
-                }, helpBoxRect)) {
-                    this.tips.helpBox.open = false
-                    this.tips.helpBox.defaultBoxRect = helpBoxRect
-                } else {
-                    this.tips.helpBox.open = true
-                    this.tips.helpBox.defaultBoxRect = null
+                let helpBoxDom = this.$refs.terminalHelpBoxRef
+                if (helpBoxDom) {
+                    let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
+                    let helpBoxRect = this.tips.helpBox.defaultBoxRect || helpBoxDom.getBoundingClientRect()
+                    if (cursorRect && helpBoxRect && _pointInRect({
+                        x: cursorRect.x + this.byteLen.en * 2,
+                        y: cursorRect.y + FONT_HEIGHT
+                    }, helpBoxRect)) {
+                        this.tips.helpBox.open = false
+                        this.tips.helpBox.defaultBoxRect = helpBoxRect
+                    } else {
+                        this.tips.helpBox.open = true
+                        this.tips.helpBox.defaultBoxRect = null
+                    }
                 }
+
             })
         },
         _checkInputCursor() {
-            let eIn = this.$refs.terminalCmdInput
+            let eIn = this.$refs.terminalCmdInputRef
             if (eIn.selectionStart !== this.cursorConf.idx) {
                 this.cursorConf.idx = eIn.selectionStart
             }
@@ -1161,7 +1174,7 @@ export default {
             }
         },
         _fullscreen() {
-            let fullArea = this.$refs.terminalContainer
+            let fullArea = this.$refs.terminalContainerRef
             if (this.fullscreenState) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -1246,9 +1259,9 @@ export default {
             let mouseOffsetX = 0;
             let mouseOffsetY = 0;
 
-            let dragArea = this.$refs.terminalHeader
-            let box = this.$refs.terminalContainer
-            let window = this.$refs.terminalWindow
+            let dragArea = this.$refs.terminalHeaderRef
+            let box = this.$refs.terminalContainerRef
+            let window = this.$refs.terminalWindowRef
 
             let isDragging = false;
             let isResize = false;
@@ -1288,16 +1301,16 @@ export default {
                 window.style['user-select'] = 'none'
             })
 
-            _eventOn(this.$refs.resizeLT, 'mousedown', evt => {
+            _eventOn(this.$refs.resizeLTRef, 'mousedown', evt => {
                 storeResizeData('lt', evt)
             })
-            _eventOn(this.$refs.resizeRT, 'mousedown', evt => {
+            _eventOn(this.$refs.resizeRTRef, 'mousedown', evt => {
                 storeResizeData('rt', evt)
             })
-            _eventOn(this.$refs.resizeLB, 'mousedown', evt => {
+            _eventOn(this.$refs.resizeLBRef, 'mousedown', evt => {
                 storeResizeData('lb', evt)
             })
-            _eventOn(this.$refs.resizeRB, 'mousedown', evt => {
+            _eventOn(this.$refs.resizeRBRef, 'mousedown', evt => {
                 storeResizeData('rb', evt)
             })
 
@@ -1367,7 +1380,7 @@ export default {
             }
             let clientWidth = document.body.clientWidth
             let clientHeight = document.body.clientHeight
-            let container = this.$refs.terminalContainer
+            let container = this.$refs.terminalContainerRef
 
             let xVal, yVal
             if (x > clientWidth - container.clientWidth) {
@@ -1400,7 +1413,7 @@ export default {
         },
         _getPosition() {
             if (this.isDraggable()) {
-                let box = this.$refs.terminalContainer
+                let box = this.$refs.terminalContainerRef
                 return {x: parseInt(box.style.left), y: parseInt(box.style.top)}
             } else {
                 return {x: 0, y: 0}
@@ -1460,13 +1473,13 @@ export default {
         },
         _calculateTipsPos(autoOpen = false) {
             if (autoOpen) {
-                this.tips.opacity = 0
+                this.tips.style.opacity = 0
                 this.tips.open = true
             }
             if (this.tips.open) {
                 this.$nextTick(() => {
                     let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
-                    let containerRect = this.$refs.terminalContainer.getBoundingClientRect()
+                    let containerRect = this.$refs.terminalContainerRef.getBoundingClientRect()
                     let tipsRect = this.$refs.terminalCmdTipsRef.getBoundingClientRect()
 
                     let cursorRelativeLeft = cursorRect.left - containerRect.left
@@ -1489,7 +1502,7 @@ export default {
 
                     this.tips.style.top = tipsRelativeTop
                     this.tips.style.left = tipsRelativeLeft
-                    this.tips.opacity = 100
+                    this.tips.style.opacity = 100
                 })
             }
         },
@@ -1539,14 +1552,14 @@ export default {
                 })
                 return
             }
-            this.command = selectedItem.attach.key
+            this.command = selectedItem.command.key
             this._resetCursorPos()
             this._jumpToBottom()
         },
         _getElementInfo() {
-            let windowEle = this.$refs.terminalWindow
+            let windowEle = this.$refs.terminalWindowRef
             let windowRect = windowEle.getBoundingClientRect()
-            let containerRect = this.$refs.terminalContainer.getBoundingClientRect()
+            let containerRect = this.$refs.terminalContainerRef.getBoundingClientRect()
             let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
             return {
                 pos: this._getPosition(),           //  窗口所在位置

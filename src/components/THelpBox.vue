@@ -1,8 +1,7 @@
 <template>
   <div class="t-cmd-help"
        ref="terminalHelpBox"
-       :style="`top: ${top}px;max-height: calc(100% - ${top}px);`"
-       v-if="content && !_screenType().xs">
+       :style="`top: ${top}px;max-height: calc(100% - ${top}px);`">
     <div class="t-cmd-help-des"
        v-if="content.description"
        v-html="content.description"/>
