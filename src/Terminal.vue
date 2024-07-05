@@ -72,12 +72,12 @@
             </div>
           </div>
         </div>
-        <div v-if="flash.open && flash.content" :style="`margin-top:${lineSpace}px;`">
+        <div v-if="flash.open && flash.content" :style="`margin:${lineSpace}px 0;`">
           <slot name="flash" :content="flash.content">
             <div v-html="flash.content"></div>
           </slot>
         </div>
-        <div v-if="ask.open && ask.question" :style="`margin-top:${lineSpace}px;`">
+        <div v-if="ask.open && ask.question" :style="`margin:${lineSpace}px 0;`">
           <div v-html="ask.question" style="display: inline-block"></div>
           <input :type="ask.isPassword ? 'password' : 'text'"
                  ref="terminalAskInputRef"
@@ -132,13 +132,18 @@
          v-if="tips.open"
          :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
          ref="terminalCmdTipsRef">
-      <div v-for="(item,idx) in tips.items"
-           :key="idx"
-           @click="_clickTips(idx)"
-           :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ') + (idx === tips.items.length - 1 ? 't-cmd-tips-item-last ' : ' ')"
-      >
-        <span class="t-cmd-tips-content" v-html="item.content"></span>
-        <span class="t-cmd-tips-des" v-html="item.description"></span>
+      <div class="t-cmd-tips-items">
+        <div v-for="(item,idx) in tips.items"
+             :key="idx"
+             @click="_clickTips(idx)"
+             :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ')"
+        >
+          <span class="t-cmd-tips-content" v-html="item.content"></span>
+          <span class="t-cmd-tips-des" v-html="item.description"></span>
+        </div>
+      </div>
+      <div class="t-cmd-tips-footer">
+        Press <strong>Tab</strong> to choose the selected suggestion.
       </div>
     </div>
     <span class="t-flag t-crude-font t-disable-select">

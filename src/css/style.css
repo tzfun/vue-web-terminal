@@ -16,6 +16,7 @@
 .t-log-box {
     display: block;
     position: relative;
+    line-height: var(--t-font-height);
 }
 
 .t-container {
@@ -123,8 +124,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
-    font-family: unset;
-    /*font-family: Monaco, Menlo, Consolas, monospace;*/
+    font-family: Monaco, "Lucida Console", system-ui;
 }
 
 .t-window {
@@ -295,6 +295,7 @@
     letter-spacing: 0;
     position: relative;
     margin-bottom: 15px;
+    line-height: var(--t-font-height);
 }
 
 /*手机*/
@@ -606,10 +607,6 @@
 .t-cmd-tips {
     --t-cmd-tips-box-shadow: 5px 5px 15px 0 rgb(116 129 153 / 30%);
 
-
-    min-width: 5px;
-    max-width: 500px;
-    max-height: 200px;
     position: absolute;
     z-index: 100;
     background-color: var(--t-cmd-tips-background-color);
@@ -622,6 +619,23 @@
     -moz-box-shadow: var(--t-cmd-tips-box-shadow);
     -webkit-box-shadow: var(--t-cmd-tips-box-shadow);
     -o-box-shadow: var(--t-cmd-tips-box-shadow);
+    font-family: system-ui;
+}
+
+.t-cmd-tips-items {
+    min-width: 360px;
+    max-width: 500px;
+    max-height: 200px;
+}
+
+.t-cmd-tips-footer {
+    width: 100%;
+    padding: 5px 0;
+    text-indent: 6px;
+    line-height: var(--t-font-height);
+    background-color: var(--t-cmd-tips-footer-background-color);
+    color: var(--t-cmd-tips-footer-font-color);
+    font-size: 12px;
 }
 
 .t-cmd-tips-item {
