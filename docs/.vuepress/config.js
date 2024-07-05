@@ -14,6 +14,7 @@ const __dirname = getDirname(import.meta.url)
 //  修改：.vp=sidebar 改为 .vp-sidebar
 
 export default defineUserConfig({
+    base: '/vue-web-terminal/',
     lang: 'en-US',
     title: 'vue-web-terminal',
     dest: "dist",
