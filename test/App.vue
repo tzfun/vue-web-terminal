@@ -17,7 +17,7 @@
           :enable-default-command="true"
           :line-space="15"
           :init-log="initLog"
-          :enable-fold="false"
+          :enable-fold="true"
           @on-keydown="onKeyDown"
           @exec-cmd="onExecCmd"
           @on-active="onActive"

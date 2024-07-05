@@ -123,6 +123,7 @@
 .t-window div,
 .t-crude-font {
     font-size: var(--t-font-size);
+    font-family: unset;
     /*font-family: Monaco, Menlo, Consolas, monospace;*/
 }
 

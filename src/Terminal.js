@@ -120,6 +120,7 @@ export default {
                     top: 0,
                     left: 0
                 },
+                cursorIdx: 0,
                 items: [],
                 helpBox: {
                     //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
@@ -191,10 +192,13 @@ export default {
                             return
                         }
                     }
-                    if (key === 'escape' && this.tips.open) {
-                        this._closeTips(false)
-                        return;
+                    if(this.tips.open) {
+                        if (key === 'escape') {
+                            this._closeTips(false)
+                            return;
+                        }
                     }
+
 
                     if (this.cursorConf.show) {
                         if (key === 'tab') {
@@ -1053,11 +1057,7 @@ export default {
                 } else {
                     idx = this.tips.items.length - 1
                 }
-                let viewItem = this.$refs.terminalCmdTipsRef.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
-                if (viewItem) {
-                    viewItem.scrollIntoView({block: "start", behavior: "smooth"})
-                }
-                this.tips.selectedIndex = idx
+                this._switchTipsSelectedIdx(idx)
             } else {
                 this._switchPreCmd()
             }
@@ -1070,13 +1070,22 @@ export default {
                 } else {
                     idx = 0
                 }
-                let viewItem = this.$refs.terminalCmdTipsRef.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
-                if (viewItem) {
-                    viewItem.scrollIntoView({block: "start", behavior: "smooth"})
-                }
-                this.tips.selectedIndex = idx
+                this._switchTipsSelectedIdx(idx)
             } else {
                 this._switchNextCmd()
+            }
+        },
+        _switchTipsSelectedIdx(idx) {
+            let viewItem = this.$refs.terminalCmdTipsRef.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
+            if (viewItem) {
+                viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+            }
+            this.tips.selectedIndex = idx
+
+            //  重置input的光标
+            let input = this.$refs.terminalCmdInputRef
+            if (input) {
+                input.setSelectionRange(this.tips.cursorIdx, this.tips.cursorIdx)
             }
         },
         _switchPreCmd() {
@@ -1466,6 +1475,7 @@ export default {
         _calculateTipsPos(autoOpen = false) {
             if (autoOpen) {
                 this.tips.style.opacity = 0
+                this.tips.cursorIdx = this.$refs.terminalCmdInputRef.selectionStart
                 this.tips.open = true
             }
             if (this.tips.open) {
