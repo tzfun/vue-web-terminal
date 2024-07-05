@@ -612,7 +612,6 @@
     background-color: var(--t-cmd-tips-background-color);
     border-radius: var(--t-cmd-tips-border-radius);
     color: var(--t-cmd-tips-font-color);
-    overflow-y: auto;
     -ms-overflow-y: auto;
     cursor: context-menu;
     box-shadow: var(--t-cmd-tips-box-shadow);
@@ -626,6 +625,7 @@
     min-width: 360px;
     max-width: 500px;
     max-height: 200px;
+    overflow-y: auto;
 }
 
 .t-cmd-tips-footer {
