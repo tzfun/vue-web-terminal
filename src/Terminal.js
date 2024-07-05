@@ -42,7 +42,7 @@ import TViewCode from "@/components/TViewCode.vue";
 import TViewTable from "@/components/TViewTable.vue";
 import THelpBox from "@/components/THelpBox.vue";
 import TEditor from "@/components/TEditor.vue";
-import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE} from "@/js/Configuration";
+import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE, WINDOW_STYLE} from "@/js/Configuration";
 import {_parseANSI} from "@/js/ansi/ANSI";
 import {_screenType} from "@/js/Util";
 
@@ -125,7 +125,7 @@ export default {
                 helpBox: {
                     //  避免默认提示板与输入框遮挡，某些情况下需要隐藏提示板
                     open: false,
-                    defaultBoxRect: null,
+                    lastRect: null
                 },
                 selectedIndex: 0
             }
@@ -384,6 +384,9 @@ export default {
         }
     },
     computed: {
+        WINDOW_STYLE() {
+            return WINDOW_STYLE
+        },
         isEnableHelpBox: function () {
             return this.enableHelpBox && this.tips.items[this.tips.selectedIndex] && this.tips.items[this.tips.selectedIndex].command
         },
@@ -1130,20 +1133,18 @@ export default {
             this.$nextTick(() => {
                 this._checkInputCursor()
                 this._calculateCursorPos()
-                let helpBoxDom = this.$refs.terminalHelpBoxRef
-                if (helpBoxDom) {
-                    let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
-                    let helpBoxRect = this.tips.helpBox.defaultBoxRect || helpBoxDom.getBoundingClientRect()
-                    if (cursorRect && helpBoxRect && _pointInRect({
-                        x: cursorRect.x + this.byteLen.en * 2,
-                        y: cursorRect.y + FONT_HEIGHT
-                    }, helpBoxRect)) {
-                        this.tips.helpBox.open = false
-                        this.tips.helpBox.defaultBoxRect = helpBoxRect
-                    } else {
-                        this.tips.helpBox.open = true
-                        this.tips.helpBox.defaultBoxRect = null
-                    }
+
+                let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
+                let helpBoxRect = this.tips.helpBox.lastRect || (this.$refs.terminalHelpBoxRef ? this.$refs.terminalHelpBoxRef.getBoundingClientRect() : null)
+                if (cursorRect && helpBoxRect && _pointInRect({
+                    x: cursorRect.x + this.byteLen.en * 2,
+                    y: cursorRect.y + FONT_HEIGHT
+                }, helpBoxRect)) {
+                    this.tips.helpBox.open = false
+                    this.tips.helpBox.lastRect = helpBoxRect
+                } else {
+                    this.tips.helpBox.open = true
+                    this.tips.helpBox.lastRect = null
                 }
 
             })
@@ -1512,8 +1513,6 @@ export default {
                 this.tips.items = []
                 this.tips.selectedIndex = 0
             }
-            this.tips.helpBox.open = false
-            this.tips.helpBox.defaultBoxRect = null
         },
         _updateTipsItems(items, openTips = true) {
             if (this.enableInputTips && items && items instanceof Array && items.length > 0) {
@@ -1561,12 +1560,26 @@ export default {
             let windowRect = windowEle.getBoundingClientRect()
             let containerRect = this.$refs.terminalContainerRef.getBoundingClientRect()
             let hasScroll = windowEle.scrollHeight > windowEle.clientHeight || windowEle.offsetHeight > windowEle.clientHeight
+            let clientWidth = windowRect.width - WINDOW_STYLE.PADDING_RIGHT
+            if (hasScroll) {
+                //  滚动条宽度 8px
+                clientWidth -= 8
+            }
+
+            //  减去padding值
+            if (this.enableFold) {
+                clientWidth -= WINDOW_STYLE.PADDING_LEFT_FOLD
+            } else {
+                clientWidth -= WINDOW_STYLE.PADDING_LEFT
+            }
+            let clientHeight = windowRect.height - WINDOW_STYLE.PADDING_TOP - WINDOW_STYLE.PADDING_BOTTOM - this.headerHeight
+
             return {
                 pos: this._getPosition(),           //  窗口所在位置
                 screenWidth: containerRect.width,   //  窗口整体宽度
                 screenHeight: containerRect.height, //  窗口整体高度
-                clientWidth: hasScroll ? (windowRect.width - 48) : (windowRect.width - 40), //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
-                clientHeight: windowRect.height,    //  可显示内容范围高度
+                clientWidth: clientWidth, //  可显示内容范围高度，减去padding值，如果有滚动条去掉滚动条宽度
+                clientHeight: clientHeight,    //  可显示内容范围高度
                 charWidth: {
                     en: this.byteLen.en,            //  单个英文字符宽度
                     cn: this.byteLen.cn             //  单个中文字符宽度
