@@ -708,9 +708,9 @@ export default {
                         this.showInputLine = false
                         let success = (message) => {
                             let finish = () => {
-                                this._jumpToBottom()
                                 this.showInputLine = true
                                 this._endExecCallBack()
+                                this._jumpToBottom()
                             }
 
                             if (message != null) {
