@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDebounceFn } from '@vueuse/core'
 import {computed, nextTick, onMounted, onUnmounted, PropType, reactive, ref, watch} from "vue";
 import {
   AskConfig,
@@ -1242,7 +1243,7 @@ const _calculateStringWidth = (str: string): number => {
   return width
 }
 
-const _onInput = (e: InputEvent) => {
+const _onInput = useDebounceFn((e: InputEvent) => {
   if (props.inputFilter) {
     let value = (e.target as HTMLInputElement).value
     let newStr = props.inputFilter(e.data, value, e)
@@ -1277,8 +1278,7 @@ const _onInput = (e: InputEvent) => {
       tips.helpBox.lastRect = null
     }
   })
-
-}
+}, 100, { maxWait: 500 })
 
 const _checkInputCursor = () => {
   let eIn = terminalCmdInputRef.value
