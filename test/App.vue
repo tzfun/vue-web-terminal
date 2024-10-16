@@ -8,7 +8,26 @@
 import {Terminal, TerminalApi, TerminalAsk, TerminalElementInfo} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {reactive, ref} from "vue";
-
+const commandStore: Array<Command> = [
+  {
+    key: "COMMAND CONFIG"
+  },
+  {
+    key: "CONFIG",
+  },
+  {
+    key: "config",
+  },
+  {
+    key: "COMMAND CONFIG come on",
+  },
+  {
+    key: "CONFIG haha",
+  },
+  {
+    key: "Test CONFIG",
+  }
+]
 const initLog = reactive([{
   type: 'normal',
   content: "Terminal Initializing ..."
@@ -324,6 +343,7 @@ const onClick = (key: string, name: string) => {
           :enable-fold="true"
           :init-log="initLog"
           :theme="item.theme"
+          :command-store="commandStore"
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"

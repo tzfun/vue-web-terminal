@@ -775,16 +775,26 @@ const _searchCmd = () => {
     let reg = new RegExp(cmd.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'ig')
     let matchArray = []
 
+    let lowerCaseCmd = cmd.toLowerCase()
+
     for (const o of allCommandStore.value) {
       if (_nonEmpty(o.key)) {
         let res = o.key.match(reg)
         if (res != null) {
-          //  计算出匹配分数，之后根据分数进行排序
-          //  分数为 0 表示完全匹配
-          let score = res.index * 1000 + (cmd.length - res[0].length) + (o.key.length - res[0].length)
+          //  匹配分数集合：[是否完全匹配，是否大小写完全匹配，首个匹配索引位置，匹配次数, 源字符串长度]
+          let score = [0, 0, 0, 0, 0]
+          //  完全匹配
+          if (cmd.length === o.key.length) {
+            score[0] = 1
+          } else {
+            score[1] = res.includes(cmd) ? 1 : 0
+            score[2] = o.key.toLowerCase().indexOf(lowerCaseCmd)
+            score[3] = res.length
+            score[4] = o.key.length
+          }
           matchArray.push({
             item: o,
-            keyword: o.key.split(res[0]).join(`<span class="t-cmd-key">${res[0]}</span>`),
+            keyword: o.key.replace(reg, '<span class="t-cmd-key">$&</span>'),
             score: score
           })
         }
@@ -793,7 +803,40 @@ const _searchCmd = () => {
 
     if (matchArray.length > 0) {
       matchArray.sort((a, b) => {
-        return a.score - b.score
+        let scoreA = a.score
+        let scoreB = b.score
+
+        //  都完全匹配
+        if (scoreA[0] == 1 && scoreA[0] == scoreB[0]) {
+          return 0
+        }
+        //  a完全匹配
+        else if (scoreA[0] == 1) {
+          return -1
+        }
+        //  b完全匹配
+        else if (scoreB[0] == 1) {
+          return 1
+        }
+        //  均不完全匹配
+        else {
+          if (scoreA[1] == scoreB[1]) {
+            //  匹配索引位置越靠左越优先展示
+            let res = scoreA[2] - scoreB[2]
+            if (res == 0) {
+              //  匹配次数越多越优先展示
+              res = scoreB[3] - scoreA[3]
+              //  匹配源字符长度越短越优先展示
+              if (res == 0) {
+                res = scoreA[4] - scoreB[4]
+              }
+            }
+            return res
+          } else {
+            //  大小写完全匹配的优先展示
+            return scoreB[1] - scoreA[1]
+          }
+        }
       })
 
       let items = []
