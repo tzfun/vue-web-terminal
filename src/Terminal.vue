@@ -1642,7 +1642,7 @@ const _calculateTipsPos = (autoOpen: boolean = false) => {
 
       //  超下边界
       if (cursorRect.top + tipsRect.height + TOP_FLOAT > containerRect.top + containerRect.height) {
-        tipsRelativeTop -= (tipsRect.height + TOP_FLOAT)
+        tipsRelativeTop -= (tipsRect.height + TOP_FLOAT + 10)
       }
 
       tips.style.top = tipsRelativeTop
