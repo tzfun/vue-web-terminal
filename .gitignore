@@ -34,3 +34,4 @@ dist-ssr
 stats.html
 /docs/
 /docs/.vuepress/
+pnpm-lock.yaml

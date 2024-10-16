@@ -38,7 +38,7 @@ import {
   _isPhone,
   _isSafari,
   _nonEmpty,
-  _openUrl,
+  _openUrl, _parsePixelFromValue,
   _pointInRect,
   _screenType,
 } from "~/common/util.ts";
@@ -194,8 +194,8 @@ const containerStyle = computed(() => {
 })
 
 const isEnableHelpBox = computed<boolean>(() => {
-  let enable:boolean =  props.enableHelpBox
-  if(enable) {
+  let enable: boolean = props.enableHelpBox
+  if (enable) {
     let tipItem = tips.items[tips.selectedIndex]
     enable = !!(tipItem && tipItem.command);
   }
@@ -262,8 +262,8 @@ const tips = reactive({
   open: false,
   style: {
     opacity: 100,
-    top:0,
-    left:0
+    top: 0,
+    left: 0
   },
   cursorIdx: 0,
   items: <InputTipItem[]>[],
@@ -521,7 +521,7 @@ onMounted(() => {
       return _setCommand(options)
     } else if (type === 'switchAllFoldState') {
       return _switchAllFoldState(options)
-    }else {
+    } else {
       console.error(`Unsupported event type ${type} in instance ${getName()}`)
     }
   })
@@ -987,7 +987,7 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
   }
 }
 
-const _pushMessage0 = (message: Message, checkSize:boolean = false) => {
+const _pushMessage0 = (message: Message, checkSize: boolean = false) => {
   _filterMessageType(message)
   if (message.type !== 'cmdLine' && props.pushMessageBefore) {
     props.pushMessageBefore(message, getName())
@@ -1019,7 +1019,7 @@ const _checkLogSize = () => {
   let count = logSize.value - limit;
   while (count > 0) {
     let group = terminalLog.value[0]
-    let leftCount  = count - group.logs.length
+    let leftCount = count - group.logs.length
     if (leftCount >= 0) {
       terminalLog.value.splice(0, 1)
       logSize.value -= group.logs.length
@@ -1041,7 +1041,7 @@ const _appendMessage = (message: string) => {
   let lastMessage: Message
   for (let i = terminalLog.value.length - 1; i >= 0; i--) {
     let group = terminalLog.value[i]
-    for (let j = group.logs.length - 1; j>=0;j--) {
+    for (let j = group.logs.length - 1; j >= 0; j--) {
       let message = group.logs[j]
       if (message.type !== 'cmdLine') {
         lastMessage = message
@@ -1094,7 +1094,7 @@ const _resetCursorPos = (cmd?: string) => {
   _calculateByteLen()
 
   let input = terminalCmdInputRef.value
-  if(input) {
+  if (input) {
     input.focus()
     let cursorPos = command.value.length
     input.setSelectionRange(cursorPos, cursorPos)
@@ -1194,7 +1194,7 @@ const _inputKeyDown = () => {
   }
 }
 
-const _switchTipsSelectedIdx = (idx:number) => {
+const _switchTipsSelectedIdx = (idx: number) => {
   let viewItem = terminalCmdTipsRef.value.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
   if (viewItem) {
     viewItem.scrollIntoView({block: "start", behavior: "smooth"})
@@ -1342,17 +1342,8 @@ const _initContainerStyle = () => {
     let clientWidth = document.body.clientWidth
     let clientHeight = document.body.clientHeight
 
-    let confWidth = props.dragConf.width
-    let width = confWidth ? confWidth : 700
-
-    if (confWidth && typeof confWidth === 'string' && (confWidth as string).endsWith("%")) {
-      width = clientWidth * (parseInt(confWidth) / 100)
-    }
-    let confHeight = props.dragConf.height
-    let height: number = confHeight ? parseInt(confHeight) : 500
-    if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
-      height = clientHeight * (parseInt(confHeight) / 100)
-    }
+    let width: number = _parsePixelFromValue(props.dragConf.width, clientWidth, 700)
+    let height: number = _parsePixelFromValue(props.dragConf.height, clientHeight, 500)
 
     let zIndex = props.dragConf.zIndex ? props.dragConf.zIndex : 100
 
@@ -1579,13 +1570,13 @@ const _getCommand = () => {
 }
 
 const _setCommand = (cmd: any) => {
-  if(ask.open) {
+  if (ask.open) {
     console.error("Cannot call 'setCommand' api in ask mode")
     return
-  } else if(textEditor.open) {
+  } else if (textEditor.open) {
     console.error("Cannot call 'setCommand' api in editor mode")
     return
-  } else if(flash.open) {
+  } else if (flash.open) {
     console.error("Cannot call 'setCommand' api in flash mode")
     return
   }
@@ -1661,7 +1652,7 @@ const _calculateTipsPos = (autoOpen: boolean = false) => {
   }
 }
 
-const _closeTips = (clearItems:boolean = true) => {
+const _closeTips = (clearItems: boolean = true) => {
   tips.open = false
   if (clearItems) {
     tips.items = []
@@ -1669,7 +1660,7 @@ const _closeTips = (clearItems:boolean = true) => {
   }
 }
 
-const _updateTipsItems = (items: InputTipItem[], openTips:boolean = true) => {
+const _updateTipsItems = (items: InputTipItem[], openTips: boolean = true) => {
   if (props.enableInputTips && items && items instanceof Array && items.length > 0) {
     tips.items = items
     tips.selectedIndex = 0
@@ -1697,7 +1688,7 @@ const _selectTips = () => {
   }
   let selectedItem = tips.items[tips.selectedIndex]
   if (props.inputTipsSelectHandler) {
-    props.inputTipsSelectHandler(command.value, cursorConf.idx, selectedItem, (newCommand:string) => {
+    props.inputTipsSelectHandler(command.value, cursorConf.idx, selectedItem, (newCommand: string) => {
       if (newCommand && typeof newCommand === 'string') {
         command.value = newCommand
         _resetCursorPos()
@@ -1810,7 +1801,8 @@ defineExpose({
              :class="`t-log-box t-log-fold-container ${enableHoverStripe && group.logs.length > 1 ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
              :style="`margin-top:${lineSpace}px;`">
           <span v-if="_enableFold(group)">
-            <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
+            <span class="t-log-fold-icon t-log-fold-icon-active" v-if="group.fold"
+                  @click="_closeGroupFold(group)">+</span>
             <span class="t-log-fold-icon" v-else @click="group.fold = true">-</span>
             <span class="t-log-fold-line" v-if="!group.fold"/>
           </span>

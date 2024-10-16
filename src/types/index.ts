@@ -19,8 +19,8 @@ export type Position = {
 }
 
 export type DragConfig = {
-    width: number
-    height: string
+    width: number | string
+    height: number | string
     zIndex?: string
     init?: Position
     pinned?: boolean
