@@ -38,7 +38,8 @@ import {
   _isPhone,
   _isSafari,
   _nonEmpty,
-  _openUrl, _parsePixelFromValue,
+  _openUrl,
+  _parsePixelFromValue,
   _pointInRect,
   _screenType,
 } from "~/common/util.ts";
@@ -608,6 +609,16 @@ watch(
     () => props.showHeader,
     () => {
       updateHeaderHeight()
+    }
+)
+
+watch(
+    () => cursorConf,
+    () => {
+      _calculateTipsPos()
+    },
+    {
+      deep: true
     }
 )
 
@@ -1189,7 +1200,6 @@ const _resetCursorPos = (cmd?: string) => {
   cursorConf.left = 'unset'
   cursorConf.top = 'unset'
   cursorConf.width = cursorConf.defaultWidth
-  _calculateTipsPos()
 }
 
 const _calculateCursorPos = (cmdStr?: string) => {
@@ -1216,8 +1226,6 @@ const _calculateCursorPos = (cmdStr?: string) => {
   //  前一个字符的长度
   let preWidth = inputBoxParam.promptWidth
 
-  console.log(preWidth)
-
   //  先找到被覆盖字符的位置
   for (let i = 0; i <= idx; i++) {
     charWidth = _calculateStringWidth(cmd[i])
@@ -1233,8 +1241,6 @@ const _calculateCursorPos = (cmdStr?: string) => {
   cursorConf.left = pos.left + 'px'
   cursorConf.top = pos.top + 'px'
   cursorConf.width = charWidth
-
-  _calculateTipsPos()
 }
 
 const _cursorGoLeft = () => {
@@ -1342,8 +1348,6 @@ const _onInput = (e: InputEvent) => {
   } else {
     _searchCmd()
   }
-
-  _calculateTipsPos()
 
   nextTick(() => {
     _checkInputCursor()
@@ -1700,12 +1704,7 @@ const _switchAllFoldState = (fold: boolean) => {
   return count
 }
 
-const _calculateTipsPos = (autoOpen: boolean = false) => {
-  if (autoOpen) {
-    tips.style.opacity = 0
-    tips.cursorIdx = terminalCmdInputRef.value.selectionStart
-    tips.open = true
-  }
+const _calculateTipsPos = () => {
   if (tips.open) {
     nextTick(() => {
       let cursorRect = terminalCursorRef.value.getBoundingClientRect()
@@ -1713,21 +1712,21 @@ const _calculateTipsPos = (autoOpen: boolean = false) => {
       let tipsRect = terminalCmdTipsRef.value.getBoundingClientRect()
 
       let cursorRelativeLeft = cursorRect.left - containerRect.left
-      let cursorRelativeTop = cursorRect.top - containerRect.top
+      // let cursorRelativeTop = cursorRect.top - containerRect.top
 
-      const TOP_FLOAT = 25
+      let containerPaddingLeft = props.enableFold ? WINDOW_STYLE.PADDING_LEFT_FOLD : WINDOW_STYLE.PADDING_LEFT
 
-      let tipsRelativeTop = cursorRelativeTop + TOP_FLOAT
-      let tipsRelativeLeft = cursorRelativeLeft
+      let tipsRelativeTop = FONT_HEIGHT
+      let tipsRelativeLeft = cursorRelativeLeft - containerPaddingLeft
 
       //  超右边界
       if (cursorRect.left + tipsRect.width > containerRect.left + containerRect.width) {
-        tipsRelativeLeft -= tipsRect.width
+        tipsRelativeLeft -= (tipsRect.width - cursorConf.width)
       }
 
       //  超下边界
-      if (cursorRect.top + tipsRect.height + TOP_FLOAT > containerRect.top + containerRect.height) {
-        tipsRelativeTop -= (tipsRect.height + TOP_FLOAT + 10)
+      if (cursorRect.top + tipsRect.height > containerRect.top + containerRect.height) {
+        tipsRelativeTop = -tipsRect.height
       }
 
       tips.style.top = tipsRelativeTop
@@ -1750,7 +1749,9 @@ const _updateTipsItems = (items: InputTipItem[], openTips: boolean = true) => {
     tips.items = items
     tips.selectedIndex = 0
     if (openTips) {
-      _calculateTipsPos(true)
+      tips.style.opacity = 0
+      tips.cursorIdx = terminalCmdInputRef.value.selectionStart
+      tips.open = true
     } else {
       tips.open = false
     }
@@ -1956,6 +1957,24 @@ defineExpose({
             :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${enableCursorBlink ? 't-cursor-blink' : ''}`"
             ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
+          <span class="t-cmd-tips"
+                v-if="tips.open"
+                :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
+                ref="terminalCmdTipsRef">
+            <span class="t-cmd-tips-items">
+              <span v-for="(item,idx) in tips.items"
+                    :key="idx"
+                    @click="_clickTips(idx)"
+                    :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ')"
+              >
+                <span class="t-cmd-tips-content" v-html="item.content"></span>
+                <span class="t-cmd-tips-des" v-html="item.description"></span>
+              </span>
+            </span>
+            <span class="t-cmd-tips-footer">
+              Press <strong>Tab</strong> to choose the selected suggestion.
+            </span>
+          </span>
           <input type="text"
                  autofocus
                  v-model="command"
@@ -1991,24 +2010,7 @@ defineExpose({
                   ref="terminalTextEditorRef"></t-editor>
       </slot>
     </div>
-    <div class="t-cmd-tips"
-         v-if="tips.open"
-         :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
-         ref="terminalCmdTipsRef">
-      <div class="t-cmd-tips-items">
-        <div v-for="(item,idx) in tips.items"
-             :key="idx"
-             @click="_clickTips(idx)"
-             :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ')"
-        >
-          <span class="t-cmd-tips-content" v-html="item.content"></span>
-          <span class="t-cmd-tips-des" v-html="item.description"></span>
-        </div>
-      </div>
-      <div class="t-cmd-tips-footer">
-        Press <strong>Tab</strong> to choose the selected suggestion.
-      </div>
-    </div>
+
     <span class="t-flag t-crude-font t-disable-select">
       <span class="t-cmd-line-content t-disable-select" ref="terminalEnFlagRef">aaaaaaaaaa</span>
       <span class="t-cmd-line-content t-disable-select" ref="terminalCnFlagRef">你你你你你你你你你你</span>
