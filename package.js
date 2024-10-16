@@ -38,7 +38,7 @@ function copyTypes() {
     console.log(`copied types.d.ts`)
 }
 
-copyDir('./src/css/theme', './lib/theme');
+// copyDir('./src/css/theme', './lib/theme');
 deleteFile('./lib/ansi')
 deleteFile('./lib/common')
 deleteFile('./lib/components')

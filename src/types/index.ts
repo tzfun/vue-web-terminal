@@ -56,6 +56,7 @@ export type CmdHistory = {
 export type Options = {
     highlight: object
     codemirror: object
+    themes: Record<string, string>
 }
 
 export type MessageContentTable = {

@@ -420,7 +420,7 @@ export function _parsePixelFromValue(value: number | string, parentPixel: number
     if (value) {
         if (typeof value === 'string') {
             if (value.endsWith("%")) {
-                pixel = (parentPixel * (parseFloat(value) / 100)).toFixed(2)
+                pixel = (parentPixel * (parseFloat(value) / 100))
             } else if (value.endsWith("px")) {
                 pixel = parseFloat(value)
             } else {

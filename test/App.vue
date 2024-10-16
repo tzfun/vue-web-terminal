@@ -4,7 +4,7 @@
 // import {Command} from "../lib/types";
 
 // import '~/css/theme/light.css'
-import '~/css/theme/dark.css'
+// import '~/css/theme/dark.css'
 import {Terminal, TerminalApi, TerminalAsk, TerminalElementInfo} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {reactive, ref} from "vue";
@@ -20,7 +20,7 @@ const initLog = reactive([{
   content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn. Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
 }])
 
-const terminals = ref<any>([
+const terminals = ref<Array<any>>([
   {
     show: true,
     name: 'terminal-test',
@@ -35,7 +35,8 @@ const terminals = ref<any>([
       },
       pinned: false
     },
-    showHeader: true
+    showHeader: true,
+    theme: 'dark'
   }
 ])
 
@@ -114,7 +115,7 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
       }
     })
   } else if (key === 'close') {
-    closeWindow(name)
+    closeWindow(name, true)
     success()
   } else if (key === 'new') {
     let seq = terminals.value.length
@@ -206,6 +207,26 @@ const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: 
       type: 'json',
       content: TerminalApi.elementInfo(name)
     })
+  } else if (key === 'theme') {
+    let theme = command.split(" ")[1]
+    if (theme.match("dark|light")) {
+      terminals.value.forEach((o: any) => {
+        if (o.name === name) {
+          o.theme = theme
+        }
+      })
+      success()
+    } else {
+      failed("Invalid theme")
+    }
+  } else if (key === 'name') {
+    let newName = command.split(" ")[1]
+    terminals.value.forEach((o: any) => {
+      if (o.name === name) {
+        o.name = newName
+      }
+    })
+    success()
   } else {
     failed("Unknown command: " + key)
   }
@@ -227,8 +248,8 @@ const onInactive = (name: string) => {
   })
 }
 
-const onResize = (info: TerminalElementInfo, name:string) => {
-  console.log(name,"resize =>",info)
+const onResize = (info: TerminalElementInfo, name: string) => {
+  console.log(name, "resize =>", info)
 }
 
 const pushMessageBefore = (message: Message, name: string) => {
@@ -243,24 +264,30 @@ const setCommand = () => {
   TerminalApi.setCommand(terminals.value[0].name, "The custom command -a xxx")
 }
 
-const closeWindow = (name:string) => {
+const closeWindow = (name: string, remove: boolean = false) => {
   let activeNext: string
-  terminals.value.forEach((o: any) => {
+  let idx = -1
+  for (let i = 0; i < terminals.value.length; i++) {
+    let o = terminals.value[i]
     if (o.name === name) {
       o.show = false
+      idx = i
     }
     if (o.show) {
       activeNext = o.name
     }
-  })
+  }
   if (activeNext) {
     TerminalApi.focus(activeNext, true)
+  }
+  if (remove && idx >= 0) {
+    terminals.value.splice(idx, 1)
   }
 }
 
 const onClick = (key: string, name: string) => {
   if (key === 'close') {
-    closeWindow(name)
+    closeWindow(name, true)
   }
 }
 
@@ -279,7 +306,7 @@ const onClick = (key: string, name: string) => {
     <!--      </terminal>-->
     <!--    </div>-->
 
-    <div v-for="(item,i) in terminals" :key="i">
+    <div v-for="item in terminals" :key="item.name">
       <terminal
           v-show="item.show"
           :name="item.name"
@@ -296,6 +323,7 @@ const onClick = (key: string, name: string) => {
           enable-hover-stripe
           :enable-fold="true"
           :init-log="initLog"
+          :theme="item.theme"
           @exec-cmd="onExecCmd"
           @on-active="onActive"
           @on-inactive="onInactive"

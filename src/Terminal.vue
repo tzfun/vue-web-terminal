@@ -42,7 +42,7 @@ import {
   _pointInRect,
   _screenType,
 } from "~/common/util.ts";
-import api, {register, rename, unregister} from "~/common/api";
+import api, {getOptions, register, rename, unregister} from "~/common/api";
 import {DEFAULT_COMMANDS, WINDOW_STYLE} from "~/common/configuration.ts";
 import {_parseANSI} from "~/ansi";
 import store from "~/common/store";
@@ -53,6 +53,9 @@ import TViewerCode from "~/components/TViewerCode.vue";
 import TViewerTable from "~/components/TViewerTable.vue";
 import THelpBox from "~/components/THelpBox.vue";
 import TEditor from "~/components/TEditor.vue";
+
+import themeDark from "~/css/theme/dark.css"
+import themeLight from "~/css/theme/light.css"
 
 //  对应css变量 --t-font-height
 const FONT_HEIGHT = 19;
@@ -162,6 +165,11 @@ const props = defineProps({
   inputTipsSelectHandler: Function as PropType<InputTipsSelectHandlerFunc>,
   //  用户自定义命令搜索提示实现
   inputTipsSearchHandler: Function as PropType<InputTipsSearchHandlerFunc>,
+  //  主题
+  theme: {
+    type: String,
+    default: () => 'dark'
+  }
 })
 
 const draggable = computed<boolean>(() => {
@@ -303,6 +311,8 @@ const resizeObserver = ref<ResizeObserver>()
 
 onMounted(() => {
   emits('init-before', getName())
+
+  setTheme(props.theme)
 
   _initContainerStyle()
 
@@ -529,16 +539,33 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  //  通知
   emits('destroyed', getName())
+
+  //  注销事件监听器
   _eventOff(window, 'keydown', keydownListener.value)
   _eventOff(window, "click", clickListener.value)
   if (resizeObserver.value && terminalHeaderRef.value) {
     resizeObserver.value.unobserve(terminalHeaderRef.value)
     resizeObserver.value = null
   }
+
+  //  移除样式文件
+  let style = document.getElementById(getThemeStyleId(getName()))
+  if (style) {
+    document.body.removeChild(style)
+  }
+
+  //  注销本地数据
   unregister(getName())
 })
 
+//  监听主题
+watch(() => props.theme, (t) => {
+  setTheme(t)
+})
+
+//  监听上下文
 watch(
     () => props.context,
     () => {
@@ -549,13 +576,18 @@ watch(
     }
 )
 
+//  监听改名称
 watch(
     () => props.name,
     (newVal, oldVal) => {
-      rename(newVal ? newVal : getName(), oldVal ? oldVal : _name.value, terminalListener.value)
+      let newName = newVal ? newVal : getName()
+      let oldName = oldVal ? oldVal : _name.value
+      rename(newName, oldName, terminalListener.value)
+      changeThemeFlag(newName, oldName)
     }
 )
 
+//  监听层级变化
 watch(
     () => {
       if (props.dragConf) {
@@ -571,6 +603,7 @@ watch(
     }
 )
 
+//  监听header显示
 watch(
     () => props.showHeader,
     () => {
@@ -604,6 +637,58 @@ const getName = () => {
     _name.value = generateTerminalName();
   }
   return _name.value;
+}
+
+const getThemeStyleId = (salt: string): string => {
+  return `t-theme-style-${salt}`
+}
+
+/**
+ * 设置主题
+ * @param theme
+ */
+const setTheme = (theme: string) => {
+  let customThemes = getOptions().themes
+  let themeStyle
+  if (customThemes && customThemes[theme]) {
+    themeStyle = customThemes[theme]
+  } else if (theme === 'dark') {
+    themeStyle = themeDark
+  } else if (theme === 'light') {
+    themeStyle = themeLight
+  } else {
+    console.warn("The specified terminal theme style was not found:", theme)
+    return
+  }
+  let css = themeStyle.match(/^.*\{(.*)}\s*$/s)[1]
+
+  themeStyle = `#t-${getName()} { ${css} }`
+
+  let tagId = getThemeStyleId(getName())
+  let styleTag = document.getElementById(tagId)
+  if (styleTag) {
+    styleTag.innerHTML = themeStyle
+  } else {
+    let themeLink = document.createElement("style")
+    themeLink.innerHTML = themeStyle
+    themeLink.id = tagId
+    document.body.appendChild(themeLink)
+  }
+}
+
+/**
+ * 当改名时，需更新css文件
+ * @param newName 新名
+ * @param oldName 旧名
+ */
+const changeThemeFlag = (newName: string, oldName: string) => {
+  let newTagId = getThemeStyleId(newName)
+  let oldThemeStyle = document.getElementById(getThemeStyleId(oldName))
+  if (oldThemeStyle) {
+    let style = oldThemeStyle.innerHTML.replace(`#t-${oldName}`, `#t-${newName}`)
+    oldThemeStyle.id = newTagId
+    oldThemeStyle.innerHTML = style
+  }
 }
 
 const _clearLog = (clearHistory: boolean) => {
@@ -1770,6 +1855,7 @@ defineExpose({
 
 <template>
   <div :class="'t-container ' + (isActive ? '' : 't-disable-select')"
+       :id="`t-${getName()}`"
        :style="containerStyle"
        ref="terminalContainerRef">
     <div v-if="draggable">

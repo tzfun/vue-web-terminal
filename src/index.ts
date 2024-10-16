@@ -5,7 +5,7 @@ import 'vue-json-viewer/style.css'
 import type {App} from 'vue'
 import TerminalStore from "./common/store"
 import TerminalApi, {setOptions} from "./common/api"
-import {configHighlight, configCodemirror, rename} from "./common/api"
+import {configHighlight, configCodemirror, configTheme} from "./common/api"
 import Terminal from "./Terminal.vue"
 import {Options, TerminalAsk, TerminalFlash} from "./types"
 
@@ -28,7 +28,7 @@ export {
     TerminalFlash,
     configHighlight,
     configCodemirror,
-    rename
+    configTheme
 }
 
 export default Terminal
