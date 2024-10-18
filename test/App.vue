@@ -60,7 +60,8 @@ const terminals = ref<Array<any>>([
   }
 ])
 
-const onExecCmd = (key: string, command: Command, success: SuccessFunc, failed: FailedFunc, name: string) => {
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc, name: string) => {
+  console.log(`Executed command is '${command}'`)
   if (key === 'list') {
     success("hello")
     TerminalApi.pushMessage(name, {
@@ -311,13 +312,25 @@ const onClick = (key: string, name: string) => {
   }
 }
 
+const textAreaKeyDown = (e: KeyboardEvent) => {
+  console.log(e)
+  if (e.key === 'Enter') {
+    e.preventDefault()
+  }
+}
+
+const textAreaKeyEnter = () => {
+  console.log("input enter")
+}
 </script>
 <template>
   <div id="app">
 
     <button @click="getCommand">get command</button>
     <button @click="setCommand">set command</button>
-    <textarea v-model="testInputValue"/>
+    <textarea v-model="testInputValue"
+              @keydown="textAreaKeyDown"
+              @keyup.enter="textAreaKeyEnter"/>
 
     <!--    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">-->
     <!--      <terminal-->

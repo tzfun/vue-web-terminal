@@ -952,7 +952,6 @@ const _printHelp = (regExp: RegExp, srcStr: string) => {
 }
 
 const _inputEnter = (e: KeyboardEvent) => {
-  e.preventDefault()
   if (e.ctrlKey) {
     if (command.value.length > 0) {
       let cursorIdx = cursorConf.idx
@@ -967,18 +966,6 @@ const _inputEnter = (e: KeyboardEvent) => {
       })
     }
   } else {
-    //  因无法阻止回车输入，这里手动删掉前后一个回车
-    let cursorIdx = terminalCmdInputRef.value.selectionStart
-    let enterIdx = -1
-    if (command.value[cursorIdx] == '\n') {
-      enterIdx = cursorIdx
-    } else if (command.value[cursorIdx - 1] == '\n') {
-      enterIdx = cursorIdx - 1
-    }
-
-    if (enterIdx >= 0) {
-      command.value = command.value.substring(0, enterIdx) + command.value.substring(enterIdx + 1)
-    }
     _execute()
   }
 }
@@ -1290,7 +1277,6 @@ const _calculateCursorPos = (cmdStr?: string) => {
   _calculateByteLen()
 
   if (idx < 0 || idx >= cmd.length) {
-    console.debug(`reset cursor, idx: ${idx}, cmd.length: ${cmd.length}`)
     _resetCursorPos()
     return
   }
@@ -1485,11 +1471,17 @@ const _onInputKeydown = (e: KeyboardEvent) => {
   } else if (key === 'arrowright') {
     _checkInputCursor()
     _cursorGoRight()
+  } else if (key === 'enter') {
+    e.preventDefault()
   }
 }
 
 const _onInputKeyup = (e: KeyboardEvent) => {
   let key = e.key.toLowerCase()
+  if (key === 'enter') {
+    e.preventDefault()
+    return
+  }
   let code = e.code.toLowerCase()
   if (key === 'home' || key === 'end' || code === 'altleft' || code === 'metaleft' || code === 'controlleft'
       || ((e.ctrlKey || e.metaKey || e.altKey) && (key === 'arrowright' || key === 'arrowleft'))) {
