@@ -88,6 +88,7 @@ Thank you for your support, your support is the author's motivation! (Sort by do
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - ￥150
 * [lilqilie](https://github.com/lilqilie) - ￥20
 * [h1xa](https://ctf.show) - ￥66
+* [GatsbyZhong](https://github.com/GatsbyZhong) - ￥10
 
 ## License
 
