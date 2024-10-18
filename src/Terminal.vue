@@ -55,8 +55,8 @@ import TViewerTable from "~/components/TViewerTable.vue";
 import THelpBox from "~/components/THelpBox.vue";
 import TEditor from "~/components/TEditor.vue";
 
-import themeDark from "~/css/theme/dark.css"
-import themeLight from "~/css/theme/light.css"
+import themeDark from "~/css/theme/dark.css?inline"
+import themeLight from "~/css/theme/light.css?inline"
 
 //  对应css变量 --t-font-height
 const FONT_HEIGHT = 19;
@@ -285,23 +285,23 @@ const tips = reactive({
 })
 
 //  references
-const terminalContainerRef = ref(null)
-const terminalHeaderRef = ref(null)
-const terminalWindowRef = ref(null)
-const terminalCmdInputRef = ref(null)
-const terminalAskInputRef = ref(null)
-const terminalInputBoxRef = ref(null)
-const terminalInputPromptRef = ref(null)
-const terminalEnFlagRef = ref(null)
-const terminalCnFlagRef = ref(null)
-const terminalTextEditorRef = ref(null)
-const terminalCursorRef = ref(null)
-const terminalHelpBoxRef = ref(null)
-const resizeLTRef = ref(null)
-const resizeRTRef = ref(null)
-const resizeLBRef = ref(null)
-const resizeRBRef = ref(null)
-const terminalCmdTipsRef = ref(null)
+const terminalContainerRef = ref<HTMLDivElement>(null)
+const terminalHeaderRef = ref<HTMLDivElement>(null)
+const terminalWindowRef = ref<HTMLDivElement>(null)
+const terminalCmdInputRef = ref<HTMLInputElement>(null)
+const terminalAskInputRef = ref<HTMLInputElement>(null)
+const terminalInputBoxRef = ref<HTMLParagraphElement>(null)
+const terminalInputPromptRef = ref<HTMLSpanElement>(null)
+const terminalEnFlagRef = ref<HTMLSpanElement>(null)
+const terminalCnFlagRef = ref<HTMLSpanElement>(null)
+const terminalTextEditorRef = ref<InstanceType<TEditor>>(null)
+const terminalCursorRef = ref<HTMLSpanElement>(null)
+const terminalHelpBoxRef = ref<InstanceType<THelpBox>>(null)
+const resizeLTRef = ref<HTMLDivElement>(null)
+const resizeRTRef = ref<HTMLDivElement>(null)
+const resizeLBRef = ref<HTMLDivElement>(null)
+const resizeRBRef = ref<HTMLDivElement>(null)
+const terminalCmdTipsRef = ref<HTMLSpanElement>(null)
 
 //  listeners
 const clickListener = ref()
@@ -421,8 +421,10 @@ onMounted(() => {
           return;
         }
         text = text.trim()
+            .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
         const cmd = command.value;
-        command.value = cmd && cmd.length ? `${cmd}${text}` : text;
+        command.value = cmd && cmd.length > 0 ? `${cmd}${text}` : text;
         _focus()
       }).catch(error => {
         console.error(error);
@@ -949,6 +951,38 @@ const _printHelp = (regExp: RegExp, srcStr: string) => {
   })
 }
 
+const _inputEnter = (e: KeyboardEvent) => {
+  e.preventDefault()
+  if (e.ctrlKey) {
+    if (command.value.length > 0) {
+      let cursorIdx = cursorConf.idx
+      command.value = command.value.substring(0, cursorIdx) + '\n' + command.value.substring(cursorIdx)
+
+      cursorIdx++
+      //  恢复光标位置
+      nextTick(() => {
+        terminalCmdInputRef.value.selectionStart = cursorIdx
+        terminalCmdInputRef.value.selectionEnd = cursorIdx
+        cursorConf.idx = cursorIdx
+      })
+    }
+  } else {
+    //  因无法阻止回车输入，这里手动删掉前后一个回车
+    let cursorIdx = terminalCmdInputRef.value.selectionStart
+    let enterIdx = -1
+    if (command.value[cursorIdx] == '\n') {
+      enterIdx = cursorIdx
+    } else if (command.value[cursorIdx - 1] == '\n') {
+      enterIdx = cursorIdx - 1
+    }
+
+    if (enterIdx >= 0) {
+      command.value = command.value.substring(0, enterIdx) + command.value.substring(enterIdx + 1)
+    }
+    _execute()
+  }
+}
+
 const _execute = () => {
   _closeTips(true)
   _saveCurCommand();
@@ -1209,22 +1243,25 @@ const _jumpToBottom = () => {
   nextTick(() => {
     let box = terminalWindowRef.value
     if (box != null) {
-      box.scrollTo({top: box.scrollHeight, behavior: props.scrollMode})
+      box.scrollTo({
+        top: box.scrollHeight,
+        behavior: props.scrollMode
+      })
     }
   }).then(() => {
   })
 }
 
 const _saveCurCommand = () => {
-  if (_nonEmpty(command.value)) {
-    store.push(getName(), command.value)
+  let cmd = command.value = command.value.trim()
+  if (cmd.length > 0) {
+    store.push(getName(), cmd)
   }
 
   let group = _newTerminalLogGroup()
-
   group.logs.push({
     type: "cmdLine",
-    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(command.value)}`
+    content: `${_html(props.context)}${props.contextSuffix}${_commandFormatter(cmd)}`
   });
   _jumpToBottom()
 }
@@ -1246,13 +1283,14 @@ const _resetCursorPos = (cmd?: string) => {
 }
 
 const _calculateCursorPos = (cmdStr?: string) => {
+  let cmd = cmdStr ? cmdStr : command.value
   //  idx可以认为是需要光标覆盖字符的索引
   let idx = cursorConf.idx
-  let cmd = cmdStr ? cmdStr : command.value
 
   _calculateByteLen()
 
   if (idx < 0 || idx >= cmd.length) {
+    console.debug(`reset cursor, idx: ${idx}, cmd.length: ${cmd.length}`)
     _resetCursorPos()
     return
   }
@@ -1266,14 +1304,32 @@ const _calculateCursorPos = (cmdStr?: string) => {
   let pos = {left: 0, top: 0}
   //  当前字符长度
   let charWidth = cursorConf.defaultWidth
-  //  前一个字符的长度
-  let preWidth = inputBoxParam.promptWidth
+  //  前面字符的长度
+  let lastCharWidth = inputBoxParam.promptWidth
+  //  前一个字符是否是回车换行
+  let lastCharIsEnter = false
 
   //  先找到被覆盖字符的位置
   for (let i = 0; i <= idx; i++) {
+    let char = cmd[i]
+
+    if (lastCharIsEnter) {
+      pos.top += FONT_HEIGHT
+      pos.left = 0
+      lastCharWidth = 0
+    }
+
+    if (char === '\n') {
+      pos.left += lastCharWidth
+      lastCharIsEnter = true
+      continue
+    } else {
+      lastCharIsEnter = false
+    }
+
     charWidth = _calculateStringWidth(cmd[i])
-    pos.left += preWidth
-    preWidth = charWidth
+    pos.left += lastCharWidth
+    lastCharWidth = charWidth
     if (pos.left > lineWidth) {
       //  行高 对应 css 变量 --t-font-height
       pos.top += FONT_HEIGHT
@@ -1351,6 +1407,7 @@ const _switchPreCmd = () => {
   _resetCursorPos()
   store.setIdx(getName(), cmdIdx)
   _searchCmd()
+  _jumpToBottom()
 }
 
 const _switchNextCmd = () => {
@@ -1366,6 +1423,7 @@ const _switchNextCmd = () => {
   _resetCursorPos()
   store.setIdx(getName(), cmdIdx)
   _searchCmd()
+  _jumpToBottom()
 }
 
 const _calculateStringWidth = (str: string): number => {
@@ -1662,7 +1720,12 @@ const _commandFormatter = (cmd: string): string => {
   if (props.commandFormatter) {
     return props.commandFormatter(cmd)
   }
-  return _defaultMergedCommandFormatter(cmd)
+  let splitsCode = []
+  let splits = cmd.split(/\r\n|\n|\r/g)
+  for (let c of splits) {
+    splitsCode.push(_defaultMergedCommandFormatter(c))
+  }
+  return splitsCode.join("<br/>")
 }
 
 const _onAskInput = () => {
@@ -2018,20 +2081,19 @@ defineExpose({
               Press <strong>Tab</strong> to choose the selected suggestion.
             </span>
           </span>
-          <input type="text"
-                 autofocus
-                 v-model="command"
-                 class="t-cmd-input t-disable-select"
-                 ref="terminalCmdInputRef"
-                 autocomplete="off"
-                 auto-complete="new-password"
-                 @keydown="_onInputKeydown"
-                 @keyup="_onInputKeyup"
-                 @input="_onInput"
-                 @focusin="cursorConf.show = true"
-                 @keyup.up.exact="_inputKeyUp"
-                 @keyup.down.exact="_inputKeyDown"
-                 @keyup.enter="_execute">
+          <textarea autofocus
+                    v-model="command"
+                    class="t-cmd-input t-disable-select"
+                    ref="terminalCmdInputRef"
+                    autocomplete="off"
+                    auto-complete="new-password"
+                    @keydown="_onInputKeydown"
+                    @keyup="_onInputKeyup"
+                    @input="_onInput"
+                    @focusin="cursorConf.show = true"
+                    @keyup.up.exact="_inputKeyUp"
+                    @keyup.down.exact="_inputKeyDown"
+                    @keyup.enter="_inputEnter"/>
         </p>
       </div>
     </div>

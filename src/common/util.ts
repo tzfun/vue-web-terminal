@@ -64,6 +64,9 @@ export function _isSafari() {
 }
 
 export function _getByteLen(val: string) {
+    if (val.match(/[\n\r]/)) {
+        return 0
+    }
     let len = 0;
     for (let i = 0; i < val.length; i++) {
         // eslint-disable-next-line no-control-regex
@@ -232,6 +235,18 @@ export function _defaultMergedCommandFormatter(cmd: string): string {
             isCmdKey = false
         } else if (char.startsWith("-")) {
             formatted += `<span class="t-cmd-arg">${char}</span>`
+        } else if (char === '\r') {
+            //  \r\n换行
+            if (i < split.length - 1 && split[i + 1] === '\n') {
+                formatted += `<br/>`
+                i++
+            }
+            // \r换行
+            else {
+                formatted += `<br/>`
+            }
+        } else if (char === '\n') {
+            formatted += `<br/>`
         } else if (char.length > 0) {
             if (char === '|') {
                 isCmdKey = true

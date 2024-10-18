@@ -38,12 +38,13 @@ const initLog = reactive([{
   type: 'normal',
   content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn. Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
 }])
+const testInputValue = ref("")
 
 const terminals = ref<Array<any>>([
   {
     show: true,
     name: 'terminal-test',
-    context: '/vue-web-terminal/test<br/>123/线上服/2',
+    context: '/vue-web-terminal/test<br/>123/阿里云/2',
     dragConf: {
       width: "60%",
       height: "50%",
@@ -316,6 +317,7 @@ const onClick = (key: string, name: string) => {
 
     <button @click="getCommand">get command</button>
     <button @click="setCommand">set command</button>
+    <textarea v-model="testInputValue"/>
 
     <!--    <div style="width: 700px;height: 400px;margin-left: 150px;margin-top: 300px">-->
     <!--      <terminal-->
