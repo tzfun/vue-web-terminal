@@ -18,17 +18,19 @@ def execute(command, with_result = False,encoding = ENCODING):
         else:
             raise Exception(f"exit with {p.returncode}, stderr: {stderr}")
     else:
-        subprocess.call(command, shell=True, encoding=encoding)
+        returncode = subprocess.call(command, shell=True, encoding=encoding)
+        if returncode != 0:
+            raise Exception(f"exit with {returncode}")
 
 if __name__ == '__main__':
     registry = execute(f'npm config get registry', with_result=True)
     node_version = execute(f'node -v', with_result=True)
+    if not node_version.startswith(f'v{NODE_VERSION}'):
+        raise Exception(f'Node version must be {NODE_VERSION}')
     try:
-        execute(f'nvm use {NODE_VERSION}')
         execute(f'pnpm install')
         execute(f'pnpm run build')
         execute(f'npm config set registry {NPM_REPOSITORY}')
         execute(f'npm publish')
     finally:
-        execute(f'nvm use {node_version}')
         execute(f'npm config set registry {registry}')

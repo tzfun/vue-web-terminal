@@ -117,7 +117,7 @@ const props = defineProps({
   commandFormatter: Function as PropType<CommandFormatterFunc>,
   //  滚动条滚动模式
   scrollMode: {
-    type: String,
+    type: String as PropType<ScrollBehavior>,
     default: 'smooth'
   },
   //  在 push 消息之前触发的钩子函数，只能对message对象的属性进行修改
@@ -285,23 +285,23 @@ const tips = reactive({
 })
 
 //  references
-const terminalContainerRef = ref<HTMLDivElement>(null)
-const terminalHeaderRef = ref<HTMLDivElement>(null)
-const terminalWindowRef = ref<HTMLDivElement>(null)
-const terminalCmdInputRef = ref<HTMLInputElement>(null)
-const terminalAskInputRef = ref<HTMLInputElement>(null)
-const terminalInputBoxRef = ref<HTMLParagraphElement>(null)
-const terminalInputPromptRef = ref<HTMLSpanElement>(null)
-const terminalEnFlagRef = ref<HTMLSpanElement>(null)
-const terminalCnFlagRef = ref<HTMLSpanElement>(null)
-const terminalTextEditorRef = ref<InstanceType<TEditor>>(null)
-const terminalCursorRef = ref<HTMLSpanElement>(null)
-const terminalHelpBoxRef = ref<InstanceType<THelpBox>>(null)
-const resizeLTRef = ref<HTMLDivElement>(null)
-const resizeRTRef = ref<HTMLDivElement>(null)
-const resizeLBRef = ref<HTMLDivElement>(null)
-const resizeRBRef = ref<HTMLDivElement>(null)
-const terminalCmdTipsRef = ref<HTMLSpanElement>(null)
+const terminalContainerRef = ref(null)
+const terminalHeaderRef = ref(null)
+const terminalWindowRef = ref(null)
+const terminalCmdInputRef = ref(null)
+const terminalAskInputRef = ref(null)
+const terminalInputBoxRef = ref(null)
+const terminalInputPromptRef = ref(null)
+const terminalEnFlagRef = ref(null)
+const terminalCnFlagRef = ref(null)
+const terminalTextEditorRef = ref<InstanceType<typeof TEditor>>(null)
+const terminalCursorRef = ref(null)
+const terminalHelpBoxRef = ref<InstanceType<typeof THelpBox>>(null)
+const resizeLTRef = ref(null)
+const resizeRTRef = ref(null)
+const resizeLBRef = ref(null)
+const resizeRBRef = ref(null)
+const terminalCmdTipsRef = ref(null)
 
 //  listeners
 const clickListener = ref()
@@ -872,6 +872,7 @@ const _focus = (enforceFocus?: boolean | MouseEvent) => {
       input = terminalAskInputRef.value
       cursorConf.show = false
     } else if (textEditor.open) {
+      //  @ts-ignore
       input = terminalTextEditorRef.value
       cursorConf.show = false
     } else {
