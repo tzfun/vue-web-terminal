@@ -1,6 +1,6 @@
 {
   "name": "vue-web-terminal",
-  "version": "2.3.1-rc.1",
+  "version": "2.3.1",
   "description": "A beautiful web-side command line window plugin (native simulation). 一个漂亮的网页命令行插件（原生模拟）",
   "license": "Apache-2.0",
   "private": false,
