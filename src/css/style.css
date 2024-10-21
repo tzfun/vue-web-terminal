@@ -605,15 +605,17 @@
 }
 
 .t-cmd-tips {
-    --t-cmd-tips-box-shadow: 5px 5px 15px 0 rgb(116 129 153 / 30%);
+    --t-cmd-tips-box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.3);
 
     position: absolute;
+    display: block;
     z-index: 100;
     background-color: var(--t-cmd-tips-background-color);
     border-radius: var(--t-cmd-tips-border-radius);
     color: var(--t-cmd-tips-font-color);
     -ms-overflow-y: auto;
     cursor: context-menu;
+    font-weight: normal;
     box-shadow: var(--t-cmd-tips-box-shadow);
     -moz-box-shadow: var(--t-cmd-tips-box-shadow);
     -webkit-box-shadow: var(--t-cmd-tips-box-shadow);
@@ -622,6 +624,7 @@
 }
 
 .t-cmd-tips-items {
+    display: block;
     min-width: 280px;
     max-width: 500px;
     max-height: 200px;
@@ -629,6 +632,7 @@
 }
 
 .t-cmd-tips-footer {
+    display: block;
     width: 100%;
     padding: 5px 0;
     text-indent: 6px;
@@ -636,9 +640,14 @@
     background-color: var(--t-cmd-tips-footer-background-color);
     color: var(--t-cmd-tips-footer-font-color);
     font-size: 12px;
+    border-bottom-left-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-bottom-left-radius: var(--t-cmd-tips-border-radius);
+    border-bottom-right-radius: var(--t-cmd-tips-border-radius);
+    -webkit-border-bottom-right-radius: var(--t-cmd-tips-border-radius);
 }
 
 .t-cmd-tips-item {
+    display: block;
     padding: 5px 8px;
     text-overflow:ellipsis;
     overflow:hidden;
