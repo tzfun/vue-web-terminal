@@ -43,7 +43,7 @@ const testInputValue = ref("")
 const terminals = ref<Array<any>>([
   {
     show: true,
-    name: 'terminal-test',
+    name: 'terminal-test [default]',
     context: '/vue-web-terminal/test<br/>123/阿里云/2',
     dragConf: {
       width: "60%",

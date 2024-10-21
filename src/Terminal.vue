@@ -1962,7 +1962,7 @@ defineExpose({
 
 <template>
   <div :class="'t-container ' + (isActive ? '' : 't-disable-select')"
-       :id="`t-${getName()}`"
+       :id="`t-${parseNameHtmlSafely(getName())}`"
        :style="containerStyle"
        ref="terminalContainerRef">
     <div v-if="draggable">
