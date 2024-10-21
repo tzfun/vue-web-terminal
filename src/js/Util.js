@@ -398,3 +398,31 @@ export function _debounce(fn, delay = 200) {
         }, delay);
     };
 }
+
+/**
+ * 将配置值转为像素度单位值
+ * @param value {number | string} 配置值，如果为number值则单位默认为px，如果为string只支持百分比和px单位配置
+ * @param parentPixel 父元素的像素度，用于百分比计算
+ * @param defaultValue 默认值，如果解析失败则使用默认值
+ */
+export function _parsePixelFromValue(value, parentPixel, defaultValue) {
+    let pixel
+    if (value) {
+        if (typeof value === 'string') {
+            if (value.endsWith("%")) {
+                pixel = (parentPixel * (parseFloat(value) / 100)).toFixed(2)
+            } else if (value.endsWith("px")) {
+                pixel = parseFloat(value)
+            } else {
+                pixel = parseFloat(value)
+            }
+        } else if (typeof value === 'number') {
+            pixel = value
+        } else {
+            pixel = defaultValue
+        }
+    } else {
+        pixel = defaultValue
+    }
+    return pixel
+}

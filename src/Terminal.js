@@ -14,7 +14,7 @@ import {
     _isPhone,
     _isSafari,
     _nonEmpty,
-    _openUrl,
+    _openUrl, _parsePixelFromValue,
     _pointInRect
 } from "./js/Util.js";
 import historyStore from "@/js/TerminalStore.js";
@@ -192,7 +192,7 @@ export default {
                             return
                         }
                     }
-                    if(this.tips.open) {
+                    if (this.tips.open) {
                         if (key === 'escape') {
                             this._closeTips(false)
                             return;
@@ -1216,17 +1216,8 @@ export default {
                 let clientWidth = document.body.clientWidth
                 let clientHeight = document.body.clientHeight
 
-                let confWidth = this.dragConf.width
-                let width = confWidth == null ? 700 : confWidth
-
-                if (confWidth && typeof confWidth === 'string' && confWidth.endsWith("%")) {
-                    width = clientWidth * (parseInt(confWidth) / 100)
-                }
-                let confHeight = this.dragConf.height
-                let height = confHeight == null ? 500 : confHeight
-                if (confHeight && typeof confHeight === 'string' && confHeight.endsWith("%")) {
-                    height = clientHeight * (parseInt(confHeight) / 100)
-                }
+                let width = _parsePixelFromValue(this.dragConf.width, clientWidth, 700)
+                let height = _parsePixelFromValue(this.dragConf.height, clientHeight, 500)
 
                 let zIndex = this.dragConf.zIndex ? this.dragConf.zIndex : 100
 

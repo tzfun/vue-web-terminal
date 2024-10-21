@@ -25,3 +25,5 @@ pnpm-debug.log*
 /vue-web-terminal.js
 /docs/.vuepress/
 /stats.html
+yarn.lock
+pnpm-lock.yaml
