@@ -3,7 +3,8 @@
 .t-text-editor::-webkit-scrollbar,
 .t-vue-codemirror .vue-codemirror .CodeMirror .CodeMirror-hscrollbar::-webkit-scrollbar,
 .t-window pre::-webkit-scrollbar,
-.t-cmd-tips-items::-webkit-scrollbar
+.t-cmd-tips-items::-webkit-scrollbar,
+.t-cmd-help::-webkit-scrollbar
 {
     width: 8px;
     height: 8px;
@@ -14,7 +15,8 @@
 .t-text-editor::-webkit-scrollbar-button,
 .t-vue-codemirror .vue-codemirror .CodeMirror .CodeMirror-hscrollbar::-webkit-scrollbar-button,
 .t-window pre::-webkit-scrollbar-button,
-.t-cmd-tips-items::-webkit-scrollbar-button
+.t-cmd-tips-items::-webkit-scrollbar-button,
+.t-cmd-help::-webkit-scrollbar-button
 {
     width: 0;
     height: 0;
@@ -26,7 +28,8 @@
 .t-text-editor::-webkit-scrollbar-thumb,
 .t-vue-codemirror .vue-codemirror .CodeMirror .CodeMirror-hscrollbar::-webkit-scrollbar-thumb,
 .t-window pre::-webkit-scrollbar-thumb,
-.t-cmd-tips-items::-webkit-scrollbar-thumb
+.t-cmd-tips-items::-webkit-scrollbar-thumb,
+.t-cmd-help::-webkit-scrollbar-thumb
 {
     border-radius: 6px;
     border-style: dashed;
@@ -41,7 +44,8 @@
 .t-text-editor::-webkit-scrollbar-thumb:hover,
 .t-vue-codemirror .vue-codemirror .CodeMirror .CodeMirror-hscrollbar::-webkit-scrollbar-thumb:hover,
 .t-window pre::-webkit-scrollbar-thumb:hover,
-.t-cmd-tips-items::-webkit-scrollbar-thumb:hover
+.t-cmd-tips-items::-webkit-scrollbar-thumb:hover,
+.t-cmd-help::-webkit-scrollbar-thumb:hover
 {
     background: rgba(157, 165, 183, 0.7);
     cursor: pointer;
@@ -52,7 +56,8 @@
 .t-text-editor::-webkit-scrollbar-track,
 .t-vue-codemirror .vue-codemirror .CodeMirror .CodeMirror-hscrollbar::-webkit-scrollbar-track,
 .t-window pre::-webkit-scrollbar-track,
-.t-cmd-tips-items::-webkit-scrollbar-track
+.t-cmd-tips-items::-webkit-scrollbar-track,
+.t-cmd-help::-webkit-scrollbar-track
 {
     border-radius: 6px;
 }

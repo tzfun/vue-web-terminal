@@ -97,6 +97,24 @@
             :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${enableCursorBlink ? 't-cursor-blink' : ''}`"
             ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
+          <span class="t-cmd-tips"
+               v-if="tips.open"
+               :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
+               ref="terminalCmdTipsRef">
+            <span class="t-cmd-tips-items">
+              <span v-for="(item,idx) in tips.items"
+                   :key="idx"
+                   @click="_clickTips(idx)"
+                   :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ')"
+              >
+                <span class="t-cmd-tips-content" v-html="item.content"></span>
+                <span class="t-cmd-tips-des" v-html="item.description"></span>
+              </span>
+            </span>
+            <span class="t-cmd-tips-footer">
+              Press <strong>Tab</strong> to choose the selected suggestion.
+            </span>
+          </span>
           <input type="text"
                  autofocus="autofocus"
                  v-model="command"
@@ -129,24 +147,7 @@
         <t-editor :config="textEditor" @close="_textEditorClose" ref="terminalTextEditorRef"></t-editor>
       </slot>
     </div>
-    <div class="t-cmd-tips"
-         v-if="tips.open"
-         :style="`top: ${tips.style.top}px;left: ${tips.style.left}px;opacity: ${tips.style.opacity};`"
-         ref="terminalCmdTipsRef">
-      <div class="t-cmd-tips-items">
-        <div v-for="(item,idx) in tips.items"
-             :key="idx"
-             @click="_clickTips(idx)"
-             :class="'t-cmd-tips-item ' + (idx === tips.selectedIndex ? 't-cmd-tips-item-active ' : ' ') + (idx === 0 ? 't-cmd-tips-item-first ' : ' ')"
-        >
-          <span class="t-cmd-tips-content" v-html="item.content"></span>
-          <span class="t-cmd-tips-des" v-html="item.description"></span>
-        </div>
-      </div>
-      <div class="t-cmd-tips-footer">
-        Press <strong>Tab</strong> to choose the selected suggestion.
-      </div>
-    </div>
+
     <span class="t-flag t-crude-font t-disable-select">
       <span class="t-cmd-line-content" ref="terminalEnFlagRef">aaaaaaaaaa</span>
       <span class="t-cmd-line-content" ref="terminalCnFlagRef">你你你你你你你你你你</span>

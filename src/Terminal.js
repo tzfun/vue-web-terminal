@@ -400,6 +400,12 @@ export default {
                 console.log("changed theme",newVal)
                 this.setTheme(newVal)
             }
+        },
+        cursorConf: {
+            handler() {
+                this._calculateTipsPos()
+            },
+            deep: true
         }
     },
     computed: {
@@ -1051,7 +1057,6 @@ export default {
             this.cursorConf.left = 'unset'
             this.cursorConf.top = 'unset'
             this.cursorConf.width = this.cursorConf.defaultWidth
-            this._calculateTipsPos()
         },
         _calculateCursorPos(cmd) {
             //  idx可以认为是需要光标覆盖字符的索引
@@ -1092,8 +1097,6 @@ export default {
             this.cursorConf.left = pos.left + 'px'
             this.cursorConf.top = pos.top + 'px'
             this.cursorConf.width = charWidth
-
-            this._calculateTipsPos()
         },
         _cursorGoLeft() {
             if (this.cursorConf.idx > 0) {
@@ -1193,8 +1196,6 @@ export default {
             } else {
                 this._searchCmd()
             }
-
-            this._calculateTipsPos()
 
             this.$nextTick(() => {
                 this._checkInputCursor()
@@ -1521,12 +1522,7 @@ export default {
             }
             return count
         },
-        _calculateTipsPos(autoOpen = false) {
-            if (autoOpen) {
-                this.tips.style.opacity = 0
-                this.tips.cursorIdx = this.$refs.terminalCmdInputRef.selectionStart
-                this.tips.open = true
-            }
+        _calculateTipsPos() {
             if (this.tips.open) {
                 this.$nextTick(() => {
                     let cursorRect = this.$refs.terminalCursorRef.getBoundingClientRect()
@@ -1534,21 +1530,21 @@ export default {
                     let tipsRect = this.$refs.terminalCmdTipsRef.getBoundingClientRect()
 
                     let cursorRelativeLeft = cursorRect.left - containerRect.left
-                    let cursorRelativeTop = cursorRect.top - containerRect.top
+                    // let cursorRelativeTop = cursorRect.top - containerRect.top
 
-                    const TOP_FLOAT = 25
+                    let containerPaddingLeft = this.enableFold ? WINDOW_STYLE.PADDING_LEFT_FOLD : WINDOW_STYLE.PADDING_LEFT
 
-                    let tipsRelativeTop = cursorRelativeTop + TOP_FLOAT
-                    let tipsRelativeLeft = cursorRelativeLeft
+                    let tipsRelativeTop = FONT_HEIGHT
+                    let tipsRelativeLeft = cursorRelativeLeft - containerPaddingLeft
 
                     //  超右边界
                     if (cursorRect.left + tipsRect.width > containerRect.left + containerRect.width) {
-                        tipsRelativeLeft -= tipsRect.width
+                        tipsRelativeLeft -= (tipsRect.width - this.cursorConf.width)
                     }
 
                     //  超下边界
-                    if (cursorRect.top + tipsRect.height + TOP_FLOAT > containerRect.top + containerRect.height) {
-                        tipsRelativeTop -= (tipsRect.height + TOP_FLOAT + 10)
+                    if (cursorRect.top + tipsRect.height > containerRect.top + containerRect.height) {
+                        tipsRelativeTop = -tipsRect.height
                     }
 
                     this.tips.style.top = tipsRelativeTop
@@ -1569,7 +1565,9 @@ export default {
                 this.tips.items = items
                 this.tips.selectedIndex = 0
                 if (openTips) {
-                    this._calculateTipsPos(true)
+                    this.tips.style.opacity = 0
+                    this.tips.cursorIdx = this.$refs.terminalCmdInputRef.selectionStart
+                    this.tips.open = true
                 } else {
                     this.tips.open = false
                 }
