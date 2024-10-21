@@ -115,8 +115,7 @@
               Press <strong>Tab</strong> to choose the selected suggestion.
             </span>
           </span>
-          <input type="text"
-                 autofocus="autofocus"
+          <textarea autofocus
                  v-model="command"
                  class="t-cmd-input t-disable-select"
                  ref="terminalCmdInputRef"
@@ -128,7 +127,7 @@
                  @focusin="cursorConf.show = true"
                  @keyup.up.exact="_inputKeyUp"
                  @keyup.down.exact="_inputKeyDown"
-                 @keyup.enter="_execute">
+                 @keyup.enter="_inputEnter"/>
         </p>
       </div>
     </div>

@@ -231,8 +231,10 @@ export default {
                         return;
                     }
                     text = text.trim()
+                        .replace(/\r\n/g, '\n')
+                        .replace(/\r/g, '\n')
                     const command = this.command;
-                    this.command = command && command.length ? `${command}${text}` : text;
+                    this.command = command && command.length > 0 ? `${command}${text}` : text;
                     this._focus()
                 }).catch(error => {
                     console.error(error);
@@ -801,6 +803,24 @@ export default {
                 content: content
             })
         },
+        _inputEnter(e) {
+            if (e.ctrlKey) {
+                if (this.command.length > 0) {
+                    let cursorIdx = this.cursorConf.idx
+                    this.command = this.command.substring(0, cursorIdx) + '\n' + this.command.substring(cursorIdx)
+
+                    cursorIdx++
+                    //  恢复光标位置
+                    this.$nextTick(() => {
+                        this.$refs.terminalCmdInputRef.selectionStart = cursorIdx
+                        this.$refs.terminalCmdInputRef.selectionEnd = cursorIdx
+                        this.cursorConf.idx = cursorIdx
+                    })
+                }
+            } else {
+                this._execute()
+            }
+        },
         _execute() {
             this._closeTips(true)
             this._saveCurCommand();
@@ -1072,19 +1092,24 @@ export default {
             this.$nextTick(() => {
                 let box = this.$refs.terminalWindowRef
                 if (box != null) {
-                    box.scrollTo({top: box.scrollHeight, behavior: this.scrollMode})
+                    box.scrollTo({
+                        top: box.scrollHeight,
+                        behavior: this.scrollMode
+                    })
                 }
             })
         },
         _saveCurCommand() {
-            if (_nonEmpty(this.command)) {
-                historyStore.pushCmd(this.getName(), this.command)
+            let cmd = this.command = this.command.trim()
+
+            if (cmd.length > 0) {
+                historyStore.pushCmd(this.getName(), cmd)
             }
             let group = this._newTerminalLogGroup()
 
             group.logs.push({
                 type: MESSAGE_TYPE.CMD_LINE,
-                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(this.command)}`
+                content: `${_html(this.context)}${this.contextSuffix}${this._commandFormatter(cmd)}`
             });
             this._jumpToBottom()
         },
@@ -1102,14 +1127,15 @@ export default {
             this.cursorConf.top = 'unset'
             this.cursorConf.width = this.cursorConf.defaultWidth
         },
-        _calculateCursorPos(cmd) {
+        _calculateCursorPos(cmdStr) {
+            let cmd = cmdStr ? cmdStr : this.command
+
             //  idx可以认为是需要光标覆盖字符的索引
             let idx = this.cursorConf.idx
-            let command = cmd == null ? this.command : cmd
 
             this._calculateByteLen()
 
-            if (idx < 0 || idx >= command.length) {
+            if (idx < 0 || idx >= cmd.length) {
                 this._resetCursorPos()
                 return
             }
@@ -1123,14 +1149,33 @@ export default {
             let pos = {left: 0, top: 0}
             //  当前字符长度
             let charWidth = this.cursorConf.defaultWidth
-            //  前一个字符的长度
-            let preWidth = this.inputBoxParam.promptWidth
+            //  前面字符的长度
+            let lastCharWidth = this.inputBoxParam.promptWidth
+            //  前一个字符是否是回车换行
+            let lastCharIsEnter = false
 
             //  先找到被覆盖字符的位置
             for (let i = 0; i <= idx; i++) {
-                charWidth = this._calculateStringWidth(command[i])
-                pos.left += preWidth
-                preWidth = charWidth
+                let char = cmd[i]
+
+                if (lastCharIsEnter) {
+                    pos.top += FONT_HEIGHT
+                    pos.left = 0
+                    lastCharWidth = 0
+                }
+
+                if (char === '\n') {
+                    pos.left += lastCharWidth
+                    lastCharIsEnter = true
+                    continue
+                } else {
+                    lastCharIsEnter = false
+                }
+
+
+                charWidth = this._calculateStringWidth(cmd[i])
+                pos.left += lastCharWidth
+                lastCharWidth = charWidth
                 if (pos.left > lineWidth) {
                     //  行高 对应css变量 --t-font-height
                     pos.top += FONT_HEIGHT
@@ -1203,6 +1248,7 @@ export default {
             this._resetCursorPos()
             historyStore.setIdx(this.getName(), cmdIdx)
             this._searchCmd()
+            this._jumpToBottom()
         },
         _switchNextCmd() {
             let cmdLog = historyStore.getLog(this.getName())
@@ -1217,6 +1263,7 @@ export default {
             this._resetCursorPos()
             historyStore.setIdx(this.getName(), cmdIdx)
             this._searchCmd()
+            this._jumpToBottom()
         },
         _calculateStringWidth(str) {
             let width = 0
@@ -1274,10 +1321,16 @@ export default {
             } else if (key === 'arrowright') {
                 this._checkInputCursor()
                 this._cursorGoRight()
+            } else if (key === 'enter') {
+                e.preventDefault()
             }
         },
         _onInputKeyup(e) {
             let key = e.key.toLowerCase()
+            if (key === 'enter') {
+                e.preventDefault()
+                return
+            }
             let code = e.code.toLowerCase()
             if (key === 'home' || key === 'end' || code === 'altleft' || code === 'metaleft' || code === 'controlleft'
                 || ((e.ctrlKey || e.metaKey || e.altKey) && (key === 'arrowright' || key === 'arrowleft'))) {
@@ -1512,7 +1565,12 @@ export default {
             if (this.commandFormatter) {
                 return this.commandFormatter(cmd)
             }
-            return _defaultMergedCommandFormatter(cmd)
+            let splitsCode = []
+            let splits = cmd.split(/\r\n|\n|\r/g)
+            for (let c of splits) {
+                splitsCode.push(_defaultMergedCommandFormatter(c))
+            }
+            return splitsCode.join("<br/>")
         },
         _onAskInput() {
             if (this.ask.autoReview) {
