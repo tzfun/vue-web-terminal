@@ -1,5 +1,4 @@
 <script setup>
-import 'vue-web-terminal/lib/theme/dark.css'
 import {reactive, ref} from "vue";
 import {commands} from "./commands.js";
 import {exampleCode} from "./example.js";

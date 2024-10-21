@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, reactive, ref} from "vue";
 import LocalTerminal from "./local-terminal/LocalTerminal.vue";
-import {usePageLang} from "@vuepress/client";
+import {useClientData, usePageLang} from "@vuepress/client";
 import languages from '../languages.json'
 
 String.prototype.format = function () {
@@ -20,6 +20,7 @@ const languageText = ref({})
 const language = ref('en-US')
 
 onMounted(() => {
+  console.log(useClientData())
   language.value = usePageLang().value
   languageText.value = languages[language.value]
 })
@@ -309,6 +310,7 @@ const goHome = () => {
             <li>{{ getText('DEMO_USAGE_5') }}</li>
             <li>{{ getText('DEMO_USAGE_6') }}</li>
             <li>{{ getText('DEMO_USAGE_7') }}</li>
+            <li>{{ getText('DEMO_USAGE_8') }}</li>
           </ul>
         </div>
       </div>
