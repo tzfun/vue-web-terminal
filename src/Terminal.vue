@@ -426,6 +426,7 @@ onMounted(() => {
         const cmd = command.value;
         command.value = cmd && cmd.length > 0 ? `${cmd}${text}` : text;
         _focus()
+        _jumpToBottom()
       }).catch(error => {
         console.error(error);
       })
@@ -964,6 +965,7 @@ const _inputEnter = (e: KeyboardEvent) => {
         terminalCmdInputRef.value.selectionEnd = cursorIdx
         cursorConf.idx = cursorIdx
       })
+      _jumpToBottom()
     }
   } else {
     _execute()
