@@ -555,7 +555,7 @@ onUnmounted(() => {
   }
 
   //  移除样式文件
-  let style = document.getElementById(getThemeStyleId(getName()))
+  let style = document.getElementById(getThemeStyleId(parseNameHtmlSafely(getName())))
   if (style) {
     document.body.removeChild(style)
   }
@@ -587,7 +587,7 @@ watch(
       let newName = newVal ? newVal : getName()
       let oldName = oldVal ? oldVal : _name.value
       rename(newName, oldName, terminalListener.value)
-      changeThemeFlag(newName, oldName)
+      changeThemeFlag(parseNameHtmlSafely(newName), parseNameHtmlSafely(oldName))
     }
 )
 
@@ -643,7 +643,7 @@ const updateHeaderHeight = () => {
   })
 }
 
-const getName = () => {
+const getName = ():string => {
   if (props.name) {
     return props.name;
   }
@@ -655,6 +655,10 @@ const getName = () => {
 
 const getThemeStyleId = (salt: string): string => {
   return `t-theme-style-${salt}`
+}
+
+const parseNameHtmlSafely = (name: string): string => {
+  return name.replace(/[\[\]{}#\s\\.,;%*+=@!&()\/]/g, '_')
 }
 
 /**
@@ -676,9 +680,11 @@ const setTheme = (theme: string) => {
   }
   let css = themeStyle.match(/^.*\{(.*)}\s*$/s)[1]
 
-  themeStyle = `#t-${getName()} { ${css} }`
+  let terminalName = parseNameHtmlSafely(getName())
 
-  let tagId = getThemeStyleId(getName())
+  themeStyle = `#t-${terminalName} { ${css} }`
+
+  let tagId = getThemeStyleId(terminalName)
   let styleTag = document.getElementById(tagId)
   if (styleTag) {
     styleTag.innerHTML = themeStyle
@@ -692,8 +698,8 @@ const setTheme = (theme: string) => {
 
 /**
  * 当改名时，需更新css文件
- * @param newName 新名
- * @param oldName 旧名
+ * @param newName 新名（已转换过）
+ * @param oldName 旧名（已转换过）
  */
 const changeThemeFlag = (newName: string, oldName: string) => {
   let newTagId = getThemeStyleId(newName)
