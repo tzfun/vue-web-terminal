@@ -19,6 +19,7 @@
           :init-log="initLog"
           :theme="item.theme"
           :enable-fold="true"
+          :command-store="commandStore"
           @on-keydown="onKeyDown"
           @exec-cmd="onExecCmd"
           @on-active="onActive"
@@ -36,6 +37,27 @@ import {Terminal, TerminalApi, TerminalAsk} from '../src/index.js'
 // import '../src/css/theme/dark.css'
 // import '../src/css/theme/light.css'
 import {_html} from "@/js/Util";
+
+const commandStore = [
+  {
+    key: "COMMAND CONFIG"
+  },
+  {
+    key: "CONFIG",
+  },
+  {
+    key: "config",
+  },
+  {
+    key: "COMMAND CONFIG come on",
+  },
+  {
+    key: "CONFIG haha",
+  },
+  {
+    key: "Test CONFIG",
+  }
+]
 
 export default {
   name: "App",
@@ -60,6 +82,7 @@ export default {
           theme: 'dark'
         }
       ],
+      commandStore: commandStore,
       initLog: [{
         type: 'normal',
         content: "Terminal Initializing ..."
