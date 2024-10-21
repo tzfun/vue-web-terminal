@@ -27,6 +27,6 @@ function renameFile(oldFile, newFile) {
     })
 }
 
-copyDir('./src/css/theme', './lib/theme')
+// copyDir('./src/css/theme', './lib/theme')
 deleteFile('demo.html')
 renameFile(`${projectName}.umd.js`, `${projectName}.js`)

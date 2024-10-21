@@ -2,7 +2,7 @@
   <div id="app">
     <button @click="_getCommand">get command</button>
     <button @click="_setCommand">set command</button>
-    <div v-for="(item,i) in terminals" :key="i">
+    <div v-for="item in terminals" :key="item.name">
       <terminal
           v-show="item.show"
           :name="item.name"
@@ -17,6 +17,7 @@
           :enable-default-command="true"
           :line-space="15"
           :init-log="initLog"
+          :theme="item.theme"
           :enable-fold="true"
           @on-keydown="onKeyDown"
           @exec-cmd="onExecCmd"
@@ -33,7 +34,7 @@
 <script>
 import {Terminal, TerminalApi, TerminalAsk} from '../src/index.js'
 // import '../src/css/theme/dark.css'
-import '../src/css/theme/light.css'
+// import '../src/css/theme/light.css'
 import {_html} from "@/js/Util";
 
 export default {
@@ -55,7 +56,8 @@ export default {
               y: 70
             },
             pinned: false
-          }
+          },
+          theme: 'dark'
         }
       ],
       initLog: [{
@@ -100,18 +102,8 @@ export default {
               "</template>"
         })
       } else if (key === 'close') {
-        let activeNext
-        this.terminals.forEach(o => {
-          if (o.name === name) {
-            o.show = false
-          }
-          if (o.show) {
-            activeNext = o.name
-          }
-        })
-        if (activeNext) {
-          TerminalApi.focus(activeNext, true)
-        }
+        this.closeWindow(name)
+
         success()
       } else if (key === 'loop') {
         let count = 0;
@@ -143,7 +135,8 @@ export default {
               x: 100 + seq * 50,
               y: 70 + seq * 20
             }
-          }
+          },
+          theme: 'dark'
         })
         success()
       } else if (key === 'ansi') {
@@ -223,6 +216,27 @@ export default {
         success(TerminalApi.switchAllFoldState(name, true).toString())
       } else if (key === 'unfold') {
         success(TerminalApi.switchAllFoldState(name, false).toString())
+      } else if (key === 'theme') {
+        let theme = command.split(" ")[1]
+        if (theme.match("dark|light")) {
+          this.terminals.forEach((o) => {
+            if (o.name === name) {
+              o.theme = theme
+              console.log(`set '${name}' theme to ${theme}`)
+            }
+          })
+          success()
+        } else {
+          failed("Invalid theme")
+        }
+      } else if (key === 'name') {
+        let newName = command.split(" ")[1]
+        this.terminals.forEach((o) => {
+          if (o.name === name) {
+            o.name = newName
+          }
+        })
+        success()
       } else {
         failed("Unknown command: " + key)
       }
@@ -254,6 +268,27 @@ export default {
     },
     onResize(info, name) {
       console.log(name, info)
+    },
+    closeWindow(name) {
+      let activeNext
+
+      let idx = -1
+      for (let i = 0; i < this.terminals.length; i++) {
+        let o = this.terminals[i]
+        if (o.name === name) {
+          o.show = false
+          idx = i
+        }
+        if (o.show) {
+          activeNext = o.name
+        }
+      }
+      if (activeNext) {
+        TerminalApi.focus(activeNext, true)
+      }
+      if (idx >= 0) {
+        this.terminals.splice(idx, 1)
+      }
     }
   }
 }

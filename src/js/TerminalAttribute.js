@@ -174,5 +174,10 @@ export function terminalProps() {
          * </pre>
          */
         inputTipsSearchHandler: Function,
+        //  主题
+        theme: {
+            type: String,
+            default: () => 'dark'
+        }
     }
 }

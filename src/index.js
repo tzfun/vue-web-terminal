@@ -1,5 +1,5 @@
 import Terminal from './Terminal.vue'
-import TerminalApi, {rename, setOptions, configCodemirror, configHighlight} from './js/TerminalApi.js'
+import TerminalApi, {setOptions, configCodemirror, configHighlight, configTheme} from './js/TerminalApi.js'
 import JsonViewer from 'vue-json-viewer'
 import TerminalFlash from "@/js/TerminalFlash";
 import TerminalAsk from "@/js/TerminalAsk";
@@ -25,7 +25,7 @@ export {
     TerminalFlash,
     configCodemirror,
     configHighlight,
-    rename
+    configTheme
 }
 
 export default Terminal;

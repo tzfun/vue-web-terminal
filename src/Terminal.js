@@ -20,19 +20,7 @@ import {
 import historyStore from "@/js/TerminalStore.js";
 import TerminalFlash from "@/js/TerminalFlash.js";
 import TerminalAsk from "@/js/TerminalAsk";
-import {
-    dragging,
-    execute,
-    focus,
-    fullscreen,
-    isFullscreen,
-    pushMessage,
-    register,
-    rename,
-    textEditorClose,
-    textEditorOpen,
-    unregister
-} from './js/TerminalApi';
+import TerminalApi, {getOptions, register, rename, unregister} from './js/TerminalApi';
 import {terminalProps} from "@/js/TerminalAttribute";
 import THeader from "@/components/THeader.vue";
 import TViewJson from "@/components/TViewJson.vue";
@@ -44,6 +32,9 @@ import TEditor from "@/components/TEditor.vue";
 import {DEFAULT_COMMANDS, MESSAGE_CLASS, MESSAGE_TYPE, WINDOW_STYLE} from "@/js/Configuration";
 import {_parseANSI} from "@/js/ansi/ANSI";
 import {_screenType} from "@/js/Util";
+
+import themeDark from "!!raw-loader!./css/theme/dark.css"
+import themeLight from "!!raw-loader!./css/theme/light.css"
 
 let idx = 0;
 
@@ -134,7 +125,7 @@ export default {
     props: terminalProps(),
     mounted() {
         this.$emit('init-before', this.getName())
-
+        this.setTheme(this.theme)
         this._initContainerStyle()
 
         if (this.initLog) {
@@ -357,13 +348,24 @@ export default {
         this.$emit('init-complete', this.getName())
     },
     destroyed() {
+        //  通知
         this.$emit('destroyed', this.getName())
+
+        //  注销事件监听器
         _eventOff(window, 'keydown', this.keydownListener);
         _eventOff(window, "click", this.clickListener);
         if (this.resizeObserver && this.$refs.terminalHeaderRef) {
             this.resizeObserver.unobserve(this.$refs.terminalHeaderRef)
             this.resizeObserver = null
         }
+
+        //  移除样式文件
+        let style = document.getElementById(this.getThemeStyleId(this.getName()))
+        if (style) {
+            document.body.removeChild(style)
+        }
+
+        //  注销本地数据
         unregister(this.getName())
     },
     watch: {
@@ -374,16 +376,30 @@ export default {
                 })
             }
         },
+        //  监听改名称
         name: {
             handler(newVal, oldVal) {
-                rename(newVal ? newVal : this.getName(), oldVal ? oldVal : this._name, this.terminalListener)
+                let newName = newVal ? newVal : this.getName()
+                let oldName = oldVal ? oldVal : this._name
+
+                rename(newName, oldName, this.terminalListener)
+                this.changeThemeFlag(newName, oldName)
             }
         },
+        //  监听层级变化
         "dragConf.zIndex"(newVal) {
             this.containerStyleStore['z-index'] = newVal
         },
+        //  监听header显示
         showHeader() {
             this._updateHeaderHeight()
+        },
+        //  监听主题
+        theme: {
+            handler(newVal) {
+                console.log("changed theme",newVal)
+                this.setTheme(newVal)
+            }
         }
     },
     computed: {
@@ -401,31 +417,31 @@ export default {
     methods: {
         _screenType,
         pushMessage(message) {
-            pushMessage(this.getName(), message);
+            TerminalApi.pushMessage(this.getName(), message);
         },
         fullscreen() {
-            return fullscreen(this.getName());
+            return TerminalApi.fullscreen(this.getName());
         },
         isFullscreen() {
-            return isFullscreen(this.getName());
+            return TerminalApi.isFullscreen(this.getName());
         },
         dragging(options) {
-            return dragging(this.getName(), options);
+            return TerminalApi.dragging(this.getName(), options);
         },
         execute(options) {
-            return execute(this.getName(), options);
+            return TerminalApi.execute(this.getName(), options);
         },
         focus() {
-            return focus(this.getName());
+            return TerminalApi.focus(this.getName());
         },
         elementInfo() {
             return this._getElementInfo();
         },
         textEditorClose(options) {
-            return textEditorClose(this.getName(), options);
+            return TerminalApi.textEditorClose(this.getName(), options);
         },
         textEditorOpen(options) {
-            return textEditorOpen(this.getName(), options);
+            return TerminalApi.textEditorOpen(this.getName(), options);
         },
         clearLog(clearHistory) {
             if (clearHistory) {
@@ -492,6 +508,46 @@ export default {
          */
         isBlockCommandFocus() {
             return this.textEditor.open || this.flash.open || this.ask.open
+        },
+        getThemeStyleId(salt) {
+            return `t-theme-style-${salt}`
+        },
+        setTheme(theme) {
+            let customThemes = getOptions().themes
+            let themeStyle
+            if (customThemes && customThemes[theme]) {
+                themeStyle = customThemes[theme]
+            } else if (theme === 'dark') {
+                themeStyle = themeDark
+            } else if (theme === 'light') {
+                themeStyle = themeLight
+            } else {
+                console.warn("The specified terminal theme style was not found:", theme)
+                return
+            }
+            let css = themeStyle.match(/^.*\{(.*)}\s*$/s)[1]
+
+            themeStyle = `#t-${this.getName()} { ${css} }`
+
+            let tagId = this.getThemeStyleId(this.getName())
+            let styleTag = document.getElementById(tagId)
+            if (styleTag) {
+                styleTag.innerHTML = themeStyle
+            } else {
+                let themeLink = document.createElement("style")
+                themeLink.innerHTML = themeStyle
+                themeLink.id = tagId
+                document.body.appendChild(themeLink)
+            }
+        },
+        changeThemeFlag(newName, oldName) {
+            let newTagId = this.getThemeStyleId(newName)
+            let oldThemeStyle = document.getElementById(this.getThemeStyleId(oldName))
+            if (oldThemeStyle) {
+                let style = oldThemeStyle.innerHTML.replace(`#t-${oldName}`, `#t-${newName}`)
+                oldThemeStyle.id = newTagId
+                oldThemeStyle.innerHTML = style
+            }
         },
         _triggerClick(key) {
             if (key === 'fullscreen') {

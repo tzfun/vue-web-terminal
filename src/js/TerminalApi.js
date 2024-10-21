@@ -1,36 +1,58 @@
 const pool = {};
-let options = {};
+let options = {
+    highlight: null,
+    codemirror: null,
+    themes: {}
+};
 
-function register(name, listener) {
+export function register(name, listener) {
     if (pool[name] != null) {
         throw Error(`Unable to register an existing terminal: ${name}`)
     }
     pool[name] = listener
 }
 
-function unregister(name) {
+export function unregister(name) {
     delete pool[name]
 }
 
-function rename(newName, oldName, listener) {
+export function rename(newName, oldName, listener) {
     unregister(oldName)
     register(newName, listener);
 }
 
-function configHighlight(config) {
+export function configHighlight(config) {
     options.highlight = config
 }
 
-function configCodemirror(config) {
+export function configCodemirror(config) {
     options.codemirror = config
 }
 
-function getOptions() {
+export function getOptions() {
     return options
 }
 
-function setOptions(op) {
+export function setOptions(op) {
     options = {...op}
+}
+
+export function configTheme(theme, css) {
+    let res = css.match(/^.*\{(.*)}\s*$/s)
+    if (!res || res.length !== 2) {
+        throw new Error(`Incorrect theme style format, correct format example:
+:root {
+    --t-main-background-color: #191b24;
+    --t-main-font-color: #fff;
+    ...
+}
+        `)
+    }
+    let themes = options.themes
+    if (!themes) {
+        options.themes = themes = {}
+    }
+    themes[theme] = css
 }
 
 const TerminalApi = {
@@ -96,40 +118,3 @@ const TerminalApi = {
 }
 
 export default TerminalApi;
-const {
-    pushMessage,
-    fullscreen,
-    isFullscreen,
-    dragging,
-    execute,
-    focus,
-    elementInfo,
-    textEditorClose,
-    textEditorOpen,
-    clearLog,
-    getCommand,
-    setCommand,
-    switchAllFoldState
-} = TerminalApi;
-export {
-    register,
-    unregister,
-    rename,
-    pushMessage,
-    fullscreen,
-    isFullscreen,
-    dragging,
-    execute,
-    focus,
-    elementInfo,
-    textEditorClose,
-    textEditorOpen,
-    clearLog,
-    configHighlight,
-    configCodemirror,
-    getOptions,
-    setOptions,
-    getCommand,
-    setCommand,
-    switchAllFoldState
-}
