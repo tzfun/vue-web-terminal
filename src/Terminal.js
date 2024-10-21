@@ -236,6 +236,7 @@ export default {
                     const command = this.command;
                     this.command = command && command.length > 0 ? `${command}${text}` : text;
                     this._focus()
+                    this._jumpToBottom()
                 }).catch(error => {
                     console.error(error);
                 })
@@ -816,6 +817,7 @@ export default {
                         this.$refs.terminalCmdInputRef.selectionEnd = cursorIdx
                         this.cursorConf.idx = cursorIdx
                     })
+                    this._jumpToBottom()
                 }
             } else {
                 this._execute()
