@@ -1,0 +1,1 @@
+import{_ as t,o as e,c as o,d as n}from"./app-Dow5uvci.js";const a={},c=n("p",null,"404 Not Found",-1),l=[c];function s(_,r){return e(),o("div",null,l)}const i=t(a,[["render",s],["__file","404.html.vue"]]),h=JSON.parse('{"path":"/404.html","title":"","lang":"en-US","frontmatter":{"layout":"NotFound"},"headers":[],"git":{},"filePathRelative":null}');export{i as comp,h as data};
