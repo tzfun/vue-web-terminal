@@ -60,8 +60,6 @@ Register the plugin in main.js
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  Light theme: vue-web-terminal/lib/theme/light.css
-import 'vue-web-terminal/lib/theme/dark.css'
 
 Vue.use(Terminal)
 ```
@@ -70,8 +68,6 @@ Vue.use(Terminal)
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  Light theme: vue-web-terminal/lib/theme/light.css
-import 'vue-web-terminal/lib/theme/dark.css'
 
 createApp(App).use(Terminal)
 ```

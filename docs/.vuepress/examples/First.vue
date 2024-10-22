@@ -1,9 +1,12 @@
 <template>
   <terminal name="my-terminal"
             @exec-cmd="onExecCmd"
-            :drag-conf="dragConf" />
+            :drag-conf="dragConf"
+            theme="dark" />
 </template>
 <script>
+import Terminal from 'vue-web-terminal';
+
 export default {
   name: 'App',
   data(){

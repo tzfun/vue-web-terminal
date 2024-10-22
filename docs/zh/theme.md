@@ -5,15 +5,17 @@
 从 `2.1.13` 和 `3.2.0` 版本开始，插件内置有两个主题：`dark` 和 `light`，并抽出一部分css变量，提供自定义主题的能力。
 
 ::: warning
-在`2.1.13` 和 `3.2.0` 版本之前不支持主题功能，也无需引入相应css文件
+在`2.3.1` 和 `3.3.1` （包含）版本之后支持每个实例单独设置主题，不再需要引入内置默认主题css文件
 :::
 
 ## 黑暗主题
 
-黑暗主题是插件的默认主题，也更符合大多数用户的使用习惯，要使用它只需在`main.js`入口处引入相应的css样式即可
+黑暗主题是插件的默认主题，也更符合大多数用户的使用习惯，将 theme 属性设置为dark，不设置属性也默认为该值。
 
-```js:no-line-numbers title="main.js"
-import 'vue-web-terminal/lib/theme/dark.css'
+```vue title="MyTerminal.vue"
+<template>
+    <terminal name='my-terminal' theme='dark'></terminal>
+</template>
 ```
 
 示例：
@@ -21,10 +23,12 @@ import 'vue-web-terminal/lib/theme/dark.css'
 
 ## 亮色主题
 
-插件内置了亮色主题，需要使用它只需引入 light 的css样式即可
+插件内置了亮色主题，将theme属性设置成 `light` 即可
 
-```js:no-line-numbers title="main.js"
-import 'vue-web-terminal/lib/theme/light.css'
+```vue title="MyTerminal.vue"
+<template>
+    <terminal name='my-terminal' theme='light'></terminal>
+</template>
 ```
 
 示例：
@@ -32,7 +36,7 @@ import 'vue-web-terminal/lib/theme/light.css'
 
 ## 自定义主题
 
-插件实现主题方式是修改不同元素或模块的颜色，这些颜色通过 css variables 指定，所以你只需要定义对应的 css 变量即可，一下是黑暗主题的颜色定义
+插件实现主题方式是修改不同元素或模块的颜色，这些颜色通过 css variables 指定，所以你只需要定义对应的 css 变量即可，以下是黑暗主题的颜色定义
 
 ```css
 :root {
@@ -87,11 +91,86 @@ import 'vue-web-terminal/lib/theme/light.css'
 }
 ```
 
-如果你需要实现自己的主题样式，你**无需引入上面任何一个css文件**，在你的工程中创建一个新的css文件，比如就叫`terminal-custom-theme.css`，
-然后在此文件中重写上面的css变量，最后在项目中 import 即可。
+如果你需要实现自己的主题样式，在你的工程中创建一个新的css文件，此文件中重写上面的css变量， 然后在`main.js`中配置你自定义的主题。
 
-```js:no-line-numbers title="main.js"
-import '~/your-style-dir/terminal-custom-theme.css'
+
+::: code-tabs#js
+
+@tab Vue2
+
+```js
+import {Terminal, configTheme} from 'vue-web-terminal';
+
+//  导出css文件内容
+import customTheme1 from '!!raw-loader!/your-style-dir/terminal-custom-theme1.css';
+import customTheme2 from '!!raw-loader!/your-style-dir/terminal-custom-theme2.css';
+
+configTheme('customTheme1', customTheme1);
+configTheme('customTheme2', customTheme2);
+
+Vue.use(Terminal);
+```
+
+@tab Vue3
+
+```js
+import {Terminal, configTheme} from 'vue-web-terminal';
+
+//  导出css文件内容
+import customTheme1 from '/your-style-dir/terminal-custom-theme1.css?inline';
+import customTheme2 from '/your-style-dir/terminal-custom-theme2.css?inline';
+
+configTheme('customTheme1', customTheme1);
+configTheme('customTheme2', customTheme2);
+
+createApp(App).use(Terminal)
+```
+:::
+
+然后在你的代码中使用自定义主题：
+```vue title="MyTerminal.vue"
+<template>
+    <terminal name='my-terminal' theme='customTheme1'></terminal>
+</template>
+```
+
+如果你想覆盖默认的`dark`和`light`主题，你可以在注册时覆盖对应的主题名即可：
+```js
+configTheme('dark', customTheme1);
+configTheme('light', customTheme2);
+```
+
+::: info 提示
+css文件中必须按以下格式填写，且不能有其他内容，`{}`前面的css选择器可以是任意的，它并不会被真正使用
+```css
+.anything {
+    --t-main-background-color: #191b24;
+    // ...
+}
+```
+:::
+
+## 动态修改主题
+
+主题属性值是双向绑定的，修改绑定的js变量即可动态修改主题
+```vue
+<script setup>
+  import Terminal from 'vue-web-terminal';
+
+  const theme = ref('dark')
+
+  //  修改当前窗口主题
+  const changeTheme = () => {
+    if (theme.value === 'dark') {
+      theme.value = 'light'
+    } else {
+      theme.value = 'dark'
+    }
+  }
+</script>
+<template>
+  <terminal name='my-terminal' :theme='theme'></terminal>
+</template>
 ```
 
 ## 欢迎共建主题

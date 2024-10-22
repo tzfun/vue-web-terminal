@@ -57,8 +57,6 @@ pnpm install vue-web-terminal@3
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  亮色主题：vue-web-terminal/lib/theme/light.css
-import 'vue-web-terminal/lib/theme/dark.css'
 
 Vue.use(Terminal)
 ```
@@ -67,8 +65,6 @@ Vue.use(Terminal)
 
 ```js
 import Terminal from 'vue-web-terminal'
-//  亮色主题：vue-web-terminal/lib/theme/light.css
-import 'vue-web-terminal/lib/theme/dark.css'
 
 createApp(App).use(Terminal)
 ```

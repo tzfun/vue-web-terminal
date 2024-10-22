@@ -7,16 +7,19 @@ Starting from `2.1.13` and `3.2.0` versions, the plugin has two built-in themes:
 and extracts some css variables to provide the ability to customize the theme.
 
 ::: warning
-Before `2.1.13` and `3.2.0` versions, the theme function is not supported, and there is no need to introduce the corresponding css files.
+After `2.3.1` and `3.3.1` (inclusive) versions, each instance can be set with a separate theme, 
+and there is no need to import the built-in default theme css file.
 :::
 
 ## Dark Theme
 
-The dark theme is the default theme of the plugin, which is more in line with the usage habits of most users. To use it, 
-just introduce the corresponding css style at the entrance of `main.js`.
+The dark theme is the default theme of the plugin, which is more in line with the usage habits of most users. 
+Set the theme property to dark. If you don't set the property, it will take this value by default.
 
-```js:no-line-numbers title="main.js"
-import 'vue-web-terminal/lib/theme/dark.css'
+```vue title="MyTerminal.vue"
+<template>
+    <terminal name='my-terminal' theme='dark'></terminal>
+</template>
 ```
 
 Example:
@@ -24,10 +27,12 @@ Example:
 
 ## Light Theme
 
-The plugin has a built-in light theme. To use it, just import the light css style.
+The plugin has a built-in light theme, just set the theme property to `light`.
 
-```js:no-line-numbers title="main.js"
-import 'vue-web-terminal/lib/theme/light.css'
+```vue title="MyTerminal.vue"
+<template>
+    <terminal name='my-terminal' theme='light'></terminal>
+</template>
 ```
 
 Example:
@@ -92,12 +97,86 @@ The following is the color definition of the dark theme.
 }
 ```
 
-If you need to implement your own theme style, you don't need to import any of the above css files. 
-Create a new css file in your project, such as `terminal-custom-theme.css`, 
-and then rewrite the above css variables in this file, and finally import it in the project.
+If you need to implement your own theme style, create a new css file in your project, 
+rewrite the above css variables in this file, and then configure your custom theme in `main.js`.
+::: code-tabs#js
 
-```js:no-line-numbers title="main.js"
-import '~/your-style-dir/terminal-custom-theme.css'
+@tab Vue2
+
+```js
+import {Terminal, configTheme} from 'vue-web-terminal';
+
+//  Export css file content to variables
+import customTheme1 from '!!raw-loader!/your-style-dir/terminal-custom-theme1.css';
+import customTheme2 from '!!raw-loader!/your-style-dir/terminal-custom-theme2.css';
+
+configTheme('customTheme1', customTheme1);
+configTheme('customTheme2', customTheme2);
+
+Vue.use(Terminal);
+```
+
+@tab Vue3
+
+```js
+import {Terminal, configTheme} from 'vue-web-terminal';
+
+//  Export css file content to variables
+import customTheme1 from '/your-style-dir/terminal-custom-theme1.css?inline';
+import customTheme2 from '/your-style-dir/terminal-custom-theme2.css?inline';
+
+configTheme('customTheme1', customTheme1);
+configTheme('customTheme2', customTheme2);
+
+createApp(App).use(Terminal)
+```
+:::
+
+Then use the custom theme in your code:
+```vue title="MyTerminal.vue"
+<template>
+    <terminal name='my-terminal' theme='customTheme1'></terminal>
+</template>
+```
+
+If you want to override the default `dark` and `light` themes, you can override the corresponding theme names when registering:
+```js
+configTheme('dark', customTheme1);
+configTheme('light', customTheme2);
+```
+
+::: info 提示
+The css file must be filled in the following format and no other content can be included. 
+The css selector before `{}` can be arbitrary and will not be actually used.
+```css
+.anything {
+    --t-main-background-color: #191b24;
+    // ...
+}
+```
+:::
+
+## Modify the theme
+
+The theme attribute value is two-way bound, and the theme can be dynamically modified by modifying the bound js variable.
+```vue
+<script setup>
+  import Terminal from 'vue-web-terminal';
+
+  const theme = ref('dark')
+
+  //  Modify the current window theme
+  const changeTheme = () => {
+    if (theme.value === 'dark') {
+      theme.value = 'light'
+    } else {
+      theme.value = 'dark'
+    }
+  }
+</script>
+<template>
+  <terminal name='my-terminal' :theme='theme'></terminal>
+</template>
 ```
 
 ## Welcome to co-create the theme

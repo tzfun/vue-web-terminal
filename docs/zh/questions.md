@@ -42,6 +42,10 @@ sidebarDepth: 0
 
 如果你的网页因为某些原因无法满足以上条件，可以使用原生快捷键 `ctrl/command + v` 来粘贴剪切板的内容。
 
+## 怎么在命令行中输入换行？
+
+使用快捷键 `ctrl + enter` 即可输入换行符，此功能在 `2.3.1` 和 `3.3.1` （包含）版本之后开始支持。
+
 <CommentService></CommentService>
 
 [issues#43]: https://github.com/tzfun/vue-web-terminal/issues/43
