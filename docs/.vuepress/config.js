@@ -19,7 +19,16 @@ export default defineUserConfig({
     title: 'vue-web-terminal',
     dest: "dist",
     head: [
-        ["link", {rel: "icon", href: "/images/vue-web-terminal-mini.png"}]
+        ["link", {rel: "icon", href: "/images/vue-web-terminal-mini.png"}],
+        [
+            "script",
+            {
+                src: "https://cloud.umami.is/script.js",
+                "data-website-id": "d9491188-3d26-4f58-8239-276be8ffef7a",
+                defer: true,
+                async: true,
+            }
+        ]
     ],
     pluginVersion: {
         vue2: "2.3.0",
@@ -87,18 +96,18 @@ export default defineUserConfig({
                 sidebar: [
                     {text: 'About', link: '/about'},
                     {
-                      text: 'Document',
-                      children: [
-                          {text: 'Get Started', link: '/getting-started'},
-                          {text: 'Theme', link: '/theme'},
-                          {text: 'Attribute', link: '/attributes'},
-                          {text: 'Event', link: '/events'},
-                          {text: 'Slot', link: '/slots'},
-                          {text: 'API', link: '/api'},
-                          {text: 'Advanced Features', link: '/functions'},
-                          {text: 'More', link: '/others'},
-                          {text: 'Logs', link: '/logs'}
-                      ]
+                        text: 'Document',
+                        children: [
+                            {text: 'Get Started', link: '/getting-started'},
+                            {text: 'Theme', link: '/theme'},
+                            {text: 'Attribute', link: '/attributes'},
+                            {text: 'Event', link: '/events'},
+                            {text: 'Slot', link: '/slots'},
+                            {text: 'API', link: '/api'},
+                            {text: 'Advanced Features', link: '/functions'},
+                            {text: 'More', link: '/others'},
+                            {text: 'Logs', link: '/logs'}
+                        ]
                     },
                     {text: 'Q&A', link: '/questions'},
                 ]

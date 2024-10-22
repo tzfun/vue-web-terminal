@@ -88,7 +88,7 @@ vue-web-terminal 是一个由前端模拟实现的终端，而并不是传统意
 * [zhangpeng1314](https://gitee.com/zhangpeng1314) - 150元
 * [lilqilie](https://github.com/lilqilie) - 20元
 * [h1xa](https://ctf.show) - 66元
-* [GatsbyZhong](https://github.com/GatsbyZhong) - 10元
+* [GatsbyZhong](https://github.com/GatsbyZhong) - 50元
 
 ## License
 
