@@ -9,7 +9,7 @@ NODE_VERSION = 18
 ENCODING = "gbk" if platform.system().lower() == 'windows' else 'utf-8'
 
 def execute(command, with_result = False,encoding = ENCODING):
-    print(f"calling: {command}")
+    print(f"[calling]: {command}")
     if with_result:
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding=encoding)
         stdout,stderr = p.communicate()

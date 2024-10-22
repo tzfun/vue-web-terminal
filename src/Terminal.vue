@@ -1137,7 +1137,7 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
   _pushMessage0(message)
   _jumpToBottom()
 
-  if (message.type === 'json') {
+  if (typeof message != 'string' && message.type === 'json') {
     setTimeout(() => {
       _jumpToBottom()
     }, 80)
