@@ -83,7 +83,6 @@ const app = createApp(App).use(Terminal)
 
 <script>
   import Terminal from "vue-web-terminal"
-  import 'vue-web-terminal/lib/theme/dark.css'
 
   export default {
     name: 'App',
