@@ -1,6 +1,6 @@
 <template>
   <div :class="'t-container ' + (isActive() ? '' : 't-disable-select')"
-       :id="`t-${getName()}`"
+       :id="`t-${parseNameHtmlSafely(getName())}`"
        :style="_getContainerStyle()"
        ref="terminalContainerRef">
     <div v-if="isDraggable()">

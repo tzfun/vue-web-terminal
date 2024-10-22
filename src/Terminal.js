@@ -363,7 +363,7 @@ export default {
         }
 
         //  移除样式文件
-        let style = document.getElementById(this.getThemeStyleId(this.getName()))
+        let style = document.getElementById(this.getThemeStyleId(this.parseNameHtmlSafely(this.getName())))
         if (style) {
             document.body.removeChild(style)
         }
@@ -386,7 +386,7 @@ export default {
                 let oldName = oldVal ? oldVal : this._name
 
                 rename(newName, oldName, this.terminalListener)
-                this.changeThemeFlag(newName, oldName)
+                this.changeThemeFlag(this.parseNameHtmlSafely(newName), this.parseNameHtmlSafely(oldName))
             }
         },
         //  监听层级变化
@@ -521,6 +521,9 @@ export default {
         getThemeStyleId(salt) {
             return `t-theme-style-${salt}`
         },
+        parseNameHtmlSafely(name) {
+            return name.replace(/[[\]{}#\s\\.,;%*+=@!&()/]/g, '_')
+        },
         setTheme(theme) {
             let customThemes = getOptions().themes
             let themeStyle
@@ -535,10 +538,11 @@ export default {
                 return
             }
             let css = themeStyle.match(/^.*\{(.*)}\s*$/s)[1]
+            let terminalName = this.parseNameHtmlSafely(this.getName())
 
-            themeStyle = `#t-${this.getName()} { ${css} }`
+            themeStyle = `#t-${terminalName} { ${css} }`
 
-            let tagId = this.getThemeStyleId(this.getName())
+            let tagId = this.getThemeStyleId(terminalName)
             let styleTag = document.getElementById(tagId)
             if (styleTag) {
                 styleTag.innerHTML = themeStyle

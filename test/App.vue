@@ -67,7 +67,7 @@ export default {
       terminals: [
         {
           show: true,
-          name: 'terminal-test',
+          name: 'terminal-test [default]',
           context: '/vue-web-terminal/test',
           dragConf: {
             width: "60%",
