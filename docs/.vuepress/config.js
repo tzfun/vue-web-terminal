@@ -6,6 +6,7 @@ import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 import {searchPlugin} from "@vuepress/plugin-search";
 import {registerComponentsPlugin} from "@vuepress/plugin-register-components";
 import {getDirname, path} from "@vuepress/utils";
+// import {umamiAnalyticsPlugin} from "@vuepress/plugin-umami-analytics";
 
 const __dirname = getDirname(import.meta.url)
 
@@ -25,25 +26,24 @@ export default defineUserConfig({
             {
                 src: "https://cloud.umami.is/script.js",
                 "data-website-id": "d9491188-3d26-4f58-8239-276be8ffef7a",
-                defer: true,
-                async: true,
+                defer: true
             }
         ]
     ],
     pluginVersion: {
-        vue2: "2.3.0",
-        vue3: "3.3.0"
+        vue2: "2.3.2",
+        vue3: "3.3.2"
     },
     locales: {
         '/': {
             lang: 'en-US',
             title: 'vue-web-terminal',
-            description: 'A lightweight and beautiful web-side command line window plugin'
+            description: 'A powerful web-side command line window plugin'
         },
         '/zh/': {
             lang: 'zh-CN',
             title: 'vue-web-terminal',
-            description: '一个轻量、功能强大的命令式网页仿真终端插件'
+            description: '一个功能强大的命令式网页仿真终端插件'
         }
     },
     theme: defaultTheme({
@@ -179,6 +179,13 @@ export default defineUserConfig({
                 alias: {
                     // 'vue': _resolve('vue/dist/vue.esm-bundler.js'),
                 }
+            },
+            css: {
+                preprocessorOptions: {
+                    scss: {
+                        quietDeps: true,
+                    }
+                }
             }
         }
     }),
@@ -218,6 +225,10 @@ export default defineUserConfig({
             components: {
                 TerminalLocalDemo: path.resolve(__dirname, './components/TerminalLocalDemo.vue')
             }
-        })
+        }),
+        // umamiAnalyticsPlugin({
+        //     id: "d9491188-3d26-4f58-8239-276be8ffef7a",
+        //     link: "https://cloud.umami.is/script.js"
+        // })
     ]
 })
