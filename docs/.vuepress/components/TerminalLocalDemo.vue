@@ -18,6 +18,7 @@ String.prototype.format = function () {
 
 const languageText = ref({})
 const language = ref('en-US')
+const theme = ref('dark')
 
 onMounted(() => {
   console.log(useClientData())
@@ -224,6 +225,7 @@ const goHome = () => {
                          :init-cmd="item.localInitCmd"
                          :show-header="item.showHeader"
                          :drag-conf="item.dragConf"
+                         :theme="theme"
                          @on-active="onActive(key, $event)"
                          @close="closeWindow(key, item.name)">
           </LocalTerminal>
@@ -234,6 +236,7 @@ const goHome = () => {
                          :init-cmd="item.localInitCmd"
                          :show-header="item.showHeader"
                          :drag-conf="item.dragConf"
+                         :theme="theme"
                          @on-active="onActive(key, $event)"
                          @close="closeWindow(key, item.name)">
           </LocalTerminal>
@@ -244,6 +247,7 @@ const goHome = () => {
                          :init-cmd="item.localInitCmd"
                          :show-header="item.showHeader"
                          :drag-conf="item.dragConf"
+                         :theme="theme"
                          :style="item.style"
                          @on-active="onActive(key, $event)"
                          @close="closeWindow(key, item.name)"/>
@@ -256,6 +260,7 @@ const goHome = () => {
                            :init-cmd="it.localInitCmd"
                            :show-header="it.showHeader"
                            :drag-conf="it.dragConf"
+                           :theme="theme"
                            @on-active="onActive(key, $event)"
                            @close="closeWindow(key, it.name)"/>
           </div>
@@ -277,6 +282,12 @@ const goHome = () => {
         </div>
         <div class="editor-navbar">
           <button class="btn" @click="goHome">{{ getText('DEMO_NAVBAR_GO_HOME') }}</button>
+          <div>
+            <div :class="'btn btn-merged btn-merged-left ' + (theme === 'dark' ? 't-btn-active' : 'btn-default')"
+                  @click="theme = 'dark'">Dark</div>
+            <div :class="'btn btn-merged btn-merged-right ' + (theme === 'light' ? 't-btn-active' : 'btn-default')"
+                 @click="theme = 'light'">Light</div>
+          </div>
         </div>
         <div class="demo-btn">
           <button :class="'btn ' + (terminals.default.show ? 't-btn-active' :'btn-default')"
@@ -319,11 +330,12 @@ const goHome = () => {
 </template>
 
 <style scoped>
+
 .btn {
   margin: 15px;
   padding: 0.5em 1.5em;
   font-size: 1em;
-  border-radius: 5px;
+  border-radius: var(--doc-btn-border-radius);
   border: none;
   box-shadow: 1px 1px 15px rgb(0 0 0 / 20%);
   transition: background-color .1s ease;
@@ -335,6 +347,21 @@ const goHome = () => {
 .btn:hover {
   background: #63e5aa;
   color: white;
+}
+
+.btn-merged {
+  box-shadow: none;
+  margin-left: 0;
+  margin-right: 0;
+  display: inline-block;
+}
+
+.btn-merged-left {
+  border-radius: var(--doc-btn-border-radius) 0 0 var(--doc-btn-border-radius);
+}
+
+.btn-merged-right {
+  border-radius: 0 var(--doc-btn-border-radius) var(--doc-btn-border-radius) 0;
 }
 
 .editor-navbar {
@@ -418,7 +445,7 @@ const goHome = () => {
 }
 
 .help-list {
-  margin-left: 40px;
+  margin-left: 20px;
   list-style: decimal;
   font-size: 1em;
   padding-top: 0;
@@ -433,11 +460,15 @@ const goHome = () => {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 </style>
 
 <style>
+:root {
+  --doc-btn-border-radius: 5px;
+}
+
 .btn-default {
   color: #3eaf7c;
   background-color: #ffffff;

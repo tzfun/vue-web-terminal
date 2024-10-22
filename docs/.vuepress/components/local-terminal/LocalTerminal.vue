@@ -46,6 +46,10 @@ const props = defineProps({
         }
       }
     }
+  },
+  theme: {
+    type: String,
+    default: () => 'dark'
   }
 })
 const customTextEditorRef = ref(null)
@@ -498,6 +502,7 @@ const mockLoading = (flash, fileName, terminalInfo) => {
       :drag-conf="dragConf"
       :show-header="showHeader"
       :enable-hover-stripe="false"
+      :theme="theme"
       @exec-cmd="onExecCmd"
       @on-click="onClick"
       @on-keydown="onKeydown"
@@ -549,10 +554,10 @@ const mockLoading = (flash, fileName, terminalInfo) => {
 
 .demo-init-box {
   border-radius: 5px;
-  border: 1px yellow solid;
-  border-left: 1px dashed yellow;
-  border-right: 1px dashed yellow;
-  color: white;
+  border: 1px #29e709 solid;
+  border-left: 1px dashed #29e709;
+  border-right: 1px dashed #29e709;
+  color: inherit;
   align-content: center;
   text-align: center;
   padding: 40px 15px;
