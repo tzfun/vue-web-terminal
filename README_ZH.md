@@ -38,7 +38,7 @@
 
 > 一句话描述：
 >
-> 它并不具备执行某个具体命令的能力，这个能力需要开发者自己去实现，它负责的事情是在网页上以终端界面的形式从用户那拿到想要执行的命令，然后交给开发者去实现，执行完之后再交给它展示给用户。
+> 它并不具备执行某个具体命令的能力，这个能力需要开发者自己去实现，它负责的事情是在网页上以终端界面的形式从用户那拿到想要执行的命令，然后交给开发者去执行，之后再交给它展示给用户。
 
 # 在线体验
 
@@ -83,7 +83,6 @@ const app = createApp(App).use(Terminal)
 
 <script>
   import Terminal from "vue-web-terminal"
-  import 'vue-web-terminal/lib/theme/dark.css'
 
   export default {
     name: 'App',

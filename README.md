@@ -85,7 +85,6 @@ Example:
 
 <script>
   import Terminal from "vue-web-terminal"
-  import 'vue-web-terminal/lib/theme/dark.css'
 
   export default {
     name: 'App',
@@ -101,7 +100,7 @@ Example:
           success({
             type: 'normal',
             class: clazz,
-            tag: '成功',
+            tag: 'success',
             content: command
           })
         }

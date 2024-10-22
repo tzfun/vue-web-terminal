@@ -9,7 +9,7 @@ NODE_VERSION = 16
 ENCODING = "gbk" if platform.system().lower() == 'windows' else 'utf-8'
 
 def execute(command, with_result = False,encoding = ENCODING):
-    print(f"calling: {command}")
+    print(f"[calling]: {command}")
     if with_result:
         p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding=encoding)
         stdout,stderr = p.communicate()
@@ -28,8 +28,8 @@ if __name__ == '__main__':
     if not node_version.startswith(f'v{NODE_VERSION}'):
         raise Exception(f'Node version must be {NODE_VERSION}')
     try:
-        execute(f'pnpm install')
-        execute(f'pnpm run build')
+        execute(f'yarn install')
+        execute(f'yarn build')
         execute(f'npm config set registry {NPM_REPOSITORY}')
         execute(f'npm publish')
     finally:
