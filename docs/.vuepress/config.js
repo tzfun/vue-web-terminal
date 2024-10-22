@@ -211,13 +211,17 @@ export default defineUserConfig({
             category: "Announcements",
             categoryId: "DIC_kwDOG2MIV84CgDvf",
         }),
-        mdEnhancePlugin({
-            //  启用代码块分组
-            codetabs: true,
-            //  提示容器
-            //  https://theme-hope.vuejs.press/zh/guide/markdown/stylize/hint.html
-            hint: true
-        }),
+        //  https://theme-hope.vuejs.press/zh/guide/markdown/
+        mdEnhancePlugin({}),
+        //  https://ecosystem.vuejs.press/zh/plugins/markdown/markdown-hint.html
+        // markdownHintPlugin({
+        //     hint: true
+        // }),
+        //  https://ecosystem.vuejs.press/zh/plugins/markdown/markdown-tab.html
+        // markdownTabPlugin({
+        //     //  启用代码块分组
+        //     codeTabs: true
+        // }),
         searchPlugin({
             locales: {
                 '/': {

@@ -145,7 +145,7 @@ configTheme('dark', customTheme1);
 configTheme('light', customTheme2);
 ```
 
-::: info 提示
+::: info Notice
 The css file must be filled in the following format and no other content can be included. 
 The css selector before `{}` can be arbitrary and will not be actually used.
 ```css
