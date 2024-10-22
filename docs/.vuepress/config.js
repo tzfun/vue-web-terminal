@@ -32,7 +32,8 @@ export default defineUserConfig({
                 async: true,
                 src: "/vue-web-terminal/js/umami.js",
                 "data-website-id": "d9491188-3d26-4f58-8239-276be8ffef7a",
-                "data-host-url": "https://cloud.umami.is"
+                "data-host-url": "https://cloud.umami.is",
+                "data-domains": "tzfun.github.io"
             }
         ]
     ],
