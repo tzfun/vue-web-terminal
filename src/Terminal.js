@@ -940,7 +940,7 @@ export default {
             this._closeTips(true)
         },
         _filterMessageType(message) {
-            let valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
+            let valid = message.type && /^(normal|html|code|table|json|ansi)$/.test(message.type)
             if (!valid) {
                 console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
                 message.type = MESSAGE_TYPE.NORMAL
@@ -995,18 +995,6 @@ export default {
                 return;
             }
 
-            if (typeof message === 'string') {
-                message = {
-                    type: MESSAGE_TYPE.NORMAL,
-                    content: message
-                }
-            }
-
-            if (message.type === MESSAGE_TYPE.ANSI) {
-                message.type = MESSAGE_TYPE.HTML
-                message.content = _parseANSI(message.content)
-            }
-
             this._pushMessage0(message)
             this._jumpToBottom()
 
@@ -1017,10 +1005,22 @@ export default {
             }
         },
         _pushMessage0(message, checkSize = true) {
-            this._filterMessageType(message)
-            if (message.type !== MESSAGE_TYPE.CMD_LINE && this.pushMessageBefore) {
-                this.pushMessageBefore(message, this.getName())
+            if (typeof message === 'string') {
+                message = {
+                    type: MESSAGE_TYPE.NORMAL,
+                    content: message
+                }
+            } else {
+                this._filterMessageType(message)
+                if (message.type === MESSAGE_TYPE.ANSI) {
+                    message.type = MESSAGE_TYPE.HTML
+                    message.content = _parseANSI(message.content)
+                }
+                if (message.type !== MESSAGE_TYPE.CMD_LINE && this.pushMessageBefore) {
+                    this.pushMessageBefore(message, this.getName())
+                }
             }
+
             let terminalLogLength = this.terminalLog.length;
             if (terminalLogLength === 0) {
                 this._newTerminalLogGroup()
