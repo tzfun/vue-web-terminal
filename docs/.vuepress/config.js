@@ -6,7 +6,6 @@ import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 import {searchPlugin} from "@vuepress/plugin-search";
 import {registerComponentsPlugin} from "@vuepress/plugin-register-components";
 import {getDirname, path} from "@vuepress/utils";
-// import {umamiAnalyticsPlugin} from "@vuepress/plugin-umami-analytics";
 
 const __dirname = getDirname(import.meta.url)
 
@@ -20,13 +19,20 @@ export default defineUserConfig({
     title: 'vue-web-terminal',
     dest: "dist",
     head: [
-        ["link", {rel: "icon", href: "/images/vue-web-terminal-mini.png"}],
+        [
+            "link",
+            {
+                rel: "icon",
+                href: "/vue-web-terminal/images/vue-web-terminal-mini.png"
+            }
+        ],
         [
             "script",
             {
-                src: "https://cloud.umami.is/script.js",
+                async: true,
+                src: "/vue-web-terminal/js/umami.js",
                 "data-website-id": "d9491188-3d26-4f58-8239-276be8ffef7a",
-                defer: true
+                "data-host-url": "https://cloud.umami.is"
             }
         ]
     ],
@@ -225,10 +231,6 @@ export default defineUserConfig({
             components: {
                 TerminalLocalDemo: path.resolve(__dirname, './components/TerminalLocalDemo.vue')
             }
-        }),
-        // umamiAnalyticsPlugin({
-        //     id: "d9491188-3d26-4f58-8239-276be8ffef7a",
-        //     link: "https://cloud.umami.is/script.js"
-        // })
+        })
     ]
 })
