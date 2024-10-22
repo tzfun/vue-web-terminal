@@ -1097,7 +1097,7 @@ const _endExecCallBack = () => {
 }
 
 const _filterMessageType = (message: Message) => {
-  const valid = message.type && /^(normal|html|code|table|json)$/.test(message.type)
+  const valid = message.type && /^(normal|html|code|table|json|ansi)$/.test(message.type)
   if (!valid) {
     console.debug(`Invalid terminal message type: ${message.type}, the default type normal will be used`)
     message.type = 'normal'
@@ -1134,18 +1134,6 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
     return;
   }
 
-  if (typeof message === 'string') {
-    message = {
-      type: 'normal',
-      content: message as string
-    }
-  }
-
-  if (message.type === 'ansi') {
-    message.type = 'html'
-    message.content = _parseANSI(message.content as string)
-  }
-
   _pushMessage0(message)
   _jumpToBottom()
 
@@ -1156,10 +1144,22 @@ const _pushMessage = (message: Message | Array<Message> | string) => {
   }
 }
 
-const _pushMessage0 = (message: Message, checkSize: boolean = false) => {
-  _filterMessageType(message)
-  if (message.type !== 'cmdLine' && props.pushMessageBefore) {
-    props.pushMessageBefore(message, getName())
+const _pushMessage0 = (message: Message | string, checkSize: boolean = false) => {
+  if (typeof message === 'string') {
+    message = {
+      type: 'normal',
+      content: message as string
+    }
+  } else {
+    _filterMessageType(message)
+    if (message.type === 'ansi') {
+      message.type = 'html'
+      message.content = _parseANSI(message.content as string)
+    }
+
+    if (message.type !== 'cmdLine' && props.pushMessageBefore) {
+      props.pushMessageBefore(message, getName())
+    }
   }
 
   let terminalLogLength = terminalLog.value.length

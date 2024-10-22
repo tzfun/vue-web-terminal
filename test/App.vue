@@ -8,6 +8,7 @@
 import {Terminal, TerminalApi, TerminalAsk, TerminalElementInfo} from '~/index'
 import {Command, FailedFunc, Message, SuccessFunc} from "~/types";
 import {reactive, ref} from "vue";
+
 const commandStore: Array<Command> = [
   {
     key: "COMMAND CONFIG"
@@ -28,16 +29,24 @@ const commandStore: Array<Command> = [
     key: "Test CONFIG",
   }
 ]
-const initLog = reactive([{
-  type: 'normal',
-  content: "Terminal Initializing ..."
-}, {
-  type: 'normal',
-  content: "Current login time: " + new Date().toLocaleString()
-}, {
-  type: 'normal',
-  content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn. Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
-}])
+const initLog = reactive([
+  {
+    type: 'normal',
+    content: "Terminal Initializing ..."
+  },
+  {
+    type: 'normal',
+    content: "Current login time: " + new Date().toLocaleString()
+  },
+  {
+    type: 'ansi',
+    content: '\x1B[1;34mThis are some blue text.\x1B[0m\n\x1B[30;43mThis is a line of text with a background color.\x1B[0m\n\x1B[92;5mThis is blink text.\x1B[0m'
+  },
+  {
+    type: 'normal',
+    content: "Welcome to vue web terminal! If you are using for the first time, you can use the <span class='t-cmd-key'>help</span> command to learn. Thanks for your star support: <a class='t-a' target='_blank' href='https://github.com/tzfun/vue-web-terminal'>https://github.com/tzfun/vue-web-terminal</a>"
+  }
+])
 const testInputValue = ref("")
 
 const terminals = ref<Array<any>>([
