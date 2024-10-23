@@ -658,7 +658,7 @@ const getThemeStyleId = (salt: string): string => {
 }
 
 const parseNameHtmlSafely = (name: string): string => {
-  return name.replace(/[\[\]{}#\s\\.,;%*+=@!&()\/]/g, '_')
+  return name.replace(/[\[\]{}#\s\\.,:;%|*+=@!?&()\/]/g, '_')
 }
 
 /**
