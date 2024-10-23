@@ -522,7 +522,7 @@ export default {
             return `t-theme-style-${salt}`
         },
         parseNameHtmlSafely(name) {
-            return name.replace(/[[\]{}#\s\\.,;%*+=@!&()/]/g, '_')
+            return name.replace(/[[\]{}#\s\\.,:;%|*+=@!?&()/]/g, '_')
         },
         setTheme(theme) {
             let customThemes = getOptions().themes

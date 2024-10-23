@@ -67,7 +67,7 @@ export default {
       terminals: [
         {
           show: true,
-          name: 'terminal-test [default]',
+          name: 'terminal-test [default] Monaco Rails Console - STG HTTP:172.28.76.137 - FIAT',
           context: '/vue-web-terminal/test',
           dragConf: {
             width: "60%",
