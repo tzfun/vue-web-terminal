@@ -14,22 +14,38 @@ export default defineUserConfig({
     title: 'vue-web-terminal',
     dest: "dist",
     head: [
-        ["link", {rel: "icon", href: "/images/vue-web-terminal-mini.png"}]
+        [
+            "link",
+            {
+                rel: "icon",
+                href: "/vue-web-terminal/images/vue-web-terminal-mini.png"
+            }
+        ],
+        [
+            "script",
+            {
+                async: true,
+                src: "/vue-web-terminal/js/umami.js",
+                "data-website-id": "d9491188-3d26-4f58-8239-276be8ffef7a",
+                "data-host-url": "https://cloud.umami.is",
+                "data-domains": "tzfun.github.io"
+            }
+        ]
     ],
     pluginVersion: {
-        vue2: "2.3.0",
-        vue3: "3.3.0"
+        vue2: "2.3.2",
+        vue3: "3.3.2"
     },
     locales: {
         '/': {
             lang: 'en-US',
             title: 'vue-web-terminal',
-            description: 'A lightweight and beautiful web-side command line window plugin'
+            description: 'A powerful web-side command line window plugin'
         },
         '/zh/': {
             lang: 'zh-CN',
             title: 'vue-web-terminal',
-            description: '一个轻量、功能强大的命令式网页仿真终端插件'
+            description: '一个功能强大的命令式网页仿真终端插件'
         }
     },
     theme: defaultTheme({
@@ -93,18 +109,18 @@ export default defineUserConfig({
                 sidebar: [
                     {text: 'About', link: '/about'},
                     {
-                      text: 'Document',
-                      children: [
-                          {text: 'Get Started', link: '/getting-started'},
-                          {text: 'Theme', link: '/theme'},
-                          {text: 'Attribute', link: '/attributes'},
-                          {text: 'Event', link: '/events'},
-                          {text: 'Slot', link: '/slots'},
-                          {text: 'API', link: '/api'},
-                          {text: 'Advanced Features', link: '/functions'},
-                          {text: 'More', link: '/others'},
-                          {text: 'Logs', link: '/logs'}
-                      ]
+                        text: 'Document',
+                        children: [
+                            {text: 'Get Started', link: '/getting-started'},
+                            {text: 'Theme', link: '/theme'},
+                            {text: 'Attribute', link: '/attributes'},
+                            {text: 'Event', link: '/events'},
+                            {text: 'Slot', link: '/slots'},
+                            {text: 'API', link: '/api'},
+                            {text: 'Advanced Features', link: '/functions'},
+                            {text: 'More', link: '/others'},
+                            {text: 'Logs', link: '/logs'}
+                        ]
                     },
                     {text: 'Q&A', link: '/questions'},
                 ]
@@ -175,6 +191,13 @@ export default defineUserConfig({
             resolve: {
                 alias: {
                     // 'vue': _resolve('vue/dist/vue.esm-bundler.js'),
+                }
+            },
+            css: {
+                preprocessorOptions: {
+                    scss: {
+                        quietDeps: true,
+                    }
                 }
             }
         }

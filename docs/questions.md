@@ -48,6 +48,10 @@ Right-click to read the clipboard contents and paste them into Terminal. Your we
 
 If your web page does not meet the above conditions for some reason, you can use the native shortcut `ctrl/command + v` to paste the contents of the clipboard.
 
+## How to enter a line break in the command line?
+
+Use the shortcut `ctrl + enter` to enter a line break. This feature is supported since `2.3.1` and `3.3.1` (inclusive).
+
 <CommentService></CommentService>
 
 [issues#43]: https://github.com/tzfun/vue-web-terminal/issues/43

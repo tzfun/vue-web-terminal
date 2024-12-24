@@ -26,3 +26,4 @@ dist-ssr
 /docs/.vuepress/.cache/
 /lib/
 /stats.html
+/yarn.lock
