@@ -2,16 +2,11 @@ import {defaultTheme} from '@vuepress/theme-default'
 import {defineUserConfig} from 'vuepress/cli'
 import {viteBundler} from '@vuepress/bundler-vite'
 import {commentPlugin} from "@vuepress/plugin-comment";
-import {mdEnhancePlugin} from "vuepress-plugin-md-enhance";
 import {searchPlugin} from "@vuepress/plugin-search";
 import {registerComponentsPlugin} from "@vuepress/plugin-register-components";
 import {getDirname, path} from "@vuepress/utils";
 
 const __dirname = getDirname(import.meta.url)
-
-//  注意！default-theme有一个锚点 bug，每次打包时需要修改这个文件里面的第20行代码:
-//  node_modules/.pnpm/@vuepress+theme-default@2.0.0-rc.35_vuepress@2.0.0-rc.13/node_modules/@vuepress/theme-default/lib/client/components/VPSidebarItems.vue
-//  修改：.vp=sidebar 改为 .vp-sidebar
 
 export default defineUserConfig({
     base: '/vue-web-terminal/',
@@ -44,6 +39,17 @@ export default defineUserConfig({
         docsDir: "docs",
         editLink: true,
         editLinkPattern: ":repo/edit/:branch/:path",
+        themePlugins: {
+            hint: {
+                hint: true,
+            },
+            copyCode: true,
+            tab: {
+                //  启用代码块分组
+                codeTabs: true,
+                tabs: true
+            }
+        },
         locales: {
             '/': {
                 selectLanguageText: 'Languages',
@@ -187,13 +193,6 @@ export default defineUserConfig({
             repoId: "R_kgDOG2MIVw",
             category: "Announcements",
             categoryId: "DIC_kwDOG2MIV84CgDvf",
-        }),
-        mdEnhancePlugin({
-            //  启用代码块分组
-            codetabs: true,
-            //  提示容器
-            //  https://theme-hope.vuejs.press/zh/guide/markdown/stylize/hint.html
-            hint: true
         }),
         searchPlugin({
             locales: {

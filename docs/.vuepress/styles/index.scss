@@ -37,3 +37,15 @@
   cursor: default !important;
   font-family: monospace !important;
 }
+
+html[data-theme="dark"] {
+  .vp-hero-action-button:hover {
+    color: #e7dbdb !important;
+  }
+}
+
+html[data-theme="light"] {
+  .vp-hero-action-button:hover {
+    color: #393434 !important;
+  }
+}
