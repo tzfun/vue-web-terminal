@@ -1640,21 +1640,30 @@ export default {
                     let tipsRect = this.$refs.terminalCmdTipsRef.getBoundingClientRect()
 
                     let cursorRelativeLeft = cursorRect.left - containerRect.left
-                    // let cursorRelativeTop = cursorRect.top - containerRect.top
+                    let cursorRelativeRight = containerRect.left + containerRect.width - cursorRect.left
+                    let cursorRelativeTop = cursorRect.top - containerRect.top
+                    let cursorRelativeBottom = containerRect.top + containerRect.height - cursorRect.top
 
                     let containerPaddingLeft = this.enableFold ? WINDOW_STYLE.PADDING_LEFT_FOLD : WINDOW_STYLE.PADDING_LEFT
 
+                    //  tips默认在右下角展示
                     let tipsRelativeTop = FONT_HEIGHT
                     let tipsRelativeLeft = cursorRelativeLeft - containerPaddingLeft
 
                     //  超右边界
                     if (cursorRect.left + tipsRect.width > containerRect.left + containerRect.width) {
-                        tipsRelativeLeft -= (tipsRect.width - this.cursorConf.width)
+                        //  按照可视区域更大的来展示
+                        if (cursorRelativeLeft > cursorRelativeRight) {
+                            tipsRelativeLeft -= (tipsRect.width - this.cursorConf.width)
+                        }
                     }
 
                     //  超下边界
                     if (cursorRect.top + tipsRect.height > containerRect.top + containerRect.height) {
-                        tipsRelativeTop = -tipsRect.height
+                        //  按照可视区域更大的来展示
+                        if (cursorRelativeTop > cursorRelativeBottom) {
+                            tipsRelativeTop = -tipsRect.height
+                        }
                     }
 
                     this.tips.style.top = tipsRelativeTop
