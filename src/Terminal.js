@@ -194,16 +194,11 @@ export default {
 
                     if (this.cursorConf.show) {
                         if (key === 'home') {
-                            this.$refs.terminalCmdInputRef.selectionStart = 0
-                            this.$refs.terminalCmdInputRef.selectionEnd = 0
-                            this.cursorConf.idx = 0
+                            this._setCursorIdx(0)
 
                             event.preventDefault()
                         } else if(key === 'end') {
-                            let valueLen = this.$refs.terminalCmdInputRef.value.length
-                            this.$refs.terminalCmdInputRef.selectionStart = valueLen
-                            this.$refs.terminalCmdInputRef.selectionEnd = valueLen
-                            this.cursorConf.idx = valueLen
+                            this._setCursorIdx(this.$refs.terminalCmdInputRef.value.length)
 
                             event.preventDefault()
                         } else if (key === 'tab') {
@@ -247,8 +242,15 @@ export default {
                     text = text.trim()
                         .replace(/\r\n/g, '\n')
                         .replace(/\r/g, '\n')
-                    const command = this.command;
-                    this.command = command && command.length > 0 ? `${command}${text}` : text;
+                    const cmd = this.command;
+                    let cursorIdx = this.cursorConf.idx
+                    this.command = cmd.substring(0, cursorIdx) + text + cmd.substring(cursorIdx);
+
+                    this.$nextTick(() => {
+                        this._setCursorIdx(cursorIdx + text.length)
+                        this._calculateCursorPos()
+                    })
+
                     this._focus()
                     this._jumpToBottom()
                 }).catch(error => {
@@ -829,15 +831,18 @@ export default {
                     cursorIdx++
                     //  恢复光标位置
                     this.$nextTick(() => {
-                        this.$refs.terminalCmdInputRef.selectionStart = cursorIdx
-                        this.$refs.terminalCmdInputRef.selectionEnd = cursorIdx
-                        this.cursorConf.idx = cursorIdx
+                        this._setCursorIdx(cursorIdx)
                     })
                     this._jumpToBottom()
                 }
             } else {
                 this._execute()
             }
+        },
+        _setCursorIdx(idx) {
+            this.$refs.terminalCmdInputRef.selectionStart = idx
+            this.$refs.terminalCmdInputRef.selectionEnd = idx
+            this.cursorConf.idx = idx
         },
         _execute() {
             this._closeTips(true)
