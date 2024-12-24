@@ -41,9 +41,11 @@
                :key="idx"
                :style="`margin-top:${lineSpace}px;`"
                @click="_closeGroupFold(group)">
-            <span v-if="item.type === 'cmdLine'"
-                  class="t-crude-font t-cmd-line t-cmd-line-content"
-                  v-html="item.content"/>
+            <span v-if="item.type === 'cmdLine'">
+              <slot name="cmdLine" :item="item">
+                <span class="t-crude-font t-cmd-line t-cmd-line-content" v-html="item.content"></span>
+              </slot>
+            </span>
             <div v-else>
             <span v-if="item.type === 'normal'">
               <slot name="normal" :message="item">
