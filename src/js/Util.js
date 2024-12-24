@@ -441,3 +441,23 @@ export function _parsePixelFromValue(value, parentPixel, defaultValue) {
     }
     return pixel
 }
+
+export function _hash(str) {
+    // Step 1: Initialize hash value
+    let hash = 5381;
+
+    // Step 2: Compute hash
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash * 33) ^ str.charCodeAt(i);
+    }
+
+    // Step 3: Convert hash to 32-bit unsigned integer
+    hash = hash >>> 0;
+
+    // Step 4: Convert hash to hexadecimal string
+    return hash.toString(16);
+}
+
+const _parseStrHtmlSafely = (str) => {
+    return str.replace(/[\[\]{}#\s\\.,:;%|*+=@!?&()\/]/g, '_')
+}

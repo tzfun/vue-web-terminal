@@ -35,6 +35,7 @@ import {_screenType} from "@/js/Util";
 
 import themeDark from "!!raw-loader!./css/theme/dark.css"
 import themeLight from "!!raw-loader!./css/theme/light.css"
+import {_hash} from "./js/Util";
 
 let idx = 0;
 
@@ -363,7 +364,7 @@ export default {
         }
 
         //  移除样式文件
-        let style = document.getElementById(this.getThemeStyleId(this.parseNameHtmlSafely(this.getName())))
+        let style = document.getElementById(this.getThemeStyleId(_hash(this.getName())))
         if (style) {
             document.body.removeChild(style)
         }
@@ -386,7 +387,7 @@ export default {
                 let oldName = oldVal ? oldVal : this._name
 
                 rename(newName, oldName, this.terminalListener)
-                this.changeThemeFlag(this.parseNameHtmlSafely(newName), this.parseNameHtmlSafely(oldName))
+                this.changeThemeFlag(_hash(newName), _hash(oldName))
             }
         },
         //  监听层级变化
@@ -424,6 +425,7 @@ export default {
         }
     },
     methods: {
+        _hash,
         _screenType,
         pushMessage(message) {
             TerminalApi.pushMessage(this.getName(), message);
@@ -521,9 +523,6 @@ export default {
         getThemeStyleId(salt) {
             return `t-theme-style-${salt}`
         },
-        parseNameHtmlSafely(name) {
-            return name.replace(/[[\]{}#\s\\.,:;%|*+=@!?&()/]/g, '_')
-        },
         setTheme(theme) {
             let customThemes = getOptions().themes
             let themeStyle
@@ -538,7 +537,7 @@ export default {
                 return
             }
             let css = themeStyle.match(/^.*\{(.*)}\s*$/s)[1]
-            let terminalName = this.parseNameHtmlSafely(this.getName())
+            let terminalName = _hash(this.getName())
 
             themeStyle = `#t-${terminalName} { ${css} }`
 
