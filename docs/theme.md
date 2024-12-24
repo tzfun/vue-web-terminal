@@ -101,21 +101,6 @@ If you need to implement your own theme style, create a new css file in your pro
 rewrite the above css variables in this file, and then configure your custom theme in `main.js`.
 ::: code-tabs#js
 
-@tab Vue2
-
-```js
-import {Terminal, configTheme} from 'vue-web-terminal';
-
-//  Export css file content to variables
-import customTheme1 from '!!raw-loader!/your-style-dir/terminal-custom-theme1.css';
-import customTheme2 from '!!raw-loader!/your-style-dir/terminal-custom-theme2.css';
-
-configTheme('customTheme1', customTheme1);
-configTheme('customTheme2', customTheme2);
-
-Vue.use(Terminal);
-```
-
 @tab Vue3
 
 ```js
@@ -129,6 +114,21 @@ configTheme('customTheme1', customTheme1);
 configTheme('customTheme2', customTheme2);
 
 createApp(App).use(Terminal)
+```
+
+@tab Vue2
+
+```js
+import {Terminal, configTheme} from 'vue-web-terminal';
+
+//  Export css file content to variables
+import customTheme1 from '!!raw-loader!/your-style-dir/terminal-custom-theme1.css';
+import customTheme2 from '!!raw-loader!/your-style-dir/terminal-custom-theme2.css';
+
+configTheme('customTheme1', customTheme1);
+configTheme('customTheme2', customTheme2);
+
+Vue.use(Terminal);
 ```
 :::
 

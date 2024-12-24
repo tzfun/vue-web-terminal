@@ -45,6 +45,22 @@ This calling method relies on the reference in Vue. Once the Ref of the specifie
 can be called without passing the name value of the Terminal.
 
 ::: code-tabs#vue
+@tab Vue3
+
+```vue
+<template>
+  <terminal name="my-terminal" ref="myTerminalRef"></terminal>
+</template>
+
+<script setup>
+const myTerminalRef = ref(null)
+
+const invokeApi = () => {
+  myTerminalRef.pushMessage("hello world!")
+}
+</script>
+```
+
 @tab Vue2
 
 ```vue
@@ -60,22 +76,6 @@ can be called without passing the name value of the Terminal.
         }
     }  
   }
-</script>
-```
-
-@tab Vue3
-
-```vue
-<template>
-  <terminal name="my-terminal" ref="myTerminalRef"></terminal>
-</template>
-
-<script setup>
-const myTerminalRef = ref(null)
-
-const invokeApi = () => {
-  myTerminalRef.pushMessage("hello world!")
-}
 </script>
 ```
 :::

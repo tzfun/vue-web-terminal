@@ -71,22 +71,6 @@ code类型消息支持`highlight.js`高亮显示，需要你在自己的工程�
 首先你需要在 main.js 入口配置 Highlight.js，详细配置见[highlight.js in npm][highlight.js in npm]
 
 ::: code-tabs#js
-
-@tab Vue2
-```js
-import {Terminal, configHighlight} from 'vue-web-terminal'
-import hljs from 'highlight.js'
-import java from 'highlight.js/lib/languages/java'
-import vuePlugin from "@highlightjs/vue-plugin"
-import 'highlight.js/styles/tomorrow-night-bright.css'
-
-Vue.use(vuePlugin)
-Vue.use(Terminal)
-
-hljs.registerLanguage('java', java)
-configHighlight(true)
-```
-
 @tab Vue3
 
 ```js
@@ -99,6 +83,21 @@ import 'highlight.js/styles/tomorrow-night-bright.css'
 const app = createApp(App)
 app.use(vuePlugin)
 app.use(Terminal)
+
+hljs.registerLanguage('java', java)
+configHighlight(true)
+```
+
+@tab Vue2
+```js
+import {Terminal, configHighlight} from 'vue-web-terminal'
+import hljs from 'highlight.js'
+import java from 'highlight.js/lib/languages/java'
+import vuePlugin from "@highlightjs/vue-plugin"
+import 'highlight.js/styles/tomorrow-night-bright.css'
+
+Vue.use(vuePlugin)
+Vue.use(Terminal)
 
 hljs.registerLanguage('java', java)
 configHighlight(true)
@@ -122,28 +121,6 @@ code类型消息也支持 codemirror 高亮显示，详细配置见[codemirror.j
 
 ::: code-tabs#js
 
-@tab Vue2
-```js
-import {Terminal, configCodemirror} from 'vue-web-terminal'
-import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/addon/edit/closebrackets.js'
-
-Vue.use(VueCodemirror)
-Vue.use(Terminal)
-
-configCodemirror({
-  tabSize: 4,
-  mode: 'text/x-java',
-  theme: "darcula",
-  lineNumbers: true,
-  line: true,
-  smartIndent: true
-})
-```
-
 @tab Vue3
 ```js
 import {Terminal, configCodemirror} from 'vue-web-terminal'
@@ -156,6 +133,28 @@ import 'codemirror/addon/edit/closebrackets.js'
 const app = createApp(App)
 app.use(VueCodemirror)
 app.use(Terminal)
+
+configCodemirror({
+  tabSize: 4,
+  mode: 'text/x-java',
+  theme: "darcula",
+  lineNumbers: true,
+  line: true,
+  smartIndent: true
+})
+```
+
+@tab Vue2
+```js
+import {Terminal, configCodemirror} from 'vue-web-terminal'
+import VueCodemirror from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/darcula.css'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/addon/edit/closebrackets.js'
+
+Vue.use(VueCodemirror)
+Vue.use(Terminal)
 
 configCodemirror({
   tabSize: 4,

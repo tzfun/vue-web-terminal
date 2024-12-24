@@ -6,7 +6,7 @@
 
 在你打算正式使用此插件之前希望你已经阅读 [关于插件](./about.md) 并充分了解此插件支持的功能以及它的局限性。
 
-::: warning
+::: tip
 **Vue2**版本从 **2024年12月24日** 开始正式归档，不再提供维护更新，源码见 [vue2分支](https://github.com/tzfun/vue-web-terminal/tree/vue2)。
 :::
 
@@ -56,6 +56,13 @@ pnpm install vue-web-terminal@3
 在main.js中注册插件
 
 ::: code-tabs#js
+@tab Vue3
+
+```js
+import Terminal from 'vue-web-terminal'
+
+createApp(App).use(Terminal)
+```
 
 @tab Vue2
 
@@ -63,14 +70,6 @@ pnpm install vue-web-terminal@3
 import Terminal from 'vue-web-terminal'
 
 Vue.use(Terminal)
-```
-
-@tab Vue3
-
-```js
-import Terminal from 'vue-web-terminal'
-
-createApp(App).use(Terminal)
 ```
 :::
 

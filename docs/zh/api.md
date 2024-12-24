@@ -42,6 +42,22 @@
 这种调用方式依赖于Vue中的 Ref 引用，获取到指定Dom的Ref即可调用插件的API，且无需传递Terminal的name值
 
 ::: code-tabs#vue
+@tab Vue3
+
+```vue
+<template>
+  <terminal name="my-terminal" ref="myTerminalRef"></terminal>
+</template>
+
+<script setup>
+const myTerminalRef = ref(null)
+
+const invokeApi = () => {
+  myTerminalRef.pushMessage("hello world!")
+}
+</script>
+```
+
 @tab Vue2
 
 ```vue
@@ -57,22 +73,6 @@
         }
     }  
   }
-</script>
-```
-
-@tab Vue3
-
-```vue
-<template>
-  <terminal name="my-terminal" ref="myTerminalRef"></terminal>
-</template>
-
-<script setup>
-const myTerminalRef = ref(null)
-
-const invokeApi = () => {
-  myTerminalRef.pushMessage("hello world!")
-}
 </script>
 ```
 :::

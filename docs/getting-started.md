@@ -9,7 +9,7 @@ you can also edit the code and run in [CodeSandbox][Online Demo CodeSandbox].
 Before you plan to officially use this plugin, I hope you have read [About the plugin](./about.md) and fully 
 understand the functions supported by this plugin and its limitations.
 
-::: warning
+::: tip
 The **Vue2** version will be officially archived from **December 24, 2024** and will no longer provide maintenance updates. 
 For the source code, see [vue2 branch](https://github.com/tzfun/vue-web-terminal/tree/vue2).
 :::
@@ -61,20 +61,20 @@ Register the plugin in main.js
 
 ::: code-tabs#js
 
-@tab Vue2
-
-```js
-import Terminal from 'vue-web-terminal'
-
-Vue.use(Terminal)
-```
-
 @tab Vue3
 
 ```js
 import Terminal from 'vue-web-terminal'
 
 createApp(App).use(Terminal)
+```
+
+@tab Vue2
+
+```js
+import Terminal from 'vue-web-terminal'
+
+Vue.use(Terminal)
 ```
 :::
 

@@ -79,7 +79,7 @@ export default defineUserConfig({
                         link: '/'
                     },
                     {
-                        text: 'Demo',
+                        text: 'Online Experience',
                         link: '/demo'
                     },
                     {

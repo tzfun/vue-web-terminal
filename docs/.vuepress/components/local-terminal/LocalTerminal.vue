@@ -3,7 +3,7 @@ import {reactive, ref} from "vue";
 import {commands} from "./commands.js";
 import {exampleCode} from "./example.js";
 import CodeEditor from "../editor/CodeEditor.vue";
-import {useClientData, usePageLang} from "@vuepress/client";
+import {usePageLang} from "@vuepress/client";
 import languages from '../../languages.json'
 import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from 'vue-web-terminal'
 

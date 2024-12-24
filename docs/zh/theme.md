@@ -95,6 +95,20 @@
 
 
 ::: code-tabs#js
+@tab Vue3
+
+```js
+import {Terminal, configTheme} from 'vue-web-terminal';
+
+//  导出css文件内容
+import customTheme1 from '/your-style-dir/terminal-custom-theme1.css?inline';
+import customTheme2 from '/your-style-dir/terminal-custom-theme2.css?inline';
+
+configTheme('customTheme1', customTheme1);
+configTheme('customTheme2', customTheme2);
+
+createApp(App).use(Terminal)
+```
 
 @tab Vue2
 
@@ -109,21 +123,6 @@ configTheme('customTheme1', customTheme1);
 configTheme('customTheme2', customTheme2);
 
 Vue.use(Terminal);
-```
-
-@tab Vue3
-
-```js
-import {Terminal, configTheme} from 'vue-web-terminal';
-
-//  导出css文件内容
-import customTheme1 from '/your-style-dir/terminal-custom-theme1.css?inline';
-import customTheme2 from '/your-style-dir/terminal-custom-theme2.css?inline';
-
-configTheme('customTheme1', customTheme1);
-configTheme('customTheme2', customTheme2);
-
-createApp(App).use(Terminal)
 ```
 :::
 
