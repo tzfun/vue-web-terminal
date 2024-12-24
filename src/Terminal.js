@@ -360,6 +360,8 @@ export default {
                 return this.setCommand(options)
             } else if (type === 'switchAllFoldState') {
                 return this._switchAllFoldState(options)
+            } else if (type === 'jumpToBottom') {
+                return this._jumpToBottom(options)
             } else {
                 console.error(`Unsupported event type '${type}' in instance ${this.getName()}`)
             }
@@ -476,6 +478,9 @@ export default {
                 this.terminalLog = [];
                 this.logSize = 0;
             }
+        },
+        jumpToBottom(options) {
+            return this._jumpToBottom(options)
         },
         getCommand() {
             return this.command

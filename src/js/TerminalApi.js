@@ -114,6 +114,10 @@ const TerminalApi = {
 
     switchAllFoldState(name, options) {
         return TerminalApi.post(name, 'switchAllFoldState', options)
+    },
+
+    jumpToBottom(name, options) {
+        return this.post(name, 'jumpToBottom', options)
     }
 }
 
