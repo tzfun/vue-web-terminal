@@ -426,7 +426,6 @@ export default {
         //  监听主题
         theme: {
             handler(newVal) {
-                console.log("changed theme",newVal)
                 this.setTheme(newVal)
             }
         },
@@ -1321,7 +1320,7 @@ export default {
             }
             return width
         },
-        _onInput(e) {
+        _onInput: _debounce(function (e) {
             if (this.inputFilter != null) {
                 let value = e.target.value
                 let newStr = this.inputFilter(e.data, value, e)
@@ -1355,7 +1354,7 @@ export default {
                 }
 
             })
-        },
+        }, 100),
         _checkInputCursor() {
             let eIn = this.$refs.terminalCmdInputRef
             if (eIn.selectionStart !== this.cursorConf.idx) {

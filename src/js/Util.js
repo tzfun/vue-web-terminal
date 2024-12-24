@@ -457,7 +457,3 @@ export function _hash(str) {
     // Step 4: Convert hash to hexadecimal string
     return hash.toString(16);
 }
-
-const _parseStrHtmlSafely = (str) => {
-    return str.replace(/[\[\]{}#\s\\.,:;%|*+=@!?&()\/]/g, '_')
-}

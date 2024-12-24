@@ -2,8 +2,10 @@
   <div id="app">
     <button @click="_getCommand">get command</button>
     <button @click="_setCommand">set command</button>
+    <button @click="_goBottom">go bottom</button>
     <div v-for="item in terminals" :key="item.name">
       <terminal
+          ref="terminalRef"
           v-show="item.show"
           :name="item.name"
           :title="item.name"
@@ -297,6 +299,9 @@ export default {
     },
     _setCommand() {
       TerminalApi.setCommand(this.terminals[0].name, "hello this is a new command -a xxx")
+    },
+    _goBottom() {
+      this.$refs.terminalRef[0].jumpToBottom(true)
     },
     onResize(info, name) {
       console.log(name, info)
