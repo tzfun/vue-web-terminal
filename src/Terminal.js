@@ -193,7 +193,20 @@ export default {
 
 
                     if (this.cursorConf.show) {
-                        if (key === 'tab') {
+                        if (key === 'home') {
+                            this.$refs.terminalCmdInputRef.selectionStart = 0
+                            this.$refs.terminalCmdInputRef.selectionEnd = 0
+                            this.cursorConf.idx = 0
+
+                            event.preventDefault()
+                        } else if(key === 'end') {
+                            let valueLen = this.$refs.terminalCmdInputRef.value.length
+                            this.$refs.terminalCmdInputRef.selectionStart = valueLen
+                            this.$refs.terminalCmdInputRef.selectionEnd = valueLen
+                            this.cursorConf.idx = valueLen
+
+                            event.preventDefault()
+                        } else if (key === 'tab') {
                             this._selectTips()
                             event.preventDefault()
                         } else if (document.activeElement !== this.$refs.terminalCmdInputRef) {
@@ -1233,7 +1246,10 @@ export default {
         _switchTipsSelectedIdx(idx) {
             let viewItem = this.$refs.terminalCmdTipsRef.querySelector(".t-cmd-tips-item:nth-child(" + (idx + 1) + ")")
             if (viewItem) {
-                viewItem.scrollIntoView({block: "start", behavior: "smooth"})
+                viewItem.scrollIntoView({
+                    block: "center",
+                    behavior: "smooth"
+                })
             }
             this.tips.selectedIndex = idx
 

@@ -629,6 +629,7 @@
     max-width: 500px;
     max-height: 200px;
     overflow-y: auto;
+    padding: 5px;
 }
 
 .t-cmd-tips-footer {
@@ -653,6 +654,7 @@
     overflow:hidden;
     text-wrap: nowrap;
     color: var(--t-cmd-tips-des-font-color);
+    border-radius: 5px;
 }
 
 .t-cmd-tips-item-first {

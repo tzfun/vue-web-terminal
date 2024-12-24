@@ -50,6 +50,7 @@ const commandStore = [
   },
   {
     key: "COMMAND CONFIG come on",
+    description: "This is a very long long long long description."
   },
   {
     key: "CONFIG haha",
