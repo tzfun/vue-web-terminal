@@ -120,7 +120,8 @@ export default {
                     lastRect: null
                 },
                 selectedIndex: 0
-            }
+            },
+            autoScrollToBottom: true
         }
     },
     props: terminalProps(),
@@ -252,7 +253,7 @@ export default {
                     })
 
                     this._focus()
-                    this._jumpToBottom()
+                    this._jumpToBottom(true)
                 }).catch(error => {
                     console.error(error);
                 })
@@ -287,6 +288,13 @@ export default {
                 }
             });
         });
+
+        _eventOn(el, 'scroll', (e) => {
+            let doc = e.target
+            let bottom = doc.scrollHeight - doc.clientHeight - doc.scrollTop
+
+            this.autoScrollToBottom = bottom <= 30;
+        })
 
         //  如果是移动设备，需要监听touch事件来模拟双击事件
         if (_isPhone() || _isPad()) {
@@ -845,7 +853,7 @@ export default {
                     this.$nextTick(() => {
                         this._setCursorIdx(cursorIdx)
                     })
-                    this._jumpToBottom()
+                    this._jumpToBottom(true)
                 }
             } else {
                 this._execute()
@@ -894,7 +902,7 @@ export default {
                                         this.ask.callback = options.callback
                                         this.ask.autoReview = options.autoReview
                                         this._focus()
-                                        this._jumpToBottom()
+                                        this._jumpToBottom(true)
                                     })
 
                                     message.onFinish(() => {
@@ -1123,7 +1131,10 @@ export default {
                 this._pushMessage(message)
             }
         },
-        _jumpToBottom() {
+        _jumpToBottom(force = false) {
+            if (!force && !this.autoScrollToBottom) {
+                return
+            }
             this.$nextTick(() => {
                 let box = this.$refs.terminalWindowRef
                 if (box != null) {
@@ -1286,7 +1297,7 @@ export default {
             this._resetCursorPos()
             historyStore.setIdx(this.getName(), cmdIdx)
             this._searchCmd()
-            this._jumpToBottom()
+            this._jumpToBottom(true)
         },
         _switchNextCmd() {
             let cmdLog = historyStore.getLog(this.getName())
@@ -1301,7 +1312,7 @@ export default {
             this._resetCursorPos()
             historyStore.setIdx(this.getName(), cmdIdx)
             this._searchCmd()
-            this._jumpToBottom()
+            this._jumpToBottom(true)
         },
         _calculateStringWidth(str) {
             let width = 0
@@ -1744,7 +1755,7 @@ export default {
                     if (newCommand && typeof newCommand === 'string') {
                         this.command = newCommand
                         this._resetCursorPos()
-                        this._jumpToBottom()
+                        this._jumpToBottom(true)
                     } else {
                         console.warn(`'tipsSelectHandler' returns an invalid result, the expected return value is string type, got ${typeof newCommand}.`)
                     }
@@ -1753,7 +1764,7 @@ export default {
             }
             this.command = selectedItem.command.key
             this._resetCursorPos()
-            this._jumpToBottom()
+            this._jumpToBottom(true)
         },
         _getElementInfo() {
             let windowEle = this.$refs.terminalWindowRef
