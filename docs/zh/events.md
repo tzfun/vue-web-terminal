@@ -72,4 +72,11 @@ success回调参数支持多种数据类型，不同数据类型执行逻辑也�
   - name: `string`，Terminal实例的名称
 - **说明**：窗口大小变化时触发
 
+## on-dragging
+
+- **回调参数**：`(position, name)`
+  - position: [Position](./others.md#position)，窗口位置
+  - name: `string`，Terminal实例的名称
+- **说明**：拖拽窗口时触发
+
 <CommentService></CommentService>

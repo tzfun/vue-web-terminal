@@ -207,7 +207,7 @@ type elementInfo = () => TerminalElementInfo;
 let info = TerminalApi.elementInfo('my-terminal')
 console.log(info)
 ```
-- **Result Example**：
+- **Result Example**: 
 ```json
 {
   "pos": {
@@ -308,18 +308,34 @@ TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 
 ### switchAllFoldState
 
-- **Description**：Collapse or expand all command groups.
-- **Definition**：
+- **Description**: Collapse or expand all command groups.
+- **Definition**: 
 ```ts:no-line-numbers
 type switchAllFoldState = (name: string, state: boolean) => number;
 ```
-- **Example**：
+- **Example**: 
 ```js
 // Collapse all command groups
 TerminalApi.switchAllFoldState('my-terminal', true)
 
 // Expand all command groups
 TerminalApi.switchAllFoldState('my-terminal', false)
+```
+
+### jumpToBottom
+
+- **Description**: Jump to the bottom of the window
+- **Definition**: 
+```ts:no-line-numbers
+type jumpToBottom = (name: string, force: boolean) => void;
+```
+- **Example**: 
+```js
+// Jump to the bottom of the window. If the latest line is more than a certain distance away from the visible area, it will not jump.
+TerminalApi.jumpToBottom('my-terminal', false)
+
+// Force jump to bottom
+TerminalApi.jumpToBottom('my-terminal', true)
 ```
 
 <CommentService></CommentService>

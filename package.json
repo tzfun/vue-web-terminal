@@ -23,6 +23,7 @@
     "@vuepress/plugin-theme-data": "2.0.0-rc.66",
     "@vuepress/theme-default": "2.0.0-rc.66",
     "@vuepress/utils": "^2.0.0-rc.19",
+    "vuepress": "2.0.0-rc.19",
     "codemirror": "^6.x",
     "markdown-it": "^14.1.0",
     "sass-embedded": "1.83.0",
@@ -30,8 +31,7 @@
     "vite": "5.4.6",
     "vue": "3.5.13",
     "vue-codemirror": "^6.1.1",
-    "vue-web-terminal": "^3.3.0",
-    "vuepress": "2.0.0-rc.19"
+    "vue-web-terminal": "3.3.3-rc.4"
   },
   "peerDependencies": {
     "vite": "5.4.6",

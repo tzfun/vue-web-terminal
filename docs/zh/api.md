@@ -319,4 +319,20 @@ TerminalApi.switchAllFoldState('my-terminal', true)
 TerminalApi.switchAllFoldState('my-terminal', false)
 ```
 
+### jumpToBottom
+
+- **说明**：跳转到窗口底部
+- **定义**：
+```ts:no-line-numbers
+type jumpToBottom = (name: string, force: boolean) => void;
+```
+- **示例**：
+```js
+// 跳转到窗口底部，如果此时最新的一行离可视区域超过一定距离则不跳转
+TerminalApi.jumpToBottom('my-terminal', false)
+
+// 强制跳转到底部
+TerminalApi.jumpToBottom('my-terminal', true)
+```
+
 <CommentService></CommentService>

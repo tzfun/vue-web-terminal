@@ -8,17 +8,19 @@ not meet your needs, you can use these slots to customize this part of the displ
 
 ## Slots Details
 
-| Slot name    | Arguments            | Description                                                         |
-|--------------|----------------------|---------------------------------------------------------------------|
-| header       | /                    | Customize the header style, still retain the drag area.             |
-| helpBox      | { showHeader, item } | Custom command search result prompt box, item is the search result. |
-| normal       | { message }          | Custom `normal` type message.                                       |
-| json         | { message }          | Custom `json` type message.                                         |
-| table        | { message }          | Custom `table` type message.                                        |
-| code         | { message }          | Custom `code` type message.                                         |
-| html         | { message }          | Custom `html` type message.                                         |
-| flash        | { content }          | Custom flash style.                                                 |
-| textEditor   | { data }             | Custom text editor style.                                           |
+| Slot name   | Arguments            | Description                                                         |
+|-------------|----------------------|---------------------------------------------------------------------|
+| header      | /                    | Customize the header style, still retain the drag area.             |
+| helpBox     | { showHeader, item } | Custom command search result prompt box, item is the search result. |
+| normal      | { message }          | Custom `normal` type message.                                       |
+| json        | { message }          | Custom `json` type message.                                         |
+| table       | { message }          | Custom `table` type message.                                        |
+| code        | { message }          | Custom `code` type message.                                         |
+| html        | { message }          | Custom `html` type message.                                         |
+| flash       | { content }          | Custom flash style.                                                 |
+| textEditor  | { data }             | Custom text editor style.                                           |
+| cmdLine     | { item }             | Custom command line logging style.                                  |
+| folder      | { group }            | Custom collapse button style.                                       |
 
 ## Example
 

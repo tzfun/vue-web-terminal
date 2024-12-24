@@ -73,4 +73,11 @@ The success callback parameter supports multiple data types, and the execution l
   - name: `string`, the name of the Terminal instance.
 - **Description**：Triggered when the window size changes.
 
+## on-dragging
+
+- **Parameters**：`(position, name)`
+  - position: [Position](./others.md#position), window position
+  - name: `string`, the name of the Terminal instance.
+- **Description**：Triggered when dragging the window.
+
 <CommentService></CommentService>

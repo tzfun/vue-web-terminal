@@ -13,6 +13,12 @@ export default defineUserConfig({
     lang: 'en-US',
     title: 'vue-web-terminal',
     dest: "dist",
+    define:{
+        __PLUGIN_VERSION__: {
+            vue2: "2.3.3",
+            vue3: "3.3.3"
+        },
+    },
     head: [
         [
             "link",
@@ -32,10 +38,6 @@ export default defineUserConfig({
             }
         ]
     ],
-    pluginVersion: {
-        vue2: "2.3.2",
-        vue3: "3.3.2"
-    },
     locales: {
         '/': {
             lang: 'en-US',
@@ -75,6 +77,10 @@ export default defineUserConfig({
                     {
                         text: 'Home',
                         link: '/'
+                    },
+                    {
+                        text: 'Demo',
+                        link: '/demo'
                     },
                     {
                         text: 'Document',
@@ -133,6 +139,10 @@ export default defineUserConfig({
                     {
                         text: '首页',
                         link: '/zh/'
+                    },
+                    {
+                        text: '在线体验',
+                        link: '/zh/demo'
                     },
                     {
                         text: '开发文档',

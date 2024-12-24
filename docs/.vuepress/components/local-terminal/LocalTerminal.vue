@@ -3,15 +3,12 @@ import {reactive, ref} from "vue";
 import {commands} from "./commands.js";
 import {exampleCode} from "./example.js";
 import CodeEditor from "../editor/CodeEditor.vue";
-import {usePageLang} from "@vuepress/client";
+import {useClientData, usePageLang} from "@vuepress/client";
 import languages from '../../languages.json'
 import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from 'vue-web-terminal'
 
 //  当前最新版本
-const version = reactive({
-  vue2: '2.3.0',
-  vue3: '3.3.0'
-})
+const version = __PLUGIN_VERSION__
 
 const languageText = reactive(languages[usePageLang().value])
 

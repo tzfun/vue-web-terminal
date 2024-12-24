@@ -17,6 +17,8 @@
 | html       | { message }          | 自定义`html`类型消息          |
 | flash      | { content }          | 自定义实时回显样式              |
 | textEditor | { data }             | 自定义文本编辑器样式             |
+| cmdLine    | { item }             | 自定义命令行记录样式             |
+| folder     | { group }            | 自定义折叠按钮样式              |
 
 
 ## 示例
