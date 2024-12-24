@@ -1565,6 +1565,9 @@ export default {
 
             this.containerStyleStore.left = xVal + "px";
             this.containerStyleStore.top = yVal + "px";
+
+            let position = {x: xVal, y: yVal}
+            this.$emit('on-dragging', position, this.getName())
         },
         _commandFormatter(cmd) {
             if (this.commandFormatter) {
