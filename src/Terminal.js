@@ -552,11 +552,12 @@ export default {
                 return
             }
             let css = themeStyle.match(/^.*\{(.*)}\s*$/s)[1]
-            let terminalName = _hash(this.getName())
 
-            themeStyle = `#t-${terminalName} { ${css} }`
+            let terminalNameKey = _hash(this.getName())
 
-            let tagId = this.getThemeStyleId(terminalName)
+            themeStyle = `.t-container[t-data-key="${terminalNameKey}"] { ${css} }`
+
+            let tagId = this.getThemeStyleId(terminalNameKey)
             let styleTag = document.getElementById(tagId)
             if (styleTag) {
                 styleTag.innerHTML = themeStyle
@@ -567,11 +568,17 @@ export default {
                 document.body.appendChild(themeLink)
             }
         },
-        changeThemeFlag(newName, oldName) {
-            let newTagId = this.getThemeStyleId(newName)
-            let oldThemeStyle = document.getElementById(this.getThemeStyleId(oldName))
+        /**
+         * 当改名时，需更新css文件
+         *
+         * @param newNameKey 新 Key（已转换过）
+         * @param oldNameKey 旧 Key（已转换过）
+         */
+        changeThemeFlag(newNameKey, oldNameKey) {
+            let newTagId = this.getThemeStyleId(newNameKey)
+            let oldThemeStyle = document.getElementById(this.getThemeStyleId(oldNameKey))
             if (oldThemeStyle) {
-                let style = oldThemeStyle.innerHTML.replace(`#t-${oldName}`, `#t-${newName}`)
+                let style = oldThemeStyle.innerHTML.replace(`[t-data-key="${oldNameKey}"]`, `[t-data-key="${newNameKey}"]`)
                 oldThemeStyle.id = newTagId
                 oldThemeStyle.innerHTML = style
             }
