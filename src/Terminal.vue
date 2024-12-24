@@ -32,9 +32,11 @@
              :class="`t-log-box t-log-fold-container ${enableHoverStripe && group.logs.length > 1 ? 't-log-box-hover-script' : ''} ${group.fold ? 't-log-box-folded' : ''}`"
              :style="`margin-top:${lineSpace}px;`">
           <span v-if="_enableFold(group)">
-            <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
-            <span class="t-log-fold-icon" v-else @click="group.fold = true">-</span>
-            <span class="t-log-fold-line" v-if="!group.fold"/>
+            <slot name="folder" :group="group">
+              <span class="t-log-fold-icon t-log-fold-icon-active"  v-if="group.fold" @click="_closeGroupFold(group)">+</span>
+              <span class="t-log-fold-icon" v-else @click="group.fold = true">-</span>
+              <span class="t-log-fold-line" v-if="!group.fold"/>
+            </slot>
           </span>
 
           <div v-for="(item,idx) in group.logs"
