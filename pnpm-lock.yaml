@@ -66,8 +66,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1(codemirror@6.0.0(@lezer/common@1.2.1))(vue@3.5.13)
       vue-web-terminal:
-        specifier: 3.3.3-rc.4
-        version: 3.3.3-rc.4
+        specifier: 3.3.3
+        version: 3.3.3
       vuepress:
         specifier: 2.0.0-rc.19
         version: 2.0.0-rc.19(@vuepress/bundler-vite@2.0.0-rc.19(@types/node@20.4.5)(sass-embedded@1.83.0)(yaml@2.4.5))(vue@3.5.13)
@@ -1726,8 +1726,8 @@ packages:
     peerDependencies:
       vue: ^3.2.0
 
-  vue-web-terminal@3.3.3-rc.4:
-    resolution: {integrity: sha512-iUPcd+eKItmgwlsr6SwLYebdu10FmESu9U2yrnxqQgw5Tv7li+45fc7fAmz17BvSQx2gnH5FNR+cdpwb7yv34Q==}
+  vue-web-terminal@3.3.3:
+    resolution: {integrity: sha512-jxBk9UYQzW6aXCkizbt/ALj7DkhePf53hpfBYZ/s7SmB+3+BQlLm9xMDKbJ1EU6U1ZN69kpZHPFTj0Lh8Ub7og==}
 
   vue@3.5.13:
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}
@@ -3420,7 +3420,7 @@ snapshots:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.13
 
-  vue-web-terminal@3.3.3-rc.4:
+  vue-web-terminal@3.3.3:
     dependencies:
       vue: 3.5.13
       vue-json-viewer: 3.0.4(vue@3.5.13)
