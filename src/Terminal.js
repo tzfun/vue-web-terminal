@@ -121,7 +121,7 @@ export default {
                 },
                 selectedIndex: 0
             },
-            autoScrollToBottom: true
+            forceScrollToBottom: true
         }
     },
     props: terminalProps(),
@@ -293,7 +293,7 @@ export default {
             let doc = e.target
             let bottom = doc.scrollHeight - doc.clientHeight - doc.scrollTop
 
-            this.autoScrollToBottom = bottom <= 30;
+            this.forceScrollToBottom = bottom <= 100;
         })
 
         //  如果是移动设备，需要监听touch事件来模拟双击事件
@@ -1021,22 +1021,23 @@ export default {
          * @private
          */
         _pushMessage(message) {
+            let forceToBottom = this.forceScrollToBottom
             if (!message) return
             if (message instanceof Array) {
                 for (let m of message) {
                     this._pushMessage0(m, false)
                 }
                 this._checkLogSize()
-                this._jumpToBottom()
+                this._jumpToBottom(forceToBottom)
                 return;
             }
 
             this._pushMessage0(message)
-            this._jumpToBottom()
+            this._jumpToBottom(forceToBottom)
 
             if (message.type === MESSAGE_TYPE.JSON) {
                 setTimeout(() => {
-                    this._jumpToBottom()
+                    this._jumpToBottom(forceToBottom)
                 }, 80)
             }
         },
@@ -1131,7 +1132,7 @@ export default {
             }
         },
         _jumpToBottom(force = false) {
-            if (!force && !this.autoScrollToBottom) {
+            if (!force && !this.forceScrollToBottom) {
                 return
             }
             this.$nextTick(() => {
@@ -1354,6 +1355,7 @@ export default {
                 }
 
             })
+            this._jumpToBottom(true)
         }, 100),
         _checkInputCursor() {
             let eIn = this.$refs.terminalCmdInputRef
