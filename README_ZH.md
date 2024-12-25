@@ -1,5 +1,7 @@
 中文版 | [English](./README.md)
 
+> **Vue2**版本从 **2024年12月24日** 开始正式归档，不再提供维护更新。
+
 <div align=center>
 <img src=public/logo.png/>
 </div>
@@ -119,7 +121,7 @@ const app = createApp(App).use(Terminal)
 
 # 联系作者
 
-我是一名后端Coder，恰巧对前端也会一点皮毛，个人兴趣开发了此插件，业余玩家请多指教。
+我是一名后端Coder，恰巧对前端也会一点，个人兴趣开发了此插件。
 
 如果对代码优化或功能有好的想法并乐意贡献代码欢迎提交[PR](https://github.com/tzfun/vue-web-terminal/pulls)
 ，对插件使用存在疑问或发现bug请提交[issue](https://github.com/tzfun/vue-web-terminal/issues)。

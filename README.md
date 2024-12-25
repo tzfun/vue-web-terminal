@@ -1,5 +1,7 @@
 [中文版](./README_ZH.md) | English
 
+> The **Vue2** version will be officially archived from **December 24, 2024** and will no longer provide maintenance updates.
+
 <div align=center>
 <img src=public/logo.png/>
 </div>
@@ -121,7 +123,7 @@ Example:
 
 # Contact Author
 
-I am a backend coder who happens to have some knowledge of frontend. I developed this plugin out of personal interest.
+I am a backend coder, and I know a little bit about frontend. This plugin was created out of my interest.
 
 If you have good ideas for code optimization or functions and are willing to contribute code, please submit [PR](https://github.com/tzfun/vue-web-terminal/pulls),
 If you have any questions about the use of the plugin or find bugs, please submit[issue](https://github.com/tzfun/vue-web-terminal/issues).
