@@ -18,3 +18,5 @@ package.js
 lib/*.html
 lib/*.chunk.*
 lib/*.txt
+*.html
+*.py
