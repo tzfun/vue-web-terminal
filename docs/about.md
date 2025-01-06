@@ -15,7 +15,6 @@ vue-web-terminal is a web-based command line window plugin built by Vue that sup
 - Supports real-time content display and appending, and can create simple animation effects
 - Support user question and answer input
 - Support online text editing
-- Support `Highlight`, `Codemirror` code highlighting
 - Support window dragging and fixing
 - Support ← → cursor key switching and ↑ ↓ key history command switching
 - Support fullscreen
@@ -23,7 +22,7 @@ vue-web-terminal is a web-based command line window plugin built by Vue that sup
 - Support logging group folding
 - Supports multiple styles of slots, customizable styles
 - Supports themes, with built-in dark and light themes by default, and you can also customize themes
-- Provides a rich set of JS APIs, almost all functions can be simulated by APIs to simulate non-human operations
+- Provides a rich set of JS APIs, almost all functions can be simulated by APIs to simulate human operations
 - Supports Vue2/Vue3
 
 ![vue-web-terminal.gif](/images/vue-web-terminal.gif)

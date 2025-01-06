@@ -18,21 +18,17 @@
 使用方法是通过引入全局API `TerminalApi` 调用接口，所有接口入参的第一个都是Terminal的name值，之后的参数就是对应接口的参数值。
 
 ```vue
+<script setup lang="ts">
+  import {TerminalApi} from 'vue-web-terminal';
+  import {onMounted} from "vue";
+
+  onMounted(() => {
+    TerminalApi.pushMessage('my-terminal', "hello world!")
+  })
+</script>
 <template>
   <terminal name="my-terminal"></terminal>
 </template>
-
-<script>
-  import { TerminalApi } from 'vue-web-terminal';
-  
-  export default {
-    methods: {
-        invokeApi() {
-            TerminalApi.pushMessage('my-terminal', "hello world!");
-        }
-    }  
-  }
-</script>
 ```
 
 
@@ -45,17 +41,19 @@
 @tab Vue3
 
 ```vue
+<script setup lang="ts">
+  import {onMounted, ref} from "vue";
+  import {Terminal} from 'vue-web-terminal'
+
+  const myTerminalRef = ref<InstanceType<typeof Terminal>>()
+
+  onMounted(() => {
+    myTerminalRef.value!.pushMessage("hello world!")  
+  })
+</script>
 <template>
   <terminal name="my-terminal" ref="myTerminalRef"></terminal>
 </template>
-
-<script setup>
-const myTerminalRef = ref(null)
-
-const invokeApi = () => {
-  myTerminalRef.pushMessage("hello world!")
-}
-</script>
 ```
 
 @tab Vue2
@@ -117,7 +115,7 @@ TerminalApi.pushMessage('my-terminal', [
 type appendMessage = (msg: string) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.appendMessage('my-terminal', "This is additional content")
 ```
 
@@ -129,7 +127,7 @@ TerminalApi.appendMessage('my-terminal', "This is additional content")
 type fullscreen = () => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.fullscreen('my-terminal')
 ```
 
@@ -141,7 +139,7 @@ TerminalApi.fullscreen('my-terminal')
 type isFullscreen = () => boolean;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 let isFullscreen = TerminalApi.isFullscreen('my-terminal')
 console.log(isFullscreen)
 ```
@@ -154,7 +152,7 @@ console.log(isFullscreen)
 type dragging = (pos: Position) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 ```
 - **引用**：
@@ -168,7 +166,7 @@ TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 type execute = (cmd: string) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.execute('my-terminal', 'help :local')
 ```
 
@@ -183,7 +181,7 @@ TerminalApi.execute('my-terminal', 'help :local')
 type focus = (enforceFocus?: boolean | MouseEvent) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.focus('my-terminal', true)
 ```
 
@@ -200,7 +198,7 @@ TerminalApi.focus('my-terminal', true)
 type elementInfo = () => TerminalElementInfo;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 let info = TerminalApi.elementInfo('my-terminal')
 console.log(info)
 ```
@@ -257,7 +255,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 type textEditorClose = (options: any) => string;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.textEditorClose('my-terminal', true)
 
 TerminalApi.textEditorClose('my-terminal', 'hello! this is close options')
@@ -271,7 +269,7 @@ TerminalApi.textEditorClose('my-terminal', 'hello! this is close options')
 type clearLog = (clearCommandHistory?: boolean) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 //  clear screen log
 TerminalApi.clearLog('my-terminal')
 
@@ -287,7 +285,7 @@ TerminalApi.clearLog('my-terminal', true)
 type getCommand = () => string;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.getCommand('my-terminal')
 ```
 
@@ -299,7 +297,7 @@ TerminalApi.getCommand('my-terminal')
 type setCommand = (command: string) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
@@ -311,7 +309,7 @@ TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 type switchAllFoldState = (name: string, state: boolean) => number;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 // 折叠所有命令分组
 TerminalApi.switchAllFoldState('my-terminal', true)
 
@@ -327,7 +325,7 @@ TerminalApi.switchAllFoldState('my-terminal', false)
 type jumpToBottom = (name: string, force: boolean) => void;
 ```
 - **示例**：
-```js
+```js:no-line-numbers
 // 跳转到窗口底部，如果此时最新的一行离可视区域超过一定距离则不跳转
 TerminalApi.jumpToBottom('my-terminal', false)
 

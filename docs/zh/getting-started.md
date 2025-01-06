@@ -53,15 +53,19 @@ pnpm install vue-web-terminal@3
 
 ## Vue注册
 
-在main.js中注册插件
+在 main 中注册插件
 
 ::: code-tabs#js
 @tab Vue3
 
-```js
-import Terminal from 'vue-web-terminal'
+```typescript
+import { createTerminal } from 'vue-web-terminal'
 
-createApp(App).use(Terminal)
+const app = createApp(App)
+
+app.use(createTerminal())
+
+app.mount('#app')
 ```
 
 @tab Vue2
@@ -72,6 +76,44 @@ import Terminal from 'vue-web-terminal'
 Vue.use(Terminal)
 ```
 :::
+
+## 全局配置
+
+::: tip
+全局配置需要在`main`中注册之前（调用`app.use()`之前）处理完成，此功能只有 Vue3 版本支持（从`3.4.0`开始）
+:::
+
+**配置本地存储名**
+
+```typescript
+const terminal: VueWebTerminal = createTerminal()
+//  default is 'terminal'
+terminal.configStoreName('my-terminal-storage')
+
+app.use(terminal)
+```
+
+**配置每个Terminal实例记忆历史指令的最大数量**
+
+```typescript
+const terminal: VueWebTerminal = createTerminal()
+//  default is 100
+terminal.configMaxStoredCommandCountPerInstance(200)
+
+app.use(terminal)
+```
+
+**配置自定义主题**
+
+```typescript
+//  导出css文件内容
+import customTheme from '/your-style-dir/terminal-custom-theme1.css?inline';
+
+const terminal: VueWebTerminal = createTerminal()
+terminal.configTheme('my-custom-theme', customTheme)
+
+app.use(terminal)
+```
 
 ## 你的第一个vue-web-terminal
 

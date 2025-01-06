@@ -56,7 +56,7 @@ json类型的消息会被显示为json编辑窗口，type为`json`，content需�
 
 #### code
 
-code类型消息可以更友好的显示代码和多行文本，type为`code`，content类型为字符串。它支持 **highlight** 和 **codemirror** 的高亮显示。
+code类型消息可以更友好的显示代码和多行文本，type为`code`，content类型为字符串。
 
 ```json
 {
@@ -65,115 +65,9 @@ code类型消息可以更友好的显示代码和多行文本，type为`code`，
 }
 ```
 
-##### highlight代码高亮
-code类型消息支持`highlight.js`高亮显示，需要你在自己的工程中引入依赖并接入
-
-首先你需要在 main.js 入口配置 Highlight.js，详细配置见[highlight.js in npm][highlight.js in npm]
-
-::: code-tabs#js
-@tab Vue3
-
-```js
-import {Terminal, configHighlight} from 'vue-web-terminal'
-import hljs from 'highlight.js'
-import java from 'highlight.js/lib/languages/java'
-import vuePlugin from "@highlightjs/vue-plugin"
-import 'highlight.js/styles/tomorrow-night-bright.css'
-
-const app = createApp(App)
-app.use(vuePlugin)
-app.use(Terminal)
-
-hljs.registerLanguage('java', java)
-configHighlight(true)
-```
-
-@tab Vue2
-```js
-import {Terminal, configHighlight} from 'vue-web-terminal'
-import hljs from 'highlight.js'
-import java from 'highlight.js/lib/languages/java'
-import vuePlugin from "@highlightjs/vue-plugin"
-import 'highlight.js/styles/tomorrow-night-bright.css'
-
-Vue.use(vuePlugin)
-Vue.use(Terminal)
-
-hljs.registerLanguage('java', java)
-configHighlight(true)
-```
-:::
-
-::: tip
-vue2版本需要找对应的依赖版本，最新的适用于vue3不一定适用于vue2，下面是作者在测试时使用的对应Vue2的版本
-
-```json
-{
-  "@highlightjs/vue-plugin": "^1.0.2",
-  "highlight.js": "^10.7.3"
-}
-```
-:::
-
-##### codemirror代码高亮
-
-code类型消息也支持 codemirror 高亮显示，详细配置见[codemirror.js in npm][codemirror.js in npm]
-
-::: code-tabs#js
-
-@tab Vue3
-```js
-import {Terminal, configCodemirror} from 'vue-web-terminal'
-import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/addon/edit/closebrackets.js'
-
-const app = createApp(App)
-app.use(VueCodemirror)
-app.use(Terminal)
-
-configCodemirror({
-  tabSize: 4,
-  mode: 'text/x-java',
-  theme: "darcula",
-  lineNumbers: true,
-  line: true,
-  smartIndent: true
-})
-```
-
-@tab Vue2
-```js
-import {Terminal, configCodemirror} from 'vue-web-terminal'
-import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/addon/edit/closebrackets.js'
-
-Vue.use(VueCodemirror)
-Vue.use(Terminal)
-
-configCodemirror({
-  tabSize: 4,
-  mode: 'text/x-java',
-  theme: "darcula",
-  lineNumbers: true,
-  line: true,
-  smartIndent: true
-})
-```
-:::
-
-::: tip
-和 highlight.js 一样，codemirror在选择时也需要注意版本问题，vue2和vue3版本不一定兼容，作者在测试时使用的vue2版本：`"vue-codemirror": "^4.0.6"`
-:::
-
 ##### 自定义高亮
 
-如果你有自己的代码高亮显示实现，或者认为插件默认实现的 highlight 和 codemirror 不够灵活，可以选择使用 [插槽 Slots](./slots) 去重写它。
+如果你有自己的代码高亮显示实现，可以选择使用 [插槽 Slots](./slots) 去重写它。
 
 #### table
 
@@ -210,8 +104,11 @@ configCodemirror({
 #### html
 
 type为`html`时可自定义内容格式，content为html标签构成
-```js
-function execCmd(key, command, success) {
+
+```ts
+import {SuccessFunc} from "vue-web-terminal";
+
+function execCmd(key: string, command: string, success: SuccessFunc) {
     // ...
     success({
         type: 'html',
@@ -234,8 +131,10 @@ function execCmd(key, command, success) {
 
 type为`ansi`时可以显示ANSI控制码样式，**目前仅支持着色控制，包含 *xterm-256color* 色系，其余控制码会被过滤**
 
-```js
-function execCmd(key, command, success) {
+```ts
+import {SuccessFunc} from "vue-web-terminal";
+
+function execCmd(key: string, command: string, success: SuccessFunc) {
     // ...
     success({
         type: 'ansi',

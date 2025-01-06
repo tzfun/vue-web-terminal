@@ -6,11 +6,6 @@
 Starting from `2.1.13` and `3.2.0` versions, the plugin has two built-in themes: `dark` and `light`, 
 and extracts some css variables to provide the ability to customize the theme.
 
-::: warning
-After `2.3.1` and `3.3.1` (inclusive) versions, each instance can be set with a separate theme, 
-and there is no need to import the built-in default theme css file.
-:::
-
 ## Dark Theme
 
 The dark theme is the default theme of the plugin, which is more in line with the usage habits of most users. 
@@ -98,22 +93,27 @@ The following is the color definition of the dark theme.
 ```
 
 If you need to implement your own theme style, create a new css file in your project, 
-rewrite the above css variables in this file, and then configure your custom theme in `main.js`.
+rewrite the above css variables in this file, and then configure your custom theme in `main`.
 ::: code-tabs#js
 
 @tab Vue3
 
-```js
-import {Terminal, configTheme} from 'vue-web-terminal';
+```ts
+import { createTerminal } from 'vue-web-terminal';
+import type { VueWebTerminal } from 'vue-web-terminal'
 
 //  Export css file content to variables
 import customTheme1 from '/your-style-dir/terminal-custom-theme1.css?inline';
 import customTheme2 from '/your-style-dir/terminal-custom-theme2.css?inline';
 
-configTheme('customTheme1', customTheme1);
-configTheme('customTheme2', customTheme2);
+const terminal:VueWebTerminal = createTerminal()
 
-createApp(App).use(Terminal)
+terminal.configTheme('customTheme1', customTheme1);
+terminal.configTheme('customTheme2', customTheme2);
+
+const app = createApp(App)
+
+app.use(terminal)
 ```
 
 @tab Vue2
@@ -141,8 +141,8 @@ Then use the custom theme in your code:
 
 If you want to override the default `dark` and `light` themes, you can override the corresponding theme names when registering:
 ```js
-configTheme('dark', customTheme1);
-configTheme('light', customTheme2);
+terminal.configTheme('dark', customTheme1);
+terminal.configTheme('light', customTheme2);
 ```
 
 ::: info Notice
@@ -160,9 +160,7 @@ The css selector before `{}` can be arbitrary and will not be actually used.
 
 The theme attribute value is two-way bound, and the theme can be dynamically modified by modifying the bound js variable.
 ```vue
-<script setup>
-  import Terminal from 'vue-web-terminal';
-
+<script setup lang="ts">
   const theme = ref('dark')
 
   //  Modify the current window theme

@@ -57,16 +57,20 @@ pnpm install vue-web-terminal@3
 
 ## Register
 
-Register the plugin in main.js
+Register the plugin in `main`
 
 ::: code-tabs#js
 
 @tab Vue3
 
-```js
-import Terminal from 'vue-web-terminal'
+```typescript
+import { createTerminal } from 'vue-web-terminal'
 
-createApp(App).use(Terminal)
+const app = createApp(App)
+
+app.use(createTerminal())
+
+app.mount('#app')
 ```
 
 @tab Vue2
@@ -77,6 +81,45 @@ import Terminal from 'vue-web-terminal'
 Vue.use(Terminal)
 ```
 :::
+
+## Global Configuration
+
+::: tip
+Global configuration needs to be processed before registering in `main` (before calling `app.use()`). 
+This feature is only supported by Vue3 version (starting from `3.4.0`).
+:::
+
+**Configure the local storage name**
+
+```typescript
+const terminal: VueWebTerminal = createTerminal()
+//  default is 'terminal'
+terminal.configStoreName('my-terminal-storage')
+
+app.use(terminal)
+```
+
+**Configure the maximum number of historical commands to be memorized per terminal instance**
+
+```typescript
+const terminal: VueWebTerminal = createTerminal()
+//  default is 100
+terminal.configMaxStoredCommandCountPerInstance(200)
+
+app.use(terminal)
+```
+
+**Configuring a custom theme**
+
+```typescript
+//  Export css file content
+import customTheme from '/your-style-dir/terminal-custom-theme1.css?inline';
+
+const terminal: VueWebTerminal = createTerminal()
+terminal.configTheme('my-custom-theme', customTheme)
+
+app.use(terminal)
+```
 
 ## Your first vue-web-terminal
 

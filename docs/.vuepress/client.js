@@ -8,8 +8,10 @@ export default defineClientConfig({
             const {Codemirror} = await import('vue-codemirror')
             app.component('codemirror', Codemirror)
 
-            const Terminal = await import('vue-web-terminal')
-            app.use(Terminal)
+            const {createTerminal} = await import('vue-web-terminal')
+
+            const terminal = createTerminal()
+            app.use(terminal)
 
             // app.component('TerminalLocalDemo', TerminalLocalDemo)
         }

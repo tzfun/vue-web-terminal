@@ -22,21 +22,17 @@ The method of use is to introduce the global API `TerminalApi` to call the inter
 interface inputs is the name value of Terminal, and the subsequent parameters are the parameter values of the corresponding interface.
 
 ```vue
+<script setup lang="ts">
+  import {TerminalApi} from 'vue-web-terminal';
+  import {onMounted} from "vue";
+
+  onMounted(() => {
+    TerminalApi.pushMessage('my-terminal', "hello world!")
+  })
+</script>
 <template>
   <terminal name="my-terminal"></terminal>
 </template>
-
-<script>
-  import { TerminalApi } from 'vue-web-terminal';
-  
-  export default {
-    methods: {
-        invokeApi() {
-            TerminalApi.pushMessage('my-terminal', "hello world!");
-        }
-    }  
-  }
-</script>
 ```
 
 ### Ref Call
@@ -48,17 +44,19 @@ can be called without passing the name value of the Terminal.
 @tab Vue3
 
 ```vue
+<script setup lang="ts">
+  import {onMounted, ref} from "vue";
+  import {Terminal} from 'vue-web-terminal'
+
+  const myTerminalRef = ref<InstanceType<typeof Terminal>>()
+
+  onMounted(() => {
+    myTerminalRef.value!.pushMessage("hello world!")
+  })
+</script>
 <template>
   <terminal name="my-terminal" ref="myTerminalRef"></terminal>
 </template>
-
-<script setup>
-const myTerminalRef = ref(null)
-
-const invokeApi = () => {
-  myTerminalRef.pushMessage("hello world!")
-}
-</script>
 ```
 
 @tab Vue2
@@ -120,7 +118,7 @@ TerminalApi.pushMessage('my-terminal', [
 type appendMessage = (msg: string) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.appendMessage('my-terminal', "This is additional content")
 ```
 
@@ -132,7 +130,7 @@ TerminalApi.appendMessage('my-terminal', "This is additional content")
 type fullscreen = () => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.fullscreen('my-terminal')
 ```
 
@@ -157,7 +155,7 @@ console.log(isFullscreen)
 type dragging = (pos: Position) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 ```
 - **References**:
@@ -171,7 +169,7 @@ TerminalApi.dragging('my-terminal', { x: 100, y: 200 })
 type execute = (cmd: string) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.execute('my-terminal', 'help :local')
 ```
 
@@ -186,7 +184,7 @@ TerminalApi.execute('my-terminal', 'help :local')
 type focus = (enforceFocus?: boolean | MouseEvent) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.focus('my-terminal', true)
 ```
 
@@ -203,7 +201,7 @@ If your window has been created but not displayed on the page (for example, if v
 type elementInfo = () => TerminalElementInfo;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 let info = TerminalApi.elementInfo('my-terminal')
 console.log(info)
 ```
@@ -260,7 +258,7 @@ TerminalApi.textEditorOpen('my-terminal', {
 type textEditorClose = (options: any) => string;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.textEditorClose('my-terminal', true)
 
 TerminalApi.textEditorClose('my-terminal', 'hello! this is close options')
@@ -274,7 +272,7 @@ TerminalApi.textEditorClose('my-terminal', 'hello! this is close options')
 type clearLog = (clearCommandHistory?: boolean) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 //  clear screen log
 TerminalApi.clearLog('my-terminal')
 
@@ -290,7 +288,7 @@ TerminalApi.clearLog('my-terminal', true)
 type getCommand = () => string;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.getCommand('my-terminal')
 ```
 
@@ -302,7 +300,7 @@ TerminalApi.getCommand('my-terminal')
 type setCommand = (command: string) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 ```
 
@@ -314,7 +312,7 @@ TerminalApi.setCommand('my-terminal', "customCmd -a hello")
 type switchAllFoldState = (name: string, state: boolean) => number;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 // Collapse all command groups
 TerminalApi.switchAllFoldState('my-terminal', true)
 
@@ -330,7 +328,7 @@ TerminalApi.switchAllFoldState('my-terminal', false)
 type jumpToBottom = (name: string, force: boolean) => void;
 ```
 - **Example**: 
-```js
+```js:no-line-numbers
 // Jump to the bottom of the window. If the latest line is more than a certain distance away from the visible area, it will not jump.
 TerminalApi.jumpToBottom('my-terminal', false)
 

@@ -57,7 +57,7 @@ Messages of type json will be displayed as a json editing window, type is `json`
 
 #### code
 
-Code type messages can display code and multi-line text more friendly, type is `code`, content type is string. It supports **highlight** and **codemirror** highlighting.
+Code type messages can display code and multi-line text more friendly, type is `code`, content type is string.
 
 ```json
 {
@@ -66,121 +66,9 @@ Code type messages can display code and multi-line text more friendly, type is `
 }
 ```
 
-##### highlight
-
-`code` type messages support highlighting with `highlight.js`. You need to introduce dependencies and connect to it in your project.
-
-First you need to configure Highlight.js in the main.js entry. For detailed configuration, see [highlight.js in npm][highlight.js in npm]
-
-::: code-tabs#js
-
-@tab Vue3
-
-```js
-import {Terminal, configHighlight} from 'vue-web-terminal'
-import hljs from 'highlight.js'
-import java from 'highlight.js/lib/languages/java'
-import vuePlugin from "@highlightjs/vue-plugin"
-import 'highlight.js/styles/tomorrow-night-bright.css'
-
-const app = createApp(App)
-app.use(vuePlugin)
-app.use(Terminal)
-
-hljs.registerLanguage('java', java)
-configHighlight(true)
-```
-
-@tab Vue2
-```js
-import {Terminal, configHighlight} from 'vue-web-terminal'
-import hljs from 'highlight.js'
-import java from 'highlight.js/lib/languages/java'
-import vuePlugin from "@highlightjs/vue-plugin"
-import 'highlight.js/styles/tomorrow-night-bright.css'
-
-Vue.use(vuePlugin)
-Vue.use(Terminal)
-
-hljs.registerLanguage('java', java)
-configHighlight(true)
-```
-:::
-
-::: tip
-The vue2 version needs to find the corresponding dependency version.
-The latest version applicable to vue3 may not be applicable to vue2. 
-The following is the corresponding Vue2 version used by the author during testing.
-
-```json
-{
-  "@highlightjs/vue-plugin": "^1.0.2",
-  "highlight.js": "^10.7.3"
-}
-```
-:::
-
-##### codemirror
-
-`code` type messages also support codemirror highlighting, see [codemirror.js in npm][codemirror.js in npm] for detailed configuration
-
-::: code-tabs#js
-@tab Vue3
-```js
-import {Terminal, configCodemirror} from 'vue-web-terminal'
-import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/addon/edit/closebrackets.js'
-
-const app = createApp(App)
-app.use(VueCodemirror)
-app.use(Terminal)
-
-configCodemirror({
-  tabSize: 4,
-  mode: 'text/x-java',
-  theme: "darcula",
-  lineNumbers: true,
-  line: true,
-  smartIndent: true
-})
-```
-
-@tab Vue2
-```js
-import {Terminal, configCodemirror} from 'vue-web-terminal'
-import VueCodemirror from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/darcula.css'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/addon/edit/closebrackets.js'
-
-Vue.use(VueCodemirror)
-Vue.use(Terminal)
-
-configCodemirror({
-  tabSize: 4,
-  mode: 'text/x-java',
-  theme: "darcula",
-  lineNumbers: true,
-  line: true,
-  smartIndent: true
-})
-```
-:::
-
-::: tip
-Like highlight.js, you also need to pay attention to the version issue when choosing codemirror. 
-Vue2 and Vue3 versions are not necessarily compatible. 
-The author used the Vue2 version during testing: `"vue-codemirror": "^4.0.6"`
-:::
-
 ##### Custom highlight
 
-If you have your own code highlighting implementation, or think that the default implementation of highlight and 
-codemirror is not flexible enough, you can choose to use [slots](./slots) to rewrite it.
+If you have your own code highlighting implementation, you can choose to use [slots](./slots) to rewrite it.
 
 #### table
 
@@ -219,8 +107,10 @@ Table type display, type is `table`, content is table configuration, where `head
 
 When type is `html`, you can customize the content format, and content is composed of html tags.
 
-```js
-function execCmd(key, command, success) {
+```ts
+import {SuccessFunc} from "vue-web-terminal";
+
+function execCmd(key: string, command: string, success: SuccessFunc) {
     // ...
     success({
         type: 'html',
@@ -244,8 +134,10 @@ function execCmd(key, command, success) {
 When type is `ansi`, ANSI control code style can be displayed. 
 **Currently only color control is supported, including *xterm-256color* color system, other control codes will be filtered**
 
-```js
-function execCmd(key, command, success) {
+```ts
+import {SuccessFunc} from "vue-web-terminal";
+
+function execCmd(key: string, command: string, success: SuccessFunc) {
     // ...
     success({
         type: 'ansi',

@@ -47,24 +47,24 @@ Create a flash object through `new TerminalFlash()` and pass it into the success
 - `flush(string)`: Update the currently displayed content
 - `finish()`: End execution
 
-```js
-import {TerminalFlash} from 'vue-web-terminal'
+```ts
+import {FailedFunc, SuccessFunc, TerminalFlash} from 'vue-web-terminal'
 
-const onExecCmd = (key, command, success, failed) => {
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
 
-    let flash = new TerminalFlash()
-    success(flash)
+  let flash = new TerminalFlash()
+  success(flash)
 
-    let count = 0
-    let flashInterval = setInterval(() => {
-        flash.flush(`This is flash content: ${count}`)
+  let count = 0
+  let flashInterval = setInterval(() => {
+    flash.flush(`This is flash content: ${count}`)
 
-        if (++count >= 20) {
-            clearInterval(flashInterval)
-            flash.finish()
-        }
-    }, 200)
-    
+    if (++count >= 20) {
+      clearInterval(flashInterval)
+      flash.finish()
+    }
+  }, 200)
+
 }
 ```
 
@@ -83,10 +83,10 @@ Create an ask object through `new TerminalAsk()` and pass it into the success ca
   - `isPassword`: boolean, whether it is a password input.
 - `finish()`: End execution
 
-```js
-import {TerminalAsk} from 'vue-web-terminal'
+```ts
+import {FailedFunc, SuccessFunc, TerminalAsk} from 'vue-web-terminal'
 
-const onExecCmd = (key, command, success, failed) => {
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
     let asker = new TerminalAsk()
     success(asker)
 
@@ -118,8 +118,8 @@ two APIs: [textEditorOpen](./api.md#texteditoropen), [textEditorClose](./api.md#
 
 A simple example:
 
-```js
-const onExecCmd = (key, command, success, failed) => {
+```ts
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
     TerminalApi.textEditorOpen('my-terminal', {
         content: 'Please edit this file',
         onClose: (value, options) => {
@@ -148,6 +148,40 @@ The plugin provides an `onKeydown` event, which is the best way to control the T
 Here, take the text editor as an example, and set the user to press the shortcut key `Ctrl + S` to complete the editing and save.
 
 ```vue
+<script setup lang="ts">
+  import {SuccessFunc, FailedFunc, TerminalApi} from "vue-web-terminal";
+  import {ref} from "vue";
+
+  const name = ref<string>("my-terminal")
+  const enableTextEditor = ref<boolean>(false)
+  const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
+    if (key === 'edit') {
+      TerminalApi.textEditorOpen(name.value, {
+        content: 'Please edit this file',
+        onClose: (value) => {
+          enableTextEditor.value = false
+          success({
+            type: "code",
+            content: value
+          })
+        }
+      })
+      enableTextEditor.value = true
+    }
+  }
+
+  const onKeydown = (event: Event) => {
+    if (enableTextEditor.value && event.key === 's' && event.ctrlKey) {
+      _textEditorClose(true)
+      event.preventDefault()
+    }
+  }
+
+  const _textEditorClose = (option: boolean) => {
+    TerminalApi.textEditorClose(name.value, option)
+  }
+</script>
+
 <template>
   <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
@@ -165,46 +199,6 @@ Here, take the text editor as an example, and set the user to press the shortcut
     </template>
   </terminal>
 </template>
-
-<script>
-import { TerminalApi } from "vue-web-terminal";
-
-export default {
-  name: "TerminalDemo",
-  data() {
-    return {
-      name: "my-terminal",
-      enableTextEditor: false
-    }
-  },
-  method: {
-    onExecCmd(key, command, success, failed, name) {
-      if (key === 'edit') {
-        TerminalApi.textEditorOpen(this.name, {
-          content: 'Please edit this file',
-          onClose: (value) => {
-            this.enableTextEditor = false
-            success({
-              type: "code",
-              content: value
-            })
-          }
-        })
-        this.enableTextEditor = true
-      }
-    },
-    onKeydown(event) {
-      if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-        this._textEditorClose(true)
-        event.preventDefault()
-      }
-    },
-    _textEditorClose(option) {
-      TerminalApi.textEditorClose(this.name, option)
-    }
-  }
-}
-</script>
 ```
 
 <CommentService></CommentService>

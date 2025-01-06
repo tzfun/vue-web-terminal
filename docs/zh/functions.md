@@ -41,24 +41,24 @@ Terminal默认的消息都是以追加的模式显示，当你只需要显示执
 - `flush(string)`: 更新当前显示的内容
 - `finish()`: 结束执行
 
-```js
-import {TerminalFlash} from 'vue-web-terminal'
+```ts
+import {FailedFunc, SuccessFunc, TerminalFlash} from 'vue-web-terminal'
 
-const onExecCmd = (key, command, success, failed) => {
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
 
-    let flash = new TerminalFlash()
-    success(flash)
+  let flash = new TerminalFlash()
+  success(flash)
 
-    let count = 0
-    let flashInterval = setInterval(() => {
-        flash.flush(`This is flash content: ${count}`)
+  let count = 0
+  let flashInterval = setInterval(() => {
+    flash.flush(`This is flash content: ${count}`)
 
-        if (++count >= 20) {
-            clearInterval(flashInterval)
-            flash.finish()
-        }
-    }, 200)
-    
+    if (++count >= 20) {
+      clearInterval(flashInterval)
+      flash.finish()
+    }
+  }, 200)
+
 }
 ```
 
@@ -77,10 +77,10 @@ const onExecCmd = (key, command, success, failed) => {
   - `isPassword`: boolean，是否是密码输入
 - `finish()`: 结束执行
 
-```js
-import {TerminalAsk} from 'vue-web-terminal'
+```ts
+import {FailedFunc, SuccessFunc, TerminalAsk} from 'vue-web-terminal'
 
-const onExecCmd = (key, command, success, failed) => {
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
     let asker = new TerminalAsk()
     success(asker)
 
@@ -110,8 +110,8 @@ const onExecCmd = (key, command, success, failed) => {
 
 一个简单示例：
 
-```js
-const onExecCmd = (key, command, success, failed) => {
+```ts
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
     TerminalApi.textEditorOpen('my-terminal', {
         content: 'Please edit this file',
         onClose: (value, options) => {
@@ -137,6 +137,40 @@ const closeEditor = () => {
 插件提供了一个 `onKeydown` 事件，此事件是你控制 **活跃状态** 下Terminal快捷键最好的方法，这里以文本编辑器为例，设定用户按快捷键 `Ctrl + S` 就表示完成编辑并保存
 
 ```vue
+<script setup lang="ts">
+  import {SuccessFunc, FailedFunc, TerminalApi} from "vue-web-terminal";
+  import {ref} from "vue";
+
+  const name = ref<string>("my-terminal")
+  const enableTextEditor = ref<boolean>(false)
+  const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
+    if (key === 'edit') {
+      TerminalApi.textEditorOpen(name.value, {
+        content: 'Please edit this file',
+        onClose: (value) => {
+          enableTextEditor.value = false
+          success({
+            type: "code",
+            content: value
+          })
+        }
+      })
+      enableTextEditor.value = true
+    }
+  }
+  
+  const onKeydown = (event: Event) => {
+    if (enableTextEditor.value && event.key === 's' && event.ctrlKey) {
+      _textEditorClose(true)
+      event.preventDefault()
+    }
+  }
+  
+  const _textEditorClose = (option: boolean) => {
+    TerminalApi.textEditorClose(name.value, option)
+  }
+</script>
+
 <template>
   <terminal :name="name" @exec-cmd="onExecCmd" @on-keydown="onKeydown">
     <template #textEditor="{ data }">
@@ -154,46 +188,6 @@ const closeEditor = () => {
     </template>
   </terminal>
 </template>
-
-<script>
-import { TerminalApi } from "vue-web-terminal";
-
-export default {
-  name: "TerminalDemo",
-  data() {
-    return {
-      name: "my-terminal",
-      enableTextEditor: false
-    }
-  },
-  method: {
-    onExecCmd(key, command, success, failed, name) {
-      if (key === 'edit') {
-        TerminalApi.textEditorOpen(this.name, {
-          content: 'Please edit this file',
-          onClose: (value) => {
-            this.enableTextEditor = false
-            success({
-              type: "code",
-              content: value
-            })
-          }
-        })
-        this.enableTextEditor = true
-      }
-    },
-    onKeydown(event) {
-      if (this.enableTextEditor && event.key === 's' && event.ctrlKey) {
-        this._textEditorClose(true)
-        event.preventDefault()
-      }
-    },
-    _textEditorClose(option) {
-      TerminalApi.textEditorClose(this.name, option)
-    }
-  }
-}
-</script>
 ```
 
 <CommentService></CommentService>

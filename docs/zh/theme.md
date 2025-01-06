@@ -4,10 +4,6 @@
 
 从 `2.1.13` 和 `3.2.0` 版本开始，插件内置有两个主题：`dark` 和 `light`，并抽出一部分css变量，提供自定义主题的能力。
 
-::: warning
-在`2.3.1` 和 `3.3.1` （包含）版本之后支持每个实例单独设置主题，不再需要引入内置默认主题css文件
-:::
-
 ## 黑暗主题
 
 黑暗主题是插件的默认主题，也更符合大多数用户的使用习惯，将 theme 属性设置为dark，不设置属性也默认为该值。
@@ -91,23 +87,27 @@
 }
 ```
 
-如果你需要实现自己的主题样式，在你的工程中创建一个新的css文件，此文件中重写上面的css变量， 然后在`main.js`中配置你自定义的主题。
-
+如果你需要实现自己的主题样式，在你的工程中创建一个新的css文件，此文件中重写上面的css变量， 然后在`main`中配置你自定义的主题。
 
 ::: code-tabs#js
 @tab Vue3
 
-```js
-import {Terminal, configTheme} from 'vue-web-terminal';
+```ts
+import { createTerminal } from 'vue-web-terminal';
+import type { VueWebTerminal } from 'vue-web-terminal'
 
 //  导出css文件内容
 import customTheme1 from '/your-style-dir/terminal-custom-theme1.css?inline';
 import customTheme2 from '/your-style-dir/terminal-custom-theme2.css?inline';
 
-configTheme('customTheme1', customTheme1);
-configTheme('customTheme2', customTheme2);
+const terminal:VueWebTerminal = createTerminal()
 
-createApp(App).use(Terminal)
+terminal.configTheme('customTheme1', customTheme1);
+terminal.configTheme('customTheme2', customTheme2);
+
+const app = createApp(App)
+
+app.use(terminal)
 ```
 
 @tab Vue2
@@ -135,8 +135,8 @@ Vue.use(Terminal);
 
 如果你想覆盖默认的`dark`和`light`主题，你可以在注册时覆盖对应的主题名即可：
 ```js
-configTheme('dark', customTheme1);
-configTheme('light', customTheme2);
+terminal.configTheme('dark', customTheme1);
+terminal.configTheme('light', customTheme2);
 ```
 
 ::: info 提示
@@ -153,9 +153,7 @@ css文件中必须按以下格式填写，且不能有其他内容，`{}`前面�
 
 主题属性值是双向绑定的，修改绑定的js变量即可动态修改主题
 ```vue
-<script setup>
-  import Terminal from 'vue-web-terminal';
-
+<script setup lang="ts">
   const theme = ref('dark')
 
   //  修改当前窗口主题
