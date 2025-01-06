@@ -1,8 +1,9 @@
 <script setup>
-import {onMounted, reactive, ref} from "vue";
+import {nextTick, onMounted, reactive, ref} from "vue";
 import LocalTerminal from "./local-terminal/LocalTerminal.vue";
 import {useClientData, usePageLang} from "@vuepress/client";
 import languages from '../languages.json'
+import {TerminalApi} from "vue-web-terminal";
 
 String.prototype.format = function () {
   if (arguments.length === 0) {
@@ -130,6 +131,11 @@ const showDemo = (type) => {
     createNew()
   } else {
     resetList()
+    if (type === 'fullscreen') {
+      nextTick(() => {
+        TerminalApi.fullscreen(terminals.fullscreen.name)
+      })
+    }
   }
 }
 
@@ -154,7 +160,7 @@ const createNew = () => {
     showHeader: true,
     dragConf: {
       zIndex: 100,
-      width: 700,
+      width: 800,
       height: 500,
       init: {
         x: 100 + seq * 50,

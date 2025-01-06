@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import {reactive, ref} from "vue";
 import {commands} from "./commands.js";
 import {exampleCode} from "./example.js";
 import CodeEditor from "../editor/CodeEditor.vue";
 import {usePageLang} from "@vuepress/client";
 import languages from '../../languages.json'
-import {Terminal, TerminalApi, TerminalAsk, TerminalFlash} from 'vue-web-terminal'
+import {FailedFunc, SuccessFunc, Terminal, TerminalApi, TerminalAsk, TerminalFlash} from 'vue-web-terminal'
 
 //  当前最新版本
 const version = __PLUGIN_VERSION__
@@ -49,7 +49,7 @@ const props = defineProps({
     default: () => 'dark'
   }
 })
-const customTextEditorRef = ref(null)
+const customTextEditorRef = ref<InstanceType<typeof CodeEditor>>()
 
 const cmdStore = ref(commands[usePageLang().value])
 const initLog = reactive([
@@ -79,7 +79,7 @@ const enableTextEditor = ref(false)
 
 const emits = defineEmits(['on-active', 'update:context', 'close'])
 
-const onActive = (name) => {
+const onActive = (name: string) => {
   emits('on-active', name)
 }
 
@@ -91,7 +91,7 @@ const onActive = (name) => {
  * @param success 成功回调
  * @param failed  失败回调
  */
-const onExecCmd = (key, command, success, failed) => {
+const onExecCmd = (key: string, command: string, success: SuccessFunc, failed: FailedFunc) => {
   if (guide.step > 0 && guide.command && key !== 'exit' && key !== guide.command) {
     let tip = getText('TERM_GUIDE_RETRY').format({
       guideCommand: `<span class="t-cmd-key">${guide.command}</span>`,
@@ -305,18 +305,18 @@ const onExecCmd = (key, command, success, failed) => {
   nextGuide(success)
 }
 
-const onClick = (key) => {
+const onClick = (key: string) => {
   if (key === "close") {
     emits('close', props.name)
   }
 }
-const onKeydown = (event) => {
+const onKeydown = (event: KeyboardEvent) => {
   if (enableTextEditor.value && event.key === 's' && event.ctrlKey) {
     textEditorClose(true)
     event.preventDefault()
   }
 }
-const textEditorClose = (options) => {
+const textEditorClose = (options: any) => {
   TerminalApi.textEditorClose(props.name, options)
 }
 
@@ -361,46 +361,46 @@ const nextGuide = () => {
     return;
   }
   let message = null
-  const guideStepArg = { guideStep: guide.step }
+  const guideStepArg = {guideStep: guide.step}
   if (guide.step === 1) {
     guide.command = 'list'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_LIST').format(guideCommandArg)
   } else if (guide.step === 2) {
     guide.command = 'json'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_JSON').format(guideCommandArg)
   } else if (guide.step === 3) {
     guide.command = 'code'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_CODE').format(guideCommandArg)
   } else if (guide.step === 4) {
     guide.command = 'table'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_TABLE').format(guideCommandArg)
   } else if (guide.step === 5) {
     guide.command = 'loop'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_LOOP').format(guideCommandArg)
   } else if (guide.step === 6) {
     guide.command = 'html'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_HTML').format(guideCommandArg)
   } else if (guide.step === 7) {
     guide.command = 'ansi'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_ANSI').format(guideCommandArg)
   } else if (guide.step === 8) {
     guide.command = 'flash'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_FLASH').format(guideCommandArg)
   } else if (guide.step === 9) {
     guide.command = 'edit'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_EDIT').format(guideCommandArg)
   } else if (guide.step === 10) {
     guide.command = 'ask'
-    const guideCommandArg = { guideCommand: `<span class="t-cmd-key">${guide.command}</span>` }
+    const guideCommandArg = {guideCommand: `<span class="t-cmd-key">${guide.command}</span>`}
     message = getText('TERM_GUIDE_PREFIX').format(guideStepArg) + getText('TERM_GUIDE_COMMAND_ASK').format(guideCommandArg)
   } else if (guide.step === 11) {
     guide.command = null
@@ -456,6 +456,7 @@ const mockLoading = (flash, fileName, terminalInfo) => {
   let prefix2 = `deg)"></span><span style="color: aqua">${fileName}</span>`
 
   return new Promise(resolve => {
+    TerminalApi.jumpToBottom(props.name, true)
     let startTime = new Date().getTime()
     let count = 0
     let flashInterval = setInterval(() => {
@@ -471,6 +472,7 @@ const mockLoading = (flash, fileName, terminalInfo) => {
       let str = prefix1 + (90 * (count % 8)) + prefix2 + "<span>[" + "#".repeat(count) + "-".repeat(processDots - count) + ']' + percent + '%</span>';
       //  更新显示当前进度
       flash.flush(str)
+      TerminalApi.jumpToBottom(props.name, true)
 
       if (count >= processDots) {
         clearInterval(flashInterval)
@@ -529,6 +531,7 @@ const mockLoading = (flash, fileName, terminalInfo) => {
 .t-header h4 {
   margin: 5px !important;
 }
+
 .custom-content {
   list-style: none;
   margin: 0;
