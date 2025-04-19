@@ -60,7 +60,7 @@ code类型消息可以更友好的显示代码和多行文本，type为`code`，
 
 ```json
 {
-  "type": "json",
+  "type": "code",
   "content": "import Terminal from 'vue-web-terminal'\n\nVue.use(Terminal)"
 }
 ```

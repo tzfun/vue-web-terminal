@@ -61,7 +61,7 @@ Code type messages can display code and multi-line text more friendly, type is `
 
 ```json
 {
-  "type": "json",
+  "type": "code",
   "content": "import Terminal from 'vue-web-terminal'\n\nVue.use(Terminal)"
 }
 ```
