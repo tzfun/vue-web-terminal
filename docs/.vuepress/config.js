@@ -16,7 +16,7 @@ export default defineUserConfig({
     define:{
         __PLUGIN_VERSION__: {
             vue2: "2.3.3",
-            vue3: "3.4.0"
+            vue3: "3.4.1"
         },
     },
     head: [

@@ -333,4 +333,15 @@ TerminalApi.jumpToBottom('my-terminal', false)
 TerminalApi.jumpToBottom('my-terminal', true)
 ```
 
+### getOutputs
+- **说明**：获取当前屏幕下的输出，以结构体对象的形式返回
+- **定义**：
+```ts:no-line-numbers
+type getOutputs = (name: string) => MessageGroup[];
+```
+- **示例**：
+```js:no-line-numbers
+const outputs = TerminalApi.getOutputs('my-terminal')
+```
+
 <CommentService></CommentService>

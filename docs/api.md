@@ -336,4 +336,17 @@ TerminalApi.jumpToBottom('my-terminal', false)
 TerminalApi.jumpToBottom('my-terminal', true)
 ```
 
+### getOutputs
+
+- **Description**: Get the output under the current screen and return it in the form of a struct object.
+- **Definition**:
+```ts:no-line-numbers
+type getOutputs = (name: string) => MessageGroup[];
+```
+- **Example**:
+```js:no-line-numbers
+const outputs = TerminalApi.getOutputs('my-terminal')
+```
+
+
 <CommentService></CommentService>
