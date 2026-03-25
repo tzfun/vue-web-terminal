@@ -1,6 +1,6 @@
 :root {
     /*限定字体高度*/
-    --t-font-height: 19px;
+    --t-font-height: 16px;
     /*限定字体大小*/
     --t-font-size: 16px;
     --t-cmd-tips-border-radius: 5px;
@@ -174,6 +174,11 @@
 
 .t-window .t-cursor-block {
     background-color: var(--t-cursor-color);
+}
+
+.t-window .t-cursor-block.t-cursor-inactive {
+    background-color: unset;
+    border: 0.5px solid var(--t-cursor-color);
 }
 
 .t-window .t-cursor-underline::before {

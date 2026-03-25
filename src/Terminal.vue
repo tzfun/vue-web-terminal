@@ -382,13 +382,27 @@ onMounted(() => {
     if (isActive.value) {
       try {
         let key = event.key.toLowerCase()
-        if (key.match(/c|control|meta/g)) {
-          if (event.metaKey || event.ctrlKey) {
-            return
+        if (event.metaKey || event.ctrlKey) {
+          console.log(key, event)
+          switch (key) {
+            case 'l': //  清屏
+                _clearLog(false)
+                event.preventDefault()
+              break
+            case 'a': //  光标跳转到头
+              _setCursorIdx(0)
+              event.preventDefault()
+              break
+            case 'e': //  光标跳转到尾
+              _setCursorIdx(terminalCmdInputRef.value.value.length)
+              event.preventDefault()
+              break
+            case 'u': //  删除整行
+              _setCommand('')
+              event.preventDefault()
+              break
           }
-          if (key === 'c' && (event.metaKey || event.ctrlKey)) {
-            return
-          }
+          return;
         }
 
         if (key === 'escape' && tips.open) {
@@ -2190,8 +2204,13 @@ defineExpose({
             <span>{{ context }}</span>
             <span>{{ contextSuffix }}</span>
           </span><span class="t-cmd-line-content" v-html="_commandFormatter(command)"></span><span
-            v-show="cursorConf.show"
-            :class="`t-cursor t-disable-select t-cursor-${cursorStyle} ${enableCursorBlink ? 't-cursor-blink' : ''}`"
+            :class="[
+                't-cursor',
+                't-disable-select',
+                `t-cursor-${cursorStyle}`,
+                cursorConf.show ? undefined : 't-cursor-inactive',
+                cursorConf.show && enableCursorBlink ? 't-cursor-blink' : undefined,
+            ]"
             ref="terminalCursorRef"
             :style="`width:${cursorConf.width}px;left:${cursorConf.left};top:${cursorConf.top};`">&nbsp;</span>
           <span class="t-cmd-tips"
