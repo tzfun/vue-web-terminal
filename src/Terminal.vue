@@ -61,7 +61,7 @@ import themeDark from "~/css/theme/dark.css?inline"
 import themeLight from "~/css/theme/light.css?inline"
 
 //  对应css变量 --t-font-height
-const FONT_HEIGHT = 19;
+const FONT_HEIGHT = 16;
 const emits = defineEmits([
   "on-keydown",
   "on-click",
@@ -342,6 +342,11 @@ onMounted(() => {
   if (terminalWindowRef.value) {
     terminalWindowRef.value.scrollTop = terminalWindowRef.value.offsetHeight;
   }
+
+  //  初始化字体宽度测量，确保光标首次渲染时宽度正确
+  nextTick(() => {
+    _calculateByteLen()
+  })
 
   let selectContentText = null
 
@@ -1359,6 +1364,109 @@ const _calculateCursorPos = (cmdStr?: string) => {
     return
   }
 
+  let inputBox = terminalInputBoxRef.value
+  if (!inputBox) {
+    _calculateCursorPosFallback(cmd, idx)
+    return
+  }
+
+  //  在可见的已渲染 DOM 上通过 Range API 精确定位光标位置
+  //  terminalInputBoxRef 的子节点结构: [0]=prompt, [1]=command content, [2]=cursor, ...
+  let cmdContentEl = inputBox.querySelector('.t-cmd-line-content:not(.t-prompt)')
+  if (!cmdContentEl) {
+    _calculateCursorPosFallback(cmd, idx)
+    return
+  }
+
+  let domPos = _findDomPositionByCharIdx(cmdContentEl, idx, cmd)
+  if (domPos) {
+    let range = document.createRange()
+    let containerRect = inputBox.getBoundingClientRect()
+    let rect: DOMRect
+
+    if (domPos.isBr) {
+      //  光标在换行符上，定位到 <br> 之后（即下一行开头）
+      //  插入一个临时零宽字符来获取下一行位置
+      let tempSpan = document.createElement('span')
+      tempSpan.textContent = '\u200B'
+      tempSpan.className = 't-cmd-line-content'
+      domPos.node.parentNode.insertBefore(tempSpan, domPos.node.nextSibling)
+      rect = tempSpan.getBoundingClientRect()
+      tempSpan.remove()
+      cursorConf.width = cursorConf.defaultWidth
+    } else {
+      range.setStart(domPos.node, domPos.offset)
+      range.setEnd(domPos.node, Math.min(domPos.offset + 1, domPos.node.textContent.length))
+      rect = range.getBoundingClientRect()
+      cursorConf.width = rect.width > 0 ? rect.width : cursorConf.defaultWidth
+    }
+
+    //  Range.getBoundingClientRect() 返回字形边界，可能比行盒顶部略高
+    //  将 top 值对齐到行高网格，消除字体 metrics 导致的偏移
+    let lineHeight = parseFloat(getComputedStyle(cmdContentEl).lineHeight) || FONT_HEIGHT
+    let rawTop = rect.top - containerRect.top
+    let snappedTop = Math.round(rawTop / lineHeight) * lineHeight
+
+    cursorConf.left = (rect.left - containerRect.left) + 'px'
+    cursorConf.top = snappedTop + 'px'
+  } else {
+    _calculateCursorPosFallback(cmd, idx)
+  }
+}
+
+/**
+ * 将原始命令字符索引映射到格式化后 DOM 中的文本节点位置。
+ *
+ * _commandFormatter 会将空格转为 &nbsp;（<span>&nbsp;</span>），将 \n 转为 <br/>，
+ * 其余字符保持不变（只是被包裹在 <span> 中）。
+ *
+ * 本函数遍历 DOM 的文本节点和 <br> 元素，逐字符匹配原始命令来定位目标字符。
+ */
+const _findDomPositionByCharIdx = (el: Element, targetIdx: number, cmd: string): { node: Node, offset: number, isBr: boolean } | null => {
+  let cmdCharIdx = 0
+
+  const walk = (node: Node): { node: Node, offset: number, isBr: boolean } | null => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      let text = node.textContent || ''
+      for (let i = 0; i < text.length; i++) {
+        if (cmdCharIdx === targetIdx) {
+          return {node, offset: i, isBr: false}
+        }
+        let ch = text[i]
+        //  &nbsp; (char code 160) 对应原始命令中的空格 (char code 32)
+        if (ch === '\u00A0') {
+          cmdCharIdx++  // 对应原始命令中的一个空格
+        } else {
+          cmdCharIdx++
+        }
+      }
+      return null
+    }
+
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      let element = node as Element
+      if (element.tagName === 'BR') {
+        //  <br> 对应原始命令中的 \n
+        if (cmdCharIdx === targetIdx) {
+          return {node, offset: 0, isBr: true}
+        }
+        cmdCharIdx++
+        return null
+      }
+
+      for (let i = 0; i < node.childNodes.length; i++) {
+        let result = walk(node.childNodes[i])
+        if (result) return result
+      }
+    }
+
+    return null
+  }
+
+  return walk(el)
+}
+
+const _calculateCursorPosFallback = (cmd: string, idx: number) => {
   if (inputBoxParam.promptWidth === 0) {
     _calculatePromptLen()
   }
@@ -1394,10 +1502,9 @@ const _calculateCursorPos = (cmdStr?: string) => {
     charWidth = _calculateStringWidth(cmd[i])
     pos.left += lastCharWidth
     lastCharWidth = charWidth
-    if (pos.left > lineWidth) {
-      //  行高 对应 css 变量 --t-font-height
+    if (pos.left + charWidth > lineWidth) {
       pos.top += FONT_HEIGHT
-      pos.left = charWidth
+      pos.left = 0
     }
   }
 

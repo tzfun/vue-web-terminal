@@ -163,6 +163,11 @@
 
 .t-window .t-cursor {
     position: absolute;
+    height: var(--t-font-height);
+    line-height: var(--t-font-height);
+    font-size: var(--t-font-size);
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .t-window .t-cursor-blink {
@@ -178,7 +183,7 @@
 
 .t-window .t-cursor-block.t-cursor-inactive {
     background-color: unset;
-    border: 0.5px solid var(--t-cursor-color);
+    border: 1px solid var(--t-cursor-color);
 }
 
 .t-window .t-cursor-underline::before {
