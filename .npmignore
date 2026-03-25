@@ -24,3 +24,8 @@ lib/*.txt
 lib/*.png
 lib/*.gif
 lib/*.jpg
+design/
+shortcut/
+docs/
+.idea/
+.github/
