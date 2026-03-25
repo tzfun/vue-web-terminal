@@ -2048,6 +2048,7 @@ const _onResize = _debounce(() => {
 
 defineExpose({
   pushMessage: _pushMessage,
+  appendMessage: _appendMessage,
   fullscreen: _fullscreen,
   isFullscreen: (): boolean => {
     return fullscreenState.value
